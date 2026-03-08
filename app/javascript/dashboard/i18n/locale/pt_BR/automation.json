@@ -40,13 +40,13 @@
       }
     },
     "LIST": {
+      "404": "Nenhuma regra de automação encontrada",
       "TABLE_HEADER": {
         "NAME": "Nome",
         "DESCRIPTION": "Descrição",
         "ACTIVE": "Ativo",
         "CREATED_ON": "Criado em"
-      },
-      "404": "Nenhuma regra de automação encontrada"
+      }
     },
     "DELETE": {
       "TITLE": "Excluir regra de automação",
@@ -150,7 +150,8 @@
       "ADD_PRIVATE_NOTE": "Adicionar uma Nota Privada",
       "CHANGE_PRIORITY": "Alterar Prioridade",
       "ADD_SLA": "Adicionar SLA",
-      "OPEN_CONVERSATION": "Abrir conversa"
+      "OPEN_CONVERSATION": "Abrir conversa",
+      "PENDING_CONVERSATION": "Marcar conversa como pendente"
     },
     "MESSAGE_TYPES": {
       "INCOMING": "Mensagem Recebida",

@@ -124,7 +124,8 @@
     "PAGINATION": {
       "RESULTS": "Exibindo {start} — {end} de {total} resultados",
       "PER_PAGE_TEMPLATE": "{size} / page"
-    }
+    },
+    "DOWNLOAD_CONVERSATION_REPORTS": "Baixar relatórios de conversas"
   },
   "AGENT_REPORTS": {
     "HEADER": "Visão Geral de Agentes",
@@ -192,6 +193,11 @@
     "CUSTOM_DATE_RANGE": {
       "CONFIRM": "Aplicar",
       "PLACEHOLDER": "Selecionar intervalo de datas"
+    },
+    "FILTERS": {
+      "INPUT_PLACEHOLDER": {
+        "AGENTS": "Buscar agentes"
+      }
     }
   },
   "LABEL_REPORTS": {
@@ -260,6 +266,11 @@
     "CUSTOM_DATE_RANGE": {
       "CONFIRM": "Aplicar",
       "PLACEHOLDER": "Selecionar intervalo de datas"
+    },
+    "FILTERS": {
+      "INPUT_PLACEHOLDER": {
+        "LABELS": "Buscar etiquetas"
+      }
     }
   },
   "INBOX_REPORTS": {
@@ -330,6 +341,11 @@
     "CUSTOM_DATE_RANGE": {
       "CONFIRM": "Aplicar",
       "PLACEHOLDER": "Selecionar intervalo de datas"
+    },
+    "FILTERS": {
+      "INPUT_PLACEHOLDER": {
+        "INBOXES": "Buscar caixas de entrada"
+      }
     }
   },
   "TEAM_REPORTS": {
@@ -398,6 +414,14 @@
     "CUSTOM_DATE_RANGE": {
       "CONFIRM": "Aplicar",
       "PLACEHOLDER": "Selecionar intervalo de datas"
+    },
+    "FILTERS": {
+      "ADD_FILTER": "Adicionar filtro",
+      "CLEAR_ALL": "Limpar todos",
+      "NO_FILTER": "Nenhum filtro disponível",
+      "INPUT_PLACEHOLDER": {
+        "TEAMS": "Buscar equipes"
+      }
     }
   },
   "CSAT_REPORTS": {
@@ -407,7 +431,26 @@
     "DOWNLOAD_FAILED": "Falha ao baixar Relatórios CSAT",
     "FILTERS": {
       "AGENTS": {
-        "PLACEHOLDER": "Escolher agentes"
+        "PLACEHOLDER": "Escolher agentes",
+        "LABEL": "Agente"
+      },
+      "ADD_FILTER": "Adicionar filtro",
+      "CLEAR_ALL": "Limpar todos",
+      "NO_FILTER": "Nenhum filtro disponível",
+      "INPUT_PLACEHOLDER": {
+        "AGENTS": "Buscar agentes",
+        "INBOXES": "Buscar caixas de entrada",
+        "TEAMS": "Buscar equipes",
+        "RATINGS": "Buscar avaliações"
+      },
+      "INBOXES": {
+        "LABEL": "Caixa de entrada"
+      },
+      "TEAMS": {
+        "LABEL": "Equipe"
+      },
+      "RATINGS": {
+        "LABEL": "Avaliação"
       }
     },
     "TABLE": {
@@ -415,8 +458,13 @@
         "CONTACT_NAME": "Contato",
         "AGENT_NAME": "Agente atribuído",
         "RATING": "Classificação",
-        "FEEDBACK_TEXT": "Comentário do feedback"
-      }
+        "FEEDBACK_TEXT": "Comentário do feedback",
+        "CONVERSATION": "Conversa",
+        "CUSTOMER": "Cliente",
+        "RESPONSE": "Resposta",
+        "HANDLED_BY": "Atendido por"
+      },
+      "UNKNOWN_CUSTOMER": "Cliente desconhecido"
     },
     "METRIC": {
       "TOTAL_RESPONSES": {
@@ -430,6 +478,28 @@
       "RESPONSE_RATE": {
         "LABEL": "Taxa de resposta",
         "TOOLTIP": "Número total de respostas / Número total de mensagens CSAT de pesquisa enviadas * 100"
+      },
+      "RATING_DISTRIBUTION": "Distribuição de avaliações"
+    },
+    "NO_RECORDS_DESCRIPTION": "As respostas da pesquisa de satisfação aparecerão aqui assim que os clientes começarem a fornecer feedback.",
+    "NO_AGENT": "Sem agente atribuído",
+    "NO_FEEDBACK": "Nenhum feedback fornecido",
+    "REVIEW_NOTES": {
+      "TITLE": "Notas de revisão",
+      "PLACEHOLDER": "Adicione notas de revisão sobre esta avaliação...",
+      "SAVE": "Salvar",
+      "CANCEL": "Cancelar",
+      "SAVING": "Salvando...",
+      "SAVED": "Notas salvas com sucesso",
+      "SAVE_ERROR": "Falha ao salvar notas",
+      "UPDATED_BY": "Atualizado por {name} {time}",
+      "UPDATED_BY_LABEL": "Atualizado por",
+      "PAYWALL": {
+        "TITLE": "Faça upgrade para adicionar notas de revisão",
+        "AVAILABLE_ON": "O recurso de notas de revisão está disponível apenas nos planos Business e Enterprise.",
+        "UPGRADE_PROMPT": "Adicione contexto interno a cada resposta de satisfação com notas de revisão.",
+        "UPGRADE_NOW": "Fazer upgrade agora",
+        "CANCEL_ANYTIME": "Você pode alterar ou cancelar seu plano a qualquer momento"
       }
     }
   },

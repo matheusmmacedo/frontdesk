@@ -1,8 +1,8 @@
 {
   "CONVERSATION": {
+    "404": "Desculpe, não conseguimos encontrar a conversa. Por favor, tente novamente",
     "SELECT_A_CONVERSATION": "Por favor, selecione uma conversa no painel da esquerda",
     "CSAT_REPLY_MESSAGE": "Por favor, classifique a conversa",
-    "404": "Desculpe, não conseguimos encontrar a conversa. Por favor, tente novamente",
     "SWITCH_VIEW_LAYOUT": "Alternar o layout",
     "DASHBOARD_APP_TAB_MESSAGES": "Mensagens",
     "UNVERIFIED_SESSION": "A identidade deste usuário não foi verificada",
@@ -187,7 +187,8 @@
       "PRIVATE_MSG_INPUT": "A mensagem será visível apenas para agentes",
       "MESSAGE_SIGNATURE_NOT_CONFIGURED": "A assinatura da mensagem não está configurada. Por favor, configure-a nas configurações do perfil.",
       "CLICK_HERE": "Clique aqui para atualizar",
-      "WHATSAPP_TEMPLATES": "Templates do Whatsapp"
+      "WHATSAPP_TEMPLATES": "Templates do Whatsapp",
+      "COPILOT_MSG_INPUT": "Dê instruções adicionais ao copiloto, ou pergunte qualquer coisa... Pressione Enter para enviar"
     },
     "REPLYBOX": {
       "REPLY": "Responder",
@@ -234,7 +235,8 @@
         "REMOVE_PREVIEW": "Remover o encadeamento de e-mails citado",
         "COLLAPSE": "Recolher a prévia",
         "EXPAND": "Expandir a prévia"
-      }
+      },
+      "COPILOT_THINKING": "Copiloto está processando"
     },
     "VISIBLE_TO_AGENTS": "Mensagem Privada: Apenas visível para você e seu time",
     "CHANGE_STATUS": "Estado da conversa mudou",
@@ -285,7 +287,11 @@
       "REJECT_CALL": "Recusar",
       "JOIN_CALL": "Entrar na chamada",
       "END_CALL": "Encerrar chamada"
-    }
+    },
+    "UNSUPPORTED_MESSAGE_TIKTOK": "Esta mensagem não é suportada. Você pode visualizá-la no aplicativo TikTok.",
+    "FILE_TYPE_NOT_SUPPORTED": "Este arquivo {fileName} não é suportado nesta conversa",
+    "NATIVE_APP": "Aplicativo nativo",
+    "NATIVE_APP_ADVISORY": "Esta mensagem foi enviada do aplicativo nativo. Responda pelo Chatwoot para manter a janela de mensagens."
   },
   "EMAIL_TRANSCRIPT": {
     "TITLE": "Enviar transcrição de conversa",

@@ -1052,6 +1052,53 @@
       "INSTAGRAM": "Instagram",
       "TIKTOK": "TikTok",
       "VOICE": "Voz"
+    },
+    "ASSIGNMENT": {
+      "TITLE": "Atribuição de Conversas",
+      "DESCRIPTION": "Atribuir automaticamente conversas recebidas a agentes disponíveis com base em políticas de atribuição",
+      "ENABLE_AUTO_ASSIGNMENT": "Habilitar atribuição automática de conversas",
+      "DEFAULT_RULES_TITLE": "Regras padrão de atribuição",
+      "DEFAULT_RULES_DESCRIPTION": "Usando o comportamento padrão de atribuição para todas as conversas",
+      "DEFAULT_RULE_1": "Conversas criadas mais cedo primeiro",
+      "DEFAULT_RULE_2": "Distribuição por revezamento (round robin)",
+      "CUSTOMIZE_WITH_POLICY": "Personalizar com política de atribuição",
+      "USING_POLICY": "Usando política de atribuição personalizada para esta caixa de entrada",
+      "CUSTOMIZE_POLICY": "Personalizar com política de atribuição",
+      "DELETE_POLICY": "Excluir política",
+      "POLICY_LABEL": "Política de atribuição",
+      "ASSIGNMENT_ORDER_LABEL": "Ordem de Atribuição",
+      "ASSIGNMENT_METHOD_LABEL": "Método de Atribuição",
+      "POLICY_STATUS": {
+        "ACTIVE": "Ativo",
+        "INACTIVE": "Inativo"
+      },
+      "PRIORITY": {
+        "EARLIEST_CREATED": "Criado mais cedo",
+        "LONGEST_WAITING": "Aguardando há mais tempo"
+      },
+      "METHOD": {
+        "ROUND_ROBIN": "Revezamento (round robin)",
+        "BALANCED": "Atribuição equilibrada"
+      },
+      "UPGRADE_PROMPT": "Políticas de atribuição personalizadas estão disponíveis no plano Business",
+      "UPGRADE_TO_BUSINESS": "Fazer upgrade para Business",
+      "DEFAULT_POLICY_LINKED": "Política padrão vinculada",
+      "DEFAULT_POLICY_DESCRIPTION": "Vincule uma política de atribuição personalizada para configurar como as conversas são atribuídas aos agentes nesta caixa de entrada.",
+      "LINK_EXISTING_POLICY": "Vincular política existente",
+      "CREATE_NEW_POLICY": "Criar nova política",
+      "NO_POLICIES": "Nenhuma política de atribuição encontrada",
+      "VIEW_ALL_POLICIES": "Ver todas as políticas",
+      "CURRENT_BEHAVIOR": "Atualmente usando comportamento padrão de atribuição:",
+      "LINK_SUCCESS": "Política de atribuição vinculada com sucesso",
+      "LINK_ERROR": "Falha ao vincular política de atribuição"
+    },
+    "ASSIGNMENT_POLICY": {
+      "DELETE_CONFIRM_TITLE": "Excluir política de atribuição?",
+      "DELETE_CONFIRM_MESSAGE": "Tem certeza que deseja remover esta política de atribuição desta caixa de entrada? A caixa de entrada voltará às regras padrão de atribuição.",
+      "CANCEL": "Cancelar",
+      "CONFIRM_DELETE": "Excluir",
+      "DELETE_SUCCESS": "Política de atribuição removida com sucesso",
+      "DELETE_ERROR": "Falha ao remover política de atribuição"
     }
   }
 }
