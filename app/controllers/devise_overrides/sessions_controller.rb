@@ -15,7 +15,7 @@ class DeviseOverrides::SessionsController < DeviseTokenAuth::SessionsController
     # Find user first so we can check super_admin status before blocking
     user = find_user_for_authentication
 
-    if direct_login_disabled? && !user&.super_admin?
+    if direct_login_disabled? && !user.is_a?(SuperAdmin)
       return render json: { error: I18n.t('errors.direct_login_disabled') }, status: :forbidden
     end
 
