@@ -53,8 +53,8 @@
       "LAST_7_DAYS": "Últimos 7 dias",
       "LAST_14_DAYS": "Últimos 14 dias",
       "LAST_30_DAYS": "Últimos 30 dias",
-      "THIS_MONTH": "This month",
-      "LAST_MONTH": "Last month",
+      "THIS_MONTH": "Este mês",
+      "LAST_MONTH": "Mês passado",
       "LAST_3_MONTHS": "Últimos 3 meses",
       "LAST_6_MONTHS": "Últimos 6 meses",
       "LAST_YEAR": "Ano passado",
@@ -123,7 +123,7 @@
     },
     "PAGINATION": {
       "RESULTS": "Exibindo {start} — {end} de {total} resultados",
-      "PER_PAGE_TEMPLATE": "{size} / page"
+      "PER_PAGE_TEMPLATE": "{size} / página"
     },
     "DOWNLOAD_CONVERSATION_REPORTS": "Baixar relatórios de conversas"
   },
@@ -280,8 +280,8 @@
     "NO_ENOUGH_DATA": "Não existem dados suficientes para gerar o relatório. Tente novamente mais tarde.",
     "DOWNLOAD_INBOX_REPORTS": "Baixar relatórios de entrada",
     "FILTER_DROPDOWN_LABEL": "Selecionar caixa de entrada",
-    "ALL_INBOXES": "All Inboxes",
-    "SEARCH_INBOX": "Search Inbox",
+    "ALL_INBOXES": "Todas as Caixas de Entrada",
+    "SEARCH_INBOX": "Buscar Caixa de Entrada",
     "METRICS": {
       "CONVERSATIONS": {
         "NAME": "Conversas",
@@ -543,7 +543,7 @@
       "DOWNLOAD_REPORT": "Baixar relatório"
     },
     "RESOLUTION_HEATMAP": {
-      "HEADER": "Resolutions",
+      "HEADER": "Resoluções",
       "NO_CONVERSATIONS": "Não há conversas",
       "CONVERSATION": "{count} conversa",
       "CONVERSATIONS": "{count} conversas",
