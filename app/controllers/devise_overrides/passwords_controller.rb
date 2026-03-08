@@ -30,7 +30,7 @@ class DeviseOverrides::PasswordsController < Devise::PasswordsController
     return unless direct_login_disabled?
 
     user = User.from_email(params[:email]) if params[:email].present?
-    return if user&.super_admin?
+    return if user.is_a?(SuperAdmin)
 
     render json: { error: I18n.t('errors.direct_login_disabled') }, status: :forbidden
   end
