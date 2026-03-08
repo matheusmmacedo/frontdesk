@@ -109,6 +109,7 @@ export default {
   created() {
     if (this.ssoAuthToken) {
       this.submitLogin();
+      return;
     }
     if (this.ssoOnlyMode && !this.$route.query.admin_login) {
       const redirectUrl = window.chatwootConfig.ssoLoginRedirectUrl;
