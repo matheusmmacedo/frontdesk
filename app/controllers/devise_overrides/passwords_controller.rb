@@ -36,7 +36,7 @@ class DeviseOverrides::PasswordsController < Devise::PasswordsController
   end
 
   def direct_login_disabled?
-    GlobalConfigService.load('DISABLE_DIRECT_LOGIN', 'false') == 'true'
+    GlobalConfigService.load('DISABLE_DIRECT_LOGIN', 'false').to_s == 'true'
   end
 
   def reset_password_and_confirmation(recoverable)

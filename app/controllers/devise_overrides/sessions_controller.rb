@@ -32,7 +32,7 @@ class DeviseOverrides::SessionsController < DeviseTokenAuth::SessionsController
   private
 
   def direct_login_disabled?
-    GlobalConfigService.load('DISABLE_DIRECT_LOGIN', 'false') == 'true'
+    GlobalConfigService.load('DISABLE_DIRECT_LOGIN', 'false').to_s == 'true'
   end
 
   def find_user_for_authentication
