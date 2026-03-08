@@ -315,10 +315,15 @@
   description: 'Disable rendering profile update page for users'
 - name: DISABLE_DIRECT_LOGIN
   display_title: 'Disable Direct Email Login'
-  description: 'When enabled, regular users can only log in via SSO. Super admins are exempt and can always log in directly.'
+  description: 'When enabled, regular users can only log in via SSO. Super admins are exempt and can always log in directly. To access the login form as super admin, use: /app/login?admin_login=true'
   value: false
   locked: false
   type: boolean
+- name: SSO_LOGIN_REDIRECT_URL
+  display_title: 'SSO Login Redirect URL'
+  description: 'When DISABLE_DIRECT_LOGIN is enabled, redirect users to this URL instead of showing the login page. Leave empty to show the SSO-only message.'
+  value: ''
+  locked: false
 ## ------ End of Configs added for enterprise clients ------ ##
 
 ## ------ Configs added for FCM v1 notifications ------ ##

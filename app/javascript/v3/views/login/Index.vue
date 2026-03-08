@@ -110,6 +110,13 @@ export default {
     if (this.ssoAuthToken) {
       this.submitLogin();
     }
+    if (this.ssoOnlyMode && !this.$route.query.admin_login) {
+      const redirectUrl = window.chatwootConfig.ssoLoginRedirectUrl;
+      if (redirectUrl) {
+        window.location.replace(redirectUrl);
+        return;
+      }
+    }
     if (this.authError) {
       const messageKey = ERROR_MESSAGES[this.authError] ?? 'LOGIN.API.UNAUTH';
       // Use a method to get the translated text to avoid dynamic key warning
