@@ -99,6 +99,12 @@ export default {
     showSamlLogin() {
       return this.allowedLoginMethods.includes('saml');
     },
+    ssoOnlyMode() {
+      return !this.allowedLoginMethods.includes('email');
+    },
+    showLoginForm() {
+      return !this.ssoOnlyMode || this.$route.query.admin_login === 'true';
+    },
   },
   created() {
     if (this.ssoAuthToken) {
@@ -264,74 +270,84 @@ export default {
       }"
     >
       <div v-if="!email">
-        <div class="flex flex-col gap-4">
-          <GoogleOAuthButton v-if="showGoogleOAuth" />
-          <div v-if="showSamlLogin" class="text-center">
-            <router-link
-              to="/app/login/sso"
-              class="inline-flex justify-center w-full px-4 py-3 items-center bg-n-background dark:bg-n-solid-3 rounded-md shadow-sm ring-1 ring-inset ring-n-container dark:ring-n-container focus:outline-offset-0 hover:bg-n-alpha-2 dark:hover:bg-n-alpha-2"
-            >
-              <Icon
-                icon="i-lucide-lock-keyhole"
-                class="size-5 text-n-slate-11"
-              />
-              <span class="ml-2 text-base font-medium text-n-slate-12">
-                {{ $t('LOGIN.SAML.LABEL') }}
-              </span>
-            </router-link>
-          </div>
-          <SimpleDivider
-            v-if="showGoogleOAuth || showSamlLogin"
-            :label="$t('COMMON.OR')"
-            class="uppercase"
-          />
+        <!-- SSO-only mode: show informational message, hide the login form -->
+        <div v-if="ssoOnlyMode && !showLoginForm" class="text-center">
+          <p class="text-sm text-n-slate-11">
+            {{ $t('LOGIN.SSO_ONLY_MESSAGE') }}
+          </p>
         </div>
-        <form class="space-y-5" @submit.prevent="submitFormLogin">
-          <FormInput
-            v-model="credentials.email"
-            name="email_address"
-            type="text"
-            data-testid="email_input"
-            :tabindex="1"
-            required
-            :label="$t('LOGIN.EMAIL.LABEL')"
-            :placeholder="$t('LOGIN.EMAIL.PLACEHOLDER')"
-            :has-error="v$.credentials.email.$error"
-            @input="v$.credentials.email.$touch"
-          />
-          <FormInput
-            v-model="credentials.password"
-            type="password"
-            name="password"
-            data-testid="password_input"
-            required
-            :tabindex="2"
-            :label="$t('LOGIN.PASSWORD.LABEL')"
-            :placeholder="$t('LOGIN.PASSWORD.PLACEHOLDER')"
-            :has-error="v$.credentials.password.$error"
-            @input="v$.credentials.password.$touch"
-          >
-            <p v-if="!globalConfig.disableUserProfileUpdate">
+
+        <!-- Login form: shown in normal mode or when admin_login query param is present -->
+        <template v-if="showLoginForm">
+          <div class="flex flex-col gap-4">
+            <GoogleOAuthButton v-if="showGoogleOAuth" />
+            <div v-if="showSamlLogin" class="text-center">
               <router-link
-                to="auth/reset/password"
-                class="text-sm text-link"
-                tabindex="4"
+                to="/app/login/sso"
+                class="inline-flex justify-center w-full px-4 py-3 items-center bg-n-background dark:bg-n-solid-3 rounded-md shadow-sm ring-1 ring-inset ring-n-container dark:ring-n-container focus:outline-offset-0 hover:bg-n-alpha-2 dark:hover:bg-n-alpha-2"
               >
-                {{ $t('LOGIN.FORGOT_PASSWORD') }}
+                <Icon
+                  icon="i-lucide-lock-keyhole"
+                  class="size-5 text-n-slate-11"
+                />
+                <span class="ml-2 text-base font-medium text-n-slate-12">
+                  {{ $t('LOGIN.SAML.LABEL') }}
+                </span>
               </router-link>
-            </p>
-          </FormInput>
-          <NextButton
-            lg
-            type="submit"
-            data-testid="submit_button"
-            class="w-full"
-            :tabindex="3"
-            :label="$t('LOGIN.SUBMIT')"
-            :disabled="loginApi.showLoading"
-            :is-loading="loginApi.showLoading"
-          />
-        </form>
+            </div>
+            <SimpleDivider
+              v-if="showGoogleOAuth || showSamlLogin"
+              :label="$t('COMMON.OR')"
+              class="uppercase"
+            />
+          </div>
+          <form class="space-y-5" @submit.prevent="submitFormLogin">
+            <FormInput
+              v-model="credentials.email"
+              name="email_address"
+              type="text"
+              data-testid="email_input"
+              :tabindex="1"
+              required
+              :label="$t('LOGIN.EMAIL.LABEL')"
+              :placeholder="$t('LOGIN.EMAIL.PLACEHOLDER')"
+              :has-error="v$.credentials.email.$error"
+              @input="v$.credentials.email.$touch"
+            />
+            <FormInput
+              v-model="credentials.password"
+              type="password"
+              name="password"
+              data-testid="password_input"
+              required
+              :tabindex="2"
+              :label="$t('LOGIN.PASSWORD.LABEL')"
+              :placeholder="$t('LOGIN.PASSWORD.PLACEHOLDER')"
+              :has-error="v$.credentials.password.$error"
+              @input="v$.credentials.password.$touch"
+            >
+              <p v-if="!globalConfig.disableUserProfileUpdate">
+                <router-link
+                  to="auth/reset/password"
+                  class="text-sm text-link"
+                  tabindex="4"
+                >
+                  {{ $t('LOGIN.FORGOT_PASSWORD') }}
+                </router-link>
+              </p>
+            </FormInput>
+            <NextButton
+              lg
+              type="submit"
+              data-testid="submit_button"
+              class="w-full"
+              :tabindex="3"
+              :label="$t('LOGIN.SUBMIT')"
+              :disabled="loginApi.showLoading"
+              :is-loading="loginApi.showLoading"
+            />
+          </form>
+        </template>
       </div>
       <div v-else class="flex items-center justify-center">
         <Spinner color-scheme="primary" size="" />

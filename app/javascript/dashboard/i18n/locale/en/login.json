@@ -20,6 +20,7 @@
       "BUSINESS_ACCOUNTS_ONLY": "Please use your company email address to login",
       "NO_ACCOUNT_FOUND": "We couldn't find an account for your email address."
     },
+    "SSO_ONLY_MESSAGE": "Your organization uses SSO. Use the link sent by your platform to sign in.",
     "FORGOT_PASSWORD": "Forgot your password?",
     "CREATE_NEW_ACCOUNT": "Create a new account",
     "SUBMIT": "Login",

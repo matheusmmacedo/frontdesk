@@ -12,7 +12,13 @@ class DeviseOverrides::SessionsController < DeviseTokenAuth::SessionsController
     return handle_mfa_verification if mfa_verification_request?
     return handle_sso_authentication if sso_authentication_request?
 
+    # Find user first so we can check super_admin status before blocking
     user = find_user_for_authentication
+
+    if direct_login_disabled? && !user&.super_admin?
+      return render json: { error: I18n.t('errors.direct_login_disabled') }, status: :forbidden
+    end
+
     return handle_mfa_required(user) if user&.mfa_enabled?
 
     # Only proceed with standard authentication if no MFA is required
@@ -24,6 +30,10 @@ class DeviseOverrides::SessionsController < DeviseTokenAuth::SessionsController
   end
 
   private
+
+  def direct_login_disabled?
+    GlobalConfigService.load('DISABLE_DIRECT_LOGIN', 'false') == 'true'
+  end
 
   def find_user_for_authentication
     return nil unless params[:email].present? && params[:password].present?

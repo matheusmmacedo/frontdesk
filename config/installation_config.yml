@@ -313,6 +313,12 @@
   value: false
   locked: false
   description: 'Disable rendering profile update page for users'
+- name: DISABLE_DIRECT_LOGIN
+  display_title: 'Disable Direct Email Login'
+  description: 'When enabled, regular users can only log in via SSO. Super admins are exempt and can always log in directly.'
+  value: false
+  locked: false
+  type: boolean
 ## ------ End of Configs added for enterprise clients ------ ##
 
 ## ------ Configs added for FCM v1 notifications ------ ##

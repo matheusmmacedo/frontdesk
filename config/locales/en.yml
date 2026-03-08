@@ -63,6 +63,7 @@ en:
       not_found: Assignment policy not found
     attachments:
       invalid: Invalid attachment
+    direct_login_disabled: Direct login is disabled. Please use SSO to sign in.
     saml:
       feature_not_enabled: SAML feature not enabled for this account
       sso_not_enabled: SAML SSO is not enabled for this installation
