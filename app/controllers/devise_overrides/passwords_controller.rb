@@ -3,6 +3,7 @@ class DeviseOverrides::PasswordsController < Devise::PasswordsController
 
   skip_before_action :require_no_authentication, raise: false
   skip_before_action :authenticate_user!, raise: false
+  before_action :check_direct_login_allowed, only: [:create]
 
   def create
     @user = User.from_email(params[:email])
@@ -24,6 +25,19 @@ class DeviseOverrides::PasswordsController < Devise::PasswordsController
   end
 
   private
+
+  def check_direct_login_allowed
+    return unless direct_login_disabled?
+
+    user = User.from_email(params[:email]) if params[:email].present?
+    return if user&.super_admin?
+
+    render json: { error: I18n.t('errors.direct_login_disabled') }, status: :forbidden
+  end
+
+  def direct_login_disabled?
+    GlobalConfigService.load('DISABLE_DIRECT_LOGIN', 'false') == 'true'
+  end
 
   def reset_password_and_confirmation(recoverable)
     recoverable.confirm unless recoverable.confirmed? # confirm if user resets password without confirming anytime before

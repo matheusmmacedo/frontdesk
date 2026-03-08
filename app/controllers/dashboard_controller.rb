@@ -22,6 +22,7 @@ class DashboardController < ActionController::Base
     HCAPTCHA_SITE_KEY
     LOGOUT_REDIRECT_LINK
     DISABLE_USER_PROFILE_UPDATE
+    DISABLE_DIRECT_LOGIN
     DEPLOYMENT_ENV
     INSTALLATION_PRICING_PLAN
   ].freeze
@@ -85,7 +86,8 @@ class DashboardController < ActionController::Base
   end
 
   def allowed_login_methods
-    methods = ['email']
+    methods = []
+    methods << 'email' unless GlobalConfigService.load('DISABLE_DIRECT_LOGIN', 'false') == 'true'
     methods << 'google_oauth' if GlobalConfigService.load('ENABLE_GOOGLE_OAUTH_LOGIN', 'true').to_s != 'false'
     methods << 'saml' if ChatwootHub.pricing_plan != 'community' && GlobalConfigService.load('ENABLE_SAML_SSO_LOGIN', 'true').to_s != 'false'
     methods
