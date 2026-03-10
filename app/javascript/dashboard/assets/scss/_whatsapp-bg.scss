@@ -42,35 +42,17 @@
   .bg-n-brand { background-color: #00a884; }
 
   // ---------------------------------------------------------------------------
-  // Conversation list panel — #f0f2f5 background, white items
+  // Conversation list panel — #ffffff (WhatsApp list bg)
   // ---------------------------------------------------------------------------
   .conversations-list-wrap {
-    background-color: #f0f2f5 !important;
+    background-color: #ffffff !important;
     border-right: 1px solid #d1d7db;
   }
 
-  // Conversation card items — white bg, hover f5f6f6
-  .conversations-list-wrap .conversation-item,
-  .conversations-list-wrap [class*="conversation-card"],
-  .conversations-list-wrap li {
-    background-color: #ffffff;
-
-    &:hover {
-      background-color: #f5f6f6;
-    }
-  }
-
-  // Active/selected conversation card
-  .conversations-list-wrap .active,
-  .conversations-list-wrap [class*="active"] {
-    background-color: #f0f2f5 !important;
-  }
-
-  // Chat list header area (search bar row, filters)
-  .conversations-list-wrap > div:first-child,
-  .conversations-list-wrap .chat-list--header {
-    background-color: #f0f2f5 !important;
-    border-bottom: 1px solid #d1d7db;
+  // Tabs row (Minhas / Não atribuídas / Todos) — transparent, inherits white
+  // DO NOT apply any background to <li> — it causes white square artifacts
+  .conversations-list-wrap ul li {
+    background-color: transparent !important;
   }
 
   // ---------------------------------------------------------------------------
@@ -244,28 +226,9 @@
     border-right: 1px solid #1f2c34;
   }
 
-  // Conversation items — #111b21 base, #182229 hover
-  .conversations-list-wrap .conversation-item,
-  .conversations-list-wrap [class*="conversation-card"],
-  .conversations-list-wrap li {
-    background-color: #111b21;
-
-    &:hover {
-      background-color: #182229;
-    }
-  }
-
-  // Active/selected conversation
-  .conversations-list-wrap .active,
-  .conversations-list-wrap [class*="active"] {
-    background-color: #2a3942 !important;
-  }
-
-  // Chat list header
-  .conversations-list-wrap > div:first-child,
-  .conversations-list-wrap .chat-list--header {
-    background-color: #202c33 !important;
-    border-bottom: 1px solid #1f2c34;
+  // Tabs li — transparent, inherits panel bg (never set explicit bg on li)
+  .conversations-list-wrap ul li {
+    background-color: transparent !important;
   }
 
   // ---------------------------------------------------------------------------
