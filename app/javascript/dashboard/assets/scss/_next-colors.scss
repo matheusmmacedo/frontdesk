@@ -315,6 +315,20 @@
     --teal-11: 0 133 105;
     --teal-12: 0 80 63;
 
+    /* Blue scale remapped to WhatsApp green — for tabs, links, badges */
+    --blue-1: 240 253 250;
+    --blue-2: 220 248 241;
+    --blue-3: 200 242 230;   /* tab badge bg (light green tint) */
+    --blue-4: 170 232 213;
+    --blue-5: 130 215 195;
+    --blue-6: 90 195 172;
+    --blue-7: 50 175 150;
+    --blue-8: 10 155 125;
+    --blue-9: 0 168 132;     /* #00a884 */
+    --blue-10: 0 150 118;
+    --blue-11: 0 133 105;    /* active tab text */
+    --blue-12: 0 80 63;
+
     /* Backgrounds */
     --background-color: 240 242 245;   /* #f0f2f5 sidebar/nav */
     --surface-1: 234 230 223;          /* #eae6df chat area bg */
@@ -371,6 +385,20 @@
     --teal-10: 0 150 118;
     --teal-11: 11 216 182;
     --teal-12: 173 240 221;
+
+    /* Blue scale remapped to WhatsApp green (dark) */
+    --blue-1: 10 25 22;
+    --blue-2: 15 35 30;
+    --blue-3: 0 60 48;       /* tab badge bg dark */
+    --blue-4: 0 72 58;
+    --blue-5: 0 82 66;
+    --blue-6: 0 95 76;
+    --blue-7: 0 110 88;
+    --blue-8: 0 130 104;
+    --blue-9: 0 168 132;     /* #00a884 */
+    --blue-10: 0 150 118;
+    --blue-11: 11 216 182;   /* active tab text dark */
+    --blue-12: 173 240 221;
 
     /* Backgrounds */
     --background-color: 17 27 33;      /* #111b21 sidebar */
