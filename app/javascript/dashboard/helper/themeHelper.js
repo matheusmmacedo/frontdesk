@@ -3,7 +3,7 @@ import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
 
 export const setColorTheme = isOSOnDarkMode => {
   const selectedColorScheme =
-    LocalStorage.get(LOCAL_STORAGE_KEYS.COLOR_SCHEME) || 'auto';
+    LocalStorage.get(LOCAL_STORAGE_KEYS.COLOR_SCHEME) || 'whatsapp';
 
   document.body.classList.remove('dark', 'whatsapp', 'whatsapp-dark');
 
