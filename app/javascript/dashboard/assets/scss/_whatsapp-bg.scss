@@ -20,21 +20,12 @@
   .group-hover\:bg-n-brand:hover,
   .hover\:bg-n-brand:hover      { background-color: #00a884 !important; }
 
-  // Primary buttons — WhatsApp green fill
-  button[class*="bg-n-brand"],
-  [class*="bg-n-brand"]         { background-color: #00a884; }
-
   // ---------------------------------------------------------------------------
   // Tab active underline — after:bg-n-brand is hardcoded #2781F6
-  // Target ::after pseudo-element on elements containing "bg-n-brand" in class
+  // IMPORTANT: use [class*]::after ONLY for pseudo-element — never for the
+  // element itself, or it will paint the whole active tab green.
   // ---------------------------------------------------------------------------
   [class*="bg-n-brand"]::after  { background-color: #00a884 !important; }
-
-  // Chat type tabs (Minhas / Não atribuídas / Todos)
-  // Active tab: text-n-blue-11 + after:bg-n-brand::after + badge bg-n-blue-3
-  // --blue-11/3 already remapped via CSS vars above, but ::after needs direct override
-  woot-tabs a[class*="after\:bg-n-brand"]::after,
-  .conversations-list-wrap a::after { background-color: #00a884 !important; }
 
   // ---------------------------------------------------------------------------
   // Sidebar / Navigation panel — #f0f2f5
@@ -233,9 +224,8 @@
   .border-n-brand               { border-color: #00a884 !important; }
   .focus\:outline-n-brand:focus { outline-color: #00a884 !important; }
 
-  // Tab active underline ::after override
+  // Tab active underline ::after — pseudo-element only, NOT the element itself
   [class*="bg-n-brand"]::after  { background-color: #00a884 !important; }
-  .conversations-list-wrap a::after { background-color: #00a884 !important; }
 
   // ---------------------------------------------------------------------------
   // Sidebar / Navigation — #111b21
