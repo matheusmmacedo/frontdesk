@@ -292,5 +292,94 @@
     --border-container: 255, 255, 255, 0;
     --white-alpha: 255, 255, 255, 0.1;
   }
+
+  /* ===== WhatsApp Light Theme ===== */
+  .whatsapp:not(.whatsapp-dark) {
+    --slate-1: 240 242 245;
+    --slate-2: 245 246 246;
+    --slate-3: 234 230 223;
+    --slate-4: 217 253 211;
+    --slate-5: 209 215 219;
+    --slate-6: 209 215 219;
+    --slate-7: 134 150 160;
+    --slate-8: 102 119 129;
+    --slate-9: 102 119 129;
+    --slate-10: 84 101 111;
+    --slate-11: 41 68 80;
+    --slate-12: 17 27 33;
+
+    --teal-9: 0 168 132;
+    --teal-10: 0 150 118;
+    --teal-11: 0 133 105;
+
+    --background-color: 240 242 245;
+    --surface-1: 255 255 255;
+    --surface-2: 255 255 255;
+    --surface-active: 245 246 246;
+    --background-input-box: 0, 0, 0, 0.03;
+
+    --border-weak: 234 234 234;
+    --border-strong: 209 215 219;
+    --border-container: 209 215 219;
+
+    --solid-1: 255 255 255;
+    --solid-2: 240 242 245;
+    --solid-3: 245 246 246;
+    --solid-active: 245 246 246;
+    --solid-blue: 217 253 211;
+
+    --card-color: 255 255 255;
+    --label-background: 240 242 245;
+    --overlay: 0, 0, 0, 0.12;
+    --button-color: 255 255 255;
+    --alpha-1: 215, 215, 215, 0.22;
+    --alpha-2: 196, 197, 198, 0.22;
+    --alpha-3: 255, 255, 255, 0.96;
+  }
+
+  /* ===== WhatsApp Dark Theme ===== */
+  .whatsapp.whatsapp-dark {
+    --slate-1: 17 27 33;
+    --slate-2: 32 44 51;
+    --slate-3: 31 44 52;
+    --slate-4: 42 57 66;
+    --slate-5: 42 57 66;
+    --slate-6: 55 70 80;
+    --slate-7: 77 96 108;
+    --slate-8: 134 150 160;
+    --slate-9: 134 150 160;
+    --slate-10: 160 176 186;
+    --slate-11: 174 186 193;
+    --slate-12: 233 237 239;
+
+    --teal-9: 0 168 132;
+    --teal-10: 0 150 118;
+    --teal-11: 11 216 182;
+
+    --background-color: 11 20 26;
+    --surface-1: 17 27 33;
+    --surface-2: 32 44 51;
+    --surface-active: 42 57 66;
+    --background-input-box: 255, 255, 255, 0.02;
+
+    --border-weak: 31 44 52;
+    --border-strong: 42 57 66;
+    --border-container: 255, 255, 255, 0;
+
+    --solid-1: 17 27 33;
+    --solid-2: 32 44 51;
+    --solid-3: 42 57 66;
+    --solid-active: 55 70 80;
+    --solid-blue: 0 92 75;
+
+    --card-color: 32 44 51;
+    --label-background: 25 35 42;
+    --overlay: 0, 0, 0, 0.4;
+    --button-color: 42 57 66;
+    --alpha-1: 35, 36, 42, 0.8;
+    --alpha-2: 147, 153, 176, 0.12;
+    --alpha-3: 33, 34, 38, 0.95;
+    --white-alpha: 255, 255, 255, 0.1;
+  }
 }
 // NEXT COLORS END
