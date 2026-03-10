@@ -1,33 +1,379 @@
-/* WhatsApp chat area background pattern */
+// =============================================================================
+// WhatsApp Theme — Aggressive Visual Overrides
+// Targets specific component classes to replicate WhatsApp Web/Desktop look
+// =============================================================================
+
+// =============================================================================
+// LIGHT THEME
+// =============================================================================
 .whatsapp:not(.whatsapp-dark) {
-  .messages-view,
-  [data-messages-container],
-  .conversation-chat-area {
+
+  // ---------------------------------------------------------------------------
+  // Brand color overrides (n-brand is hardcoded #2781F6 in theme/colors.js)
+  // WhatsApp green: #00a884
+  // ---------------------------------------------------------------------------
+  .bg-n-brand                   { background-color: #00a884 !important; }
+  .text-n-brand                 { color: #00a884 !important; }
+  .outline-n-brand              { outline-color: #00a884 !important; }
+  .border-n-brand               { border-color: #00a884 !important; }
+  .focus\:outline-n-brand:focus { outline-color: #00a884 !important; }
+  .group-hover\:bg-n-brand:hover,
+  .hover\:bg-n-brand:hover      { background-color: #00a884 !important; }
+
+  // Primary buttons — WhatsApp green fill
+  button[class*="bg-n-brand"],
+  [class*="bg-n-brand"]         { background-color: #00a884; }
+
+  // ---------------------------------------------------------------------------
+  // Sidebar / Navigation panel — #f0f2f5
+  // aside.bg-n-background
+  // ---------------------------------------------------------------------------
+  &.bg-n-background,
+  aside.bg-n-background {
+    background-color: #f0f2f5 !important;
+    border-right-color: #d1d7db !important;
+  }
+
+  // Sidebar resize bar hover → green
+  .group:hover > .bg-n-brand,
+  .bg-n-brand { background-color: #00a884; }
+
+  // ---------------------------------------------------------------------------
+  // Conversation list panel — #f0f2f5 background, white items
+  // ---------------------------------------------------------------------------
+  .conversations-list-wrap {
+    background-color: #f0f2f5 !important;
+    border-right: 1px solid #d1d7db;
+  }
+
+  // Conversation card items — white bg, hover f5f6f6
+  .conversations-list-wrap .conversation-item,
+  .conversations-list-wrap [class*="conversation-card"],
+  .conversations-list-wrap li {
+    background-color: #ffffff;
+
+    &:hover {
+      background-color: #f5f6f6;
+    }
+  }
+
+  // Active/selected conversation card
+  .conversations-list-wrap .active,
+  .conversations-list-wrap [class*="active"] {
+    background-color: #f0f2f5 !important;
+  }
+
+  // Chat list header area (search bar row, filters)
+  .conversations-list-wrap > div:first-child,
+  .conversations-list-wrap .chat-list--header {
+    background-color: #f0f2f5 !important;
+    border-bottom: 1px solid #d1d7db;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Main conversation area wrapper — gives header/footer a neutral bg
+  // .conversation-details-wrap has bg-n-surface-1 → now #eae6df via CSS var
+  // We override the outer wrap to f0f2f5 so only the scroll panel is beige
+  // ---------------------------------------------------------------------------
+  .conversation-details-wrap {
+    background-color: #f0f2f5 !important;
+  }
+
+  // Conversation header strip — #f0f2f5 (same as panel)
+  .conversation-details-wrap > .flex:first-child,
+  .conversation-details-wrap > div.flex:first-child {
+    background-color: #f0f2f5 !important;
+    border-bottom: 1px solid #d1d7db;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Message scroll area — #eae6df (the iconic WhatsApp beige)
+  // .conversation-panel is the scrollable message container
+  // ---------------------------------------------------------------------------
+  .conversation-panel {
+    background-color: #eae6df !important;
+  }
+
+  // MessageList ul (has bg-n-surface-1 class) — transparent so panel shows
+  .conversation-panel ul {
+    background-color: transparent !important;
+  }
+
+  // Empty state area
+  .conversation-details-wrap .flex.h-full.min-h-0 {
     background-color: #eae6df;
   }
 
+  // ---------------------------------------------------------------------------
+  // Message bubbles
+  // .left-bubble  = incoming/customer/received → WHITE
+  // .right-bubble = outgoing/agent/sent       → GREEN #d9fdd3
+  // ---------------------------------------------------------------------------
+  .left-bubble {
+    background-color: #ffffff !important;
+    color: #111b21 !important;
+    box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  }
+
+  .right-bubble {
+    background-color: #d9fdd3 !important;
+    color: #111b21 !important;
+    box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  }
+
+  // Activity / system messages — subtle WhatsApp style
+  .rounded-md.bg-n-alpha-1 {
+    background-color: rgba(255, 255, 255, 0.75) !important;
+    color: #54656a !important;
+    border-radius: 0.5rem !important;
+  }
+
+  // Unread count bubble in message list
+  .conversation-panel .shadow-lg.rounded-full.bg-n-brand {
+    background-color: #00a884 !important;
+    color: #ffffff !important;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reply / input box — white with subtle border
+  // .reply-box has bg-n-solid-1
+  // ---------------------------------------------------------------------------
+  .reply-box {
+    background-color: #ffffff !important;
+    border-color: #d1d7db !important;
+    border-radius: 0.75rem !important;
+  }
+
+  // Reply box tabs (Reply / Note / Email)
+  .reply-editor--header,
+  [class*="reply-top"],
+  .reply-box__top {
+    background-color: #f0f2f5 !important;
+    border-bottom: 1px solid #d1d7db !important;
+  }
+
+  // Private note bubble — keep amber but adapt text
+  .right-bubble.bg-n-solid-amber,
+  .left-bubble.bg-n-solid-amber {
+    background-color: #fff3c4 !important;
+    color: #111b21 !important;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Dashed border (SVG) override
+  // ---------------------------------------------------------------------------
   .custom-dashed-border {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect x='0' y='0' width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23D1D7DB' stroke-width='2' stroke-dasharray='6, 8' stroke-dashoffset='0' stroke-linecap='round'/%3E%3C/svg%3E");
   }
+
+  // ---------------------------------------------------------------------------
+  // Macro form gradient
+  // ---------------------------------------------------------------------------
+  .macro-gradient-radial {
+    background-image: radial-gradient(#d1d7db 1.2px, transparent 0);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Modals, dropdowns, popovers — white surfaces
+  // ---------------------------------------------------------------------------
+  .modal-container,
+  [class*="dropdown-pane"],
+  [class*="popover"] {
+    background-color: #ffffff !important;
+    border-color: #d1d7db !important;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Text color tweaks for readability
+  // ---------------------------------------------------------------------------
+  .text-n-slate-12 { color: #111b21; }
+  .text-n-slate-11 { color: #54656a; }
+  .text-n-slate-10 { color: #667781; }
+  .text-n-slate-8  { color: #8696a0; }
+
+  // ---------------------------------------------------------------------------
+  // Scrollbar styling — subtle like WhatsApp
+  // ---------------------------------------------------------------------------
+  .conversation-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+  .conversation-panel::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+  }
+  .conversation-panel::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
+
+// =============================================================================
+// DARK THEME
+// =============================================================================
 .whatsapp.whatsapp-dark {
-  .messages-view,
-  [data-messages-container],
-  .conversation-chat-area {
+
+  // ---------------------------------------------------------------------------
+  // Brand color — same green
+  // ---------------------------------------------------------------------------
+  .bg-n-brand                   { background-color: #00a884 !important; }
+  .text-n-brand                 { color: #00a884 !important; }
+  .outline-n-brand              { outline-color: #00a884 !important; }
+  .border-n-brand               { border-color: #00a884 !important; }
+  .focus\:outline-n-brand:focus { outline-color: #00a884 !important; }
+
+  // ---------------------------------------------------------------------------
+  // Sidebar / Navigation — #111b21
+  // ---------------------------------------------------------------------------
+  &.bg-n-background,
+  aside.bg-n-background {
+    background-color: #111b21 !important;
+    border-right-color: #1f2c34 !important;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Conversation list panel — #111b21
+  // ---------------------------------------------------------------------------
+  .conversations-list-wrap {
+    background-color: #111b21 !important;
+    border-right: 1px solid #1f2c34;
+  }
+
+  // Conversation items — #111b21 base, #182229 hover
+  .conversations-list-wrap .conversation-item,
+  .conversations-list-wrap [class*="conversation-card"],
+  .conversations-list-wrap li {
+    background-color: #111b21;
+
+    &:hover {
+      background-color: #182229;
+    }
+  }
+
+  // Active/selected conversation
+  .conversations-list-wrap .active,
+  .conversations-list-wrap [class*="active"] {
+    background-color: #2a3942 !important;
+  }
+
+  // Chat list header
+  .conversations-list-wrap > div:first-child,
+  .conversations-list-wrap .chat-list--header {
+    background-color: #202c33 !important;
+    border-bottom: 1px solid #1f2c34;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Conversation details wrapper — #202c33 (header/footer area)
+  // ---------------------------------------------------------------------------
+  .conversation-details-wrap {
+    background-color: #202c33 !important;
+  }
+
+  // Header strip
+  .conversation-details-wrap > .flex:first-child,
+  .conversation-details-wrap > div.flex:first-child {
+    background-color: #202c33 !important;
+    border-bottom: 1px solid #1f2c34;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Message scroll area — #0b141a
+  // ---------------------------------------------------------------------------
+  .conversation-panel {
+    background-color: #0b141a !important;
+  }
+
+  .conversation-panel ul {
+    background-color: transparent !important;
+  }
+
+  .conversation-details-wrap .flex.h-full.min-h-0 {
     background-color: #0b141a;
   }
 
+  // ---------------------------------------------------------------------------
+  // Message bubbles
+  // ---------------------------------------------------------------------------
+  .left-bubble {
+    background-color: #202c33 !important;
+    color: #e9edef !important;
+    box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.5);
+  }
+
+  .right-bubble {
+    background-color: #005c4b !important;
+    color: #e9edef !important;
+    box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.5);
+  }
+
+  // Activity / system messages
+  .rounded-md.bg-n-alpha-1 {
+    background-color: rgba(17, 27, 33, 0.9) !important;
+    color: #8696a0 !important;
+  }
+
+  // Unread count bubble
+  .conversation-panel .shadow-lg.rounded-full.bg-n-brand {
+    background-color: #00a884 !important;
+    color: #ffffff !important;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reply / input box — #2a3942
+  // ---------------------------------------------------------------------------
+  .reply-box {
+    background-color: #1f2c34 !important;
+    border-color: #1f2c34 !important;
+    border-radius: 0.75rem !important;
+  }
+
+  .reply-editor--header,
+  [class*="reply-top"],
+  .reply-box__top {
+    background-color: #202c33 !important;
+    border-bottom: 1px solid #1f2c34 !important;
+  }
+
+  // Private note bubble — dark amber
+  .right-bubble.bg-n-solid-amber,
+  .left-bubble.bg-n-solid-amber {
+    background-color: #3b2f1e !important;
+    color: #e9edef !important;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Dashed border override
+  // ---------------------------------------------------------------------------
   .custom-dashed-border {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect x='0' y='0' width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%231F2C34' stroke-width='2' stroke-dasharray='6, 8' stroke-dashoffset='0' stroke-linecap='round'/%3E%3C/svg%3E");
   }
-}
 
-/* Macro form gradient overrides for WhatsApp themes */
-.whatsapp:not(.whatsapp-dark) .macro-gradient-radial {
-  background-image: radial-gradient(#d1d7db 1.2px, transparent 0);
-}
+  // ---------------------------------------------------------------------------
+  // Macro form gradient
+  // ---------------------------------------------------------------------------
+  .macro-gradient-radial {
+    background-image: radial-gradient(#2a3942 1.2px, transparent 0);
+  }
 
-.whatsapp.whatsapp-dark .macro-gradient-radial {
-  background-image: radial-gradient(#2a3942 1.2px, transparent 0);
+  // ---------------------------------------------------------------------------
+  // Text color tweaks
+  // ---------------------------------------------------------------------------
+  .text-n-slate-12 { color: #e9edef; }
+  .text-n-slate-11 { color: #aebac1; }
+  .text-n-slate-10 { color: #8696a0; }
+  .text-n-slate-8  { color: #667781; }
+
+  // ---------------------------------------------------------------------------
+  // Scrollbar styling
+  // ---------------------------------------------------------------------------
+  .conversation-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+  .conversation-panel::-webkit-scrollbar-thumb {
+    background-color: rgba(174, 186, 193, 0.2);
+    border-radius: 3px;
+  }
+  .conversation-panel::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
