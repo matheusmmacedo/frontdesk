@@ -295,83 +295,107 @@
 
   /* ===== WhatsApp Light Theme ===== */
   .whatsapp:not(.whatsapp-dark) {
-    --slate-1: 240 242 245;
-    --slate-2: 245 246 246;
-    --slate-3: 234 230 223;
-    --slate-4: 217 253 211;
-    --slate-5: 209 215 219;
+    /* Slate ramp — WhatsApp gray-green palette */
+    --slate-1: 240 242 245;   /* #f0f2f5 panel bg */
+    --slate-2: 245 246 246;   /* #f5f6f6 hover */
+    --slate-3: 238 240 242;   /* subtle */
+    --slate-4: 230 235 239;   /* borders, tree lines */
+    --slate-5: 209 215 219;   /* #d1d7db divider */
     --slate-6: 209 215 219;
-    --slate-7: 134 150 160;
-    --slate-8: 102 119 129;
+    --slate-7: 134 150 160;   /* #8696a0 secondary text */
+    --slate-8: 102 119 129;   /* #667781 secondary text */
     --slate-9: 102 119 129;
     --slate-10: 84 101 111;
-    --slate-11: 41 68 80;
-    --slate-12: 17 27 33;
+    --slate-11: 54 80 94;
+    --slate-12: 17 27 33;     /* #111b21 primary text */
 
+    /* Brand green — WhatsApp #00a884 */
     --teal-9: 0 168 132;
     --teal-10: 0 150 118;
     --teal-11: 0 133 105;
+    --teal-12: 0 80 63;
 
-    --background-color: 240 242 245;
-    --surface-1: 255 255 255;
+    /* Backgrounds */
+    --background-color: 240 242 245;   /* #f0f2f5 sidebar/nav */
+    --surface-1: 234 230 223;          /* #eae6df chat area bg */
     --surface-2: 255 255 255;
     --surface-active: 245 246 246;
+
+    /* Input & forms */
     --background-input-box: 0, 0, 0, 0.03;
 
-    --border-weak: 234 234 234;
-    --border-strong: 209 215 219;
+    /* Borders */
+    --border-weak: 222 227 229;
+    --border-strong: 209 215 219;      /* #d1d7db */
     --border-container: 209 215 219;
 
-    --solid-1: 255 255 255;
-    --solid-2: 240 242 245;
-    --solid-3: 245 246 246;
+    /* Solid surfaces */
+    --solid-1: 255 255 255;            /* reply box, cards */
+    --solid-2: 240 242 245;            /* panel fills */
+    --solid-3: 245 246 246;            /* hover fills */
     --solid-active: 245 246 246;
-    --solid-blue: 217 253 211;
+    --solid-blue: 217 253 211;         /* #d9fdd3 sent bubble */
+    --solid-blue-2: 240 252 235;
+    --solid-amber: 255 235 181;        /* private notes */
 
+    /* Misc */
     --card-color: 255 255 255;
     --label-background: 240 242 245;
     --overlay: 0, 0, 0, 0.12;
     --button-color: 255 255 255;
-    --alpha-1: 215, 215, 215, 0.22;
+    --alpha-1: 209 215 219, 0.3;
     --alpha-2: 196, 197, 198, 0.22;
     --alpha-3: 255, 255, 255, 0.96;
+    --black-alpha-1: 0, 0, 0, 0.08;
+    --black-alpha-2: 0, 0, 0, 0.04;
   }
 
   /* ===== WhatsApp Dark Theme ===== */
   .whatsapp.whatsapp-dark {
-    --slate-1: 17 27 33;
-    --slate-2: 32 44 51;
-    --slate-3: 31 44 52;
-    --slate-4: 42 57 66;
+    /* Slate ramp — WhatsApp dark palette */
+    --slate-1: 11 20 26;      /* #0b141a deepest bg */
+    --slate-2: 17 27 33;      /* #111b21 chat list */
+    --slate-3: 31 44 52;      /* #1f2c34 surface */
+    --slate-4: 42 57 66;      /* #2a3942 input/hover */
     --slate-5: 42 57 66;
     --slate-6: 55 70 80;
     --slate-7: 77 96 108;
-    --slate-8: 134 150 160;
+    --slate-8: 134 150 160;   /* #8696a0 secondary text */
     --slate-9: 134 150 160;
     --slate-10: 160 176 186;
-    --slate-11: 174 186 193;
-    --slate-12: 233 237 239;
+    --slate-11: 174 186 193;  /* #aebac1 icons */
+    --slate-12: 233 237 239;  /* #e9edef primary text */
 
+    /* Brand green — same */
     --teal-9: 0 168 132;
     --teal-10: 0 150 118;
     --teal-11: 11 216 182;
+    --teal-12: 173 240 221;
 
-    --background-color: 11 20 26;
-    --surface-1: 17 27 33;
-    --surface-2: 32 44 51;
-    --surface-active: 42 57 66;
+    /* Backgrounds */
+    --background-color: 17 27 33;      /* #111b21 sidebar */
+    --surface-1: 11 20 26;             /* #0b141a message area */
+    --surface-2: 32 44 51;             /* #202c33 header */
+    --surface-active: 42 57 66;        /* #2a3942 hover */
+
+    /* Input & forms */
     --background-input-box: 255, 255, 255, 0.02;
 
-    --border-weak: 31 44 52;
+    /* Borders */
+    --border-weak: 31 44 52;           /* #1f2c34 */
     --border-strong: 42 57 66;
     --border-container: 255, 255, 255, 0;
 
-    --solid-1: 17 27 33;
-    --solid-2: 32 44 51;
-    --solid-3: 42 57 66;
+    /* Solid surfaces */
+    --solid-1: 32 44 51;               /* #202c33 cards/panels */
+    --solid-2: 32 44 51;               /* #202c33 */
+    --solid-3: 42 57 66;               /* #2a3942 */
     --solid-active: 55 70 80;
-    --solid-blue: 0 92 75;
+    --solid-blue: 0 92 75;             /* #005c4b sent bubble dark */
+    --solid-blue-2: 0 72 58;
+    --solid-amber: 56 50 41;
 
+    /* Misc */
     --card-color: 32 44 51;
     --label-background: 25 35 42;
     --overlay: 0, 0, 0, 0.4;
@@ -379,6 +403,8 @@
     --alpha-1: 35, 36, 42, 0.8;
     --alpha-2: 147, 153, 176, 0.12;
     --alpha-3: 33, 34, 38, 0.95;
+    --black-alpha-1: 0, 0, 0, 0.3;
+    --black-alpha-2: 0, 0, 0, 0.2;
     --white-alpha: 255, 255, 255, 0.1;
   }
 }
