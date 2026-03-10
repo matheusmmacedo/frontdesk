@@ -5,6 +5,7 @@ import {
   ICON_LIGHT_MODE,
   ICON_DARK_MODE,
   ICON_SYSTEM_MODE,
+  ICON_WHATSAPP_MODE,
 } from 'dashboard/helper/commandbar/icons';
 import { LocalStorage } from 'shared/helpers/localStorage';
 import { LOCAL_STORAGE_KEYS } from 'dashboard/constants/localStorage';
@@ -25,6 +26,16 @@ const getThemeOptions = t => [
     key: 'auto',
     label: t('COMMAND_BAR.COMMANDS.SYSTEM_MODE'),
     icon: ICON_SYSTEM_MODE,
+  },
+  {
+    key: 'whatsapp',
+    label: 'WhatsApp Light',
+    icon: ICON_WHATSAPP_MODE,
+  },
+  {
+    key: 'whatsapp-dark',
+    label: 'WhatsApp Dark',
+    icon: ICON_WHATSAPP_MODE,
   },
 ];
 
