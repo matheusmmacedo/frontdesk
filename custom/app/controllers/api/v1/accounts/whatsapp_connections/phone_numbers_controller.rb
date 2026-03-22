@@ -17,7 +17,11 @@ class Api::V1::Accounts::WhatsappConnections::PhoneNumbersController < Api::V1::
                WhatsappConnections::Evolution::PhoneLinkerService.new(@phone_number)
              end
 
-    result = linker.link
+    result = if @connection.meta_cloud?
+               linker.perform
+             else
+               linker.link
+             end
     render json: {
       phone_number: phone_number_response(@phone_number.reload),
       inbox: { id: result[:inbox].id, name: result[:inbox].name }
@@ -27,16 +31,10 @@ class Api::V1::Accounts::WhatsappConnections::PhoneNumbersController < Api::V1::
   end
 
   def unlink
-    unlinker = if @connection.meta_cloud?
-                 WhatsappConnections::Meta::PhoneUnlinkerService.new(@phone_number)
-               else
-                 WhatsappConnections::Evolution::PhoneLinkerService.new(@phone_number)
-               end
-
     if @connection.meta_cloud?
-      unlinker.perform
+      WhatsappConnections::Meta::PhoneUnlinkerService.new(@phone_number).perform
     else
-      unlinker.unlink
+      WhatsappConnections::Evolution::PhoneLinkerService.new(@phone_number).unlink
     end
 
     render json: phone_number_response(@phone_number.reload)
