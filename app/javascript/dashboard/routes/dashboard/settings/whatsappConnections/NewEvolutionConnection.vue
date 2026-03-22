@@ -6,7 +6,7 @@ import SettingsLayout from '../SettingsLayout.vue';
 
 const store = useStore();
 const router = useRouter();
-const connectionName = ref('Evolution API');
+const connectionName = ref('WhatsApp Não Oficial');
 const isCreating = ref(false);
 const error = ref('');
 
@@ -28,7 +28,7 @@ async function createConnection() {
     error.value =
       err?.response?.data?.error ||
       err.message ||
-      'Failed to create connection. Make sure Evolution API is configured in Super Admin.';
+      'Failed to create connection. Make sure WhatsApp Não Oficial is configured in Super Admin.';
   } finally {
     isCreating.value = false;
   }
@@ -46,7 +46,7 @@ async function createConnection() {
           &larr; Back
         </router-link>
         <h1 class="text-2xl font-semibold text-n-slate-12">
-          New Evolution API Connection
+          Nova Conexão WhatsApp Não Oficial
         </h1>
       </div>
     </template>
@@ -55,12 +55,11 @@ async function createConnection() {
       <div class="max-w-lg mx-auto flex flex-col gap-6">
         <div class="p-6 bg-white rounded-lg border border-n-weak">
           <h2 class="text-lg font-semibold text-n-slate-12 mb-4">
-            Connect to Evolution API
+            Conectar WhatsApp Não Oficial
           </h2>
           <p class="text-sm text-n-slate-9 mb-6">
-            The Evolution API is configured globally by the Super Admin. This
-            will create a connection for your account and import your existing
-            instances.
+            A conexão não oficial permite conectar números WhatsApp via QR Code.
+            Suas instâncias existentes serão importadas automaticamente.
           </p>
 
           <div class="flex flex-col gap-4">
@@ -71,7 +70,7 @@ async function createConnection() {
               <input
                 v-model="connectionName"
                 type="text"
-                placeholder="e.g., Evolution API"
+                placeholder="e.g., WhatsApp Não Oficial"
                 class="px-3 py-2 border border-n-weak rounded-lg text-sm"
               />
             </label>

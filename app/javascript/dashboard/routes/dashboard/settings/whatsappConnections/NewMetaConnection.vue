@@ -80,7 +80,7 @@ async function startEmbeddedSignup() {
           &larr; Back
         </router-link>
         <h1 class="text-2xl font-semibold text-n-slate-12">
-          New Meta WABA Connection
+          Nova Conexão WhatsApp Oficial
         </h1>
       </div>
     </template>
@@ -89,7 +89,7 @@ async function startEmbeddedSignup() {
       <div class="max-w-lg mx-auto flex flex-col gap-6">
         <div class="p-6 bg-white rounded-lg border border-n-weak">
           <h2 class="text-lg font-semibold text-n-slate-12 mb-4">
-            Connect your WhatsApp Business Account
+            Conectar sua Conta WhatsApp Business
           </h2>
           <p class="text-sm text-n-slate-9 mb-6">
             Click the button below to authenticate with Facebook and connect

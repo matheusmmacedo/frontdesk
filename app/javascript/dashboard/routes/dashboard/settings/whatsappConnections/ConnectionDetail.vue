@@ -110,7 +110,7 @@ async function syncNumbers() {
             "
             @click="activeSection = 'instances'"
           >
-            Instances
+            Instâncias
           </button>
         </div>
 

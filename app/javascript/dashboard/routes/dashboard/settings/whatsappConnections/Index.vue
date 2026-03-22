@@ -85,7 +85,7 @@ function statusBadgeClass(status) {
             "
             @click="activeTab = 'meta_cloud'"
           >
-            Meta WABA ({{ metaConnections.length }})
+            WhatsApp Oficial ({{ metaConnections.length }})
           </button>
           <button
             class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
@@ -96,7 +96,7 @@ function statusBadgeClass(status) {
             "
             @click="activeTab = 'evolution'"
           >
-            Evolution API ({{ evolutionConnections.length }})
+            WhatsApp Não Oficial ({{ evolutionConnections.length }})
           </button>
         </div>
 
@@ -107,14 +107,14 @@ function statusBadgeClass(status) {
             class="px-4 py-2 text-sm font-medium text-white bg-n-brand rounded-lg hover:bg-n-brand-dark"
             @click="navigateToNewMeta"
           >
-            + New Meta WABA Connection
+            + Nova Conexão Oficial
           </button>
           <button
             v-else
             class="px-4 py-2 text-sm font-medium text-white bg-n-brand rounded-lg hover:bg-n-brand-dark"
             @click="navigateToNewEvolution"
           >
-            + New Evolution Connection
+            + Nova Conexão Não Oficial
           </button>
         </div>
 
@@ -129,7 +129,7 @@ function statusBadgeClass(status) {
           class="text-center py-12 bg-n-background rounded-lg border border-n-weak"
         >
           <p class="text-n-slate-11 text-lg">
-            No {{ activeTab === 'meta_cloud' ? 'Meta WABA' : 'Evolution API' }}
+            No {{ activeTab === 'meta_cloud' ? 'WhatsApp Oficial' : 'WhatsApp Não Oficial' }}
             connections yet.
           </p>
           <p class="text-n-slate-9 mt-2">
