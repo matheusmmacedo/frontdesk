@@ -36,9 +36,10 @@ class WhatsappConnectionsAPI extends ApiClient {
     return axios.get(`${this.url}/${connectionId}/phone_numbers`);
   }
 
-  linkPhoneNumber(connectionId, phoneNumberId) {
+  linkPhoneNumber(connectionId, phoneNumberId, inboxName) {
     return axios.post(
-      `${this.url}/${connectionId}/phone_numbers/${phoneNumberId}/link`
+      `${this.url}/${connectionId}/phone_numbers/${phoneNumberId}/link`,
+      { inbox_name: inboxName }
     );
   }
 

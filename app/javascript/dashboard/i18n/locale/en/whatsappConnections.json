@@ -54,6 +54,13 @@
       },
       "LINKING": "Linking...",
       "UNLINKING": "Unlinking...",
+      "LINK_SUCCESS": "Number linked successfully! Inbox created.",
+      "UNLINK_SUCCESS": "Number unlinked. Inbox removed.",
+      "LINK_MODAL": {
+        "TITLE": "Link Number",
+        "DESCRIPTION": "A new inbox will be created for the number {phone}. Choose the name:",
+        "INBOX_NAME": "Inbox Name"
+      },
       "STATS": {
         "NUMBERS": "numbers",
         "LINKED": "linked",

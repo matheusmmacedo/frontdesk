@@ -5,14 +5,16 @@
 module WhatsappConnections
   module Meta
     class PhoneLinkerService
-      def initialize(phone_number_record)
+      def initialize(phone_number_record, inbox_name: nil)
         @phone_number_record = phone_number_record
         @connection = phone_number_record.whatsapp_connection
         @account = phone_number_record.account
+        @custom_inbox_name = inbox_name
       end
 
       def perform
         validate!
+        cleanup_orphan_channel!
         channel, inbox = create_channel_and_inbox
         setup_webhooks(channel)
         sync_channel_templates(channel)
@@ -25,9 +27,16 @@ module WhatsappConnections
       def validate!
         raise 'Phone number is already linked' if @phone_number_record.linked?
         raise 'Connection must be meta_cloud' unless @connection.meta_cloud?
+      end
 
+      # If a previous channel exists for this phone (orphan from failed unlink), clean it up
+      def cleanup_orphan_channel!
         existing = Channel::Whatsapp.find_by(phone_number: @phone_number_record.phone_number)
-        raise "Phone number #{@phone_number_record.phone_number} already exists as a channel" if existing
+        return unless existing
+
+        Rails.logger.warn("[WHATSAPP_POOL] Cleaning up orphan channel for #{@phone_number_record.phone_number}")
+        existing.inbox&.destroy
+        existing.destroy
       end
 
       def create_channel_and_inbox
@@ -60,6 +69,8 @@ module WhatsappConnections
       end
 
       def inbox_name
+        return @custom_inbox_name if @custom_inbox_name.present?
+
         display = @phone_number_record.display_name.presence || @phone_number_record.phone_number
         "#{display} WhatsApp"
       end

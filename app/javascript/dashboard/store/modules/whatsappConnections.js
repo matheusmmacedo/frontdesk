@@ -79,10 +79,11 @@ const actions = {
     commit('setPhoneNumbers', { connectionId, phoneNumbers: data });
   },
 
-  async linkPhoneNumber({ commit }, { connectionId, phoneNumberId }) {
+  async linkPhoneNumber({ commit }, { connectionId, phoneNumberId, inboxName }) {
     const { data } = await WhatsappConnectionsAPI.linkPhoneNumber(
       connectionId,
-      phoneNumberId
+      phoneNumberId,
+      inboxName
     );
     commit('updatePhoneNumber', {
       connectionId,

@@ -15,23 +15,36 @@ const { t } = useI18n();
 const store = useStore();
 const loading = ref({});
 const showUnlinkModal = ref(false);
+const showLinkModal = ref(false);
 const selectedNumber = ref(null);
+const inboxName = ref('');
 
-async function linkNumber(phoneNumberId) {
-  loading.value[phoneNumberId] = 'linking';
+function openLinkModal(pn) {
+  selectedNumber.value = pn;
+  inboxName.value = `${pn.display_name || pn.phone_number} WhatsApp`;
+  showLinkModal.value = true;
+}
+
+async function confirmLink() {
+  if (!selectedNumber.value || !inboxName.value) return;
+  loading.value[selectedNumber.value.id] = 'linking';
+  showLinkModal.value = false;
   try {
     await store.dispatch('whatsappConnections/linkPhoneNumber', {
       connectionId: props.connectionId,
-      phoneNumberId,
+      phoneNumberId: selectedNumber.value.id,
+      inboxName: inboxName.value,
     });
     await store.dispatch(
       'whatsappConnections/fetchPhoneNumbers',
       props.connectionId
     );
+    useAlert(t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.LINK_SUCCESS'));
   } catch (err) {
     useAlert(err?.response?.data?.error || err.message);
   } finally {
-    delete loading.value[phoneNumberId];
+    delete loading.value[selectedNumber.value.id];
+    selectedNumber.value = null;
   }
 }
 
@@ -43,6 +56,7 @@ function openUnlinkModal(pn) {
 async function confirmUnlink() {
   if (!selectedNumber.value) return;
   loading.value[selectedNumber.value.id] = 'unlinking';
+  showUnlinkModal.value = false;
   try {
     await store.dispatch('whatsappConnections/unlinkPhoneNumber', {
       connectionId: props.connectionId,
@@ -52,11 +66,11 @@ async function confirmUnlink() {
       'whatsappConnections/fetchPhoneNumbers',
       props.connectionId
     );
+    useAlert(t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.UNLINK_SUCCESS'));
   } catch (err) {
     useAlert(err?.response?.data?.error || err.message);
   } finally {
     delete loading.value[selectedNumber.value.id];
-    showUnlinkModal.value = false;
     selectedNumber.value = null;
   }
 }
@@ -140,7 +154,7 @@ function statusColor(status) {
               v-if="pn.status === 'available'"
               class="px-3 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-50"
               :disabled="loading[pn.id]"
-              @click="linkNumber(pn.id)"
+              @click="openLinkModal(pn)"
             >
               {{
                 loading[pn.id] === 'linking'
@@ -170,6 +184,47 @@ function statusColor(status) {
         </tr>
       </tbody>
     </table>
+
+    <!-- Link Modal — choose inbox name -->
+    <woot-modal
+      v-if="showLinkModal"
+      :show="showLinkModal"
+      :on-close="() => { showLinkModal = false; selectedNumber = null; }"
+    >
+      <div class="p-6">
+        <h3 class="text-lg font-semibold mb-2">
+          {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.LINK_MODAL.TITLE') }}
+        </h3>
+        <p class="text-sm text-n-slate-9 mb-4">
+          {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.LINK_MODAL.DESCRIPTION', { phone: selectedNumber?.phone_number }) }}
+        </p>
+        <label class="flex flex-col gap-1 mb-4">
+          <span class="text-sm font-medium text-n-slate-11">
+            {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.LINK_MODAL.INBOX_NAME') }}
+          </span>
+          <input
+            v-model="inboxName"
+            type="text"
+            class="px-3 py-2 border border-n-weak rounded-lg text-sm"
+          />
+        </label>
+        <div class="flex justify-end gap-2">
+          <button
+            class="px-4 py-2 text-sm border border-n-weak rounded-lg"
+            @click="showLinkModal = false; selectedNumber = null"
+          >
+            {{ t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL') }}
+          </button>
+          <button
+            class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
+            :disabled="!inboxName"
+            @click="confirmLink"
+          >
+            {{ t('WHATSAPP_CONNECTIONS.ACTIONS.LINK') }}
+          </button>
+        </div>
+      </div>
+    </woot-modal>
 
     <!-- Unlink Confirmation Modal -->
     <woot-delete-modal

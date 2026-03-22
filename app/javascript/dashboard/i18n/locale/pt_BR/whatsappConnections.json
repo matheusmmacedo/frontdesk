@@ -54,6 +54,13 @@
       },
       "LINKING": "Vinculando...",
       "UNLINKING": "Desvinculando...",
+      "LINK_SUCCESS": "Número vinculado com sucesso! Caixa de entrada criada.",
+      "UNLINK_SUCCESS": "Número desvinculado. Caixa de entrada removida.",
+      "LINK_MODAL": {
+        "TITLE": "Vincular Número",
+        "DESCRIPTION": "Será criada uma nova caixa de entrada para o número {phone}. Escolha o nome:",
+        "INBOX_NAME": "Nome da Caixa de Entrada"
+      },
       "STATS": {
         "NUMBERS": "números",
         "LINKED": "vinculados",

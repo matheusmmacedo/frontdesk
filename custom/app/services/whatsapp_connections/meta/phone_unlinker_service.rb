@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # Unlinks a WhatsappPhoneNumber from its inbox by destroying Channel::Whatsapp + Inbox.
-# Tears down webhooks before destruction.
 module WhatsappConnections
   module Meta
     class PhoneUnlinkerService
@@ -15,11 +14,12 @@ module WhatsappConnections
         channel = @phone_number_record.channel_whatsapp
         inbox = @phone_number_record.inbox
 
-        # Mark as available first to clear FKs before destroy callbacks
+        # Mark as available first to clear FKs before destroy
         @phone_number_record.mark_available!
 
-        # Destroy channel (inbox is destroyed via dependent: :destroy_async on channelable)
-        channel&.destroy!
+        # Destroy inbox first (sync, not async), then channel
+        inbox&.destroy
+        channel&.destroy
 
         true
       end

@@ -11,16 +11,12 @@ class Api::V1::Accounts::WhatsappConnections::PhoneNumbersController < Api::V1::
   end
 
   def link
-    linker = if @connection.meta_cloud?
-               WhatsappConnections::Meta::PhoneLinkerService.new(@phone_number)
-             else
-               WhatsappConnections::Evolution::PhoneLinkerService.new(@phone_number)
-             end
+    inbox_name = params[:inbox_name]
 
     result = if @connection.meta_cloud?
-               linker.perform
+               WhatsappConnections::Meta::PhoneLinkerService.new(@phone_number, inbox_name: inbox_name).perform
              else
-               linker.link
+               WhatsappConnections::Evolution::PhoneLinkerService.new(@phone_number).link
              end
     render json: {
       phone_number: phone_number_response(@phone_number.reload),
