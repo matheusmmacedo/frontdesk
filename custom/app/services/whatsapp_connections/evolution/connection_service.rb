@@ -11,6 +11,7 @@ module WhatsappConnections
       end
 
       def perform
+        validate_single_connection!
         validate_global_config!
         connection = create_connection
         sync_instances(connection)
@@ -18,6 +19,11 @@ module WhatsappConnections
       end
 
       private
+
+      def validate_single_connection!
+        existing = @account.whatsapp_connections.where(provider: 'evolution').first
+        raise 'Já existe uma conexão WhatsApp Não Oficial nesta conta' if existing
+      end
 
       def validate_global_config!
         # This will raise if not configured

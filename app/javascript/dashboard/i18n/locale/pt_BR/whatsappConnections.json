@@ -110,6 +110,9 @@
     "DETAIL": {
       "BACK": "← Voltar"
     },
+    "ERRORS": {
+      "EVOLUTION_ALREADY_EXISTS": "Já existe uma conexão WhatsApp Não Oficial nesta conta. Cada conta pode ter apenas uma."
+    },
     "CONFIRM": {
       "DELETE_CONNECTION": "Tem certeza que deseja excluir esta conexão?",
       "UNLINK_NUMBER": "Desvincular este número? A caixa de entrada será excluída.",

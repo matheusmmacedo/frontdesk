@@ -267,17 +267,14 @@ function extractBodyText(template) {
     </woot-modal>
 
     <!-- Delete Confirmation -->
-    <woot-confirm-delete-modal
-      v-if="showDeleteModal"
+    <woot-delete-modal
       v-model:show="showDeleteModal"
+      :on-close="() => { showDeleteModal = false; selectedTemplateName = ''; }"
+      :on-confirm="confirmDeleteTemplate"
       :title="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
       :message="t('WHATSAPP_CONNECTIONS.CONFIRM.DELETE_TEMPLATE', { name: selectedTemplateName })"
       :confirm-text="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
       :reject-text="t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL')"
-      :confirm-value="selectedTemplateName"
-      :confirm-place-holder-text="selectedTemplateName"
-      @on-confirm="confirmDeleteTemplate"
-      @on-close="showDeleteModal = false"
     />
   </div>
 </template>

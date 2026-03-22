@@ -172,17 +172,14 @@ function statusColor(status) {
     </table>
 
     <!-- Unlink Confirmation Modal -->
-    <woot-confirm-delete-modal
-      v-if="showUnlinkModal"
+    <woot-delete-modal
       v-model:show="showUnlinkModal"
+      :on-close="() => { showUnlinkModal = false; selectedNumber = null; }"
+      :on-confirm="confirmUnlink"
       :title="t('WHATSAPP_CONNECTIONS.ACTIONS.UNLINK')"
       :message="t('WHATSAPP_CONNECTIONS.CONFIRM.UNLINK_NUMBER')"
       :confirm-text="t('WHATSAPP_CONNECTIONS.ACTIONS.UNLINK')"
       :reject-text="t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL')"
-      :confirm-value="selectedNumber?.phone_number"
-      :confirm-place-holder-text="selectedNumber?.phone_number"
-      @on-confirm="confirmUnlink"
-      @on-close="showUnlinkModal = false"
     />
   </div>
 </template>

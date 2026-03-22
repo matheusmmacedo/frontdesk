@@ -256,17 +256,14 @@ function closeQRModal() {
     </woot-modal>
 
     <!-- Delete Confirmation Modal -->
-    <woot-confirm-delete-modal
-      v-if="showDeleteModal"
+    <woot-delete-modal
       v-model:show="showDeleteModal"
+      :on-close="() => { showDeleteModal = false; selectedInstance = null; }"
+      :on-confirm="confirmDelete"
       :title="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
       :message="t('WHATSAPP_CONNECTIONS.CONFIRM.DELETE_INSTANCE')"
       :confirm-text="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
       :reject-text="t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL')"
-      :confirm-value="selectedInstance?.display_name"
-      :confirm-place-holder-text="selectedInstance?.display_name"
-      @on-confirm="confirmDelete"
-      @on-close="showDeleteModal = false"
     />
   </div>
 </template>

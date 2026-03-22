@@ -11,14 +11,12 @@ const router = useRouter();
 const activeTab = ref('meta_cloud');
 const showDeleteModal = ref(false);
 const selectedConnection = ref(null);
+const isDeleting = ref(false);
 
 onMounted(() => {
   store.dispatch('whatsappConnections/fetchConnections');
 });
 
-const connections = computed(() =>
-  store.getters['whatsappConnections/getConnections']
-);
 const metaConnections = computed(() =>
   store.getters['whatsappConnections/getMetaConnections']
 );
@@ -35,11 +33,20 @@ const currentConnections = computed(() =>
     : evolutionConnections.value
 );
 
+// Evolution: só permite 1 conexão por account
+const canCreateEvolution = computed(
+  () => evolutionConnections.value.length === 0
+);
+
 function navigateToNewMeta() {
   router.push({ name: 'whatsapp_connections_new_meta' });
 }
 
 function navigateToNewEvolution() {
+  if (!canCreateEvolution.value) {
+    useAlert(t('WHATSAPP_CONNECTIONS.ERRORS.EVOLUTION_ALREADY_EXISTS'));
+    return;
+  }
   router.push({ name: 'whatsapp_connections_new_evolution' });
 }
 
@@ -57,15 +64,16 @@ function openDeleteModal(connection) {
 
 async function confirmDelete() {
   if (!selectedConnection.value) return;
+  isDeleting.value = true;
   try {
     await store.dispatch(
       'whatsappConnections/deleteConnection',
       selectedConnection.value.id
     );
-    useAlert(t('WHATSAPP_CONNECTIONS.CONFIRM.DELETE_CONNECTION'));
   } catch (error) {
-    useAlert(error.message);
+    useAlert(error?.response?.data?.error || error.message);
   } finally {
+    isDeleting.value = false;
     showDeleteModal.value = false;
     selectedConnection.value = null;
   }
@@ -127,7 +135,7 @@ function statusBadgeClass(status) {
         {{ t('WHATSAPP_CONNECTIONS.ACTIONS.NEW_OFFICIAL') }}
       </button>
       <button
-        v-else
+        v-else-if="canCreateEvolution"
         class="px-4 py-2 text-sm font-medium text-white bg-n-brand rounded-lg hover:bg-n-brand-dark"
         @click="navigateToNewEvolution"
       >
@@ -169,20 +177,18 @@ function statusBadgeClass(status) {
         @click="navigateToDetail(connection.id)"
       >
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="flex flex-col">
-              <span class="font-semibold text-n-slate-12">
-                {{ connection.name }}
-              </span>
-              <span class="text-sm text-n-slate-9">
-                {{ connection.phone_numbers_count }}
-                {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.NUMBERS') }}
-                &middot; {{ connection.linked_count }}
-                {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.LINKED') }}
-                &middot; {{ connection.available_count }}
-                {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.AVAILABLE') }}
-              </span>
-            </div>
+          <div class="flex flex-col">
+            <span class="font-semibold text-n-slate-12">
+              {{ connection.name }}
+            </span>
+            <span class="text-sm text-n-slate-9">
+              {{ connection.phone_numbers_count }}
+              {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.NUMBERS') }}
+              &middot; {{ connection.linked_count }}
+              {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.LINKED') }}
+              &middot; {{ connection.available_count }}
+              {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.AVAILABLE') }}
+            </span>
           </div>
           <div class="flex items-center gap-3">
             <span
@@ -202,18 +208,15 @@ function statusBadgeClass(status) {
       </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <woot-confirm-delete-modal
-      v-if="showDeleteModal"
+    <!-- Delete Confirmation Modal (simple, no name typing) -->
+    <woot-delete-modal
       v-model:show="showDeleteModal"
+      :on-close="() => { showDeleteModal = false; selectedConnection = null; }"
+      :on-confirm="confirmDelete"
       :title="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
       :message="t('WHATSAPP_CONNECTIONS.CONFIRM.DELETE_CONNECTION')"
       :confirm-text="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
       :reject-text="t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL')"
-      :confirm-value="selectedConnection?.name"
-      :confirm-place-holder-text="selectedConnection?.name"
-      @on-confirm="confirmDelete"
-      @on-close="showDeleteModal = false"
     />
   </div>
 </template>

@@ -110,6 +110,9 @@
     "DETAIL": {
       "BACK": "← Back"
     },
+    "ERRORS": {
+      "EVOLUTION_ALREADY_EXISTS": "An Unofficial WhatsApp connection already exists for this account. Each account can only have one."
+    },
     "CONFIRM": {
       "DELETE_CONNECTION": "Are you sure you want to delete this connection?",
       "UNLINK_NUMBER": "Unlink this number? The inbox will be deleted.",
