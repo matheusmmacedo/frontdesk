@@ -16,12 +16,23 @@ class Api::V1::Accounts::WhatsappConnectionsController < Api::V1::Accounts::Base
   def create
     case params[:provider]
     when 'meta_cloud'
-      @connection = WhatsappConnections::Meta::ConnectionService.new(
-        account: Current.account,
-        code: params[:code],
-        waba_id: params[:waba_id],
-        business_id: params[:business_id]
-      ).perform
+      if params[:access_token].present?
+        # Direct token mode (System User token, no OAuth needed)
+        @connection = WhatsappConnections::Meta::DirectTokenConnectionService.new(
+          account: Current.account,
+          access_token: params[:access_token],
+          waba_id: params[:waba_id],
+          business_id: params[:business_id],
+          name: params[:name]
+        ).perform
+      else
+        @connection = WhatsappConnections::Meta::ConnectionService.new(
+          account: Current.account,
+          code: params[:code],
+          waba_id: params[:waba_id],
+          business_id: params[:business_id]
+        ).perform
+      end
     when 'evolution'
       @connection = WhatsappConnections::Evolution::ConnectionService.new(
         account: Current.account,
