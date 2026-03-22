@@ -9,11 +9,9 @@ import {
   createMessageHandler,
   isValidBusinessData,
 } from '../inbox/channels/whatsapp/utils';
-import { useGlobalConfig } from 'dashboard/composables/useGlobalConfig';
 
 const store = useStore();
 const router = useRouter();
-const { globalConfig } = useGlobalConfig();
 const isConnecting = ref(false);
 const error = ref('');
 const connectionName = ref('');
@@ -23,9 +21,10 @@ async function startEmbeddedSignup() {
   isConnecting.value = true;
 
   try {
-    const appId = globalConfig.value?.whatsappAppId;
-    const configId = globalConfig.value?.whatsappConfigurationId;
-    const apiVersion = globalConfig.value?.whatsappApiVersion || 'v22.0';
+    const chatwootConfig = window.chatwootConfig || {};
+    const appId = chatwootConfig.whatsappAppId;
+    const configId = chatwootConfig.whatsappConfigurationId;
+    const apiVersion = chatwootConfig.whatsappApiVersion || 'v22.0';
 
     if (!appId || !configId) {
       error.value =
