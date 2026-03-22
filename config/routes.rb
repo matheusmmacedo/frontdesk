@@ -296,6 +296,28 @@ Rails.application.routes.draw do
             resource :authorization, only: [:create]
           end
 
+          # WhatsApp Connection Pool (KLaOS custom module)
+          resources :whatsapp_connections, only: [:index, :create, :show, :update, :destroy] do
+            member do
+              post :sync_numbers
+              post :sync_templates
+            end
+            resources :phone_numbers, only: [:index], controller: 'whatsapp_connections/phone_numbers' do
+              member do
+                post :link
+                post :unlink
+              end
+            end
+            resources :templates, only: [:index, :create, :update, :destroy], controller: 'whatsapp_connections/templates'
+            resources :instances, only: [:create, :destroy], controller: 'whatsapp_connections/evolution' do
+              member do
+                get :qrcode
+                get :status
+                post :disconnect
+              end
+            end
+          end
+
           resources :webhooks, only: [:index, :create, :update, :destroy]
           namespace :integrations do
             resources :apps, only: [:index, :show]
