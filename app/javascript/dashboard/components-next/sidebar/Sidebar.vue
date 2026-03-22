@@ -642,7 +642,7 @@ const menuItems = computed(() => {
         },
         {
           name: 'Settings WhatsApp Connections',
-          label: 'WhatsApp Connections',
+          label: t('WHATSAPP_CONNECTIONS.SIDEBAR_LABEL'),
           icon: 'i-lucide-smartphone',
           activeOn: [
             'whatsapp_connections_index',

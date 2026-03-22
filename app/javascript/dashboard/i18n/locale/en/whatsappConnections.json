@@ -1,0 +1,120 @@
+{
+  "WHATSAPP_CONNECTIONS": {
+    "TITLE": "WhatsApp Connections",
+    "SIDEBAR_LABEL": "WhatsApp Connections",
+    "TABS": {
+      "OFFICIAL": "Official WhatsApp",
+      "UNOFFICIAL": "Unofficial WhatsApp"
+    },
+    "ACTIONS": {
+      "NEW_OFFICIAL": "+ New Official Connection",
+      "NEW_UNOFFICIAL": "+ New Unofficial Connection",
+      "SYNC_NUMBERS": "Sync Numbers",
+      "SYNC_TEMPLATES": "Sync Templates",
+      "CREATE_TEMPLATE": "+ Create Template",
+      "CREATE_INSTANCE": "+ Create Instance",
+      "LINK": "Link",
+      "UNLINK": "Unlink",
+      "DELETE": "Delete",
+      "BACK": "← Back",
+      "CLOSE": "Close",
+      "CANCEL": "Cancel",
+      "CREATE": "Create",
+      "CHECK_STATUS": "Check Status",
+      "QR_CODE": "QR Code",
+      "CREATE_CONNECTION": "Create Connection",
+      "CONNECT_FACEBOOK": "Connect with Facebook"
+    },
+    "STATUS": {
+      "ACTIVE": "active",
+      "DISCONNECTED": "disconnected",
+      "ERROR": "error",
+      "AVAILABLE": "available",
+      "LINKED": "linked",
+      "PENDING": "pending",
+      "AWAITING_CONNECTION": "Awaiting connection"
+    },
+    "EMPTY_STATE": {
+      "NO_CONNECTIONS_OFFICIAL": "No Official WhatsApp connections yet.",
+      "NO_CONNECTIONS_UNOFFICIAL": "No Unofficial WhatsApp connections yet.",
+      "ADD_FIRST": "Click the button above to add your first connection.",
+      "NO_PHONE_NUMBERS": "No phone numbers found. Click \"Sync Numbers\" to refresh.",
+      "NO_TEMPLATES": "No templates found.",
+      "NO_INSTANCES": "No instances yet. Create one above."
+    },
+    "LOADING": "Loading connections...",
+    "PHONE_NUMBERS": {
+      "TITLE": "Phone Numbers",
+      "TABLE": {
+        "PHONE": "Phone",
+        "NAME": "Name",
+        "STATUS": "Status",
+        "INBOX": "Inbox",
+        "ACTIONS": "Actions"
+      },
+      "LINKING": "Linking...",
+      "UNLINKING": "Unlinking...",
+      "STATS": {
+        "NUMBERS": "numbers",
+        "LINKED": "linked",
+        "AVAILABLE": "available"
+      }
+    },
+    "TEMPLATES": {
+      "TITLE": "Message Templates",
+      "SYNCING": "Syncing...",
+      "SEARCH": "Search templates...",
+      "CREATE_MODAL": {
+        "TITLE": "Create Template",
+        "NAME": "Name",
+        "NAME_PLACEHOLDER": "e.g., order_confirmation",
+        "LANGUAGE": "Language",
+        "CATEGORY": "Category",
+        "CATEGORIES": {
+          "MARKETING": "Marketing",
+          "UTILITY": "Utility",
+          "AUTHENTICATION": "Authentication"
+        },
+        "CREATING": "Creating..."
+      }
+    },
+    "INSTANCES": {
+      "TITLE": "WhatsApp Instances",
+      "NAME_PLACEHOLDER": "Instance name (e.g., Sales, Support)",
+      "CREATING": "Creating...",
+      "CHECKING": "...",
+      "DELETING": "...",
+      "QR_MODAL": {
+        "TITLE": "Scan QR Code",
+        "DESCRIPTION": "Open WhatsApp on your phone and scan this QR code."
+      }
+    },
+    "NEW_META": {
+      "TITLE": "New Official WhatsApp Connection",
+      "HEADING": "Connect your WhatsApp Business Account",
+      "DESCRIPTION": "Click the button below to authenticate with Facebook and connect your WABA. All phone numbers will be imported automatically.",
+      "CONNECTION_NAME": "Connection Name (optional)",
+      "CONNECTION_NAME_PLACEHOLDER": "e.g., My Business WABA",
+      "CONNECTING": "Connecting...",
+      "ERROR_NO_CONFIG": "WhatsApp App ID or Configuration ID not set. Contact your administrator."
+    },
+    "NEW_EVOLUTION": {
+      "TITLE": "New Unofficial WhatsApp Connection",
+      "HEADING": "Connect Unofficial WhatsApp",
+      "DESCRIPTION": "The unofficial connection allows connecting WhatsApp numbers via QR Code. Your existing instances will be imported automatically.",
+      "CONNECTION_NAME": "Connection Name",
+      "CONNECTION_NAME_PLACEHOLDER": "e.g., Unofficial WhatsApp",
+      "CREATING": "Creating...",
+      "ERROR_NO_CONFIG": "Failed to create connection. Make sure Evolution API is configured in Super Admin."
+    },
+    "DETAIL": {
+      "BACK": "← Back"
+    },
+    "CONFIRM": {
+      "DELETE_CONNECTION": "Are you sure you want to delete this connection?",
+      "UNLINK_NUMBER": "Unlink this number? The inbox will be deleted.",
+      "DELETE_TEMPLATE": "Delete template \"{name}\"?",
+      "DELETE_INSTANCE": "Delete this instance? This action cannot be undone."
+    }
+  }
+}

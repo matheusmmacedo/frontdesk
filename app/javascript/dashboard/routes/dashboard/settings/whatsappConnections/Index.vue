@@ -1,12 +1,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import SettingsLayout from '../SettingsLayout.vue';
+import { useAlert } from 'dashboard/composables';
 
+const { t } = useI18n();
 const store = useStore();
 const router = useRouter();
 const activeTab = ref('meta_cloud');
+const showDeleteModal = ref(false);
+const selectedConnection = ref(null);
 
 onMounted(() => {
   store.dispatch('whatsappConnections/fetchConnections');
@@ -46,10 +50,25 @@ function navigateToDetail(connectionId) {
   });
 }
 
-async function deleteConnection(connectionId) {
-  if (!window.confirm('Are you sure you want to delete this connection?'))
-    return;
-  await store.dispatch('whatsappConnections/deleteConnection', connectionId);
+function openDeleteModal(connection) {
+  selectedConnection.value = connection;
+  showDeleteModal.value = true;
+}
+
+async function confirmDelete() {
+  if (!selectedConnection.value) return;
+  try {
+    await store.dispatch(
+      'whatsappConnections/deleteConnection',
+      selectedConnection.value.id
+    );
+    useAlert(t('WHATSAPP_CONNECTIONS.CONFIRM.DELETE_CONNECTION'));
+  } catch (error) {
+    useAlert(error.message);
+  } finally {
+    showDeleteModal.value = false;
+    selectedConnection.value = null;
+  }
 }
 
 function statusBadgeClass(status) {
@@ -63,119 +82,138 @@ function statusBadgeClass(status) {
 </script>
 
 <template>
-  <SettingsLayout>
-    <template #header>
-      <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-semibold text-n-slate-12">
-          WhatsApp Connections
-        </h1>
-      </div>
-    </template>
+  <div class="flex flex-col gap-6 w-full">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-semibold text-n-slate-12">
+        {{ t('WHATSAPP_CONNECTIONS.TITLE') }}
+      </h1>
+    </div>
 
-    <template #body>
-      <div class="flex flex-col gap-6">
-        <!-- Tabs -->
-        <div class="flex gap-2 border-b border-n-strong pb-0">
-          <button
-            class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
-            :class="
-              activeTab === 'meta_cloud'
-                ? 'border-n-brand text-n-brand'
-                : 'border-transparent text-n-slate-11 hover:text-n-slate-12'
-            "
-            @click="activeTab = 'meta_cloud'"
-          >
-            WhatsApp Oficial ({{ metaConnections.length }})
-          </button>
-          <button
-            class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
-            :class="
-              activeTab === 'evolution'
-                ? 'border-n-brand text-n-brand'
-                : 'border-transparent text-n-slate-11 hover:text-n-slate-12'
-            "
-            @click="activeTab = 'evolution'"
-          >
-            WhatsApp Não Oficial ({{ evolutionConnections.length }})
-          </button>
-        </div>
+    <!-- Tabs -->
+    <div class="flex gap-2 border-b border-n-strong pb-0">
+      <button
+        class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
+        :class="
+          activeTab === 'meta_cloud'
+            ? 'border-n-brand text-n-brand'
+            : 'border-transparent text-n-slate-11 hover:text-n-slate-12'
+        "
+        @click="activeTab = 'meta_cloud'"
+      >
+        {{ t('WHATSAPP_CONNECTIONS.TABS.OFFICIAL') }}
+        ({{ metaConnections.length }})
+      </button>
+      <button
+        class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
+        :class="
+          activeTab === 'evolution'
+            ? 'border-n-brand text-n-brand'
+            : 'border-transparent text-n-slate-11 hover:text-n-slate-12'
+        "
+        @click="activeTab = 'evolution'"
+      >
+        {{ t('WHATSAPP_CONNECTIONS.TABS.UNOFFICIAL') }}
+        ({{ evolutionConnections.length }})
+      </button>
+    </div>
 
-        <!-- Action Button -->
-        <div class="flex justify-end">
-          <button
-            v-if="activeTab === 'meta_cloud'"
-            class="px-4 py-2 text-sm font-medium text-white bg-n-brand rounded-lg hover:bg-n-brand-dark"
-            @click="navigateToNewMeta"
-          >
-            + Nova Conexão Oficial
-          </button>
-          <button
-            v-else
-            class="px-4 py-2 text-sm font-medium text-white bg-n-brand rounded-lg hover:bg-n-brand-dark"
-            @click="navigateToNewEvolution"
-          >
-            + Nova Conexão Não Oficial
-          </button>
-        </div>
+    <!-- Action Button -->
+    <div class="flex justify-end">
+      <button
+        v-if="activeTab === 'meta_cloud'"
+        class="px-4 py-2 text-sm font-medium text-white bg-n-brand rounded-lg hover:bg-n-brand-dark"
+        @click="navigateToNewMeta"
+      >
+        {{ t('WHATSAPP_CONNECTIONS.ACTIONS.NEW_OFFICIAL') }}
+      </button>
+      <button
+        v-else
+        class="px-4 py-2 text-sm font-medium text-white bg-n-brand rounded-lg hover:bg-n-brand-dark"
+        @click="navigateToNewEvolution"
+      >
+        {{ t('WHATSAPP_CONNECTIONS.ACTIONS.NEW_UNOFFICIAL') }}
+      </button>
+    </div>
 
-        <!-- Loading -->
-        <div v-if="uiFlags.isFetching" class="text-center py-8 text-n-slate-11">
-          Loading connections...
-        </div>
+    <!-- Loading -->
+    <div
+      v-if="uiFlags.isFetching"
+      class="text-center py-8 text-n-slate-11"
+    >
+      {{ t('WHATSAPP_CONNECTIONS.LOADING') }}
+    </div>
 
-        <!-- Empty State -->
-        <div
-          v-else-if="currentConnections.length === 0"
-          class="text-center py-12 bg-n-background rounded-lg border border-n-weak"
-        >
-          <p class="text-n-slate-11 text-lg">
-            No {{ activeTab === 'meta_cloud' ? 'WhatsApp Oficial' : 'WhatsApp Não Oficial' }}
-            connections yet.
-          </p>
-          <p class="text-n-slate-9 mt-2">
-            Click the button above to add your first connection.
-          </p>
-        </div>
+    <!-- Empty State -->
+    <div
+      v-else-if="currentConnections.length === 0"
+      class="text-center py-12 bg-n-background rounded-lg border border-n-weak"
+    >
+      <p class="text-n-slate-11 text-lg">
+        {{
+          activeTab === 'meta_cloud'
+            ? t('WHATSAPP_CONNECTIONS.EMPTY_STATE.NO_CONNECTIONS_OFFICIAL')
+            : t('WHATSAPP_CONNECTIONS.EMPTY_STATE.NO_CONNECTIONS_UNOFFICIAL')
+        }}
+      </p>
+      <p class="text-n-slate-9 mt-2">
+        {{ t('WHATSAPP_CONNECTIONS.EMPTY_STATE.ADD_FIRST') }}
+      </p>
+    </div>
 
-        <!-- Connections List -->
-        <div v-else class="flex flex-col gap-4">
-          <div
-            v-for="connection in currentConnections"
-            :key="connection.id"
-            class="p-4 bg-white rounded-lg border border-n-weak hover:border-n-brand cursor-pointer transition-colors"
-            @click="navigateToDetail(connection.id)"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="flex flex-col">
-                  <span class="font-semibold text-n-slate-12">
-                    {{ connection.name }}
-                  </span>
-                  <span class="text-sm text-n-slate-9">
-                    {{ connection.phone_numbers_count }} numbers &middot;
-                    {{ connection.linked_count }} linked &middot;
-                    {{ connection.available_count }} available
-                  </span>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span
-                  class="px-2 py-1 text-xs font-medium rounded-full"
-                  :class="statusBadgeClass(connection.status)"
-                >
-                  {{ connection.status }}
-                </span>
-                <button
-                  class="text-n-slate-9 hover:text-red-600 text-sm"
-                  @click.stop="deleteConnection(connection.id)"
-                >
-                  Delete
-                </button>
-              </div>
+    <!-- Connections List -->
+    <div v-else class="flex flex-col gap-4">
+      <div
+        v-for="connection in currentConnections"
+        :key="connection.id"
+        class="p-4 bg-white rounded-lg border border-n-weak hover:border-n-brand cursor-pointer transition-colors"
+        @click="navigateToDetail(connection.id)"
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex flex-col">
+              <span class="font-semibold text-n-slate-12">
+                {{ connection.name }}
+              </span>
+              <span class="text-sm text-n-slate-9">
+                {{ connection.phone_numbers_count }}
+                {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.NUMBERS') }}
+                &middot; {{ connection.linked_count }}
+                {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.LINKED') }}
+                &middot; {{ connection.available_count }}
+                {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.STATS.AVAILABLE') }}
+              </span>
             </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span
+              class="px-2 py-1 text-xs font-medium rounded-full"
+              :class="statusBadgeClass(connection.status)"
+            >
+              {{ t(`WHATSAPP_CONNECTIONS.STATUS.${connection.status.toUpperCase()}`) }}
+            </span>
+            <button
+              class="text-n-slate-9 hover:text-red-600 text-sm"
+              @click.stop="openDeleteModal(connection)"
+            >
+              {{ t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE') }}
+            </button>
           </div>
         </div>
       </div>
-    </template>
-  </SettingsLayout>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <woot-confirm-delete-modal
+      v-if="showDeleteModal"
+      v-model:show="showDeleteModal"
+      :title="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
+      :message="t('WHATSAPP_CONNECTIONS.CONFIRM.DELETE_CONNECTION')"
+      :confirm-text="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
+      :reject-text="t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL')"
+      :confirm-value="selectedConnection?.name"
+      :confirm-place-holder-text="selectedConnection?.name"
+      @on-confirm="confirmDelete"
+      @on-close="showDeleteModal = false"
+    />
+  </div>
 </template>

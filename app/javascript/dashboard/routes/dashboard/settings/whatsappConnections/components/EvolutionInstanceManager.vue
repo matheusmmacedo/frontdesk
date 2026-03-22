@@ -1,36 +1,46 @@
 <script setup>
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
+import { useAlert } from 'dashboard/composables';
 
 const props = defineProps({
   connectionId: { type: Number, required: true },
   phoneNumbers: { type: Array, default: () => [] },
 });
 
+const { t } = useI18n();
 const store = useStore();
 const newInstanceName = ref('');
 const isCreating = ref(false);
 const qrCodeData = ref(null);
 const qrCodePhoneId = ref(null);
 const loading = ref({});
+const showDeleteModal = ref(false);
+const selectedInstance = ref(null);
 
 async function createInstance() {
   if (!newInstanceName.value) return;
   isCreating.value = true;
   try {
-    const { data } = await store.dispatch('whatsappConnections/createInstance', {
-      connectionId: props.connectionId,
-      displayName: newInstanceName.value,
-    });
+    const { data } = await store.dispatch(
+      'whatsappConnections/createInstance',
+      {
+        connectionId: props.connectionId,
+        displayName: newInstanceName.value,
+      }
+    );
     newInstanceName.value = '';
-    await store.dispatch('whatsappConnections/fetchPhoneNumbers', props.connectionId);
+    await store.dispatch(
+      'whatsappConnections/fetchPhoneNumbers',
+      props.connectionId
+    );
 
-    // Auto-show QR code for the new instance
     if (data?.phone_number?.id) {
       await showQRCode(data.phone_number.id);
     }
   } catch (err) {
-    alert(err?.response?.data?.error || 'Failed to create instance');
+    useAlert(err?.response?.data?.error || err.message);
   } finally {
     isCreating.value = false;
   }
@@ -45,7 +55,7 @@ async function showQRCode(phoneNumberId) {
     });
     qrCodeData.value = data.qrcode || data.pairingCode;
   } catch (err) {
-    alert(err?.response?.data?.error || 'Failed to get QR code');
+    useAlert(err?.response?.data?.error || err.message);
     qrCodeData.value = null;
   }
 }
@@ -57,26 +67,36 @@ async function checkStatus(phoneNumberId) {
       connectionId: props.connectionId,
       instanceId: phoneNumberId,
     });
-    await store.dispatch('whatsappConnections/fetchPhoneNumbers', props.connectionId);
+    await store.dispatch(
+      'whatsappConnections/fetchPhoneNumbers',
+      props.connectionId
+    );
   } catch (err) {
-    alert(err?.response?.data?.error || 'Failed to check status');
+    useAlert(err?.response?.data?.error || err.message);
   } finally {
     delete loading.value[phoneNumberId];
   }
 }
 
-async function deleteInstance(phoneNumberId) {
-  if (!window.confirm('Delete this instance? This cannot be undone.')) return;
-  loading.value[phoneNumberId] = 'deleting';
+function openDeleteModal(pn) {
+  selectedInstance.value = pn;
+  showDeleteModal.value = true;
+}
+
+async function confirmDelete() {
+  if (!selectedInstance.value) return;
+  loading.value[selectedInstance.value.id] = 'deleting';
   try {
     await store.dispatch('whatsappConnections/deleteInstance', {
       connectionId: props.connectionId,
-      instanceId: phoneNumberId,
+      instanceId: selectedInstance.value.id,
     });
   } catch (err) {
-    alert(err?.response?.data?.error || 'Failed to delete instance');
+    useAlert(err?.response?.data?.error || err.message);
   } finally {
-    delete loading.value[phoneNumberId];
+    delete loading.value[selectedInstance.value.id];
+    showDeleteModal.value = false;
+    selectedInstance.value = null;
   }
 }
 
@@ -99,7 +119,9 @@ function closeQRModal() {
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex items-center justify-between">
-      <h3 class="text-lg font-semibold text-n-slate-12">Evolution Instances</h3>
+      <h3 class="text-lg font-semibold text-n-slate-12">
+        {{ t('WHATSAPP_CONNECTIONS.INSTANCES.TITLE') }}
+      </h3>
     </div>
 
     <!-- Create new instance -->
@@ -107,7 +129,7 @@ function closeQRModal() {
       <input
         v-model="newInstanceName"
         type="text"
-        placeholder="Instance name (e.g., Sales, Support)"
+        :placeholder="t('WHATSAPP_CONNECTIONS.INSTANCES.NAME_PLACEHOLDER')"
         class="flex-1 px-3 py-2 border border-n-weak rounded-lg text-sm"
       />
       <button
@@ -115,13 +137,20 @@ function closeQRModal() {
         :disabled="isCreating || !newInstanceName"
         @click="createInstance"
       >
-        {{ isCreating ? 'Creating...' : '+ Create Instance' }}
+        {{
+          isCreating
+            ? t('WHATSAPP_CONNECTIONS.INSTANCES.CREATING')
+            : t('WHATSAPP_CONNECTIONS.ACTIONS.CREATE_INSTANCE')
+        }}
       </button>
     </div>
 
     <!-- Instances list -->
-    <div v-if="phoneNumbers.length === 0" class="text-center py-8 text-n-slate-9">
-      No instances yet. Create one above.
+    <div
+      v-if="phoneNumbers.length === 0"
+      class="text-center py-8 text-n-slate-9"
+    >
+      {{ t('WHATSAPP_CONNECTIONS.EMPTY_STATE.NO_INSTANCES') }}
     </div>
 
     <div v-else class="flex flex-col gap-2">
@@ -133,10 +162,16 @@ function closeQRModal() {
         <div class="flex items-center justify-between">
           <div>
             <div class="flex items-center gap-2">
-              <span class="font-semibold text-n-slate-12">{{ pn.display_name }}</span>
+              <span class="font-semibold text-n-slate-12">
+                {{ pn.display_name }}
+              </span>
               <span
                 class="text-xs font-medium capitalize"
-                :class="connectionStatusColor(pn.provider_info?.connection_status)"
+                :class="
+                  connectionStatusColor(
+                    pn.provider_info?.connection_status
+                  )
+                "
               >
                 {{ pn.provider_info?.connection_status || 'unknown' }}
               </span>
@@ -155,21 +190,29 @@ function closeQRModal() {
               class="px-3 py-1 text-xs font-medium text-blue-600 border border-blue-300 rounded hover:bg-blue-50"
               @click="showQRCode(pn.id)"
             >
-              QR Code
+              {{ t('WHATSAPP_CONNECTIONS.ACTIONS.QR_CODE') }}
             </button>
             <button
               class="px-3 py-1 text-xs font-medium text-n-slate-9 border border-n-weak rounded hover:bg-n-alpha-1"
               :disabled="loading[pn.id] === 'checking'"
               @click="checkStatus(pn.id)"
             >
-              {{ loading[pn.id] === 'checking' ? '...' : 'Check Status' }}
+              {{
+                loading[pn.id] === 'checking'
+                  ? t('WHATSAPP_CONNECTIONS.INSTANCES.CHECKING')
+                  : t('WHATSAPP_CONNECTIONS.ACTIONS.CHECK_STATUS')
+              }}
             </button>
             <button
               class="px-3 py-1 text-xs font-medium text-red-600 border border-red-300 rounded hover:bg-red-50"
               :disabled="loading[pn.id] === 'deleting'"
-              @click="deleteInstance(pn.id)"
+              @click="openDeleteModal(pn)"
             >
-              {{ loading[pn.id] === 'deleting' ? '...' : 'Delete' }}
+              {{
+                loading[pn.id] === 'deleting'
+                  ? t('WHATSAPP_CONNECTIONS.INSTANCES.DELETING')
+                  : t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')
+              }}
             </button>
           </div>
         </div>
@@ -177,24 +220,29 @@ function closeQRModal() {
     </div>
 
     <!-- QR Code Modal -->
-    <div
+    <woot-modal
       v-if="qrCodeData"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-      @click.self="closeQRModal"
+      :show="!!qrCodeData"
+      :on-close="closeQRModal"
     >
-      <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl text-center">
-        <h3 class="text-lg font-semibold mb-4">Scan QR Code</h3>
+      <div class="p-6 text-center">
+        <h3 class="text-lg font-semibold mb-4">
+          {{ t('WHATSAPP_CONNECTIONS.INSTANCES.QR_MODAL.TITLE') }}
+        </h3>
         <p class="text-sm text-n-slate-9 mb-4">
-          Open WhatsApp on your phone and scan this QR code.
+          {{ t('WHATSAPP_CONNECTIONS.INSTANCES.QR_MODAL.DESCRIPTION') }}
         </p>
         <div class="flex justify-center mb-4">
           <img
-            v-if="qrCodeData.startsWith('data:')"
+            v-if="qrCodeData.startsWith && qrCodeData.startsWith('data:')"
             :src="qrCodeData"
             alt="QR Code"
             class="w-64 h-64"
           />
-          <div v-else class="p-4 bg-gray-100 rounded text-xs font-mono break-all">
+          <div
+            v-else
+            class="p-4 bg-gray-100 rounded text-xs font-mono break-all"
+          >
             {{ qrCodeData }}
           </div>
         </div>
@@ -202,9 +250,23 @@ function closeQRModal() {
           class="px-4 py-2 text-sm border border-n-weak rounded-lg"
           @click="closeQRModal"
         >
-          Close
+          {{ t('WHATSAPP_CONNECTIONS.ACTIONS.CLOSE') }}
         </button>
       </div>
-    </div>
+    </woot-modal>
+
+    <!-- Delete Confirmation Modal -->
+    <woot-confirm-delete-modal
+      v-if="showDeleteModal"
+      v-model:show="showDeleteModal"
+      :title="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
+      :message="t('WHATSAPP_CONNECTIONS.CONFIRM.DELETE_INSTANCE')"
+      :confirm-text="t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE')"
+      :reject-text="t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL')"
+      :confirm-value="selectedInstance?.display_name"
+      :confirm-place-holder-text="selectedInstance?.display_name"
+      @on-confirm="confirmDelete"
+      @on-close="showDeleteModal = false"
+    />
   </div>
 </template>

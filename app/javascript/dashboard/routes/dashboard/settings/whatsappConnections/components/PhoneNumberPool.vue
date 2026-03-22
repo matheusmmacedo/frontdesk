@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
+import { useAlert } from 'dashboard/composables';
 
 const props = defineProps({
   connectionId: { type: Number, required: true },
@@ -9,8 +11,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['sync']);
+const { t } = useI18n();
 const store = useStore();
 const loading = ref({});
+const showUnlinkModal = ref(false);
+const selectedNumber = ref(null);
 
 async function linkNumber(phoneNumberId) {
   loading.value[phoneNumberId] = 'linking';
@@ -24,28 +29,35 @@ async function linkNumber(phoneNumberId) {
       props.connectionId
     );
   } catch (err) {
-    alert(err?.response?.data?.error || err.message);
+    useAlert(err?.response?.data?.error || err.message);
   } finally {
     delete loading.value[phoneNumberId];
   }
 }
 
-async function unlinkNumber(phoneNumberId) {
-  if (!window.confirm('Unlink this number? The inbox will be deleted.')) return;
-  loading.value[phoneNumberId] = 'unlinking';
+function openUnlinkModal(pn) {
+  selectedNumber.value = pn;
+  showUnlinkModal.value = true;
+}
+
+async function confirmUnlink() {
+  if (!selectedNumber.value) return;
+  loading.value[selectedNumber.value.id] = 'unlinking';
   try {
     await store.dispatch('whatsappConnections/unlinkPhoneNumber', {
       connectionId: props.connectionId,
-      phoneNumberId,
+      phoneNumberId: selectedNumber.value.id,
     });
     await store.dispatch(
       'whatsappConnections/fetchPhoneNumbers',
       props.connectionId
     );
   } catch (err) {
-    alert(err?.response?.data?.error || err.message);
+    useAlert(err?.response?.data?.error || err.message);
   } finally {
-    delete loading.value[phoneNumberId];
+    delete loading.value[selectedNumber.value.id];
+    showUnlinkModal.value = false;
+    selectedNumber.value = null;
   }
 }
 
@@ -63,27 +75,42 @@ function statusColor(status) {
 <template>
   <div class="flex flex-col gap-4">
     <div class="flex items-center justify-between">
-      <h3 class="text-lg font-semibold text-n-slate-12">Phone Numbers</h3>
+      <h3 class="text-lg font-semibold text-n-slate-12">
+        {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.TITLE') }}
+      </h3>
       <button
         class="px-3 py-1.5 text-sm font-medium text-n-brand border border-n-brand rounded-lg hover:bg-n-brand hover:text-white transition-colors"
         @click="emit('sync')"
       >
-        Sync Numbers
+        {{ t('WHATSAPP_CONNECTIONS.ACTIONS.SYNC_NUMBERS') }}
       </button>
     </div>
 
-    <div v-if="phoneNumbers.length === 0" class="text-center py-8 text-n-slate-9">
-      No phone numbers found. Click "Sync Numbers" to refresh.
+    <div
+      v-if="phoneNumbers.length === 0"
+      class="text-center py-8 text-n-slate-9"
+    >
+      {{ t('WHATSAPP_CONNECTIONS.EMPTY_STATE.NO_PHONE_NUMBERS') }}
     </div>
 
     <table v-else class="w-full text-sm">
       <thead>
         <tr class="border-b border-n-weak text-left text-n-slate-11">
-          <th class="py-2 px-3">Phone</th>
-          <th class="py-2 px-3">Name</th>
-          <th class="py-2 px-3">Status</th>
-          <th class="py-2 px-3">Inbox</th>
-          <th class="py-2 px-3 text-right">Actions</th>
+          <th class="py-2 px-3">
+            {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.TABLE.PHONE') }}
+          </th>
+          <th class="py-2 px-3">
+            {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.TABLE.NAME') }}
+          </th>
+          <th class="py-2 px-3">
+            {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.TABLE.STATUS') }}
+          </th>
+          <th class="py-2 px-3">
+            {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.TABLE.INBOX') }}
+          </th>
+          <th class="py-2 px-3 text-right">
+            {{ t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.TABLE.ACTIONS') }}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -95,8 +122,11 @@ function statusColor(status) {
           <td class="py-3 px-3 font-mono">{{ pn.phone_number }}</td>
           <td class="py-3 px-3">{{ pn.display_name }}</td>
           <td class="py-3 px-3">
-            <span :class="statusColor(pn.status)" class="font-medium capitalize">
-              {{ pn.status }}
+            <span
+              :class="statusColor(pn.status)"
+              class="font-medium capitalize"
+            >
+              {{ t(`WHATSAPP_CONNECTIONS.STATUS.${pn.status.toUpperCase()}`) }}
             </span>
           </td>
           <td class="py-3 px-3">
@@ -112,22 +142,47 @@ function statusColor(status) {
               :disabled="loading[pn.id]"
               @click="linkNumber(pn.id)"
             >
-              {{ loading[pn.id] === 'linking' ? 'Linking...' : 'Link' }}
+              {{
+                loading[pn.id] === 'linking'
+                  ? t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.LINKING')
+                  : t('WHATSAPP_CONNECTIONS.ACTIONS.LINK')
+              }}
             </button>
             <button
               v-else-if="pn.status === 'linked'"
               class="px-3 py-1 text-xs font-medium text-red-600 border border-red-300 rounded hover:bg-red-50 disabled:opacity-50"
               :disabled="loading[pn.id]"
-              @click="unlinkNumber(pn.id)"
+              @click="openUnlinkModal(pn)"
             >
-              {{ loading[pn.id] === 'unlinking' ? 'Unlinking...' : 'Unlink' }}
+              {{
+                loading[pn.id] === 'unlinking'
+                  ? t('WHATSAPP_CONNECTIONS.PHONE_NUMBERS.UNLINKING')
+                  : t('WHATSAPP_CONNECTIONS.ACTIONS.UNLINK')
+              }}
             </button>
-            <span v-else-if="pn.status === 'pending'" class="text-xs text-yellow-600">
-              Awaiting connection
+            <span
+              v-else-if="pn.status === 'pending'"
+              class="text-xs text-yellow-600"
+            >
+              {{ t('WHATSAPP_CONNECTIONS.STATUS.AWAITING_CONNECTION') }}
             </span>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Unlink Confirmation Modal -->
+    <woot-confirm-delete-modal
+      v-if="showUnlinkModal"
+      v-model:show="showUnlinkModal"
+      :title="t('WHATSAPP_CONNECTIONS.ACTIONS.UNLINK')"
+      :message="t('WHATSAPP_CONNECTIONS.CONFIRM.UNLINK_NUMBER')"
+      :confirm-text="t('WHATSAPP_CONNECTIONS.ACTIONS.UNLINK')"
+      :reject-text="t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL')"
+      :confirm-value="selectedNumber?.phone_number"
+      :confirm-place-holder-text="selectedNumber?.phone_number"
+      @on-confirm="confirmUnlink"
+      @on-close="showUnlinkModal = false"
+    />
   </div>
 </template>

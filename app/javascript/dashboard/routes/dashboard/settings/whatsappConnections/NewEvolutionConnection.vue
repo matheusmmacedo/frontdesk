@@ -1,34 +1,33 @@
 <script setup>
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import SettingsLayout from '../SettingsLayout.vue';
+import { useAlert } from 'dashboard/composables';
 
+const { t } = useI18n();
 const store = useStore();
 const router = useRouter();
-const connectionName = ref('WhatsApp Não Oficial');
+const connectionName = ref(t('WHATSAPP_CONNECTIONS.TABS.UNOFFICIAL'));
 const isCreating = ref(false);
-const error = ref('');
 
 async function createConnection() {
-  error.value = '';
   isCreating.value = true;
-
   try {
     const connection = await store.dispatch(
       'whatsappConnections/createEvolutionConnection',
       { name: connectionName.value }
     );
-
     router.push({
       name: 'whatsapp_connections_detail',
       params: { connectionId: connection.id },
     });
   } catch (err) {
-    error.value =
+    useAlert(
       err?.response?.data?.error ||
-      err.message ||
-      'Failed to create connection. Make sure WhatsApp Não Oficial is configured in Super Admin.';
+        err.message ||
+        t('WHATSAPP_CONNECTIONS.NEW_EVOLUTION.ERROR_NO_CONFIG')
+    );
   } finally {
     isCreating.value = false;
   }
@@ -36,59 +35,54 @@ async function createConnection() {
 </script>
 
 <template>
-  <SettingsLayout>
-    <template #header>
-      <div class="flex items-center gap-3">
-        <router-link
-          :to="{ name: 'whatsapp_connections_index' }"
-          class="text-n-slate-9 hover:text-n-slate-12"
-        >
-          &larr; Back
-        </router-link>
-        <h1 class="text-2xl font-semibold text-n-slate-12">
-          Nova Conexão WhatsApp Não Oficial
-        </h1>
-      </div>
-    </template>
+  <div class="flex flex-col gap-6 w-full">
+    <div class="flex items-center gap-3">
+      <router-link
+        :to="{ name: 'whatsapp_connections_index' }"
+        class="text-n-slate-9 hover:text-n-slate-12"
+      >
+        {{ t('WHATSAPP_CONNECTIONS.DETAIL.BACK') }}
+      </router-link>
+      <h1 class="text-2xl font-semibold text-n-slate-12">
+        {{ t('WHATSAPP_CONNECTIONS.NEW_EVOLUTION.TITLE') }}
+      </h1>
+    </div>
 
-    <template #body>
-      <div class="max-w-lg mx-auto flex flex-col gap-6">
-        <div class="p-6 bg-white rounded-lg border border-n-weak">
-          <h2 class="text-lg font-semibold text-n-slate-12 mb-4">
-            Conectar WhatsApp Não Oficial
-          </h2>
-          <p class="text-sm text-n-slate-9 mb-6">
-            A conexão não oficial permite conectar números WhatsApp via QR Code.
-            Suas instâncias existentes serão importadas automaticamente.
-          </p>
+    <div class="max-w-lg flex flex-col gap-6">
+      <div class="p-6 bg-white rounded-lg border border-n-weak">
+        <h2 class="text-lg font-semibold text-n-slate-12 mb-4">
+          {{ t('WHATSAPP_CONNECTIONS.NEW_EVOLUTION.HEADING') }}
+        </h2>
+        <p class="text-sm text-n-slate-9 mb-6">
+          {{ t('WHATSAPP_CONNECTIONS.NEW_EVOLUTION.DESCRIPTION') }}
+        </p>
 
-          <div class="flex flex-col gap-4">
-            <label class="flex flex-col gap-1">
-              <span class="text-sm font-medium text-n-slate-11">
-                Connection Name
-              </span>
-              <input
-                v-model="connectionName"
-                type="text"
-                placeholder="e.g., WhatsApp Não Oficial"
-                class="px-3 py-2 border border-n-weak rounded-lg text-sm"
-              />
-            </label>
+        <div class="flex flex-col gap-4">
+          <label class="flex flex-col gap-1">
+            <span class="text-sm font-medium text-n-slate-11">
+              {{ t('WHATSAPP_CONNECTIONS.NEW_EVOLUTION.CONNECTION_NAME') }}
+            </span>
+            <input
+              v-model="connectionName"
+              type="text"
+              :placeholder="t('WHATSAPP_CONNECTIONS.NEW_EVOLUTION.CONNECTION_NAME_PLACEHOLDER')"
+              class="px-3 py-2 border border-n-weak rounded-lg text-sm"
+            />
+          </label>
 
-            <button
-              class="px-6 py-3 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
-              :disabled="isCreating || !connectionName"
-              @click="createConnection"
-            >
-              {{ isCreating ? 'Creating...' : 'Create Connection' }}
-            </button>
-
-            <div v-if="error" class="text-sm text-red-600 bg-red-50 p-3 rounded">
-              {{ error }}
-            </div>
-          </div>
+          <button
+            class="px-6 py-3 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
+            :disabled="isCreating || !connectionName"
+            @click="createConnection"
+          >
+            {{
+              isCreating
+                ? t('WHATSAPP_CONNECTIONS.NEW_EVOLUTION.CREATING')
+                : t('WHATSAPP_CONNECTIONS.ACTIONS.CREATE_CONNECTION')
+            }}
+          </button>
         </div>
       </div>
-    </template>
-  </SettingsLayout>
+    </div>
+  </div>
 </template>
