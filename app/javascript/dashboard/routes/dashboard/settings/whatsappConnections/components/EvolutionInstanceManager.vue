@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useAlert } from 'dashboard/composables';
@@ -15,9 +15,77 @@ const newInstanceName = ref('');
 const isCreating = ref(false);
 const qrCodeData = ref(null);
 const qrCodePhoneId = ref(null);
+const qrCountdown = ref(0);
 const loading = ref({});
 const showDeleteModal = ref(false);
 const selectedInstance = ref(null);
+
+let pollingInterval = null;
+let countdownInterval = null;
+
+const QR_EXPIRY_SECONDS = 45;
+const POLL_INTERVAL_MS = 4000;
+
+function startQRPolling(phoneNumberId) {
+  stopQRPolling();
+
+  qrCountdown.value = QR_EXPIRY_SECONDS;
+
+  countdownInterval = setInterval(() => {
+    qrCountdown.value -= 1;
+    if (qrCountdown.value <= 0) {
+      refreshQRCode(phoneNumberId);
+    }
+  }, 1000);
+
+  pollingInterval = setInterval(async () => {
+    try {
+      const data = await store.dispatch(
+        'whatsappConnections/checkInstanceStatus',
+        { connectionId: props.connectionId, instanceId: phoneNumberId }
+      );
+
+      const status =
+        data?.provider_info?.connection_status || data?.status;
+
+      if (status === 'open') {
+        useAlert(t('WHATSAPP_CONNECTIONS.INSTANCES.CONNECTED'));
+        closeQRModal();
+        await store.dispatch(
+          'whatsappConnections/fetchPhoneNumbers',
+          props.connectionId
+        );
+      }
+    } catch {
+      // silently continue polling
+    }
+  }, POLL_INTERVAL_MS);
+}
+
+function stopQRPolling() {
+  if (pollingInterval) clearInterval(pollingInterval);
+  if (countdownInterval) clearInterval(countdownInterval);
+  pollingInterval = null;
+  countdownInterval = null;
+}
+
+async function refreshQRCode(phoneNumberId) {
+  try {
+    const data = await store.dispatch('whatsappConnections/getQRCode', {
+      connectionId: props.connectionId,
+      instanceId: phoneNumberId,
+    });
+    qrCodeData.value = data.qrcode || data.pairingCode;
+    qrCountdown.value = QR_EXPIRY_SECONDS;
+  } catch (err) {
+    useAlert(err?.response?.data?.error || err.message);
+    closeQRModal();
+  }
+}
+
+onUnmounted(() => {
+  stopQRPolling();
+});
 
 async function createInstance() {
   if (!newInstanceName.value) return;
@@ -54,6 +122,7 @@ async function showQRCode(phoneNumberId) {
       instanceId: phoneNumberId,
     });
     qrCodeData.value = data.qrcode || data.pairingCode;
+    startQRPolling(phoneNumberId);
   } catch (err) {
     useAlert(err?.response?.data?.error || err.message);
     qrCodeData.value = null;
@@ -111,6 +180,7 @@ function connectionStatusColor(status) {
 }
 
 function closeQRModal() {
+  stopQRPolling();
   qrCodeData.value = null;
   qrCodePhoneId.value = null;
 }
@@ -219,39 +289,77 @@ function closeQRModal() {
       </div>
     </div>
 
-    <!-- QR Code Modal -->
+    <!-- QR Code Modal with auto-refresh and polling -->
     <woot-modal
       v-if="qrCodeData"
       :show="!!qrCodeData"
       :on-close="closeQRModal"
     >
       <div class="p-6 text-center">
-        <h3 class="text-lg font-semibold mb-4">
+        <h3 class="text-lg font-semibold mb-2">
           {{ t('WHATSAPP_CONNECTIONS.INSTANCES.QR_MODAL.TITLE') }}
         </h3>
         <p class="text-sm text-n-slate-9 mb-4">
           {{ t('WHATSAPP_CONNECTIONS.INSTANCES.QR_MODAL.DESCRIPTION') }}
         </p>
-        <div class="flex justify-center mb-4">
+
+        <!-- QR Code -->
+        <div class="flex justify-center mb-3">
           <img
-            v-if="qrCodeData.startsWith && qrCodeData.startsWith('data:')"
+            v-if="typeof qrCodeData === 'string' && qrCodeData.startsWith('data:')"
             :src="qrCodeData"
             alt="QR Code"
-            class="w-64 h-64"
+            class="w-64 h-64 rounded-lg"
           />
           <div
             v-else
-            class="p-4 bg-gray-100 rounded text-xs font-mono break-all"
+            class="p-4 bg-gray-100 rounded text-xs font-mono break-all w-64"
           >
             {{ qrCodeData }}
           </div>
         </div>
-        <button
-          class="px-4 py-2 text-sm border border-n-weak rounded-lg"
-          @click="closeQRModal"
-        >
-          {{ t('WHATSAPP_CONNECTIONS.ACTIONS.CLOSE') }}
-        </button>
+
+        <!-- Countdown timer -->
+        <div class="mb-4">
+          <div class="flex items-center justify-center gap-2 text-sm">
+            <span class="text-n-slate-9">
+              {{ t('WHATSAPP_CONNECTIONS.INSTANCES.QR_MODAL.EXPIRES_IN') }}
+            </span>
+            <span
+              class="font-mono font-semibold"
+              :class="qrCountdown <= 10 ? 'text-red-600' : 'text-n-slate-12'"
+            >
+              {{ qrCountdown }}s
+            </span>
+          </div>
+          <div class="w-48 mx-auto mt-2 bg-gray-200 rounded-full h-1.5">
+            <div
+              class="h-1.5 rounded-full transition-all duration-1000"
+              :class="qrCountdown <= 10 ? 'bg-red-500' : 'bg-green-500'"
+              :style="{ width: `${(qrCountdown / QR_EXPIRY_SECONDS) * 100}%` }"
+            />
+          </div>
+        </div>
+
+        <!-- Status info -->
+        <p class="text-xs text-n-slate-9 mb-4">
+          {{ t('WHATSAPP_CONNECTIONS.INSTANCES.QR_MODAL.AUTO_DETECT') }}
+        </p>
+
+        <div class="flex justify-center gap-2">
+          <button
+            class="px-4 py-2 text-sm text-n-brand border border-n-brand rounded-lg hover:bg-n-brand hover:text-white"
+            @click="refreshQRCode(qrCodePhoneId)"
+          >
+            {{ t('WHATSAPP_CONNECTIONS.INSTANCES.QR_MODAL.REFRESH') }}
+          </button>
+          <button
+            class="px-4 py-2 text-sm border border-n-weak rounded-lg"
+            @click="closeQRModal"
+          >
+            {{ t('WHATSAPP_CONNECTIONS.ACTIONS.CLOSE') }}
+          </button>
+        </div>
       </div>
     </woot-modal>
 

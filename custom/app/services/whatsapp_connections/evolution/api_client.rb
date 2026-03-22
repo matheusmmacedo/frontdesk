@@ -45,8 +45,25 @@ module WhatsappConnections
         response.parsed_response
       end
 
-      # Delete instance
+      # Delete instance (full cleanup: disable chatwoot → logout → delete)
       def delete_instance(instance_name)
+        # Step 1: Disable Chatwoot integration
+        begin
+          set_chatwoot_integration(instance_name, {
+            enabled: false, accountId: '', token: '', url: '', nameInbox: '', autoCreate: false
+          })
+        rescue StandardError => e
+          Rails.logger.warn("[EVOLUTION] Failed to disable Chatwoot for #{instance_name}: #{e.message}")
+        end
+
+        # Step 2: Logout (disconnect WhatsApp)
+        begin
+          logout_instance(instance_name)
+        rescue StandardError => e
+          Rails.logger.warn("[EVOLUTION] Logout before delete failed for #{instance_name}: #{e.message}")
+        end
+
+        # Step 3: Delete instance
         response = delete("/instance/delete/#{instance_name}")
         response.parsed_response
       end

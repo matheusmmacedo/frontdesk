@@ -84,9 +84,13 @@
       "CREATING": "Creating...",
       "CHECKING": "...",
       "DELETING": "...",
+      "CONNECTED": "WhatsApp connected successfully!",
       "QR_MODAL": {
         "TITLE": "Scan QR Code",
-        "DESCRIPTION": "Open WhatsApp on your phone and scan this QR code."
+        "DESCRIPTION": "Open WhatsApp on your phone and scan this QR code.",
+        "EXPIRES_IN": "Expires in",
+        "AUTO_DETECT": "Connection will be detected automatically after scanning.",
+        "REFRESH": "Refresh QR Code"
       }
     },
     "NEW_META": {

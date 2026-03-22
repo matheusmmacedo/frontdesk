@@ -84,9 +84,13 @@
       "CREATING": "Criando...",
       "CHECKING": "...",
       "DELETING": "...",
+      "CONNECTED": "WhatsApp conectado com sucesso!",
       "QR_MODAL": {
         "TITLE": "Escanear QR Code",
-        "DESCRIPTION": "Abra o WhatsApp no seu celular e escaneie este QR code."
+        "DESCRIPTION": "Abra o WhatsApp no seu celular e escaneie este QR code.",
+        "EXPIRES_IN": "Expira em",
+        "AUTO_DETECT": "A conexão será detectada automaticamente após escanear.",
+        "REFRESH": "Atualizar QR Code"
       }
     },
     "NEW_META": {

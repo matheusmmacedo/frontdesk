@@ -23,6 +23,8 @@ class WhatsappConnection < ApplicationRecord
   belongs_to :account
   has_many :whatsapp_phone_numbers, dependent: :destroy
 
+  before_destroy :cleanup_evolution_instances
+
   validates :provider, presence: true, inclusion: { in: PROVIDERS }
   validates :name, presence: true
   validates :status, presence: true, inclusion: { in: STATUSES }
@@ -65,5 +67,20 @@ class WhatsappConnection < ApplicationRecord
 
   def available_phone_numbers
     whatsapp_phone_numbers.where(status: 'available')
+  end
+
+  private
+
+  def cleanup_evolution_instances
+    return unless evolution?
+
+    api_client = WhatsappConnections::Evolution::ApiClient.new
+    whatsapp_phone_numbers.where.not(phone_number_id: nil).find_each do |phone|
+      api_client.delete_instance(phone.phone_number_id)
+    rescue StandardError => e
+      Rails.logger.warn("[WHATSAPP_POOL] Failed to cleanup Evolution instance #{phone.phone_number_id}: #{e.message}")
+    end
+  rescue WhatsappConnections::Evolution::ApiClient::EvolutionApiError => e
+    Rails.logger.warn("[WHATSAPP_POOL] Evolution API not available for cleanup: #{e.message}")
   end
 end
