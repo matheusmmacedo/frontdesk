@@ -12,6 +12,14 @@ Rails.application.config.after_initialize do
       whatsapp_phone_number&.whatsapp_connection
     end
 
+    # Override: skip auto webhook setup for numbers created via our pool
+    alias_method :original_should_auto_setup_webhooks?, :should_auto_setup_webhooks?
+    def should_auto_setup_webhooks?
+      return false if provider_config['source'] == 'whatsapp_pool'
+
+      original_should_auto_setup_webhooks?
+    end
+
     # Sync templates from the parent WhatsappConnection (if linked via pool)
     # Falls back to the standard per-channel sync if not linked
     def sync_templates_from_connection

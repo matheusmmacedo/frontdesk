@@ -16,7 +16,8 @@ module WhatsappConnections
         validate!
         cleanup_orphan_channel!
         channel, inbox = create_channel_and_inbox
-        setup_webhooks(channel)
+        # NOTE: Do NOT auto-setup webhooks here. The number may be in use
+        # by another platform. Webhook setup should be explicit, not automatic.
         sync_channel_templates(channel)
         @phone_number_record.mark_linked!(inbox: inbox, channel: channel)
         { channel: channel, inbox: inbox }
