@@ -70,20 +70,47 @@
     "TEMPLATES": {
       "TITLE": "Message Templates",
       "SYNCING": "Syncing...",
-      "SEARCH": "Search templates...",
-      "CREATE_MODAL": {
-        "TITLE": "Create Template",
-        "NAME": "Name",
-        "NAME_PLACEHOLDER": "e.g., order_confirmation",
-        "LANGUAGE": "Language",
-        "CATEGORY": "Category",
-        "CATEGORIES": {
-          "MARKETING": "Marketing",
-          "UTILITY": "Utility",
-          "AUTHENTICATION": "Authentication"
-        },
-        "CREATING": "Creating..."
-      }
+      "SEARCH": "Search templates..."
+    },
+    "TEMPLATE_EDITOR": {
+      "CREATE_TITLE": "Create Message Template",
+      "EDIT_TITLE": "Edit Template",
+      "NAME": "Template Name",
+      "NAME_PLACEHOLDER": "e.g., order_confirmation",
+      "NAME_HINT": "Only lowercase letters, numbers, and underscores",
+      "LANGUAGE": "Language",
+      "CATEGORY": "Category",
+      "CATEGORIES": {
+        "MARKETING": "Marketing",
+        "UTILITY": "Utility",
+        "AUTHENTICATION": "Authentication"
+      },
+      "HEADER": "Header",
+      "HEADER_NONE": "None",
+      "HEADER_TEXT": "Text",
+      "HEADER_IMAGE": "Image",
+      "HEADER_VIDEO": "Video",
+      "HEADER_DOCUMENT": "Document",
+      "HEADER_PLACEHOLDER": "Header text (max 60 characters)",
+      "BODY": "Body",
+      "BODY_PLACEHOLDER": "Write your message here...\n\nUse *bold*, _italic_, ~strikethrough~\nUse {{1}}, {{2}} for variables",
+      "FOOTER": "Footer",
+      "FOOTER_PLACEHOLDER": "Footer text (optional, max 60 characters)",
+      "BUTTONS": "Buttons",
+      "BTN_QUICK_REPLY": "Quick Reply",
+      "BTN_URL": "URL",
+      "BTN_PHONE": "Phone",
+      "BTN_TEXT_PLACEHOLDER": "Button text",
+      "VARIABLE": "Variable",
+      "VARIABLE_EXAMPLES": "Variable examples (required by Meta for approval):",
+      "PREVIEW": "Preview",
+      "EDIT": "Edit",
+      "SUBMIT": "Submit for Approval",
+      "SAVE_CHANGES": "Save Changes",
+      "SYNC_SUCCESS": "Templates synced successfully!",
+      "CREATE_SUCCESS": "Template submitted for approval!",
+      "EDIT_SUCCESS": "Template updated successfully!",
+      "DELETE_SUCCESS": "Template deleted."
     },
     "INSTANCES": {
       "TITLE": "WhatsApp Instances",
@@ -97,17 +124,33 @@
         "DESCRIPTION": "Open WhatsApp on your phone and scan this QR code.",
         "EXPIRES_IN": "Expires in",
         "AUTO_DETECT": "Connection will be detected automatically after scanning.",
-        "REFRESH": "Refresh QR Code"
+        "REFRESH": "Refresh QR Code",
+        "INSTANCE_GONE": "Instance not found. It may have been deleted."
       }
     },
     "NEW_META": {
       "TITLE": "New Official WhatsApp Connection",
+      "TAB_EMBEDDED": "Facebook Login",
+      "TAB_DIRECT": "Direct Token",
       "HEADING": "Connect your WhatsApp Business Account",
       "DESCRIPTION": "Click the button below to authenticate with Facebook and connect your WABA. All phone numbers will be imported automatically.",
       "CONNECTION_NAME": "Connection Name (optional)",
       "CONNECTION_NAME_PLACEHOLDER": "e.g., My Business WABA",
       "CONNECTING": "Connecting...",
-      "ERROR_NO_CONFIG": "WhatsApp App ID or Configuration ID not set. Contact your administrator."
+      "ERROR_NO_CONFIG": "WhatsApp App ID or Configuration ID not set. Contact your administrator.",
+      "DIRECT_HEADING": "Connect with System User Token",
+      "DIRECT_DESCRIPTION": "If you already have a System User token with WhatsApp permissions, you can connect directly without Facebook Login.",
+      "DIRECT_NAME": "Connection Name",
+      "DIRECT_NAME_PLACEHOLDER": "e.g., My WABA",
+      "DIRECT_WABA_HINT": "Find it in Meta Business Manager > WhatsApp Accounts",
+      "DIRECT_TOKEN_HINT": "System User permanent token with whatsapp_business_messaging and whatsapp_business_management permissions",
+      "DIRECT_CONNECT": "Connect with Token",
+      "OPTIONAL": "optional",
+      "DIRECT_HELP_TITLE": "How to get your token:",
+      "DIRECT_HELP_STEP1": "Go to Meta Business Manager > Business Settings",
+      "DIRECT_HELP_STEP2": "Create a System User with Admin role",
+      "DIRECT_HELP_STEP3": "Assign the WhatsApp Business Account to the System User",
+      "DIRECT_HELP_STEP4": "Generate a permanent token with whatsapp_business_messaging and whatsapp_business_management permissions"
     },
     "NEW_EVOLUTION": {
       "TITLE": "New Unofficial WhatsApp Connection",
