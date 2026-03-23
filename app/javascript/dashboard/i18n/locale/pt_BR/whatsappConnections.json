@@ -1,0 +1,134 @@
+{
+  "WHATSAPP_CONNECTIONS": {
+    "TITLE": "Conexões WhatsApp",
+    "SIDEBAR_LABEL": "Conexões WhatsApp",
+    "TABS": {
+      "OFFICIAL": "WhatsApp Oficial",
+      "UNOFFICIAL": "WhatsApp Não Oficial"
+    },
+    "ACTIONS": {
+      "NEW_OFFICIAL": "+ Nova Conexão Oficial",
+      "NEW_UNOFFICIAL": "+ Nova Conexão Não Oficial",
+      "SYNC_NUMBERS": "Sincronizar Números",
+      "SYNC_TEMPLATES": "Sincronizar Templates",
+      "CREATE_TEMPLATE": "+ Criar Template",
+      "CREATE_INSTANCE": "+ Criar Instância",
+      "LINK": "Vincular",
+      "UNLINK": "Desvincular",
+      "DELETE": "Excluir",
+      "BACK": "← Voltar",
+      "CLOSE": "Fechar",
+      "CANCEL": "Cancelar",
+      "CREATE": "Criar",
+      "CHECK_STATUS": "Verificar Status",
+      "QR_CODE": "QR Code",
+      "CREATE_CONNECTION": "Criar Conexão",
+      "CONNECT_FACEBOOK": "Conectar com Facebook"
+    },
+    "STATUS": {
+      "ACTIVE": "ativo",
+      "DISCONNECTED": "desconectado",
+      "ERROR": "erro",
+      "AVAILABLE": "disponível",
+      "LINKED": "vinculado",
+      "PENDING": "pendente",
+      "AWAITING_CONNECTION": "Aguardando conexão"
+    },
+    "EMPTY_STATE": {
+      "NO_CONNECTIONS_OFFICIAL": "Nenhuma conexão WhatsApp Oficial ainda.",
+      "NO_CONNECTIONS_UNOFFICIAL": "Nenhuma conexão WhatsApp Não Oficial ainda.",
+      "ADD_FIRST": "Clique no botão acima para adicionar sua primeira conexão.",
+      "NO_PHONE_NUMBERS": "Nenhum número encontrado. Clique em \"Sincronizar Números\" para atualizar.",
+      "NO_TEMPLATES": "Nenhum template encontrado.",
+      "NO_INSTANCES": "Nenhuma instância ainda. Crie uma acima."
+    },
+    "LOADING": "Carregando conexões...",
+    "PHONE_NUMBERS": {
+      "TITLE": "Números de Telefone",
+      "TABLE": {
+        "PHONE": "Telefone",
+        "NAME": "Nome",
+        "STATUS": "Status",
+        "INBOX": "Caixa de Entrada",
+        "ACTIONS": "Ações"
+      },
+      "LINKING": "Vinculando...",
+      "UNLINKING": "Desvinculando...",
+      "LINK_SUCCESS": "Número vinculado com sucesso! Caixa de entrada criada.",
+      "UNLINK_SUCCESS": "Número desvinculado. Caixa de entrada removida.",
+      "LINK_MODAL": {
+        "TITLE": "Vincular Número",
+        "DESCRIPTION": "Será criada uma nova caixa de entrada para o número {phone}. Escolha o nome:",
+        "INBOX_NAME": "Nome da Caixa de Entrada"
+      },
+      "STATS": {
+        "NUMBERS": "números",
+        "LINKED": "vinculados",
+        "AVAILABLE": "disponíveis"
+      }
+    },
+    "TEMPLATES": {
+      "TITLE": "Templates de Mensagem",
+      "SYNCING": "Sincronizando...",
+      "SEARCH": "Buscar templates...",
+      "CREATE_MODAL": {
+        "TITLE": "Criar Template",
+        "NAME": "Nome",
+        "NAME_PLACEHOLDER": "ex: confirmacao_pedido",
+        "LANGUAGE": "Idioma",
+        "CATEGORY": "Categoria",
+        "CATEGORIES": {
+          "MARKETING": "Marketing",
+          "UTILITY": "Utilidade",
+          "AUTHENTICATION": "Autenticação"
+        },
+        "CREATING": "Criando..."
+      }
+    },
+    "INSTANCES": {
+      "TITLE": "Instâncias WhatsApp",
+      "NAME_PLACEHOLDER": "Nome da instância (ex: Vendas, Suporte)",
+      "CREATING": "Criando...",
+      "CHECKING": "...",
+      "DELETING": "...",
+      "CONNECTED": "WhatsApp conectado com sucesso!",
+      "QR_MODAL": {
+        "TITLE": "Escanear QR Code",
+        "DESCRIPTION": "Abra o WhatsApp no seu celular e escaneie este QR code.",
+        "EXPIRES_IN": "Expira em",
+        "AUTO_DETECT": "A conexão será detectada automaticamente após escanear.",
+        "REFRESH": "Atualizar QR Code"
+      }
+    },
+    "NEW_META": {
+      "TITLE": "Nova Conexão WhatsApp Oficial",
+      "HEADING": "Conectar sua Conta WhatsApp Business",
+      "DESCRIPTION": "Clique no botão abaixo para autenticar com o Facebook e conectar sua WABA. Todos os números serão importados automaticamente.",
+      "CONNECTION_NAME": "Nome da Conexão (opcional)",
+      "CONNECTION_NAME_PLACEHOLDER": "ex: Minha WABA Principal",
+      "CONNECTING": "Conectando...",
+      "ERROR_NO_CONFIG": "WhatsApp App ID ou Configuration ID não configurado. Contate o administrador."
+    },
+    "NEW_EVOLUTION": {
+      "TITLE": "Nova Conexão WhatsApp Não Oficial",
+      "HEADING": "Conectar WhatsApp Não Oficial",
+      "DESCRIPTION": "A conexão não oficial permite conectar números WhatsApp via QR Code. Suas instâncias existentes serão importadas automaticamente.",
+      "CONNECTION_NAME": "Nome da Conexão",
+      "CONNECTION_NAME_PLACEHOLDER": "ex: WhatsApp Não Oficial",
+      "CREATING": "Criando...",
+      "ERROR_NO_CONFIG": "Falha ao criar conexão. Verifique se a Evolution API está configurada no Super Admin."
+    },
+    "DETAIL": {
+      "BACK": "← Voltar"
+    },
+    "ERRORS": {
+      "EVOLUTION_ALREADY_EXISTS": "Já existe uma conexão WhatsApp Não Oficial nesta conta. Cada conta pode ter apenas uma."
+    },
+    "CONFIRM": {
+      "DELETE_CONNECTION": "Tem certeza que deseja excluir esta conexão?",
+      "UNLINK_NUMBER": "Desvincular este número? A caixa de entrada será excluída.",
+      "DELETE_TEMPLATE": "Excluir template \"{name}\"?",
+      "DELETE_INSTANCE": "Excluir esta instância? Esta ação não pode ser desfeita."
+    }
+  }
+}

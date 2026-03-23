@@ -48,6 +48,7 @@ import teamMembers from './modules/teamMembers';
 import teams from './modules/teams';
 import userNotificationSettings from './modules/userNotificationSettings';
 import webhooks from './modules/webhooks';
+import whatsappConnections from './modules/whatsappConnections';
 import captainAssistants from './captain/assistant';
 import captainDocuments from './captain/document';
 import captainResponses from './captain/response';
@@ -111,6 +112,7 @@ export default createStore({
     teams,
     userNotificationSettings,
     webhooks,
+    whatsappConnections,
     captainAssistants,
     captainDocuments,
     captainResponses,

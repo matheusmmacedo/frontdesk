@@ -641,6 +641,18 @@ const menuItems = computed(() => {
           to: accountScopedRoute('settings_inbox_list'),
         },
         {
+          name: 'Settings WhatsApp Connections',
+          label: t('WHATSAPP_CONNECTIONS.SIDEBAR_LABEL'),
+          icon: 'i-lucide-smartphone',
+          activeOn: [
+            'whatsapp_connections_index',
+            'whatsapp_connections_detail',
+            'whatsapp_connections_new_meta',
+            'whatsapp_connections_new_evolution',
+          ],
+          to: accountScopedRoute('whatsapp_connections_index'),
+        },
+        {
           name: 'Settings Labels',
           label: t('SIDEBAR.LABELS'),
           icon: 'i-lucide-tags',
