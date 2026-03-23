@@ -59,16 +59,12 @@ module WhatsappConnections
 
         updates = { provider_info: phone_number_record.provider_info.merge('connection_status' => connection_status) }
 
-        # If connected, try to get the actual phone number
-        if connection_status == 'open'
-          profile = @api_client.fetch_profile(instance_name)
-          if profile
-            owner = profile.dig('owner') || profile.dig('instance', 'owner') || ''
-            phone = extract_phone(owner)
-            if phone.present? && phone_number_record.phone_number.start_with?('pending_')
-              updates[:phone_number] = phone
-              updates[:status] = 'available'
-            end
+        # If connected, try to get the actual phone number with retry
+        if connection_status == 'open' && phone_number_record.phone_number.start_with?('pending_')
+          phone = fetch_phone_with_retry(instance_name)
+          if phone.present?
+            updates[:phone_number] = phone
+            updates[:status] = 'available'
           end
         end
 
@@ -100,6 +96,20 @@ module WhatsappConnections
       def build_instance_name(display_name)
         sanitized = display_name.parameterize(separator: '_')
         "account_#{@account.id}_#{sanitized}_#{SecureRandom.hex(4)}"
+      end
+
+      # Retry profile fetch up to 3 times with delay (Evolution may not have profile ready immediately)
+      def fetch_phone_with_retry(instance_name, retries: 3, delay: 2)
+        retries.times do |attempt|
+          sleep(delay) if attempt > 0
+          profile = @api_client.fetch_profile(instance_name)
+          next unless profile
+
+          owner = profile.dig('owner') || profile.dig('instance', 'owner') || ''
+          phone = extract_phone(owner)
+          return phone if phone.present?
+        end
+        ''
       end
 
       def extract_phone(owner_string)

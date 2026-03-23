@@ -70,20 +70,47 @@
     "TEMPLATES": {
       "TITLE": "Templates de Mensagem",
       "SYNCING": "Sincronizando...",
-      "SEARCH": "Buscar templates...",
-      "CREATE_MODAL": {
-        "TITLE": "Criar Template",
-        "NAME": "Nome",
-        "NAME_PLACEHOLDER": "ex: confirmacao_pedido",
-        "LANGUAGE": "Idioma",
-        "CATEGORY": "Categoria",
-        "CATEGORIES": {
-          "MARKETING": "Marketing",
-          "UTILITY": "Utilidade",
-          "AUTHENTICATION": "Autenticação"
-        },
-        "CREATING": "Criando..."
-      }
+      "SEARCH": "Buscar templates..."
+    },
+    "TEMPLATE_EDITOR": {
+      "CREATE_TITLE": "Criar Template de Mensagem",
+      "EDIT_TITLE": "Editar Template",
+      "NAME": "Nome do Template",
+      "NAME_PLACEHOLDER": "ex: confirmacao_pedido",
+      "NAME_HINT": "Apenas letras minúsculas, números e underscores",
+      "LANGUAGE": "Idioma",
+      "CATEGORY": "Categoria",
+      "CATEGORIES": {
+        "MARKETING": "Marketing",
+        "UTILITY": "Utilidade",
+        "AUTHENTICATION": "Autenticação"
+      },
+      "HEADER": "Cabeçalho",
+      "HEADER_NONE": "Nenhum",
+      "HEADER_TEXT": "Texto",
+      "HEADER_IMAGE": "Imagem",
+      "HEADER_VIDEO": "Vídeo",
+      "HEADER_DOCUMENT": "Documento",
+      "HEADER_PLACEHOLDER": "Texto do cabeçalho (máx. 60 caracteres)",
+      "BODY": "Corpo da Mensagem",
+      "BODY_PLACEHOLDER": "Escreva sua mensagem aqui...\n\nUse *negrito*, _itálico_, ~riscado~\nUse {{1}}, {{2}} para variáveis",
+      "FOOTER": "Rodapé",
+      "FOOTER_PLACEHOLDER": "Texto do rodapé (opcional, máx. 60 caracteres)",
+      "BUTTONS": "Botões",
+      "BTN_QUICK_REPLY": "Resposta Rápida",
+      "BTN_URL": "Link",
+      "BTN_PHONE": "Telefone",
+      "BTN_TEXT_PLACEHOLDER": "Texto do botão",
+      "VARIABLE": "Variável",
+      "VARIABLE_EXAMPLES": "Exemplos de variáveis (obrigatórios para aprovação pela Meta):",
+      "PREVIEW": "Visualizar",
+      "EDIT": "Editar",
+      "SUBMIT": "Enviar para Aprovação",
+      "SAVE_CHANGES": "Salvar Alterações",
+      "SYNC_SUCCESS": "Templates sincronizados com sucesso!",
+      "CREATE_SUCCESS": "Template enviado para aprovação!",
+      "EDIT_SUCCESS": "Template atualizado com sucesso!",
+      "DELETE_SUCCESS": "Template excluído."
     },
     "INSTANCES": {
       "TITLE": "Instâncias WhatsApp",
@@ -97,17 +124,33 @@
         "DESCRIPTION": "Abra o WhatsApp no seu celular e escaneie este QR code.",
         "EXPIRES_IN": "Expira em",
         "AUTO_DETECT": "A conexão será detectada automaticamente após escanear.",
-        "REFRESH": "Atualizar QR Code"
+        "REFRESH": "Atualizar QR Code",
+        "INSTANCE_GONE": "Instância não encontrada. Pode ter sido excluída."
       }
     },
     "NEW_META": {
       "TITLE": "Nova Conexão WhatsApp Oficial",
+      "TAB_EMBEDDED": "Login Facebook",
+      "TAB_DIRECT": "Token Direto",
       "HEADING": "Conectar sua Conta WhatsApp Business",
       "DESCRIPTION": "Clique no botão abaixo para autenticar com o Facebook e conectar sua WABA. Todos os números serão importados automaticamente.",
       "CONNECTION_NAME": "Nome da Conexão (opcional)",
       "CONNECTION_NAME_PLACEHOLDER": "ex: Minha WABA Principal",
       "CONNECTING": "Conectando...",
-      "ERROR_NO_CONFIG": "WhatsApp App ID ou Configuration ID não configurado. Contate o administrador."
+      "ERROR_NO_CONFIG": "WhatsApp App ID ou Configuration ID não configurado. Contate o administrador.",
+      "DIRECT_HEADING": "Conectar com Token de System User",
+      "DIRECT_DESCRIPTION": "Se você já possui um token de System User com permissões de WhatsApp, pode conectar diretamente sem Login do Facebook.",
+      "DIRECT_NAME": "Nome da Conexão",
+      "DIRECT_NAME_PLACEHOLDER": "ex: Minha WABA",
+      "DIRECT_WABA_HINT": "Encontre no Meta Business Manager > Contas do WhatsApp",
+      "DIRECT_TOKEN_HINT": "Token permanente do System User com permissões whatsapp_business_messaging e whatsapp_business_management",
+      "DIRECT_CONNECT": "Conectar com Token",
+      "OPTIONAL": "opcional",
+      "DIRECT_HELP_TITLE": "Como obter seu token:",
+      "DIRECT_HELP_STEP1": "Acesse Meta Business Manager > Configurações do Negócio",
+      "DIRECT_HELP_STEP2": "Crie um System User com papel de Administrador",
+      "DIRECT_HELP_STEP3": "Atribua a Conta WhatsApp Business ao System User",
+      "DIRECT_HELP_STEP4": "Gere um token permanente com permissões whatsapp_business_messaging e whatsapp_business_management"
     },
     "NEW_EVOLUTION": {
       "TITLE": "Nova Conexão WhatsApp Não Oficial",

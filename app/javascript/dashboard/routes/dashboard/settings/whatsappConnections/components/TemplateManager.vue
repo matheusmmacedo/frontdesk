@@ -3,6 +3,8 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useAlert } from 'dashboard/composables';
+import TemplateEditor from './TemplateEditor.vue';
+import TemplatePreview from './TemplatePreview.vue';
 
 const props = defineProps({
   connectionId: { type: Number, required: true },
@@ -14,15 +16,13 @@ const store = useStore();
 const isSyncing = ref(false);
 const searchQuery = ref('');
 const showCreateModal = ref(false);
+const showEditModal = ref(false);
 const showDeleteModal = ref(false);
+const showPreviewModal = ref(false);
+const selectedTemplate = ref(null);
 const selectedTemplateName = ref('');
-const newTemplate = ref({
-  name: '',
-  language: 'pt_BR',
-  category: 'MARKETING',
-  components: [],
-});
-const isCreating = ref(false);
+const isSubmitting = ref(false);
+const expandedTemplateId = ref(null);
 
 const filteredTemplates = computed(() => {
   if (!searchQuery.value) return props.templates;
@@ -30,7 +30,8 @@ const filteredTemplates = computed(() => {
   return props.templates.filter(
     tmpl =>
       tmpl.name?.toLowerCase().includes(q) ||
-      tmpl.language?.toLowerCase().includes(q)
+      tmpl.language?.toLowerCase().includes(q) ||
+      tmpl.category?.toLowerCase().includes(q)
   );
 });
 
@@ -41,6 +42,7 @@ async function syncTemplates() {
       'whatsappConnections/syncTemplates',
       props.connectionId
     );
+    useAlert(t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.SYNC_SUCCESS'));
   } catch (err) {
     useAlert(err?.response?.data?.error || err.message);
   } finally {
@@ -48,9 +50,71 @@ async function syncTemplates() {
   }
 }
 
+function openCreateModal() {
+  selectedTemplate.value = null;
+  showCreateModal.value = true;
+}
+
+function openEditModal(template) {
+  selectedTemplate.value = template;
+  showEditModal.value = true;
+}
+
+function openPreviewModal(template) {
+  selectedTemplate.value = template;
+  showPreviewModal.value = true;
+}
+
 function openDeleteModal(templateName) {
   selectedTemplateName.value = templateName;
   showDeleteModal.value = true;
+}
+
+function toggleExpand(templateId) {
+  expandedTemplateId.value =
+    expandedTemplateId.value === templateId ? null : templateId;
+}
+
+async function handleCreate(payload) {
+  isSubmitting.value = true;
+  try {
+    await store.dispatch('whatsappConnections/createTemplate', {
+      connectionId: props.connectionId,
+      params: payload,
+    });
+    showCreateModal.value = false;
+    await store.dispatch(
+      'whatsappConnections/fetchTemplates',
+      props.connectionId
+    );
+    useAlert(t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.CREATE_SUCCESS'));
+  } catch (err) {
+    useAlert(err?.response?.data?.error || err.message);
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+
+async function handleEdit(payload) {
+  if (!selectedTemplate.value) return;
+  isSubmitting.value = true;
+  try {
+    await store.dispatch('whatsappConnections/updateTemplate', {
+      connectionId: props.connectionId,
+      templateId: selectedTemplate.value.id,
+      params: payload,
+    });
+    showEditModal.value = false;
+    await store.dispatch(
+      'whatsappConnections/fetchTemplates',
+      props.connectionId
+    );
+    useAlert(t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.EDIT_SUCCESS'));
+  } catch (err) {
+    useAlert(err?.response?.data?.error || err.message);
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
 async function confirmDeleteTemplate() {
@@ -59,36 +123,12 @@ async function confirmDeleteTemplate() {
       connectionId: props.connectionId,
       templateName: selectedTemplateName.value,
     });
+    useAlert(t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.DELETE_SUCCESS'));
   } catch (err) {
     useAlert(err?.response?.data?.error || err.message);
   } finally {
     showDeleteModal.value = false;
     selectedTemplateName.value = '';
-  }
-}
-
-async function createTemplate() {
-  isCreating.value = true;
-  try {
-    await store.dispatch('whatsappConnections/createTemplate', {
-      connectionId: props.connectionId,
-      params: newTemplate.value,
-    });
-    showCreateModal.value = false;
-    newTemplate.value = {
-      name: '',
-      language: 'pt_BR',
-      category: 'MARKETING',
-      components: [],
-    };
-    await store.dispatch(
-      'whatsappConnections/fetchTemplates',
-      props.connectionId
-    );
-  } catch (err) {
-    useAlert(err?.response?.data?.error || err.message);
-  } finally {
-    isCreating.value = false;
   }
 }
 
@@ -105,6 +145,19 @@ function extractBodyText(template) {
   const body = template.components?.find(c => c.type === 'BODY');
   return body?.text || '';
 }
+
+function hasButtons(template) {
+  const btns = template.components?.find(c => c.type === 'BUTTONS');
+  return btns?.buttons?.length > 0;
+}
+
+function hasHeader(template) {
+  return !!template.components?.find(c => c.type === 'HEADER');
+}
+
+function componentCount(template) {
+  return template.components?.length || 0;
+}
 </script>
 
 <template>
@@ -115,7 +168,7 @@ function extractBodyText(template) {
       </h3>
       <div class="flex gap-2">
         <button
-          class="px-3 py-1.5 text-sm font-medium text-n-brand border border-n-brand rounded-lg hover:bg-n-brand hover:text-white"
+          class="px-3 py-1.5 text-sm font-medium text-n-brand border border-n-brand rounded-lg hover:bg-n-brand hover:text-white transition-colors"
           :disabled="isSyncing"
           @click="syncTemplates"
         >
@@ -127,7 +180,7 @@ function extractBodyText(template) {
         </button>
         <button
           class="px-3 py-1.5 text-sm font-medium text-white bg-n-brand rounded-lg hover:bg-n-brand-dark"
-          @click="showCreateModal = true"
+          @click="openCreateModal"
         >
           {{ t('WHATSAPP_CONNECTIONS.ACTIONS.CREATE_TEMPLATE') }}
         </button>
@@ -154,37 +207,78 @@ function extractBodyText(template) {
       <div
         v-for="tmpl in filteredTemplates"
         :key="tmpl.id || tmpl.name"
-        class="p-4 bg-white rounded-lg border border-n-weak"
+        class="bg-white rounded-lg border border-n-weak"
       >
-        <div class="flex items-start justify-between">
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="font-semibold text-n-slate-12">
-                {{ tmpl.name }}
-              </span>
-              <span
-                class="px-2 py-0.5 text-xs rounded-full"
-                :class="statusBadge(tmpl.status)"
-              >
-                {{ tmpl.status }}
-              </span>
-              <span class="text-xs text-n-slate-9">{{ tmpl.language }}</span>
-              <span
-                class="text-xs text-n-slate-9 bg-n-alpha-1 px-1.5 py-0.5 rounded"
-              >
-                {{ tmpl.category }}
-              </span>
+        <!-- Template Header Row -->
+        <div
+          class="p-4 cursor-pointer hover:bg-n-alpha-1 transition-colors"
+          @click="toggleExpand(tmpl.id || tmpl.name)"
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-semibold text-n-slate-12">
+                  {{ tmpl.name }}
+                </span>
+                <span
+                  class="px-2 py-0.5 text-xs rounded-full"
+                  :class="statusBadge(tmpl.status)"
+                >
+                  {{ tmpl.status }}
+                </span>
+                <span class="text-xs text-n-slate-9">{{ tmpl.language }}</span>
+                <span
+                  class="text-xs text-n-slate-9 bg-n-alpha-1 px-1.5 py-0.5 rounded"
+                >
+                  {{ tmpl.category }}
+                </span>
+                <span
+                  v-if="hasHeader(tmpl)"
+                  class="text-xs text-n-slate-9 bg-blue-50 px-1.5 py-0.5 rounded"
+                >
+                  Header
+                </span>
+                <span
+                  v-if="hasButtons(tmpl)"
+                  class="text-xs text-n-slate-9 bg-purple-50 px-1.5 py-0.5 rounded"
+                >
+                  Buttons
+                </span>
+              </div>
+              <p class="text-sm text-n-slate-11 line-clamp-2">
+                {{ extractBodyText(tmpl) }}
+              </p>
             </div>
-            <p class="text-sm text-n-slate-11 line-clamp-2">
-              {{ extractBodyText(tmpl) }}
-            </p>
+            <div class="flex items-center gap-2 ml-4">
+              <button
+                class="text-xs text-n-brand hover:text-n-brand-dark"
+                @click.stop="openPreviewModal(tmpl)"
+              >
+                {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.PREVIEW') }}
+              </button>
+              <button
+                v-if="tmpl.status === 'APPROVED'"
+                class="text-xs text-n-slate-9 hover:text-n-slate-12"
+                @click.stop="openEditModal(tmpl)"
+              >
+                {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.EDIT') }}
+              </button>
+              <button
+                class="text-xs text-red-600 hover:text-red-800"
+                @click.stop="openDeleteModal(tmpl.name)"
+              >
+                {{ t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE') }}
+              </button>
+            </div>
           </div>
-          <button
-            class="text-xs text-red-600 hover:text-red-800 ml-4"
-            @click="openDeleteModal(tmpl.name)"
-          >
-            {{ t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE') }}
-          </button>
+        </div>
+
+        <!-- Expanded: Inline Preview -->
+        <div
+          v-if="expandedTemplateId === (tmpl.id || tmpl.name)"
+          class="border-t border-n-weak p-4"
+        >
+          <TemplatePreview :template="tmpl" />
         </div>
       </div>
     </div>
@@ -195,74 +289,56 @@ function extractBodyText(template) {
       :show="showCreateModal"
       :on-close="() => (showCreateModal = false)"
     >
+      <div class="p-6 max-w-4xl">
+        <h3 class="text-lg font-semibold mb-4">
+          {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.CREATE_TITLE') }}
+        </h3>
+        <TemplateEditor
+          @save="handleCreate"
+          @cancel="showCreateModal = false"
+        />
+      </div>
+    </woot-modal>
+
+    <!-- Edit Modal -->
+    <woot-modal
+      v-if="showEditModal"
+      :show="showEditModal"
+      :on-close="() => (showEditModal = false)"
+    >
+      <div class="p-6 max-w-4xl">
+        <h3 class="text-lg font-semibold mb-4">
+          {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.EDIT_TITLE') }}
+          <span class="text-n-slate-9 font-normal">
+            — {{ selectedTemplate?.name }}
+          </span>
+        </h3>
+        <TemplateEditor
+          :initial-template="selectedTemplate"
+          :is-edit-mode="true"
+          @save="handleEdit"
+          @cancel="showEditModal = false"
+        />
+      </div>
+    </woot-modal>
+
+    <!-- Preview Modal -->
+    <woot-modal
+      v-if="showPreviewModal"
+      :show="showPreviewModal"
+      :on-close="() => (showPreviewModal = false)"
+    >
       <div class="p-6">
         <h3 class="text-lg font-semibold mb-4">
-          {{ t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.TITLE') }}
+          {{ selectedTemplate?.name }}
+          <span
+            class="px-2 py-0.5 text-xs rounded-full ml-2"
+            :class="statusBadge(selectedTemplate?.status)"
+          >
+            {{ selectedTemplate?.status }}
+          </span>
         </h3>
-
-        <div class="flex flex-col gap-3">
-          <label class="flex flex-col gap-1">
-            <span class="text-sm font-medium">
-              {{ t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.NAME') }}
-            </span>
-            <input
-              v-model="newTemplate.name"
-              type="text"
-              :placeholder="t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.NAME_PLACEHOLDER')"
-              class="px-3 py-2 border border-n-weak rounded-lg text-sm"
-            />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-sm font-medium">
-              {{ t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.LANGUAGE') }}
-            </span>
-            <input
-              v-model="newTemplate.language"
-              type="text"
-              placeholder="pt_BR"
-              class="px-3 py-2 border border-n-weak rounded-lg text-sm"
-            />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-sm font-medium">
-              {{ t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.CATEGORY') }}
-            </span>
-            <select
-              v-model="newTemplate.category"
-              class="px-3 py-2 border border-n-weak rounded-lg text-sm"
-            >
-              <option value="MARKETING">
-                {{ t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.CATEGORIES.MARKETING') }}
-              </option>
-              <option value="UTILITY">
-                {{ t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.CATEGORIES.UTILITY') }}
-              </option>
-              <option value="AUTHENTICATION">
-                {{ t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.CATEGORIES.AUTHENTICATION') }}
-              </option>
-            </select>
-          </label>
-
-          <div class="flex justify-end gap-2 mt-2">
-            <button
-              class="px-4 py-2 text-sm border border-n-weak rounded-lg"
-              @click="showCreateModal = false"
-            >
-              {{ t('WHATSAPP_CONNECTIONS.ACTIONS.CANCEL') }}
-            </button>
-            <button
-              class="px-4 py-2 text-sm font-medium text-white bg-n-brand rounded-lg disabled:opacity-50"
-              :disabled="isCreating || !newTemplate.name"
-              @click="createTemplate"
-            >
-              {{
-                isCreating
-                  ? t('WHATSAPP_CONNECTIONS.TEMPLATES.CREATE_MODAL.CREATING')
-                  : t('WHATSAPP_CONNECTIONS.ACTIONS.CREATE')
-              }}
-            </button>
-          </div>
-        </div>
+        <TemplatePreview :template="selectedTemplate" />
       </div>
     </woot-modal>
 

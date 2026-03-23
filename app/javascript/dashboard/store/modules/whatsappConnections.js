@@ -120,6 +120,11 @@ const actions = {
     return WhatsappConnectionsAPI.createTemplate(connectionId, params);
   },
 
+  async updateTemplate({ dispatch }, { connectionId, templateId, params }) {
+    await WhatsappConnectionsAPI.updateTemplate(connectionId, templateId, params);
+    await dispatch('fetchTemplates', connectionId);
+  },
+
   async deleteTemplate({ dispatch }, { connectionId, templateName }) {
     await WhatsappConnectionsAPI.deleteTemplate(connectionId, templateName);
     await dispatch('fetchTemplates', connectionId);

@@ -25,6 +25,10 @@ let countdownInterval = null;
 
 const QR_EXPIRY_SECONDS = 45;
 const POLL_INTERVAL_MS = 4000;
+const QR_REFRESH_COOLDOWN_MS = 3000;
+
+let lastRefreshTime = 0;
+const isRefreshing = ref(false);
 
 function startQRPolling(phoneNumberId) {
   stopQRPolling();
@@ -70,6 +74,12 @@ function stopQRPolling() {
 }
 
 async function refreshQRCode(phoneNumberId) {
+  const now = Date.now();
+  if (now - lastRefreshTime < QR_REFRESH_COOLDOWN_MS) return;
+  if (isRefreshing.value) return;
+
+  lastRefreshTime = now;
+  isRefreshing.value = true;
   try {
     const data = await store.dispatch('whatsappConnections/getQRCode', {
       connectionId: props.connectionId,
@@ -78,8 +88,15 @@ async function refreshQRCode(phoneNumberId) {
     qrCodeData.value = data.qrcode || data.pairingCode;
     qrCountdown.value = QR_EXPIRY_SECONDS;
   } catch (err) {
-    useAlert(err?.response?.data?.error || err.message);
-    closeQRModal();
+    const msg = err?.response?.data?.error || err.message;
+    if (msg?.includes('not found') || msg?.includes('not exist')) {
+      useAlert(t('WHATSAPP_CONNECTIONS.INSTANCES.QR_MODAL.INSTANCE_GONE'));
+      closeQRModal();
+    } else {
+      useAlert(msg);
+    }
+  } finally {
+    isRefreshing.value = false;
   }
 }
 
