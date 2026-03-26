@@ -14,20 +14,20 @@ namespace :billing_templates do
   TEXT
 
   TEMPLATES = {
-    cobranca_lembrete_5dias: {
-      name: 'cobranca_lembrete_5dias',
+    fatura_lembrete_5dias: {
+      name: 'fatura_lembrete_5dias',
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nTudo bem? Queremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence em 5 dias, no dia {{3}}.\n\nAproveita e já realiza o pagamento para não ter nenhuma preocupação!\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nInformamos que sua fatura da MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence em 5 dias, no dia {{3}}.\n\nRealize o pagamento antes do vencimento para evitar multas e juros.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
-    cobranca_emissao: {
-      name: 'cobranca_emissao',
+    fatura_emissao: {
+      name: 'fatura_emissao',
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence no dia {{3}}.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nSua fatura da MAIS SAÚDE 24 HORAS foi emitida. O valor de R$ {{2}} vence no dia {{3}}.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
     cobranca_vencimento_hoje: {
@@ -46,12 +46,12 @@ namespace :billing_templates do
       body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
-    cobranca_atraso_10dias: {
-      name: 'cobranca_atraso_10dias',
+    fatura_atraso_10dias: {
+      name: 'fatura_atraso_10dias',
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nO seu boleto do MAIS SAÚDE 24 HORAS está ultrapassando o prazo máximo permitido em contrato, no valor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nAviso importante: seu boleto da MAIS SAÚDE 24 HORAS no valor de R$ {{2}} está vencido desde {{3}} e ultrapassou o prazo máximo permitido em contrato.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
     cobranca_atraso_15dias: {
@@ -62,12 +62,12 @@ namespace :billing_templates do
       body: "Olá {{1}}!\nO seu boleto do MAIS SAÚDE 24 HORAS Ultrapassou o prazo permitido e será executado, você precisa realizar o pagamento hoje ainda e enviar uma cópia do comprovante com urgência para evitar protesto e cobranças extrajudiciais\n\nValor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
-    cobranca_atraso_21dias: {
-      name: 'cobranca_atraso_21dias',
+    fatura_atraso_21dias: {
+      name: 'fatura_atraso_21dias',
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente],
-      body: "Olá {{1}}\n\nComo não houve o pagamento, o seu título foi enviado no cartório juntamente com o SPC e Serasa e caso queira regularizar a situação você pode entrar em contato através deste WhatsApp para realizar a negociação do pagamento Para regularização do CPF e dos benefícios contratados\n\nBasta entrar em contato e solicitar negociação.\n\nTelefone: (31) 98248-8131"
+      body: "Olá {{1}}\n\nInformamos que, devido à inadimplência, seu título foi encaminhado ao cartório de protesto e aos órgãos de proteção ao crédito (SPC e Serasa). Para regularizar sua situação e evitar restrições no CPF, entre em contato pelo WhatsApp ou telefone abaixo.\n\nTelefone: (31) 98248-8131"
     }
   }.freeze
 
