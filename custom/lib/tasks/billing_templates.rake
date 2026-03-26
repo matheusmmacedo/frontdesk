@@ -46,20 +46,20 @@ namespace :billing_templates do
       body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
-    fatura_atraso_10dias: {
-      name: 'fatura_atraso_10dias',
+    boleto_atraso_10dias: {
+      name: 'boleto_atraso_10dias',
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
       body: "Olá {{1}}!\nAviso importante: seu boleto da MAIS SAÚDE 24 HORAS no valor de R$ {{2}} está vencido desde {{3}} e ultrapassou o prazo máximo permitido em contrato.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
-    cobranca_atraso_15dias: {
-      name: 'cobranca_atraso_15dias',
+    fatura_atraso_15dias: {
+      name: 'fatura_atraso_15dias',
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nO seu boleto do MAIS SAÚDE 24 HORAS Ultrapassou o prazo permitido e será executado, você precisa realizar o pagamento hoje ainda e enviar uma cópia do comprovante com urgência para evitar protesto e cobranças extrajudiciais\n\nValor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nO seu boleto da MAIS SAÚDE 24 HORAS ultrapassou o prazo permitido e será executado. Realize o pagamento hoje e envie uma cópia do comprovante com urgência para evitar protesto e cobranças extrajudiciais.\n\nValor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
     fatura_atraso_21dias: {
