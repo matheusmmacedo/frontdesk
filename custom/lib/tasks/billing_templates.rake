@@ -46,12 +46,12 @@ namespace :billing_templates do
       body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
-    boleto_atraso_10dias: {
-      name: 'boleto_atraso_10dias',
+    fatura_vencida_10dias: {
+      name: 'fatura_vencida_10dias',
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nAviso importante: seu boleto da MAIS SAÚDE 24 HORAS no valor de R$ {{2}} está vencido desde {{3}} e ultrapassou o prazo máximo permitido em contrato.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nSeu boleto da MAIS SAÚDE 24 HORAS no valor de R$ {{2}} venceu no dia {{3}} e ainda não identificamos o pagamento.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
     },
 
     fatura_atraso_15dias: {
