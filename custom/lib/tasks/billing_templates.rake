@@ -13,13 +13,16 @@ namespace :billing_templates do
     Email: adm@atendmedbh.com.br
   TEXT
 
+  PIX_BUTTON_URL = 'https://app.klaos.ai/pay/{{1}}'
+
   TEMPLATES = {
     fatura_lembrete_5dias: {
       name: 'fatura_lembrete_5dias',
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nInformamos que sua fatura da MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence em 5 dias, no dia {{3}}.\n\nRealize o pagamento antes do vencimento para evitar multas e juros.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nInformamos que sua fatura da MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence em 5 dias, no dia {{3}}.\n\nRealize o pagamento antes do vencimento para evitar multas e juros.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
     },
 
     fatura_emissao: {
@@ -27,7 +30,8 @@ namespace :billing_templates do
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nSua fatura da MAIS SAÚDE 24 HORAS foi emitida. O valor de R$ {{2}} vence no dia {{3}}.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nSua fatura da MAIS SAÚDE 24 HORAS foi emitida. O valor de R$ {{2}} vence no dia {{3}}.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
     },
 
     cobranca_vencimento_hoje: {
@@ -35,7 +39,8 @@ namespace :billing_templates do
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence hoje {{3}}.\n\nEvite multas e juros, pague sua fatura em dia.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence hoje {{3}}.\n\nEvite multas e juros, pague sua fatura em dia.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
     },
 
     cobranca_atraso_5dias: {
@@ -43,7 +48,8 @@ namespace :billing_templates do
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
     },
 
     fatura_vencida_10dias: {
@@ -51,7 +57,8 @@ namespace :billing_templates do
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nSeu boleto da MAIS SAÚDE 24 HORAS no valor de R$ {{2}} venceu no dia {{3}} e ainda não identificamos o pagamento.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nSeu boleto da MAIS SAÚDE 24 HORAS no valor de R$ {{2}} venceu no dia {{3}} e ainda não identificamos o pagamento.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
     },
 
     fatura_atraso_15dias: {
@@ -59,7 +66,8 @@ namespace :billing_templates do
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nO seu boleto da MAIS SAÚDE 24 HORAS ultrapassou o prazo permitido e será executado. Realize o pagamento hoje e envie uma cópia do comprovante com urgência para evitar protesto e cobranças extrajudiciais.\n\nValor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}"
+      body: "Olá {{1}}!\nO seu boleto da MAIS SAÚDE 24 HORAS ultrapassou o prazo permitido e será executado. Realize o pagamento hoje e envie uma cópia do comprovante com urgência para evitar protesto e cobranças extrajudiciais.\n\nValor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
     },
 
     fatura_atraso_21dias: {
@@ -67,7 +75,8 @@ namespace :billing_templates do
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente],
-      body: "Olá {{1}}\n\nInformamos que, devido à inadimplência, seu título foi encaminhado ao cartório de protesto e aos órgãos de proteção ao crédito (SPC e Serasa). Para regularizar sua situação e evitar restrições no CPF, entre em contato pelo WhatsApp ou telefone abaixo.\n\nTelefone: (31) 98248-8131"
+      body: "Olá {{1}}\n\nInformamos que, devido à inadimplência, seu título foi encaminhado ao cartório de protesto e aos órgãos de proteção ao crédito (SPC e Serasa). Para regularizar sua situação e evitar restrições no CPF, entre em contato conosco.",
+      buttons: [{ type: 'URL', text: 'Falar no WhatsApp', url: 'https://wa.me/5531982488131' }]
     }
   }.freeze
 
@@ -95,6 +104,27 @@ namespace :billing_templates do
     }
   end
 
+  def self.buttons_component(tpl)
+    return nil if tpl[:buttons].blank?
+
+    {
+      type: 'BUTTONS',
+      buttons: tpl[:buttons].map do |btn|
+        b = { type: btn[:type], text: btn[:text] }
+        b[:url] = btn[:url] if btn[:url]
+        b[:example] = [btn[:url].gsub('{{1}}', 'abc123')] if btn[:url]&.include?('{{1}}')
+        b
+      end
+    }
+  end
+
+  def self.template_components(tpl)
+    components = [body_component(tpl)]
+    btn = buttons_component(tpl)
+    components << btn if btn
+    components
+  end
+
   desc 'Sync all billing templates to Meta (creates missing, updates existing)'
   task sync: :environment do
     connection = find_connection
@@ -110,7 +140,7 @@ namespace :billing_templates do
       if meta_tpl
         template_id = meta_tpl['id']
         puts "[UPDATE] #{tpl[:name]} (id: #{template_id})..."
-        crud.update_template(template_id, { components: [body_component(tpl)] })
+        crud.update_template(template_id, { components: template_components(tpl) })
         puts "  -> OK"
       else
         puts "[CREATE] #{tpl[:name]}..."
@@ -118,7 +148,7 @@ namespace :billing_templates do
           name: tpl[:name],
           language: tpl[:language],
           category: tpl[:category],
-          components: [body_component(tpl)]
+          components: template_components(tpl)
         }
         result = crud.create_template(payload)
         puts "  -> OK (id: #{result['id']})"
@@ -139,6 +169,10 @@ namespace :billing_templates do
       puts "  Variables: #{tpl[:variables].map.with_index(1) { |v, i| '{{' + i.to_s + '}} = ' + v }.join(', ')}"
       puts "  Body:"
       tpl[:body].lines.each { |l| puts "    #{l}" }
+      if tpl[:buttons].present?
+        puts "  Buttons:"
+        tpl[:buttons].each { |b| puts "    [#{b[:type]}] #{b[:text]} → #{b[:url]}" }
+      end
       puts
     end
   end
