@@ -318,6 +318,13 @@ Rails.application.routes.draw do
             end
           end
 
+          # CRM Bridge (KLaOS custom module — allows KLaOS to push deal data into conversations)
+          namespace :crm_bridge, controller: 'crm_bridge' do
+            put 'conversations/:conversation_id/deal', action: :update_deal
+            delete 'conversations/:conversation_id/deal', action: :remove_deal
+            post 'contacts/:contact_id/deal', action: :create_deal_for_contact
+          end
+
           resources :webhooks, only: [:index, :create, :update, :destroy]
           namespace :integrations do
             resources :apps, only: [:index, :show]
