@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KLaOS Widget - Teste</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .container { text-align: center; padding: 40px; }
+    h1 { font-size: 24px; color: #1a1a2e; margin-bottom: 8px; }
+    p { color: #666; margin-bottom: 24px; }
+    .badge { display: inline-block; padding: 6px 16px; background: #e8f5e9; color: #2e7d32; border-radius: 20px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>KLaOS Frontdesk - Widget Test</h1>
+    <p>O widget deve aparecer no canto inferior direito.</p>
+    <span class="badge">Ambiente DEV</span>
+  </div>
+
+  <script>
+    (function(d,t) {
+      var BASE_URL = window.location.origin;
+      var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=BASE_URL+"/packs/js/sdk.js";
+      g.async=true;
+      s.parentNode.insertBefore(g,s);
+      g.onload=function(){
+        // Read token from URL param or use default (GMB dev)
+        var params = new URLSearchParams(window.location.search);
+        var token = params.get('token') || 'gcq4cgzpYdUiNTttkAb2mLL8';
+        window.chatwootSDK.run({ websiteToken: token, baseUrl: BASE_URL });
+      }
+    })(document,"script");
+  </script>
+</body>
+</html>
