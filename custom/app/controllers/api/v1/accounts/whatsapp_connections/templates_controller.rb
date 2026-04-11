@@ -90,22 +90,21 @@ class Api::V1::Accounts::WhatsappConnections::TemplatesController < Api::V1::Acc
   end
 
   def validate_meta_params!(is_update: false)
-    raw = if is_update
-            params.permit(components: build_components_permit)
-          else
-            params.permit(:name, :language, :category, :allow_category_change, components: build_components_permit)
-          end
-    validator = WhatsappConnections::Meta::TemplateValidatorService.new(raw, is_update: is_update)
-    validator.validate!
-    raw
-  end
+    # Use deep_transform to get the full nested structure (components have deeply nested examples)
+    # Validation happens in TemplateValidatorService, not via strong params
+    raw_components = params[:components]
+    base = {}
+    unless is_update
+      base[:name] = params[:name]
+      base[:language] = params[:language]
+      base[:category] = params[:category]
+      base[:allow_category_change] = params[:allow_category_change]
+    end
+    base[:components] = raw_components.is_a?(Array) ? raw_components.map { |c| c.permit!.to_h } : raw_components&.permit!&.to_h
 
-  def build_components_permit
-    [
-      :type, :format, :text, :url, :phone_number,
-      { buttons: [:type, :text, :url, :phone_number, :example, { example: [] }] },
-      { example: [:header_text, :header_url, { header_handle: [], header_text: [], body_text: [[]] }] }
-    ]
+    validator = WhatsappConnections::Meta::TemplateValidatorService.new(base, is_update: is_update)
+    validator.validate!
+    ActionController::Parameters.new(base).permit!
   end
 
   # ========== EVOLUTION (LOCAL) ==========
