@@ -13,9 +13,15 @@ module WhatsappConnections
 
       def link
         validate_link!
-        channel, inbox = create_channel_and_inbox
-        configure_evolution_chatwoot_integration(channel, inbox)
-        @phone_number_record.mark_linked!(inbox: inbox, channel: channel)
+        channel = nil
+        inbox = nil
+
+        ActiveRecord::Base.transaction do
+          channel, inbox = create_channel_and_inbox
+          configure_evolution_chatwoot_integration(channel, inbox)
+          @phone_number_record.mark_linked!(inbox: inbox, channel: channel)
+        end
+
         { channel: channel, inbox: inbox }
       end
 
@@ -23,8 +29,10 @@ module WhatsappConnections
         raise 'Phone number is not linked' unless @phone_number_record.linked?
 
         channel = @phone_number_record.channel_whatsapp
+        inbox = @phone_number_record.inbox
         @phone_number_record.mark_available!
-        channel&.destroy!
+        inbox&.destroy!
+        channel&.destroy! unless channel&.destroyed?
         true
       end
 
@@ -86,8 +94,8 @@ module WhatsappConnections
           conversation_pending: false,
           inbox_id: inbox.id.to_s
         })
-      rescue StandardError => e
-        Rails.logger.error("[WHATSAPP_POOL] Evolution Chatwoot integration setup failed: #{e.message}")
+        # NOTE: No rescue here — if Evolution integration fails, the transaction
+        # rolls back so we don't end up with a channel/inbox that can't receive messages.
       end
 
       def find_or_create_api_token
