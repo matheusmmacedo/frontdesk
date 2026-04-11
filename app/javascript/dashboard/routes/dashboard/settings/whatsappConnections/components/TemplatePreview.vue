@@ -33,8 +33,9 @@ function formatWhatsAppText(text) {
     .replace(/\n/g, '<br>');
 
   // Replace {{N}} with sample values or highlighted placeholders
+  // sampleValues uses numeric keys (1, 2, 3) from bodyExamples
   formatted = formatted.replace(/\{\{(\d+)\}\}/g, (match, num) => {
-    const val = props.sampleValues[`body_${num}`] || props.sampleValues[num];
+    const val = props.sampleValues[num] || props.sampleValues[`body_${num}`] || props.sampleValues[String(num)];
     if (val) return `<span class="text-n-brand font-medium">${val}</span>`;
     return `<span class="bg-yellow-100 text-yellow-800 px-1 rounded text-xs font-mono">${match}</span>`;
   });
