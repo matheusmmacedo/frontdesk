@@ -63,8 +63,14 @@ module WhatsappConnections
         return if response.success?
 
         error_body = response.parsed_response
-        error_msg = error_body.dig('error', 'message') || response.body
-        raise "#{error_prefix}: #{error_msg}"
+        # Meta returns detailed user-facing messages in error_user_msg/error_user_title
+        user_msg = error_body&.dig('error', 'error_user_msg')
+        user_title = error_body&.dig('error', 'error_user_title')
+        generic_msg = error_body&.dig('error', 'message')
+        error_code = error_body&.dig('error', 'code')
+
+        detail = user_msg || user_title || generic_msg || response.body
+        raise "#{detail} (#{error_code || response.code})"
       end
 
       def sync_after_mutation
