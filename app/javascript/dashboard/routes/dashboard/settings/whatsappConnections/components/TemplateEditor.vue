@@ -146,17 +146,34 @@ function insertVariable(field) {
   }
 }
 
-const isValid = computed(() => {
-  if (!props.isEditMode && !name.value.trim()) return false;
-  if (!bodyText.value.trim()) return false;
-  if (!props.isEditMode && !/^[a-z0-9_]+$/.test(name.value)) return false;
-  for (const btn of buttons.value) {
-    if (!btn.text.trim()) return false;
-    if (btn.type === 'URL' && !btn.url?.trim()) return false;
-    if (btn.type === 'PHONE_NUMBER' && !btn.phone_number?.trim()) return false;
+const validationErrors = computed(() => {
+  const errors = [];
+  if (!props.isEditMode) {
+    if (!name.value.trim()) errors.push('Nome é obrigatório');
+    else if (!/^[a-z0-9_]+$/.test(name.value)) errors.push('Nome deve conter apenas letras minúsculas, números e _');
   }
-  return true;
+  if (!bodyText.value.trim()) errors.push('Corpo é obrigatório');
+  if (bodyText.value.length > 1024) errors.push(`Corpo excede 1024 caracteres (${bodyText.value.length})`);
+  if (footerText.value.length > 60) errors.push(`Rodapé excede 60 caracteres (${footerText.value.length})`);
+  for (const [idx, btn] of buttons.value.entries()) {
+    if (!btn.text.trim()) errors.push(`Botão ${idx + 1}: texto obrigatório`);
+    if (btn.text.length > 25) errors.push(`Botão ${idx + 1}: texto excede 25 caracteres`);
+    if (btn.type === 'URL') {
+      if (!btn.url?.trim()) errors.push(`Botão ${idx + 1}: URL obrigatória`);
+      else if (!btn.url.startsWith('https://')) errors.push(`Botão ${idx + 1}: URL deve começar com https://`);
+    }
+    if (btn.type === 'PHONE_NUMBER') {
+      if (!btn.phone_number?.trim()) errors.push(`Botão ${idx + 1}: telefone obrigatório`);
+      else if (!btn.phone_number.startsWith('+')) errors.push(`Botão ${idx + 1}: telefone deve começar com +`);
+    }
+  }
+  if (headerType.value === 'TEXT' && headerText.value.length > 60) {
+    errors.push(`Header excede 60 caracteres (${headerText.value.length})`);
+  }
+  return errors;
 });
+
+const isValid = computed(() => validationErrors.value.length === 0);
 
 function save() {
   if (!isValid.value) return;
@@ -173,11 +190,39 @@ function save() {
 
 const LANGUAGES = [
   { code: 'pt_BR', label: 'Português (BR)' },
+  { code: 'pt_PT', label: 'Português (PT)' },
   { code: 'en_US', label: 'English (US)' },
+  { code: 'en_GB', label: 'English (UK)' },
   { code: 'es', label: 'Español' },
+  { code: 'es_AR', label: 'Español (AR)' },
+  { code: 'es_MX', label: 'Español (MX)' },
   { code: 'fr', label: 'Français' },
   { code: 'de', label: 'Deutsch' },
   { code: 'it', label: 'Italiano' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ko', label: '한국어' },
+  { code: 'zh_CN', label: '中文 (简体)' },
+  { code: 'zh_TW', label: '中文 (繁體)' },
+  { code: 'ar', label: 'العربية' },
+  { code: 'hi', label: 'हिन्दी' },
+  { code: 'ru', label: 'Русский' },
+  { code: 'tr', label: 'Türkçe' },
+  { code: 'nl', label: 'Nederlands' },
+  { code: 'pl', label: 'Polski' },
+  { code: 'sv', label: 'Svenska' },
+  { code: 'da', label: 'Dansk' },
+  { code: 'fi', label: 'Suomi' },
+  { code: 'nb', label: 'Norsk' },
+  { code: 'he', label: 'עברית' },
+  { code: 'id', label: 'Bahasa Indonesia' },
+  { code: 'ms', label: 'Bahasa Melayu' },
+  { code: 'th', label: 'ไทย' },
+  { code: 'vi', label: 'Tiếng Việt' },
+  { code: 'uk', label: 'Українська' },
+  { code: 'ro', label: 'Română' },
+  { code: 'cs', label: 'Čeština' },
+  { code: 'hu', label: 'Magyar' },
+  { code: 'el', label: 'Ελληνικά' },
 ];
 </script>
 
@@ -329,9 +374,12 @@ const LANGUAGES = [
 
       <!-- Footer -->
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-n-slate-11">
-          {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.FOOTER') }}
-        </span>
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-n-slate-11">
+            {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.FOOTER') }}
+          </span>
+          <span class="text-xs text-n-slate-9">{{ footerText.length }}/60</span>
+        </div>
         <input
           v-model="footerText"
           type="text"
@@ -402,6 +450,13 @@ const LANGUAGES = [
             ✕
           </button>
         </div>
+      </div>
+
+      <!-- Validation Errors -->
+      <div v-if="validationErrors.length > 0" class="flex flex-col gap-1 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <span v-for="err in validationErrors" :key="err" class="text-xs text-red-600">
+          {{ err }}
+        </span>
       </div>
 
       <!-- Actions -->
