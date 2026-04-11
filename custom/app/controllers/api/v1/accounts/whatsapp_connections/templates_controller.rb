@@ -39,6 +39,23 @@ class Api::V1::Accounts::WhatsappConnections::TemplatesController < Api::V1::Acc
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  # POST /templates/upload_media — Upload media for template header (IMAGE/VIDEO/DOCUMENT)
+  def upload_media
+    file = params[:file]
+    media_type = params[:media_type] # 'image', 'video', 'document'
+
+    render json: { error: 'File is required' }, status: :unprocessable_entity and return unless file
+    render json: { error: 'media_type is required' }, status: :unprocessable_entity and return unless media_type
+
+    service = WhatsappConnections::Meta::MediaUploadService.new(@connection)
+    result = service.upload(file, media_type)
+    render json: result
+  rescue WhatsappConnections::Meta::MediaUploadService::UploadError => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
   private
 
   def fetch_connection

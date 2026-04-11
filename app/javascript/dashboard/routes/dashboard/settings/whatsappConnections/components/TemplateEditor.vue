@@ -1,15 +1,18 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
 import TemplatePreview from './TemplatePreview.vue';
 
 const props = defineProps({
   initialTemplate: { type: Object, default: null },
   isEditMode: { type: Boolean, default: false },
+  connectionId: { type: [Number, String], default: null },
 });
 
 const emit = defineEmits(['save', 'cancel']);
 const { t } = useI18n();
+const store = useStore();
 
 const name = ref(props.initialTemplate?.name || '');
 const language = ref(props.initialTemplate?.language || 'pt_BR');
@@ -26,6 +29,61 @@ const buttons = ref([]);
 // Variable examples
 const headerExamples = ref({});
 const bodyExamples = ref({});
+
+// Media header state
+const headerMediaFile = ref(null);
+const headerMediaHandle = ref('');
+const headerMediaPreviewUrl = ref('');
+const isUploadingMedia = ref(false);
+const mediaUploadError = ref('');
+
+const MEDIA_ACCEPT = {
+  IMAGE: 'image/jpeg,image/png',
+  VIDEO: 'video/mp4,video/3gpp',
+  DOCUMENT: 'application/pdf',
+};
+
+const MEDIA_TYPE_MAP = { IMAGE: 'image', VIDEO: 'video', DOCUMENT: 'document' };
+
+async function handleMediaUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file || !props.connectionId) return;
+
+  headerMediaFile.value = file;
+  mediaUploadError.value = '';
+
+  // Show local preview for images
+  if (headerType.value === 'IMAGE' && file.type.startsWith('image/')) {
+    headerMediaPreviewUrl.value = URL.createObjectURL(file);
+  } else {
+    headerMediaPreviewUrl.value = '';
+  }
+
+  // Upload to Meta
+  isUploadingMedia.value = true;
+  try {
+    const mediaType = MEDIA_TYPE_MAP[headerType.value];
+    const result = await store.dispatch('whatsappConnections/uploadTemplateMedia', {
+      connectionId: props.connectionId,
+      file,
+      mediaType,
+    });
+    headerMediaHandle.value = result.handle;
+  } catch (err) {
+    mediaUploadError.value = err?.response?.data?.error || err.message || 'Upload falhou';
+    headerMediaFile.value = null;
+    headerMediaHandle.value = '';
+  } finally {
+    isUploadingMedia.value = false;
+  }
+}
+
+function clearMediaUpload() {
+  headerMediaFile.value = null;
+  headerMediaHandle.value = '';
+  headerMediaPreviewUrl.value = '';
+  mediaUploadError.value = '';
+}
 
 // Populate from initialTemplate if editing
 if (props.initialTemplate?.components) {
@@ -68,6 +126,11 @@ const components = computed(() => {
           examples.push(headerExamples.value[i] || `exemplo_${i}`);
         }
         hdr.example = { header_text: examples };
+      }
+    } else if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(headerType.value)) {
+      // Media header: use handle from upload or URL
+      if (headerMediaHandle.value) {
+        hdr.example = { header_handle: [headerMediaHandle.value] };
       }
     }
     comps.push(hdr);
@@ -169,6 +232,12 @@ const validationErrors = computed(() => {
   }
   if (headerType.value === 'TEXT' && headerText.value.length > 60) {
     errors.push(`Header excede 60 caracteres (${headerText.value.length})`);
+  }
+  if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(headerType.value) && !headerMediaHandle.value && !props.isEditMode) {
+    errors.push('Upload de media obrigatorio para header ' + headerType.value);
+  }
+  if (isUploadingMedia.value) {
+    errors.push('Aguardando upload de media...');
   }
   return errors;
 });
@@ -295,6 +364,43 @@ const LANGUAGES = [
             <option value="DOCUMENT">{{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.HEADER_DOCUMENT') }}</option>
           </select>
         </div>
+        <!-- Media header upload (IMAGE/VIDEO/DOCUMENT) -->
+        <div v-if="['IMAGE', 'VIDEO', 'DOCUMENT'].includes(headerType)" class="flex flex-col gap-2">
+          <div v-if="!headerMediaFile" class="flex flex-col gap-1">
+            <label
+              class="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-n-weak rounded-lg cursor-pointer hover:bg-n-alpha-1 transition-colors"
+            >
+              <span class="text-sm text-n-slate-9">
+                {{ headerType === 'IMAGE' ? 'Selecionar imagem (JPG, PNG, max 5MB)' :
+                   headerType === 'VIDEO' ? 'Selecionar video (MP4, max 16MB)' :
+                   'Selecionar documento (PDF, max 100MB)' }}
+              </span>
+              <input
+                type="file"
+                :accept="MEDIA_ACCEPT[headerType]"
+                class="hidden"
+                @change="handleMediaUpload"
+              />
+            </label>
+          </div>
+          <div v-else class="flex items-center gap-2 p-2 bg-n-alpha-1 rounded-lg">
+            <div v-if="headerMediaPreviewUrl && headerType === 'IMAGE'" class="w-16 h-16 rounded overflow-hidden">
+              <img :src="headerMediaPreviewUrl" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm truncate">{{ headerMediaFile.name }}</p>
+              <p class="text-xs text-n-slate-9">{{ (headerMediaFile.size / 1024).toFixed(0) }}KB</p>
+              <p v-if="isUploadingMedia" class="text-xs text-n-brand">Enviando para Meta...</p>
+              <p v-else-if="headerMediaHandle" class="text-xs text-green-600">Upload concluido</p>
+              <p v-if="mediaUploadError" class="text-xs text-red-500">{{ mediaUploadError }}</p>
+            </div>
+            <button class="text-red-500 hover:text-red-700 text-sm shrink-0" @click="clearMediaUpload">
+              Remover
+            </button>
+          </div>
+        </div>
+
+        <!-- Text header -->
         <div v-if="headerType === 'TEXT'" class="flex flex-col gap-1">
           <div class="flex gap-2">
             <input
@@ -486,7 +592,7 @@ const LANGUAGES = [
         <span class="text-sm font-medium text-n-slate-11 mb-2 block">
           {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.PREVIEW') }}
         </span>
-        <TemplatePreview :template="previewTemplate" :sample-values="sampleValues" />
+        <TemplatePreview :template="previewTemplate" :sample-values="sampleValues" :media-preview-url="headerMediaPreviewUrl" />
       </div>
     </div>
   </div>
