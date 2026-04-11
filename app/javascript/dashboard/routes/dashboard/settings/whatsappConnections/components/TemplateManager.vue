@@ -294,6 +294,7 @@ function componentCount(template) {
           {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.CREATE_TITLE') }}
         </h3>
         <TemplateEditor
+          :connection-id="props.connectionId"
           @save="handleCreate"
           @cancel="showCreateModal = false"
         />
@@ -316,6 +317,7 @@ function componentCount(template) {
         <TemplateEditor
           :initial-template="selectedTemplate"
           :is-edit-mode="true"
+          :connection-id="props.connectionId"
           @save="handleEdit"
           @cancel="showEditModal = false"
         />

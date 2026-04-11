@@ -4,6 +4,7 @@ import { computed } from 'vue';
 const props = defineProps({
   template: { type: Object, default: () => ({}) },
   sampleValues: { type: Object, default: () => ({}) },
+  mediaPreviewUrl: { type: String, default: '' },
 });
 
 const header = computed(() =>
@@ -76,9 +77,10 @@ const footerText = computed(() => footer.value?.text || '');
           />
           <div
             v-else-if="header.format === 'IMAGE'"
-            class="bg-n-alpha-2 rounded h-32 flex items-center justify-center"
+            class="bg-n-alpha-2 rounded h-32 flex items-center justify-center overflow-hidden"
           >
-            <span class="text-n-slate-9 text-xs">📷 Imagem</span>
+            <img v-if="mediaPreviewUrl" :src="mediaPreviewUrl" class="w-full h-full object-cover" />
+            <span v-else class="text-n-slate-9 text-xs">Imagem</span>
           </div>
           <div
             v-else-if="header.format === 'VIDEO'"

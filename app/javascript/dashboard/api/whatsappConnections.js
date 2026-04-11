@@ -79,6 +79,17 @@ class WhatsappConnectionsAPI extends ApiClient {
     return axios.post(`${this.url}/${connectionId}/sync_templates`);
   }
 
+  uploadTemplateMedia(connectionId, file, mediaType) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('media_type', mediaType);
+    return axios.post(
+      `${this.url}/${connectionId}/templates/upload_media`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+  }
+
   // --- Evolution Instances ---
   createInstance(connectionId, displayName) {
     return axios.post(`${this.url}/${connectionId}/instances`, {

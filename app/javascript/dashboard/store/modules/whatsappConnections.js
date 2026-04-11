@@ -143,6 +143,11 @@ const actions = {
     }
   },
 
+  async uploadTemplateMedia(_, { connectionId, file, mediaType }) {
+    const { data } = await WhatsappConnectionsAPI.uploadTemplateMedia(connectionId, file, mediaType);
+    return data;
+  },
+
   // Evolution-specific actions
   async createInstance(_, { connectionId, displayName }) {
     return WhatsappConnectionsAPI.createInstance(connectionId, displayName);

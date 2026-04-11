@@ -308,7 +308,11 @@ Rails.application.routes.draw do
                 post :unlink
               end
             end
-            resources :templates, only: [:index, :create, :update, :destroy], controller: 'whatsapp_connections/templates'
+            resources :templates, only: [:index, :create, :update, :destroy], controller: 'whatsapp_connections/templates' do
+              collection do
+                post :upload_media
+              end
+            end
             resources :instances, only: [:create, :destroy], controller: 'whatsapp_connections/evolution' do
               member do
                 get :qrcode
