@@ -4,12 +4,17 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { useAlert } from 'dashboard/composables';
 import TemplateEditor from './TemplateEditor.vue';
+import EvolutionTemplateEditor from './EvolutionTemplateEditor.vue';
 import TemplatePreview from './TemplatePreview.vue';
 
 const props = defineProps({
   connectionId: { type: Number, required: true },
   templates: { type: Array, default: () => [] },
+  provider: { type: String, default: 'meta_cloud' },
 });
+
+const isEvolution = computed(() => props.provider === 'evolution');
+const isMeta = computed(() => props.provider === 'meta_cloud');
 
 const { t } = useI18n();
 const store = useStore();
@@ -142,21 +147,34 @@ function statusBadge(status) {
 }
 
 function extractBodyText(template) {
+  // Evolution: body is a top-level field; Meta: nested in components
+  if (template.provider === 'evolution' || template.body) return template.body || '';
   const body = template.components?.find(c => c.type === 'BODY');
   return body?.text || '';
 }
 
 function hasButtons(template) {
+  if (template.provider === 'evolution') return template.buttons?.length > 0;
   const btns = template.components?.find(c => c.type === 'BUTTONS');
   return btns?.buttons?.length > 0;
 }
 
 function hasHeader(template) {
+  if (template.provider === 'evolution') return !!template.header;
   return !!template.components?.find(c => c.type === 'HEADER');
+}
+
+function hasMedia(template) {
+  return template.provider === 'evolution' && !!template.media_url;
 }
 
 function componentCount(template) {
   return template.components?.length || 0;
+}
+
+function templateDeleteId(template) {
+  // Evolution uses id (UUID), Meta uses name
+  return template.provider === 'evolution' ? template.id : template.name;
 }
 </script>
 
@@ -168,6 +186,7 @@ function componentCount(template) {
       </h3>
       <div class="flex gap-2">
         <button
+          v-if="isMeta"
           class="px-3 py-1.5 text-sm font-medium text-n-brand border border-n-brand rounded-lg hover:bg-n-brand hover:text-white transition-colors"
           :disabled="isSyncing"
           @click="syncTemplates"
@@ -244,6 +263,18 @@ function componentCount(template) {
                 >
                   Buttons
                 </span>
+                <span
+                  v-if="hasMedia(tmpl)"
+                  class="text-xs text-n-slate-9 bg-green-50 px-1.5 py-0.5 rounded"
+                >
+                  Media
+                </span>
+                <span
+                  v-if="isEvolution"
+                  class="text-xs text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded"
+                >
+                  Local
+                </span>
               </div>
               <p class="text-sm text-n-slate-11 line-clamp-2">
                 {{ extractBodyText(tmpl) }}
@@ -257,7 +288,7 @@ function componentCount(template) {
                 {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.PREVIEW') }}
               </button>
               <button
-                v-if="tmpl.status === 'APPROVED'"
+                v-if="tmpl.status === 'APPROVED' || isEvolution"
                 class="text-xs text-n-slate-9 hover:text-n-slate-12"
                 @click.stop="openEditModal(tmpl)"
               >
@@ -265,7 +296,7 @@ function componentCount(template) {
               </button>
               <button
                 class="text-xs text-red-600 hover:text-red-800"
-                @click.stop="openDeleteModal(tmpl.name)"
+                @click.stop="openDeleteModal(templateDeleteId(tmpl))"
               >
                 {{ t('WHATSAPP_CONNECTIONS.ACTIONS.DELETE') }}
               </button>
@@ -291,9 +322,15 @@ function componentCount(template) {
     >
       <div class="p-6 max-w-4xl">
         <h3 class="text-lg font-semibold mb-4">
-          {{ t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.CREATE_TITLE') }}
+          {{ isEvolution ? 'Criar Mensagem Salva' : t('WHATSAPP_CONNECTIONS.TEMPLATE_EDITOR.CREATE_TITLE') }}
         </h3>
+        <EvolutionTemplateEditor
+          v-if="isEvolution"
+          @save="handleCreate"
+          @cancel="showCreateModal = false"
+        />
         <TemplateEditor
+          v-else
           :connection-id="props.connectionId"
           @save="handleCreate"
           @cancel="showCreateModal = false"
@@ -314,7 +351,15 @@ function componentCount(template) {
             — {{ selectedTemplate?.name }}
           </span>
         </h3>
+        <EvolutionTemplateEditor
+          v-if="isEvolution"
+          :initial-template="selectedTemplate"
+          :is-edit-mode="true"
+          @save="handleEdit"
+          @cancel="showEditModal = false"
+        />
         <TemplateEditor
+          v-else
           :initial-template="selectedTemplate"
           :is-edit-mode="true"
           :connection-id="props.connectionId"

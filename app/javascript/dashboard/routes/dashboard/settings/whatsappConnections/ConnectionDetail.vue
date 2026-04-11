@@ -19,12 +19,11 @@ onMounted(async () => {
     'whatsappConnections/fetchPhoneNumbers',
     connectionId.value
   );
-  if (connection.value?.provider === 'meta_cloud') {
-    await store.dispatch(
-      'whatsappConnections/fetchTemplates',
-      connectionId.value
-    );
-  }
+  // Fetch templates for both Meta and Evolution
+  await store.dispatch(
+    'whatsappConnections/fetchTemplates',
+    connectionId.value
+  );
 });
 
 const connection = computed(() =>
@@ -87,7 +86,6 @@ async function syncNumbers() {
         ({{ phoneNumbers.length }})
       </button>
       <button
-        v-if="isMetaCloud"
         class="px-4 py-2 text-sm font-medium border-b-2 transition-colors"
         :class="
           activeSection === 'templates'
@@ -96,7 +94,7 @@ async function syncNumbers() {
         "
         @click="activeSection = 'templates'"
       >
-        {{ t('WHATSAPP_CONNECTIONS.TEMPLATES.TITLE') }}
+        {{ isEvolution ? 'Mensagens Salvas' : t('WHATSAPP_CONNECTIONS.TEMPLATES.TITLE') }}
         ({{ templates.length }})
       </button>
       <button
@@ -122,11 +120,12 @@ async function syncNumbers() {
       @sync="syncNumbers"
     />
 
-    <!-- Templates (Meta only) -->
+    <!-- Templates (Meta + Evolution) -->
     <TemplateManager
-      v-if="activeSection === 'templates' && isMetaCloud"
+      v-if="activeSection === 'templates'"
       :connection-id="connectionId"
       :templates="templates"
+      :provider="connection.provider"
     />
 
     <!-- Evolution Instance Manager -->
