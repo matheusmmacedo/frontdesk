@@ -89,6 +89,11 @@ module WhatsappConnections
         post("/chatwoot/set/#{instance_name}", params)
       end
 
+      # Configure webhook on Evolution instance
+      def set_webhook(instance_name, params)
+        post("/webhook/set/#{instance_name}", params)
+      end
+
       private
 
       def get(path)

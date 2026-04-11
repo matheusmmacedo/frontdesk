@@ -21,6 +21,9 @@ module WhatsappConnections
           qrcode: true
         )
 
+        # Configure webhook on Evolution so it forwards events to this Frontdesk instance
+        configure_webhook(instance_name)
+
         phone_record = @connection.whatsapp_phone_numbers.create!(
           account: @account,
           phone_number: "pending_#{instance_name}",
@@ -92,6 +95,29 @@ module WhatsappConnections
       end
 
       private
+
+      # Configure Evolution webhook so messages and status events are forwarded
+      def configure_webhook(instance_name)
+        frontend_url = GlobalConfigService.load('FRONTEND_URL', '')
+        return if frontend_url.blank?
+
+        webhook_url = "#{frontend_url}/webhooks/whatsapp"
+        @api_client.set_webhook(instance_name, {
+          url: webhook_url,
+          webhook_by_events: false,
+          webhook_base64: true,
+          events: %w[
+            MESSAGES_UPSERT
+            MESSAGES_UPDATE
+            SEND_MESSAGE
+            CONNECTION_UPDATE
+            QRCODE_UPDATED
+          ]
+        })
+        Rails.logger.info("[EVOLUTION] Webhook configured for #{instance_name}: #{webhook_url}")
+      rescue StandardError => e
+        Rails.logger.warn("[EVOLUTION] Webhook setup failed for #{instance_name}: #{e.message}")
+      end
 
       def build_instance_name(display_name)
         sanitized = display_name.parameterize(separator: '_')
