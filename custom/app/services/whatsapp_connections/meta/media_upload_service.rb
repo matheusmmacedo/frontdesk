@@ -29,7 +29,9 @@ module WhatsappConnections
         @connection = connection
         @api_version = GlobalConfigService.load('WHATSAPP_API_VERSION', 'v22.0')
         @base_url = GlobalConfigService.load('WHATSAPP_CLOUD_BASE_URL', 'https://graph.facebook.com')
-        @app_id = GlobalConfigService.load('WHATSAPP_CLOUD_APP_ID', '')
+        # App ID: first check connection-level (client's own WABA), then global (KLaOS shared WABA)
+        @app_id = connection.credentials&.dig('app_id') ||
+                  GlobalConfigService.load('WHATSAPP_CLOUD_APP_ID', '')
       end
 
       # Upload a file and return Meta's handle for use in template creation.
