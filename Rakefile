@@ -7,3 +7,7 @@ enterprise_tasks_path = Rails.root.join('enterprise/tasks_railtie.rb').to_s
 require enterprise_tasks_path if File.exist?(enterprise_tasks_path)
 
 Rails.application.load_tasks
+
+# Load custom rake tasks (KLaOS module - fork-safe)
+custom_tasks = Rails.root.join('custom/lib/tasks')
+Dir[custom_tasks.join('**/*.rake')].each { |f| load f } if custom_tasks.exist?
