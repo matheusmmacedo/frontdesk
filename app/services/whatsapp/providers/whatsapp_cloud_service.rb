@@ -117,20 +117,85 @@ class Whatsapp::Providers::WhatsappCloudService < Whatsapp::Providers::BaseServi
   def send_attachment_message(phone_number, message)
     attachment = message.attachments.first
     type = %w[image audio video].include?(attachment.file_type) ? attachment.file_type : 'document'
-    type_content = {
-      'link': attachment.download_url
-    }
-    type_content['caption'] = message.outgoing_content unless %w[audio sticker].include?(type)
-    type_content['filename'] = attachment.file.filename if type == 'document'
+
+    # For audio files, upload directly to Meta Media API to avoid MIME type issues
+    # (ActiveStorage may serve audio/opus which Meta rejects — Meta expects audio/ogg)
+    if type == 'audio' && attachment.file.attached?
+      send_audio_via_media_upload(phone_number, message, attachment)
+    else
+      type_content = {
+        'link': attachment.download_url
+      }
+      type_content['caption'] = message.outgoing_content unless %w[audio sticker].include?(type)
+      type_content['filename'] = attachment.file.filename if type == 'document'
+      response = HTTParty.post(
+        "#{phone_id_path}/messages",
+        headers: api_headers,
+        body: {
+          :messaging_product => 'whatsapp',
+          :context => whatsapp_reply_context(message),
+          'to' => phone_number,
+          'type' => type,
+          type.to_s => type_content
+        }.to_json
+      )
+
+      process_response(response, message)
+    end
+  end
+
+  def send_audio_via_media_upload(phone_number, message, attachment)
+    # Step 1: Download the file from ActiveStorage
+    blob = attachment.file.blob
+    file_data = blob.download
+
+    # Step 2: Upload to Meta Media API with correct MIME type
+    upload_url = "#{phone_id_path}/media"
+    boundary = "----MetaAudioUpload#{SecureRandom.hex(8)}"
+    content_type = 'audio/ogg; codecs=opus'
+    filename = blob.filename.to_s.presence || 'voice_response.ogg'
+
+    body = []
+    body << "--#{boundary}\r\n"
+    body << "Content-Disposition: form-data; name=\"messaging_product\"\r\n\r\n"
+    body << "whatsapp\r\n"
+    body << "--#{boundary}\r\n"
+    body << "Content-Disposition: form-data; name=\"type\"\r\n\r\n"
+    body << "#{content_type}\r\n"
+    body << "--#{boundary}\r\n"
+    body << "Content-Disposition: form-data; name=\"file\"; filename=\"#{filename}\"\r\n"
+    body << "Content-Type: #{content_type}\r\n\r\n"
+    body << file_data
+    body << "\r\n--#{boundary}--\r\n"
+
+    raw_body = body.map { |part| part.is_a?(String) ? part.encode('ASCII-8BIT', invalid: :replace, undef: :replace) : part }.join
+
+    upload_response = HTTParty.post(
+      upload_url,
+      headers: {
+        'Authorization' => "Bearer #{whatsapp_channel.provider_config['api_key']}",
+        'Content-Type' => "multipart/form-data; boundary=#{boundary}"
+      },
+      body: raw_body
+    )
+
+    unless upload_response.success? && upload_response.parsed_response&.dig('id')
+      Rails.logger.error "[WhatsApp] Audio upload failed: #{upload_response.body}"
+      return process_response(upload_response, message)
+    end
+
+    media_id = upload_response.parsed_response['id']
+
+    # Step 3: Send message with the uploaded media_id
     response = HTTParty.post(
       "#{phone_id_path}/messages",
       headers: api_headers,
       body: {
-        :messaging_product => 'whatsapp',
-        :context => whatsapp_reply_context(message),
-        'to' => phone_number,
-        'type' => type,
-        type.to_s => type_content
+        messaging_product: 'whatsapp',
+        context: whatsapp_reply_context(message),
+        to: phone_number,
+        type: 'audio',
+        audio: { id: media_id }
       }.to_json
     )
 
