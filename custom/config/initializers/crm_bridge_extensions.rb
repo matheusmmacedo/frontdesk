@@ -25,7 +25,14 @@ Rails.application.config.after_initialize do
     { attribute_display_name: 'Owner do Deal', attribute_display_type: 'text', attribute_key: 'crm_deal_owner',
       attribute_description: 'Responsável pelo deal', attribute_model: 'conversation_attribute' },
     { attribute_display_name: 'Link do Deal', attribute_display_type: 'link', attribute_key: 'crm_deal_url',
-      attribute_description: 'URL para abrir o deal no KLaOS', attribute_model: 'conversation_attribute' }
+      attribute_description: 'URL para abrir o deal no KLaOS', attribute_model: 'conversation_attribute' },
+    # SDR scheduling attributes (KLaOS Leads Ops)
+    { attribute_display_name: 'Agendado em', attribute_display_type: 'date', attribute_key: 'scheduled_at',
+      attribute_description: 'Data/hora do agendamento feito pelo SDR', attribute_model: 'conversation_attribute' },
+    { attribute_display_name: 'Link do Agendamento', attribute_display_type: 'link', attribute_key: 'scheduling_link',
+      attribute_description: 'URL da reunião agendada', attribute_model: 'conversation_attribute' },
+    { attribute_display_name: 'Closer Atribuído', attribute_display_type: 'text', attribute_key: 'closer_assigned',
+      attribute_description: 'Nome do closer responsável pelo lead', attribute_model: 'conversation_attribute' }
   ].freeze
 
   # Auto-create CRM attribute definitions for all accounts that have a KLaOS webhook
