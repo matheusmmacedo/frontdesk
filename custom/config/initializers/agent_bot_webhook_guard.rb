@@ -1,49 +1,38 @@
 # frozen_string_literal: true
 
 # AGENT BOT WEBHOOK GUARD
-# Guarantees agent bot webhooks fire for EVERY incoming message on bot-enabled inboxes.
-#
-# Problem: Chatwoot's built-in AgentBotListener (SyncDispatcher) sometimes fails
-# to dispatch AgentBots::WebhookJob, especially for recently provisioned bots.
-#
-# Solution: Replace the unreliable listener-based dispatch with a direct
-# after_create_commit callback on Message. This runs in the same transaction
-# commit hook as the original dispatch_create_events, but is more reliable
-# because it doesn't depend on the event dispatcher chain.
-#
-# Deduplication: We mark the message with a flag in content_attributes so
-# both this guard AND the normal listener can coexist without double-dispatch.
+# Ensures agent bot webhooks fire for every incoming message on bot-enabled inboxes.
+# Runs alongside Chatwoot's built-in AgentBotListener with Rails.cache dedup.
 
-Rails.application.config.after_initialize do
-  Message.class_eval do
-    after_create_commit :guard_agent_bot_webhook
+Rails.application.config.to_prepare do
+  if defined?(Message) && !Message.method_defined?(:guard_agent_bot_webhook)
+    Message.class_eval do
+      after_create_commit :guard_agent_bot_webhook
 
-    private
+      def guard_agent_bot_webhook
+        return unless incoming?
+        return if inbox.blank?
 
-    def guard_agent_bot_webhook
-      return unless incoming?
-      return if inbox.blank?
+        bot_inbox = AgentBotInbox.find_by(inbox_id: inbox_id, status: :active)
+        return if bot_inbox.blank?
 
-      bot_inbox = inbox.agent_bot_inbox
-      return unless bot_inbox&.active?
+        agent_bot = bot_inbox.agent_bot
+        return if agent_bot.blank? || agent_bot.outgoing_url.blank?
 
-      agent_bot = inbox.agent_bot
-      return unless agent_bot&.outgoing_url.present?
+        cache_key = "agent_bot_webhook_dispatched:#{id}"
+        return if Rails.cache.read(cache_key)
 
-      # Check if already dispatched (flag set by this guard)
-      cache_key = "agent_bot_webhook_dispatched:#{id}"
-      return if Rails.cache.read(cache_key)
+        Rails.cache.write(cache_key, true, expires_in: 60.seconds)
 
-      # Mark as dispatched (TTL 60s — enough to prevent duplicates)
-      Rails.cache.write(cache_key, true, expires_in: 60.seconds)
+        payload = webhook_data.merge(event: 'message_created')
+        AgentBots::WebhookJob.perform_later(agent_bot.outgoing_url, payload)
 
-      # Dispatch the webhook
-      payload = webhook_data.merge(event: 'message_created')
-      AgentBots::WebhookJob.perform_later(agent_bot.outgoing_url, payload)
-
-      Rails.logger.info("[AGENT_BOT_GUARD] Dispatched webhook for msg #{id} → #{agent_bot.name} (#{agent_bot.outgoing_url.last(40)})")
-    rescue StandardError => e
-      Rails.logger.error("[AGENT_BOT_GUARD] Error for msg #{id}: #{e.message}")
+        Rails.logger.info("[AGENT_BOT_GUARD] Dispatched msg=#{id} -> bot=#{agent_bot.name}")
+      rescue StandardError => e
+        Rails.logger.error("[AGENT_BOT_GUARD] Error msg=#{id}: #{e.class}: #{e.message}")
+      end
     end
+
+    Rails.logger.info '[AGENT_BOT_GUARD] Guard installed on Message model'
   end
 end
