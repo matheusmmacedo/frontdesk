@@ -21,6 +21,18 @@
   </div>
 
   <script>
+    // Auto-detect browser language for widget UI
+    var browserLang = (navigator.language || navigator.userLanguage || 'pt_BR').replace('-', '_');
+    var supportedLocales = ['pt_BR','pt','en','en_US','es','fr','de','it','ja','ko','zh_CN','zh_TW','ar','hi','ru','tr','nl','pl','sv','da','fi','nb','he','id','ms','th','vi','uk','ro','cs','hu','el'];
+    var locale = supportedLocales.indexOf(browserLang) >= 0 ? browserLang :
+                 supportedLocales.indexOf(browserLang.split('_')[0]) >= 0 ? browserLang.split('_')[0] : 'en';
+
+    window.chatwootSettings = {
+      locale: locale,
+      position: 'right',
+      type: 'standard'
+    };
+
     (function(d,t) {
       var BASE_URL = window.location.origin;
       var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
@@ -28,7 +40,6 @@
       g.async=true;
       s.parentNode.insertBefore(g,s);
       g.onload=function(){
-        // Read token from URL param or use default (GMB dev)
         var params = new URLSearchParams(window.location.search);
         var token = params.get('token') || 'gcq4cgzpYdUiNTttkAb2mLL8';
         window.chatwootSDK.run({ websiteToken: token, baseUrl: BASE_URL });
