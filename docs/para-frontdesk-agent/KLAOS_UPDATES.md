@@ -21,7 +21,8 @@ Briefing do agente Frontdesk listou 4 bugs. 3 fixados em código, 1 é prompt-si
 - Fix: filtro estrutural `(message_type === 0 || === 1) && !private && content`. Sem listas de palavras, agnóstico de idioma.
 
 **BUG 4 — Falso "cadastro inativo" sem consultar_debito.**
-- É decisão do agente (prompt-side). Fica na revisão do `system_prompt` da Lara — não toquei runtime.
+- É decisão do agente. Fix no `system_prompt` da Lara (agent_instance `1b092e03-…`): adicionado **Pré-requisito inegociável** no início da seção A. Agora a Lara SÓ pode enviar a mensagem literal de "contrato inativo" se **neste turno** tiver (1) o CPF confirmado pelo cliente, (2) chamada real de `consultar_debito`, (3) retorno da tool explícito com status_cadastro=inativo. Palavras do cliente ("cancelar"/"problema de pagamento") não substituem o retorno da tool.
+- Lara só existe em dev — prod não tem essa agent_instance, nada a espelhar.
 
 ### Ações pendentes pro lado Frontdesk
 Nenhuma — esses fixes são todos no backend KLaOS e já estão em dev+prod.
