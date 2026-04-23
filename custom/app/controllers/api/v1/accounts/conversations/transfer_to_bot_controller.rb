@@ -7,6 +7,14 @@
 # POST /api/v1/accounts/:account_id/conversations/:conversation_id/transfer_to_bot
 
 class Api::V1::Accounts::Conversations::TransferToBotController < Api::V1::Accounts::Conversations::BaseController
+  # Override do BaseController: em member routes, o param é :id (não :conversation_id)
+  def conversation
+    @conversation ||= Current.account.conversations.find_by!(
+      display_id: params[:conversation_id] || params[:id]
+    )
+    authorize @conversation, :show?
+  end
+
   def create
     authorize_transfer!
 
