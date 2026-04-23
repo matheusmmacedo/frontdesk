@@ -154,6 +154,8 @@ Rails.application.routes.draw do
               get :attachments
               get :inbox_assistant
               get :reporting_events if ChatwootApp.enterprise?
+              # KLaOS custom — devolver conversa ao bot da inbox
+              post :transfer_to_bot, to: 'conversations/transfer_to_bot#create'
             end
           end
 
