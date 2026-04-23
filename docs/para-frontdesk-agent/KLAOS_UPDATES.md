@@ -2,6 +2,61 @@
 
 Log cronológico de mudanças que o agente KLaOS fez que afetam o Frontdesk. Cada entrada: data, commit, resumo, impacto no Frontdesk.
 
+## 2026-04-23 — SDDs 1–4 implementados (dev)
+
+### Commit `d3d731af` — SDD 1: backfill `desk_conversation_id`
+- Coluna dedicada `agent_conversations.desk_conversation_id` agora preenchida (antes só vivia em `platform_metadata` jsonb).
+- Dual-write nos 3 caminhos (chatwoot bot webhook, bridge controller, bridge service).
+- Backfill aplicado em dev: 55/55 conversas com link Chatwoot preenchidas.
+- Index parcial `idx_agent_conv_desk_conv_id`.
+
+### Commit `da943cf5` — SDD 2: handoff routing multi-tenant
+- `resolveTeamId` em `agentToolExecutor` com prioridade: `workspaces.settings.handoff_team_map[key]` > `handoff_team_map.default` > `workspaces.closer_team_id` > fuzzy match em `listTeams`.
+- `team_name` vindo do LLM é normalizado (lowercase + sem acento + espaço → `-`).
+- Mais Saúde DEV seedado com 13 aliases (`cancelamento → 6`, `contratos → 4`, `cobranca → 2`, `consultas → 3`, etc., `default → 2`).
+
+### Commit `fa046670` — SDD 3: enforcement da tool `transferir_para_time`
+- Prompt: REGRA #4 inserida no topo da Lara — obriga tool call no mesmo turno em que emite texto de handoff.
+- Runtime guardrail em `agentBufferProcessor`: se a resposta contém "transferir"/"encaminhar"/"setor de"/"atendente humano" mas a tool não foi chamada, auto-invoca `transferir_para_time` com `team_name` inferido por keyword (ou `default`).
+- Log: `[HandoffGuard] Assistant sent handoff text without tool call — auto-invoking`.
+
+### Commit `f518f65d` — SDD 4: reopen policy opt-in
+- Nova coluna `agent_conversations.reactivation_at` + index parcial (resolved).
+- Nova coluna `agent_handoff_config.reopen_window_minutes` (default 1440 = 24h).
+- `workspace_feature_flags.reopen_policy_enabled` habilitado em Mais Saúde DEV.
+- `workspaces.settings.reopen_policy` configurado em Mais Saúde DEV.
+- Service `reopenPolicy.service.ts` com 3 hooks:
+  - `onConversationResolved` — chamado em `conversation_status_changed` com `status=resolved`; grava `resolved_at` + calcula `reactivation_at = resolved_at + window`.
+  - `routeReturningMessage` — chamado em `message_created` quando a conv está `resolved`. Dentro da janela: original online → reatribui; original offline + team fallback ligado → próximo online do `platform_metadata.handoff_team_id`. Fora da janela ou ninguém online → volta pro bot (`status='pending'` + unassign).
+  - `manualReturnToBot` — idempotente, usado pelo endpoint abaixo.
+
+### Endpoint novo — **precisa de integração do Frontdesk**
+```
+POST https://api-dev.klaos.ai/api/webhooks/klaos/bridge-event
+Headers:
+  Content-Type: application/json
+  X-Bridge-Secret: <shared secret — env FRONTDESK_BRIDGE_SECRET nos dois lados>
+Body:
+{
+  "type": "manual_transfer_to_bot",
+  "conv_display_id": <number>,       // Chatwoot display_id
+  "workspace_id": "<uuid>",
+  "reason": "optional"
+}
+Response: 200 { "ok": true }
+```
+- Ação no KLaOS: `status='pending'` + unassign no Chatwoot + nota privada + reset em `agent_conversations` (status='active', resolved_at=null, reactivation_at=null, assigned_to_user_id=null).
+- Idempotente — seguro chamar múltiplas vezes.
+
+### Impacto no Frontdesk
+- **Ação necessária:**
+  1. Quando o botão "Devolver ao bot" (ver `SDD_TRANSFER_TO_BOT_BUTTON.md`) for clicado, o backend do Chatwoot deve chamar o endpoint acima — idealmente fire-and-forget após a operação local terminar.
+  2. Compartilhar o valor de `FRONTDESK_BRIDGE_SECRET` entre os dois serviços (gerar um nonce forte em ambos os ambientes).
+  3. Nenhuma mudança necessária nos webhooks `message_created` / `conversation_status_changed` — o KLaOS já detecta `status=resolved` no webhook existente e aciona o hook 1 sozinho.
+- **Requisito adicional — `availability_status`:** o hook 2 chama `GET /api/v1/accounts/:id/agents` e `GET /api/v1/accounts/:id/teams/:id/team_members` esperando o campo `availability_status` (valores `online | busy | offline`) no retorno. Se a custom build do Chatwoot já expõe (Chatwoot padrão expõe), nada a fazer. Se não, expor.
+
+---
+
 ## 2026-04-23 — Fix display_id + ACK imediato + desativação bot
 
 ### Commit `9c327d8b` — ACK <100ms
