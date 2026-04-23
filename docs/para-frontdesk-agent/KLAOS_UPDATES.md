@@ -2,6 +2,32 @@
 
 Log cronológico de mudanças que o agente KLaOS fez que afetam o Frontdesk. Cada entrada: data, commit, resumo, impacto no Frontdesk.
 
+## 2026-04-23 — Fix 3 bugs de comportamento da Lara (pós-SDDs)
+
+Briefing do agente Frontdesk listou 4 bugs. 3 fixados em código, 1 é prompt-side.
+
+### Commit `120933cc` (dev → main `42dfd687`)
+
+**BUG 2 — Lara transferiu antes de receber CPF.**
+- Causa: o guardrail de handoff que adicionei no SDD 3 auto-invocava `transferir_para_time` quando detectava texto PT-BR via regex (`/\b(transferir|setor de|…)\b/i`).
+- Fix: **removido o auto-invoke inteiro** + função `inferTeamNameFromText`. Decisão de quando transferir vive só no prompt do agente (REGRA #4 da Lara). Se o LLM disser "vou transferir" sem chamar a tool, a próxima msg do cliente dá nova chance — nada de race com coleta de dados.
+
+**BUG 3 — `[STAGE:closing]` vazou pro cliente.**
+- Causa: `STAGE_TOKEN_PATTERN` era `/i` sem `/g`. `.replace()` só stripava a primeira ocorrência. Quando o LLM emitia dois tokens no mesmo turno, o segundo passava.
+- Fix: novo `STAGE_TOKEN_STRIP_PATTERN` (`/gi`, tolerante a whitespace) aplicado tanto no `agentBufferProcessor` quanto no `widgetConversation`.
+
+**BUG 1 — Lara cumprimentou "Gustavo" como "Daniel".**
+- Causa: o loader de histórico do Chatwoot filtrava só por `message_type !== 2`. Notas privadas (`private=true, message_type=1`) passavam — e a nota "Atribuído a Cancelamento por Daniel Limeira" vazava no contexto do LLM. Ele pegou "Daniel" como se fosse o cliente.
+- Fix: filtro estrutural `(message_type === 0 || === 1) && !private && content`. Sem listas de palavras, agnóstico de idioma.
+
+**BUG 4 — Falso "cadastro inativo" sem consultar_debito.**
+- É decisão do agente (prompt-side). Fica na revisão do `system_prompt` da Lara — não toquei runtime.
+
+### Ações pendentes pro lado Frontdesk
+Nenhuma — esses fixes são todos no backend KLaOS e já estão em dev+prod.
+
+---
+
 ## 2026-04-23 — SDDs 1–4 implementados (dev)
 
 ### Commit `d3d731af` — SDD 1: backfill `desk_conversation_id`
