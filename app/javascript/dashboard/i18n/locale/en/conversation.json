@@ -106,6 +106,9 @@
     },
     "RESOLVE_DROPDOWN": {
       "MARK_PENDING": "Mark as pending",
+      "TRANSFER_TO_BOT": "Transfer to bot",
+      "TRANSFER_TO_BOT_SUCCESS": "Conversation returned to bot. It will take over on the next customer message.",
+      "TRANSFER_TO_BOT_ERROR": "Failed to transfer to bot. Please try again.",
       "SNOOZE_UNTIL": "Snooze",
       "SNOOZE": {
         "TITLE": "Snooze until",

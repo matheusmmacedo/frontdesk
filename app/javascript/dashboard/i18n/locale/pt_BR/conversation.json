@@ -105,6 +105,9 @@
     },
     "RESOLVE_DROPDOWN": {
       "MARK_PENDING": "Deixar pendente",
+      "TRANSFER_TO_BOT": "Devolver ao bot",
+      "TRANSFER_TO_BOT_SUCCESS": "Conversa devolvida ao bot. Ele assume na próxima mensagem do cliente.",
+      "TRANSFER_TO_BOT_ERROR": "Falha ao devolver ao bot. Tente novamente.",
       "SNOOZE_UNTIL": "Adiar",
       "SNOOZE": {
         "TITLE": "Suspender até",

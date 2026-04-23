@@ -20,6 +20,9 @@
       "all": "Todos"
     },
     "CHAT_STATUS_FILTER_ITEMS": {
+      "active": {
+        "TEXT": "Ativas"
+      },
       "open": {
         "TEXT": "Abertas"
       },

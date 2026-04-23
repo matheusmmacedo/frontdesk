@@ -11,6 +11,7 @@ export default {
     PENDING: 'pending',
     SNOOZED: 'snoozed',
     ALL: 'all',
+    ACTIVE: 'active',
   },
   SORT_BY_TYPE: {
     LAST_ACTIVITY_AT_ASC: 'last_activity_at_asc',

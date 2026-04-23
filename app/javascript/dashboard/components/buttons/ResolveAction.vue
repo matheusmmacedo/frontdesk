@@ -11,6 +11,7 @@ import { useConversationRequiredAttributes } from 'dashboard/composables/useConv
 import WootDropdownItem from 'shared/components/ui/dropdown/DropdownItem.vue';
 import WootDropdownMenu from 'shared/components/ui/dropdown/DropdownMenu.vue';
 import wootConstants from 'dashboard/constants/globals';
+import ConversationApi from 'dashboard/api/inbox/conversation';
 import {
   CMD_REOPEN_CONVERSATION,
   CMD_RESOLVE_CONVERSATION,
@@ -51,6 +52,26 @@ const isSnoozed = computed(
 const showAdditionalActions = computed(
   () => !isPending.value && !isSnoozed.value
 );
+
+// KLaOS custom — botão "Devolver ao bot" aparece em convs com humano atribuído.
+// Backend valida se faz sentido de fato devolver (inbox com bot). Se não tem bot,
+// conv fica pending e o admin resolve manualmente.
+const showTransferToBot = computed(
+  () => currentChat.value?.meta?.assignee?.id != null
+);
+
+const transferToBot = async () => {
+  closeDropdown();
+  isLoading.value = true;
+  try {
+    await ConversationApi.transferToBot(currentChat.value.id);
+    useAlert(t('CONVERSATION.RESOLVE_DROPDOWN.TRANSFER_TO_BOT_SUCCESS'));
+  } catch (e) {
+    useAlert(t('CONVERSATION.RESOLVE_DROPDOWN.TRANSFER_TO_BOT_ERROR'));
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 const showOpenButton = computed(() => {
   return isPending.value || isSnoozed.value;
@@ -246,6 +267,18 @@ useEmitter(CMD_RESOLVE_CONVERSATION, onCmdResolveConversation);
             icon="i-lucide-circle-dot-dashed"
             class="w-full"
             @click="() => toggleStatus(wootConstants.STATUS_TYPE.PENDING)"
+          />
+        </WootDropdownItem>
+        <WootDropdownItem v-if="showTransferToBot">
+          <Button
+            :label="t('CONVERSATION.RESOLVE_DROPDOWN.TRANSFER_TO_BOT')"
+            ghost
+            slate
+            sm
+            start
+            icon="i-lucide-bot"
+            class="w-full"
+            @click="transferToBot"
           />
         </WootDropdownItem>
       </WootDropdownMenu>
