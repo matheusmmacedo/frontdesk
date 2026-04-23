@@ -53,16 +53,11 @@ const showAdditionalActions = computed(
   () => !isPending.value && !isSnoozed.value
 );
 
-// KLaOS custom — botão "Transferir pro bot" aparece em convs com assignee + inbox com bot ativo
-const inboxHasBot = computed(() => {
-  const inbox = currentChat.value?.meta?.inbox;
-  return Boolean(inbox?.agent_bot && inbox.agent_bot.status !== 'paused');
-});
-const conversationHasAssignee = computed(
-  () => currentChat.value?.meta?.assignee?.id != null
-);
+// KLaOS custom — botão "Devolver ao bot" aparece em convs com humano atribuído.
+// Backend valida se faz sentido de fato devolver (inbox com bot). Se não tem bot,
+// conv fica pending e o admin resolve manualmente.
 const showTransferToBot = computed(
-  () => inboxHasBot.value && conversationHasAssignee.value
+  () => currentChat.value?.meta?.assignee?.id != null
 );
 
 const transferToBot = async () => {
