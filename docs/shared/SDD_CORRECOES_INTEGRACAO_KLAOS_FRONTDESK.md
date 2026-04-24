@@ -364,6 +364,48 @@ Remover auto-assinatura do system prompt. Usar `sender.available_name` do Chatwo
 
 ---
 
+## Bug 15 — 🔴 [KLaOS] Lara continua respondendo DEPOIS do handoff manual
+
+### Evidência verificada (2026-04-24)
+
+Conv `b88adaa6-...` / Chatwoot desk 43:
+```
+19:10:11  Lara: "Vou te transferir..." (sem invocar tool)
+19:16:30  [HANDOFF] manual_recovery gravado em agent_conversations
+          → handoff_at, team_id=8 setados
+19:24:44  Gustavo (atendente humano) responde "boa tarde" via UI Frontdesk
+          → salvo em agent_messages com role='assistant'  ❌ deveria ser operator/human
+19:25:43  Cliente responde "Boa tarde"
+19:25:54  Lara IGNORA handoff e responde "Percebi que seu contrato inativo..."
+```
+
+A Lara **não checa** `handoff_at` antes de processar. Pipeline processa LLM mesmo após handoff. Também: msgs do atendente humano ficam como `role=assistant`, indistinguíveis do bot no histórico.
+
+### Root cause
+1. `agentBufferProcessor` não tem guard `return if agent_conversation.handoff_at.present?`
+2. Msgs outgoing de humanos via Chatwoot webhook são salvas como `role=assistant` no `agent_messages` — deveria ser `operator` ou `human`
+
+### Fix [KLaOS]
+```ts
+// Em agentBufferProcessor.ts antes de chamar LLM:
+if (agentConv.handoff_at && !agentConv.ended_at) {
+  logger.info('[Bot] Skip — conversation is on handoff', { conv: agentConv.id });
+  return; // não chama LLM
+}
+
+// Em onIncomingMessage webhook handler:
+const role = msg.sender_type === 'User' ? 'operator' : 'user';
+const direction = msg.sender_type === 'User' ? 'outbound' : 'inbound';
+// ...insert with correct role
+```
+
+### Critério de sucesso
+- [ ] Conv com `handoff_at IS NOT NULL AND ended_at IS NULL` → LLM não é chamado pra ela
+- [ ] Msgs de `sender_type=User` no Chatwoot → salvas com `role='operator'` no `agent_messages`
+- [ ] Smoke: fazer handoff manual → humano responder → verificar que Lara fica em silêncio
+
+---
+
 ## Bug 14 — 🟡 [KLaOS] Ausência de observability sobre tool success rate
 
 ### Evidência
