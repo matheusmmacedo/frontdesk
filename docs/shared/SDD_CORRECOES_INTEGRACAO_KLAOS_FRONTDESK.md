@@ -434,7 +434,7 @@ Comparando com v1 deste doc, as queries direto no Supabase revelaram:
 1. **Max_tokens=2000 config ignorado** — runtime emitiu 4000 tokens (Bug 2, novo fato)
 2. **system_prompt de 40.620 chars** — raiz provável de loops e latência (Bug 2, 3)
 3. **tokens_input médio 12.969** — custo financeiro significativo (Bug 2)
-4. **Model = `gpt-5.2`** (não é modelo público OpenAI estável, pode ser fonte de instabilidade)
+4. **Model = `gpt-5.2`** (OpenAI, released 2025-12-11). Já existe gpt-5.3 (fev/26), 5.4 (mar/26), 5.5 (abr/26 — hoje). Upgrade pode trazer melhorias em instruction-following e reasoning, reduzindo Bugs 1-4. Avaliar custo/benefício.
 5. **Convs stuck desde março** com handoff sem assignee (Bug 5, 9 — antes era hipótese, agora é fato)
 6. **handoff_team_map já populado** corretamente — refuta hipótese de que o problema era o mapa; confirma que é só a tool não executar (Bug 1)
 
