@@ -22,7 +22,7 @@ Investigação com queries diretas no **Supabase do KLaOS** + **Postgres do Chat
 | Temperature | 0.7 |
 | max_tokens (config) | 2000 |
 | max_tokens (observado em produção) | **4000** ⚠️ 2× maior que config |
-| system_prompt (chars) | **40.620** (~10k tokens) |
+| system_prompt (chars) | **29.301** (v5 ativa em `agent_prompt_versions` id `55b662d3...`, ~7.3k tokens). Nota: `agent_instances.system_prompt` tem 29.301 chars (v5) divergentes — provavelmente stale, runtime usa a version active. |
 | tokens_input médio por turno | 12.969 |
 | tokens_input máximo | 21.600 |
 | processing_time_ms médio | 7.158 |
@@ -132,7 +132,7 @@ Content completo (no Chatwoot msg 10458) passou de 4096 chars → `external_erro
      return;
    }
    ```
-4. **Reduzir o system prompt de 40.620 chars** — está redundante. Consolidar seções duplicadas; usar RAG pros blocos raramente usados (manual de produtos, exceções raras).
+4. **Reduzir o system prompt de 29.301 chars (v5)** — está redundante. Consolidar seções duplicadas; usar RAG pros blocos raramente usados (manual de produtos, exceções raras).
 
 ### Critério de sucesso
 - [ ] 0 msgs assistant com `tokens_output >= 2500` (margem sobre config 2000)
@@ -156,7 +156,7 @@ A primeira linha é **instrução interna** (decisão de próximo passo). Foi en
 Adicional: 48 de 178 msgs no Chatwoot começam com `*Lara*:` — padrão de self-identifier que também parece artefato de prompt.
 
 ### Root cause
-System prompt da Lara (40.620 chars) provavelmente instrui algo como: *"antes de responder, decida o próximo passo e escreva em uma linha"*. O LLM gera o plan + action tudo junto no content.
+System prompt da Lara (29.301 chars (v5)) provavelmente instrui algo como: *"antes de responder, decida o próximo passo e escreva em uma linha"*. O LLM gera o plan + action tudo junto no content.
 
 ### Fix [KLaOS]
 1. Extrair thinking pra formato delimitado:
@@ -474,7 +474,7 @@ Dashboard em `/klaos-control-panel/agents/:id/operations` com:
 Comparando com v1 deste doc, as queries direto no Supabase revelaram:
 
 1. **Max_tokens=2000 config ignorado** — runtime emitiu 4000 tokens (Bug 2, novo fato)
-2. **system_prompt de 40.620 chars** — raiz provável de loops e latência (Bug 2, 3)
+2. **system_prompt de 29.301 chars (v5)** — raiz provável de loops e latência (Bug 2, 3)
 3. **tokens_input médio 12.969** — custo financeiro significativo (Bug 2)
 4. **Model = `gpt-5.2`** (OpenAI, released 2025-12-11). Já existe gpt-5.3 (fev/26), 5.4 (mar/26), 5.5 (abr/26 — hoje). Upgrade pode trazer melhorias em instruction-following e reasoning, reduzindo Bugs 1-4. Avaliar custo/benefício.
 5. **Convs stuck desde março** com handoff sem assignee (Bug 5, 9 — antes era hipótese, agora é fato)
@@ -521,7 +521,7 @@ Essa instrução está **explicitamente** no prompt. O modelo (gpt-5.2) está ig
 
 ## Apêndice C — Redundância no prompt (oportunidade de redução)
 
-O prompt tem 40.620 chars. Sample: a regra "responda no mesmo idioma do cliente" aparece **no topo** (REGRA #1) e **no final** (`[IDIOMA — ESPELHAR O CLIENTE]`) com redação diferente. Mesma coisa pra "texto em vez de áudio". Consolidar essas regras e remover duplicação pode cortar ~30% do prompt sem perda semântica.
+O prompt tem 29.301 chars (v5). Sample: a regra "responda no mesmo idioma do cliente" aparece **no topo** (REGRA #1) e **no final** (`[IDIOMA — ESPELHAR O CLIENTE]`) com redação diferente. Mesma coisa pra "texto em vez de áudio". Consolidar essas regras e remover duplicação pode cortar ~30% do prompt sem perda semântica.
 
 Benefícios:
 - -30% de tokens_input por turno (custo financeiro)
@@ -529,6 +529,23 @@ Benefícios:
 - Menos ambiguidade pro modelo
 
 Sugestão: fazer revisão editorial do prompt com diff comparando versão atual vs consolidada + A/B test de 100 conversas pra confirmar que comportamento não degrada.
+
+## Apêndice E — Cross-reference com SDD v6 (prompt reestruturação) do agente KLaOS
+
+O agente KLaOS redigiu `SDD — Reestruturação do System Prompt da Lara (v6)` em 2026-04-24 com propostas prompt-side. Validei cada evidência contra o Supabase KLaOS dev (`szkzkyexagunvadzzaec`):
+
+- ✅ Conv Matheus `96c5e5f7-a735-43c2-8cc3-92a0c628fdba` — "quero cancela" 21:15:15 → Lara seção A "contrato inativo" 21:15:26 (confirmado byte-a-byte no `agent_messages`)
+- ✅ Beatriz conv 44, 20:52:58 — tool-call vazado como `<function json>...</function>` + ```json{"ok":true,"transferred":true}``` (confirmado)
+- ✅ v5 prompt, id `55b662d3-50d4-426f-b0dc-60dee6f5befb`, 29.301 chars, ativado 2026-04-24 21:12:19
+- ✅ R1-R8 + seções A/I + régua 1-21 dias presentes
+
+**O SDD v6 é complementar a este SDD** — endereça o prompt; eu endereço pipeline/runtime/sync. Os 2 devem rodar em paralelo.
+
+**Nuance adicional que o v6 traz** (subcaso de Bug 3 do meu SDD): **precedência semântica intenção-vs-histórico**. Quando o cliente explicitamente diz "quero cancelar", a Lara (ainda aplicando regras antigas do histórico inativo) responde com seção A em vez do fluxo H. Fix é prompt-side — adicionar regra de precedência:
+
+> 1. Intenção explícita do cliente neste turno (vence tudo)
+> 2. Retorno de `consultar_debito` neste turno
+> 3. Histórico de turnos anteriores
 
 ## Apêndice D — Observações sobre design do prompt
 
