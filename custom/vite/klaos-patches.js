@@ -97,6 +97,40 @@ const PATCHES = [
 ]);`,
     reason: 'prepend "Ativas" and reorder basic filter options',
   },
+  {
+    id: '/settings/settings.routes.js',
+    from: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';",
+    to: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';\nimport klaosMessagePrefix from './klaosMessagePrefix/klaosMessagePrefix.routes';",
+    reason: 'register KLaOS message prefix settings route import',
+  },
+  {
+    id: '/settings/settings.routes.js',
+    from: '...whatsappConnections.routes,\n  ],\n};',
+    to: '...whatsappConnections.routes,\n    ...klaosMessagePrefix.routes,\n  ],\n};',
+    reason: 'register KLaOS message prefix routes in settings route array',
+  },
+  {
+    id: '/sidebar/Sidebar.vue',
+    from: `        {
+          name: 'Settings Account Settings',
+          label: t('SIDEBAR.ACCOUNT_SETTINGS'),
+          icon: 'i-lucide-briefcase',
+          to: accountScopedRoute('general_settings_index'),
+        },`,
+    to: `        {
+          name: 'Settings Account Settings',
+          label: t('SIDEBAR.ACCOUNT_SETTINGS'),
+          icon: 'i-lucide-briefcase',
+          to: accountScopedRoute('general_settings_index'),
+        },
+        {
+          name: 'Settings KLaOS Message Prefix',
+          label: 'Prefixo mensagens humanas',
+          icon: 'i-lucide-message-square-text',
+          to: accountScopedRoute('klaos_message_prefix_index'),
+        },`,
+    reason: 'add KLaOS message prefix entry in settings sidebar',
+  },
 ];
 
 export default function klaosPatches() {
