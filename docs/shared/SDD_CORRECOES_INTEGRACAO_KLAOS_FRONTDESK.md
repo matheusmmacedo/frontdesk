@@ -444,6 +444,65 @@ Comparando com v1 deste doc, as queries direto no Supabase revelaram:
 - `BUG_LIMPAR_INBOX_DELETION.md`, `BUG_LARA_TOKEN_LOOP.md`
 - `docs/para-frontdesk-agent/KLAOS_UPDATES.md`
 
+---
+
+## Apêndice A — Guardrails existem mas não são usados
+
+Tabela `agent_guardrail_configs` existe. Pra Lara:
+```
+input_guardrails_enabled:  true
+output_guardrails_enabled: true
+additional_blocked_keywords: []
+additional_blocked_topics:   []
+custom_blocked_response:     null
+```
+
+**Infraestrutura tá ligada mas vazia.** Configurar com regras simples resolveria vários bugs sem precisar mexer em código:
+
+- `additional_blocked_keywords`: `["namespace=functions", "to=functions.", "*Lara*:", "<commentary"]`
+- Isso faria o output_guardrail **bloquear o envio** pro Chatwoot quando detectar leak — e acionar recovery path
+- `custom_blocked_response`: "Um momento, estou processando sua solicitação."
+
+Isso é fix **muito barato** (config, não código) que tampa os Bugs 1, 3, 13 de imediato.
+
+## Apêndice B — Prompt confirma que modelo está desobedecendo
+
+Trecho do system_prompt da Lara (seção A, cadastro inativo):
+> *"IMPORTANTE: o transbordo é feito chamando a ferramenta de transferência do sistema (function calling nativo). **Nunca** escreva o nome da ferramenta, JSON de argumentos, ou qualquer marcação técnica dentro da mensagem que vai pro cliente. Se você escrever isso como texto, a transferência NÃO acontece e o cliente vê lixo técnico."*
+
+Essa instrução está **explicitamente** no prompt. O modelo (gpt-5.2) está ignorando — escreveu o JSON como texto na conv 36 ao menos 2 vezes hoje.
+
+**Implicação**: o fix não é "melhorar o prompt" (já instrui). O fix é:
+1. **Guardrail determinístico** no output (Apêndice A) que detecta leak e recovery (Bug 1)
+2. Avaliar upgrade de modelo (gpt-5.3/5.4/5.5 ou Claude) — melhor instruction-following
+3. Forçar `tool_choice` quando intent clara
+
+## Apêndice C — Redundância no prompt (oportunidade de redução)
+
+O prompt tem 40.620 chars. Sample: a regra "responda no mesmo idioma do cliente" aparece **no topo** (REGRA #1) e **no final** (`[IDIOMA — ESPELHAR O CLIENTE]`) com redação diferente. Mesma coisa pra "texto em vez de áudio". Consolidar essas regras e remover duplicação pode cortar ~30% do prompt sem perda semântica.
+
+Benefícios:
+- -30% de tokens_input por turno (custo financeiro)
+- -latência
+- Menos ambiguidade pro modelo
+
+Sugestão: fazer revisão editorial do prompt com diff comparando versão atual vs consolidada + A/B test de 100 conversas pra confirmar que comportamento não degrada.
+
+## Apêndice D — Observações sobre design do prompt
+
+O prompt tem estrutura por cenário (A, B, C, D...) com mensagens literais pro cliente. Isso é bom (previsível) mas também é:
+- Frágil: qualquer nova regra adiciona mais seções, prompt cresce
+- Pouco composável: cenários sobrepõem (ex: "cliente inativo que quer ver benefícios" — qual regra ganha?)
+
+Recomendação estrutural de longo prazo:
+- Migrar regras estáveis pra **tool definitions** (ex: `calcular_desconto` retorna mensagem padronizada)
+- Usar **RAG** pra seções de cenário raro (ex: "comprovante ilegível")
+- Prompt ficaria só com princípios + priorização
+
+Não é bug crítico, mas é **débito técnico** que vai crescer.
+
+---
+
 ## Meta
 
-SDD v2 substitui o v1 com evidência real do Supabase KLaOS. Pode ser arquivado quando todos os 🔴/🟠 estiverem fechados.
+SDD v2 substitui o v1 com evidência real do Supabase KLaOS + análise do prompt. Pode ser arquivado quando todos os 🔴/🟠 estiverem fechados.
