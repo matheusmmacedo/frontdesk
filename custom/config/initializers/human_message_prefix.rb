@@ -92,18 +92,44 @@ Rails.application.config.to_prepare do
     before_create :klaos_apply_human_prefix
 
     define_method :klaos_apply_human_prefix do
-      return unless sender_type == 'User'
-      return if private
-      return unless outgoing?
-      return if content.blank?
+      tag = "[KlaosHumanMessagePrefix] conv=#{conversation_id} sender=#{sender_type}/#{sender_id} mt=#{message_type.inspect} priv=#{private}"
+
+      unless sender_type == 'User'
+        Rails.logger.debug("#{tag} skip: not User")
+        return
+      end
+      if private
+        Rails.logger.debug("#{tag} skip: private")
+        return
+      end
+      # message_type pode ser string 'outgoing' ou integer 1 em before_create
+      mt_val = message_type.is_a?(Integer) ? message_type : self.class.message_types[message_type.to_s]
+      unless mt_val == 1
+        Rails.logger.debug("#{tag} skip: not outgoing (mt_val=#{mt_val.inspect})")
+        return
+      end
+      if content.blank?
+        Rails.logger.debug("#{tag} skip: blank content")
+        return
+      end
 
       template = conversation&.account&.custom_attributes&.[]('klaos_human_message_template')
-      return if template.blank?
+      if template.blank?
+        Rails.logger.info("#{tag} skip: no template configured (acc_id=#{conversation&.account_id})")
+        return
+      end
 
       prefix = KlaosHumanMessagePrefix.render(template, sender)
-      return if prefix.blank?
-      return if content.start_with?(prefix.rstrip)
+      if prefix.blank?
+        Rails.logger.warn("#{tag} skip: empty prefix rendered (template=#{template.inspect})")
+        return
+      end
+      if content.start_with?(prefix.rstrip)
+        Rails.logger.info("#{tag} skip: content already starts with prefix")
+        return
+      end
 
+      Rails.logger.info("#{tag} applying prefix=#{prefix.inspect}")
       self.content = "#{prefix}#{content}"
     rescue StandardError => e
       Rails.logger.error("[KlaosHumanMessagePrefix] error on message: #{e.class}: #{e.message}")
