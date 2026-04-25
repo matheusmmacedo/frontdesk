@@ -91,7 +91,7 @@ onMounted(load);
         </label>
         <textarea
           v-model="template"
-          placeholder="Ex: *Atendente {FIRST_NAME_UPPER}:*&#10;"
+          placeholder="Ex: **Atendente {FIRST_NAME_UPPER}:**&#10;"
           :disabled="loading"
           maxlength="200"
           rows="3"
@@ -111,7 +111,10 @@ onMounted(load);
           {{ livePreview }}
         </div>
         <p class="mt-2 text-xs text-n-slate-11">
-          No WhatsApp, <code class="px-1 rounded bg-n-alpha-2">*texto*</code> vira <b>negrito</b> e <code class="px-1 rounded bg-n-alpha-2">_texto_</code> vira <i>itálico</i>.
+          <b>Markdown padrão:</b> use <code class="px-1 rounded bg-n-alpha-2">**texto**</code> (DOIS asteriscos) pra <b>negrito</b> e <code class="px-1 rounded bg-n-alpha-2">_texto_</code> pra <i>itálico</i>. O Chatwoot converte automaticamente pro formato do WhatsApp no envio.
+        </p>
+        <p class="mt-1 text-xs text-n-amber-12">
+          ⚠️ Um asterisco só (<code class="px-1 rounded bg-n-alpha-2">*texto*</code>) é interpretado como <i>itálico</i> em markdown — não como negrito. Use <code class="px-1 rounded bg-n-alpha-2">**...**</code>.
         </p>
       </div>
 
