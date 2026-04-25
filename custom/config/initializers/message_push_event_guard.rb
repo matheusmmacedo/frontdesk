@@ -17,20 +17,17 @@
 module KlaosMessagePushEventGuard
   def push_event_data(*args)
     super
-  rescue TypeError => e
-    if e.message.include?('implicit conversion of Hash into String')
-      Rails.logger.error(
-        "[KlaosMessagePushEventGuard] caught upstream TypeError on msg=#{id} " \
-        "conv=#{conversation_id} sender=#{sender_type}/#{sender_id} status=#{status} " \
-        "content_attributes_class=#{content_attributes.class} " \
-        "additional_attributes_class=#{additional_attributes.class} " \
-        "sentiment_class=#{sentiment.class} " \
-        "msg=#{e.message}"
-      )
-      nil
-    else
-      raise
-    end
+  rescue StandardError => e
+    Rails.logger.error(
+      "[KlaosMessagePushEventGuard] caught #{e.class}: #{e.message} on msg=#{id} " \
+      "conv=#{conversation_id} sender=#{sender_type}/#{sender_id} status=#{status} " \
+      "content_type=#{content_type} message_type=#{message_type_before_type_cast} " \
+      "content_attributes_class=#{content_attributes.class} " \
+      "additional_attributes_class=#{additional_attributes.class} " \
+      "sentiment_class=#{sentiment.class}"
+    )
+    Rails.logger.error("[KlaosMessagePushEventGuard] backtrace: #{e.backtrace.first(8).join(' | ')}")
+    nil
   end
 end
 
