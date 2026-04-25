@@ -58,9 +58,21 @@ module KlaosHumanMessagePrefix
   }.freeze
 
   EXAMPLES = [
-    { template: '*Atendente {FIRST_NAME_UPPER}*: ', preview: '*Atendente MATHEUS*: Oi, tudo bem?' },
-    { template: '*{NAME}*: ', preview: '*Matheus Macedo*: Oi, tudo bem?' },
-    { template: '_{FIRST_NAME}_ (Mais Saúde): ', preview: '_Matheus_ (Mais Saúde): Oi, tudo bem?' }
+    {
+      template: "*Atendente {FIRST_NAME_UPPER}:*\n",
+      preview: "*Atendente MATHEUS:*\nOi, tudo bem?",
+      note: 'Recomendado pra WhatsApp — negrito limpo + quebra de linha após o nome'
+    },
+    {
+      template: "*{NAME}*: ",
+      preview: '*Matheus Macedo*: Oi, tudo bem?',
+      note: 'Inline, mesmo linha. Negrito pode falhar em alguns clientes WhatsApp.'
+    },
+    {
+      template: "_{FIRST_NAME}_ (Mais Saúde):\n",
+      preview: "_Matheus_ (Mais Saúde):\nOi, tudo bem?",
+      note: 'Itálico no nome + identificador da empresa'
+    }
   ].freeze
 
   module_function

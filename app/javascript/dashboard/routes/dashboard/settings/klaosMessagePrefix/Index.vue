@@ -3,7 +3,6 @@ import { ref, computed, onMounted } from 'vue';
 import { useAlert } from 'dashboard/composables';
 import BaseSettingsHeader from '../components/BaseSettingsHeader.vue';
 import NextButton from 'dashboard/components-next/button/Button.vue';
-import NextInput from 'next/input/Input.vue';
 import KlaosMessagePrefixAPI from 'dashboard/api/klaosMessagePrefix';
 
 const template = ref('');
@@ -90,14 +89,16 @@ onMounted(load);
         <label class="block mb-2 text-sm font-medium text-n-slate-12">
           Template
         </label>
-        <NextInput
+        <textarea
           v-model="template"
-          placeholder="Ex: *Atendente {FIRST_NAME_UPPER}*: "
+          placeholder="Ex: *Atendente {FIRST_NAME_UPPER}:*&#10;"
           :disabled="loading"
           maxlength="200"
+          rows="3"
+          class="w-full px-3 py-2 text-sm font-mono rounded-lg border border-n-weak bg-n-alpha-2 text-n-slate-12 focus:outline-none focus:border-n-brand whitespace-pre"
         />
         <p class="mt-2 text-xs text-n-slate-11">
-          Deixe vazio pra desativar (comportamento padrão do Chatwoot — sem prefixo). Máximo 200 caracteres.
+          Quebra de linha (Enter) é aplicada literal no WhatsApp. Deixe vazio pra desativar. Máximo 200 caracteres.
         </p>
       </div>
 
@@ -145,10 +146,11 @@ onMounted(load);
             class="p-3 rounded-lg bg-n-alpha-2 cursor-pointer hover:bg-n-alpha-3 transition-colors"
             @click="useExample(ex.template)"
           >
+            <div v-if="ex.note" class="text-xs text-n-amber-12 mb-2 italic">{{ ex.note }}</div>
             <div class="text-xs text-n-slate-11 mb-1">Template:</div>
-            <code class="block text-sm font-mono text-n-slate-12 mb-2">{{ ex.template }}</code>
+            <code class="block text-sm font-mono text-n-slate-12 mb-2 whitespace-pre-wrap">{{ ex.template }}</code>
             <div class="text-xs text-n-slate-11 mb-1">Resulta em:</div>
-            <div class="text-sm font-mono text-n-slate-12">{{ ex.preview }}</div>
+            <div class="text-sm font-mono text-n-slate-12 whitespace-pre-wrap">{{ ex.preview }}</div>
           </div>
         </div>
       </div>
