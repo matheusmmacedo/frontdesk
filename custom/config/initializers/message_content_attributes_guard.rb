@@ -12,10 +12,22 @@
 
 module KlaosMessageContentAttributesGuard
   def content_attributes=(value)
+    # 1. Coerce string-wrapped JSON into Hash (Bug 7 SDD)
     if value.is_a?(String) && value.start_with?('{')
       parsed = JSON.parse(value) rescue nil
       value = parsed if parsed.is_a?(Hash)
     end
+
+    # 2. Drop keys that are nil — `{"in_reply_to": null}` patterns crash
+    #    Message#push_event_data downstream with "no implicit conversion of
+    #    Hash into String" when jbuilder serializes the result. Semantically
+    #    equivalent to absence of the key; cleaning up here prevents future
+    #    occurrences.
+    if value.is_a?(Hash)
+      cleaned = value.reject { |_k, v| v.nil? }
+      value = cleaned.empty? ? nil : cleaned
+    end
+
     super(value)
   end
 end
