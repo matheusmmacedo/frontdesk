@@ -79,8 +79,8 @@ onMounted(load);
 <template>
   <div class="h-auto overflow-auto w-full p-4">
     <BaseSettingsHeader
-      title="Prefixo em mensagens humanas"
-      description="Quando um atendente responde uma conversa, o Chatwoot envia o texto exato que ele digitou — sem identificar quem está falando. Esta configuração permite prepender automaticamente um template com o nome do atendente, trazendo consistência com o padrão usado pelo bot (ex: *Atendente GUSTAVO*: Oi, tudo bem?)."
+      title="Formato do Nome"
+      description="Define como o nome do atendente humano aparece automaticamente no início de cada mensagem enviada ao cliente. Padroniza a identificação (ex: **Atendente GUSTAVO:** seguido da mensagem) e mantém consistência com o padrão usado pelo bot. Configuração por conta — se vazio, comportamento padrão do Chatwoot (sem prefixo)."
     />
 
     <div class="mt-6 max-w-4xl space-y-6">

@@ -125,11 +125,11 @@ const PATCHES = [
         },
         {
           name: 'Settings KLaOS Message Prefix',
-          label: 'Prefixo mensagens humanas',
-          icon: 'i-lucide-message-square-text',
+          label: 'Formato do Nome',
+          icon: 'i-lucide-id-card',
           to: accountScopedRoute('klaos_message_prefix_index'),
         },`,
-    reason: 'add KLaOS message prefix entry in settings sidebar',
+    reason: 'add Formato do Nome (KLaOS message prefix) entry in settings sidebar',
   },
 ];
 
