@@ -49,6 +49,34 @@
     border-right: 1px solid #d1d7db;
   }
 
+  // ---------------------------------------------------------------------------
+  // Inbox-view (Notifications) list panel — same treatment as conversation list
+  // InboxList.vue uses <section class="flex w-full h-full bg-n-surface-1">
+  // This keeps the list distinct from the message area (which stays #eae6df)
+  // ---------------------------------------------------------------------------
+  main > section.bg-n-surface-1 {
+    background-color: #ffffff !important;
+  }
+  // Inner column (340px panel containing the cards) — border separates from chat area
+  main > section.bg-n-surface-1 > div:first-child {
+    border-right: 1px solid #d1d7db !important;
+  }
+  // Inbox cards — hover/active visual feedback
+  .inbox-card {
+    border-radius: 0.5rem;
+    &:hover {
+      background-color: #f5f6f6 !important;
+    }
+    &.active {
+      background-color: #f0f2f5 !important;
+    }
+  }
+  // Empty state area on the right of inbox-view — bege WhatsApp like message area
+  main > section.bg-n-surface-1 > .router-view-wrap,
+  main > section.bg-n-surface-1 > div:last-child {
+    // No background override here — keeps bege (#eae6df) of surface-1 var
+  }
+
   // Tabs row (Minhas / Não atribuídas / Todos) — transparent, inherits white
   // DO NOT apply any background to <li> — it causes white square artifacts
   .conversations-list-wrap ul li {
@@ -224,6 +252,25 @@
   .conversations-list-wrap {
     background-color: #111b21 !important;
     border-right: 1px solid #1f2c34;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Inbox-view (Notifications) list panel — dark
+  // ---------------------------------------------------------------------------
+  main > section.bg-n-surface-1 {
+    background-color: #111b21 !important;
+  }
+  main > section.bg-n-surface-1 > div:first-child {
+    border-right: 1px solid #1f2c34 !important;
+  }
+  .inbox-card {
+    border-radius: 0.5rem;
+    &:hover {
+      background-color: #1f2c34 !important;
+    }
+    &.active {
+      background-color: #2a3942 !important;
+    }
   }
 
   // Tabs li — transparent, inherits panel bg (never set explicit bg on li)
