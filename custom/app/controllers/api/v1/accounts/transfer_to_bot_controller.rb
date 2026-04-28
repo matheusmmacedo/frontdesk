@@ -11,11 +11,20 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
     ActiveRecord::Base.transaction do
       # Reatribui o agent_bot da inbox à conversa: quando o humano assumiu,
       # o callback reset_agent_bot_when_assignee_present zerou assignee_agent_bot_id.
-      # Sem reanexar, o Chatwoot não dispara o webhook do bot pras próximas
-      # mensagens do cliente — bot fica mudo mesmo após o KLaOS aceitar o
-      # bridge-event. (descoberto pela equipe KLaOS, 2026-04-28)
+      # Sem reanexar, o Chatwoot Gate do KLaOS vê agent_bot_id=null e decide
+      # bot mudo (fail-closed). Reanexar deixa o gate ver cw_bot_attached.
+      #
+      # NÃO checamos abi.active? aqui porque a flag controla o listener
+      # nativo do Chatwoot (que disparia o webhook do bot direto do
+      # message_router). KLaOS bypassa o listener — consulta o gate e
+      # despacha sua própria pipeline. Pra arquitetura KLaOS, o que importa
+      # é "tem bot configurado pra essa inbox?", não "o flag tá ligado?".
+      # Em dev a abi normalmente fica status=0 por default (admin nunca
+      # tocou no toggle de Settings > Bots), o que com active? quebrava
+      # silenciosamente o "Devolver ao bot" — sintoma reportado pelo time
+      # do KLaOS em 2026-04-28.
       bot_inbox = @conversation.inbox.agent_bot_inbox
-      reattach_bot_id = bot_inbox&.active? ? bot_inbox.agent_bot_id : nil
+      reattach_bot_id = bot_inbox&.agent_bot_id
 
       @conversation.update_columns(
         assignee_id: nil,
