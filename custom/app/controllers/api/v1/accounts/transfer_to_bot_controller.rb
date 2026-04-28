@@ -9,9 +9,18 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
 
   def create
     ActiveRecord::Base.transaction do
+      # Reatribui o agent_bot da inbox à conversa: quando o humano assumiu,
+      # o callback reset_agent_bot_when_assignee_present zerou assignee_agent_bot_id.
+      # Sem reanexar, o Chatwoot não dispara o webhook do bot pras próximas
+      # mensagens do cliente — bot fica mudo mesmo após o KLaOS aceitar o
+      # bridge-event. (descoberto pela equipe KLaOS, 2026-04-28)
+      bot_inbox = @conversation.inbox.agent_bot_inbox
+      reattach_bot_id = bot_inbox&.active? ? bot_inbox.agent_bot_id : nil
+
       @conversation.update_columns(
         assignee_id: nil,
         team_id: nil,
+        assignee_agent_bot_id: reattach_bot_id,
         status: Conversation.statuses[:pending]
       )
       @conversation.messages.create!(
@@ -67,6 +76,7 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
       type: 'manual_transfer_to_bot',
       conv_display_id: conversation.display_id,
       workspace_id: workspace_id,
+      chatwoot_account_id: conversation.account_id,
       reason: "initiator:#{user.id}:#{user.name}"
     }
 
