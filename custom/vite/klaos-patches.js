@@ -237,6 +237,29 @@ const showTransferToBot = computed(
     reason: 'devolver-ao-bot: botão visível ao lado do Resolver',
   },
 
+  // === KLaOS — "Minhas" sticky contra broadcasts transientes do bot ===
+  // Sintoma: durante o sequenciamento KLaOS (assign user → reopen → bot reply
+  // → team change), a conv aparecia/sumia da aba "Minhas" do agente. Causa:
+  // o backend EventDataPresenter#push_meta usa `assigned_entity = assignee_agent_bot
+  // || assignee` (BOT-first). Se o broadcast carrega `meta.assignee = AgentBot`
+  // mesmo por um instante (cache de associação ou estado intermediário), o
+  // getter compara `assignee.id` (do bot) com `currentUserID` (do agente) e
+  // o conv sai da Minhas. Quando próximo broadcast traz user, volta.
+  //
+  // Fix defensivo: na "Minhas", só conta atribuição quando assignee_type === 'User'.
+  // Se vier um broadcast com assignee_type='AgentBot' (transiente do bot), a conv
+  // permanece com o estado cached do store — não é removida por causa de um flash.
+  // Combina com a lógica existente: o reducer já ignora out-of-order via updated_at.
+  {
+    id: '/store/modules/conversations/getters.js',
+    from: `      const { assignee } = conversation.meta;
+      const isAssignedToMe = assignee && assignee.id === currentUserID;`,
+    to: `      const { assignee, assignee_type: assigneeType } = conversation.meta;
+      const isAssignedToMe =
+        assignee && assignee.id === currentUserID && assigneeType !== 'AgentBot';`,
+    reason: 'minhas-sticky: ignora broadcasts transientes com assignee_type=AgentBot',
+  },
+
   // === KLaOS — alerta sonoro quando conv eh atribuida ao agente logado ===
   // Hoje o som só toca em mensagem nova; quando uma conv é atribuída sem msg
   // nova (ex: bot transferiu, time auto-assignou, outro atendente moveu), o
