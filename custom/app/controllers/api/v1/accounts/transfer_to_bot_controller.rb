@@ -51,8 +51,18 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
 
     secret = ENV['FRONTDESK_BRIDGE_SECRET']
 
-    # Payload conforme o contrato do KLaOS (docs/para-frontdesk-agent/KLAOS_UPDATES.md)
+    # KLaOS exige workspace_id no payload (bridgeEvent.controller.ts) — sem ele
+    # o webhook é rejeitado com 400 e o status no KLaOS nunca é destravado,
+    # deixando o bot mudo. Falha alto pra não voltar a passar despercebido.
     workspace_id = conversation.account.custom_attributes&.dig('klaos_workspace_id')
+    if workspace_id.blank?
+      Rails.logger.error(
+        "[TransferToBot] account=#{conversation.account_id} missing klaos_workspace_id custom_attribute — " \
+        "skipping bridge webhook. Bot return won't be honored on KLaOS side until this is set."
+      )
+      return
+    end
+
     payload = {
       type: 'manual_transfer_to_bot',
       conv_display_id: conversation.display_id,
