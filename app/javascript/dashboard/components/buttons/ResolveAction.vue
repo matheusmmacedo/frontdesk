@@ -53,8 +53,15 @@ const isSnoozed = computed(
   () => currentChat.value.status === wootConstants.STATUS_TYPE.SNOOZED
 );
 
+// KLaOS custom — dropdown também precisa aparecer em estado quebrado:
+// status=pending + atribuição manual (humano/time). Antes de "Devolver ao bot"
+// existir, esse cenário era impossível; hoje pode acontecer se o atendente
+// devolve, atribui manualmente, e quer devolver de novo. Sem ampliar o gate
+// abaixo, o atendente fica sem caminho de saída.
 const showAdditionalActions = computed(
-  () => !isPending.value && !isSnoozed.value
+  () =>
+    (!isPending.value && !isSnoozed.value) ||
+    hasManualAssignment.value
 );
 
 // KLaOS custom — "Devolver ao bot" aparece quando a inbox tem agent_bot
