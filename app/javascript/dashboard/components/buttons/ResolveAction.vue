@@ -1,9 +1,13 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useAlert } from 'dashboard/composables';
 import { useToggle } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
-import { useStore, useStoreGetters } from 'dashboard/composables/store';
+import {
+  useStore,
+  useStoreGetters,
+  useFunctionGetter,
+} from 'dashboard/composables/store';
 import { useEmitter } from 'dashboard/composables/emitter';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import { useConversationRequiredAttributes } from 'dashboard/composables/useConversationRequiredAttributes';
@@ -53,11 +57,42 @@ const showAdditionalActions = computed(
   () => !isPending.value && !isSnoozed.value
 );
 
-// KLaOS custom — botão "Devolver ao bot" aparece em convs com humano atribuído.
-// Backend valida se faz sentido de fato devolver (inbox com bot). Se não tem bot,
-// conv fica pending e o admin resolve manualmente.
+// KLaOS custom — "Devolver ao bot" aparece quando a inbox tem agent_bot
+// configurado E há atribuição manual (assignee, team via meta, ou team_id no
+// top-level). Atribuição-só-pra-time (sem assignee) também conta — admin
+// pode atribuir só pro time e ainda querer devolver pro bot. Inbox sem bot
+// esconde o botão pra evitar conv órfã em pending.
+const inboxId = computed(() => currentChat.value?.inbox_id);
+
+// Lazy fetch — agentBotInbox só é populado sob demanda. Dispara quando a
+// conversa selecionada muda de inbox.
+watch(
+  inboxId,
+  newId => {
+    if (newId) store.dispatch('agentBots/fetchAgentBotInbox', newId);
+  },
+  { immediate: true }
+);
+
+const activeAgentBot = useFunctionGetter(
+  'agentBots/getActiveAgentBot',
+  inboxId
+);
+
+const inboxHasBot = computed(() => Boolean(activeAgentBot.value?.id));
+
+const hasManualAssignment = computed(() => {
+  const chat = currentChat.value;
+  return (
+    Boolean(chat?.meta?.assignee?.id) ||
+    Boolean(chat?.assignee_id) ||
+    Boolean(chat?.meta?.team?.id) ||
+    Boolean(chat?.team_id)
+  );
+});
+
 const showTransferToBot = computed(
-  () => currentChat.value?.meta?.assignee?.id != null
+  () => inboxHasBot.value && hasManualAssignment.value
 );
 
 const transferToBot = async () => {
