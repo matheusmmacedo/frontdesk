@@ -26,18 +26,17 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
       bot_inbox = @conversation.inbox.agent_bot_inbox
       reattach_bot_id = bot_inbox&.agent_bot_id
 
-      Rails.logger.warn(
-        "[TransferToBot DEBUG] conv=#{@conversation.id} display=#{@conversation.display_id} " \
-        "inbox=#{@conversation.inbox_id} bot_inbox=#{bot_inbox&.id.inspect} " \
-        "abi.agent_bot_id=#{bot_inbox&.agent_bot_id.inspect} reattach_bot_id=#{reattach_bot_id.inspect}"
-      )
-
-      @conversation.update_columns(
-        assignee_id: nil,
-        team_id: nil,
-        assignee_agent_bot_id: reattach_bot_id,
-        status: Conversation.statuses[:pending]
-      )
+      # save! (não update_columns) pra disparar after_update_commit →
+      # ActionCable broadcasts (assignee.changed, conversation.updated).
+      # Sem isso a sidebar do dashboard fica stale até reload.
+      # O callback reset_agent_bot_when_assignee_present retorna early
+      # quando assignee_id é blank — então o bot que setamos aqui
+      # sobrevive ao save.
+      @conversation.assignee_id = nil
+      @conversation.team_id = nil
+      @conversation.assignee_agent_bot_id = reattach_bot_id
+      @conversation.status = :pending
+      @conversation.save!
       @conversation.messages.create!(
         content: "Conversa devolvida ao bot por #{current_user.name}",
         message_type: :activity,
