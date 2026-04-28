@@ -131,6 +131,165 @@ const PATCHES = [
         },`,
     reason: 'add Formato do Nome (KLaOS message prefix) entry in settings sidebar',
   },
+
+  // === KLaOS — "Devolver ao bot" como botão visível + visibilidade correta ===
+  // Por que existe: o estado pré-session (b8ecaf61f) deixava o botão dentro do
+  // dropdown e usava só `meta.assignee?.id` como gate. Faltava: (a) sair do
+  // dropdown pra UX visível, (b) checar se a inbox tem agent_bot configurado
+  // (sem isso o clique deixa a conv órfã em pending), (c) cobrir atribuição
+  // só-pra-time (chat.team_id) e variantes (assignee_id top-level).
+  {
+    id: '/components/buttons/ResolveAction.vue',
+    from: "import { ref, computed } from 'vue';",
+    to: "import { ref, computed, watch } from 'vue';",
+    reason: 'devolver-ao-bot: import watch para reagir a inbox change',
+  },
+  {
+    id: '/components/buttons/ResolveAction.vue',
+    from: `// KLaOS custom — botão "Devolver ao bot" aparece em convs com humano atribuído.
+// Backend valida se faz sentido de fato devolver (inbox com bot). Se não tem bot,
+// conv fica pending e o admin resolve manualmente.
+const showTransferToBot = computed(
+  () => currentChat.value?.meta?.assignee?.id != null
+);`,
+    to: `// KLaOS custom — "Devolver ao bot" aparece quando a inbox tem agent_bot
+// configurado E há atribuição manual (assignee, team via meta, ou team_id no
+// top-level). Atribuição-só-pra-time (sem assignee) também conta — admin
+// pode atribuir só pro time e ainda querer devolver pro bot. Inbox sem bot
+// esconde o botão pra evitar conv órfã em pending.
+const inboxId = computed(() => currentChat.value?.inbox_id);
+
+// Lazy fetch — agentBotInbox só é populado sob demanda. Dispara quando a
+// conversa selecionada muda de inbox.
+watch(
+  inboxId,
+  newId => {
+    if (newId) store.dispatch('agentBots/fetchAgentBotInbox', newId);
+  },
+  { immediate: true }
+);
+
+// Checa o map agentBotInbox direto via store.state. fetchAgentBotInbox popula
+// só este map (inbox_id → bot_id), NÃO carrega a lista completa de bots em
+// records. getActiveAgentBot depende de records (que pode estar vazio em
+// fluxos onde a tela de settings de bots nunca foi visitada), então retornava
+// {} mesmo com a inbox tendo bot. Aqui basta saber que o id existe — não
+// precisamos dos detalhes do bot.
+const inboxHasBot = computed(() => {
+  const id = inboxId.value;
+  if (!id) return false;
+  const map = store.state.agentBots?.agentBotInbox || {};
+  return Boolean(map[Number(id)]);
+});
+
+const hasManualAssignment = computed(() => {
+  const chat = currentChat.value;
+  return (
+    Boolean(chat?.meta?.assignee?.id) ||
+    Boolean(chat?.assignee_id) ||
+    Boolean(chat?.meta?.team?.id) ||
+    Boolean(chat?.team_id)
+  );
+});
+
+const showTransferToBot = computed(
+  () => inboxHasBot.value && hasManualAssignment.value
+);`,
+    reason: 'devolver-ao-bot: visibility gate amplo (inbox bot + atribuição manual)',
+  },
+  {
+    // Tira a entrada do dropdown — botão agora vive visível ao lado do Resolver.
+    id: '/components/buttons/ResolveAction.vue',
+    from: `        <WootDropdownItem v-if="showTransferToBot">
+          <Button
+            :label="t('CONVERSATION.RESOLVE_DROPDOWN.TRANSFER_TO_BOT')"
+            ghost
+            slate
+            sm
+            start
+            icon="i-lucide-bot"
+            class="w-full"
+            @click="transferToBot"
+          />
+        </WootDropdownItem>
+`,
+    to: '',
+    reason: 'devolver-ao-bot: remove do dropdown (vai virar botão visível)',
+  },
+  {
+    // Adiciona botão visível ANTES do ButtonGroup, dentro do mesmo container flex.
+    id: '/components/buttons/ResolveAction.vue',
+    from: `  <div class="flex relative justify-end items-center resolve-actions">
+    <ButtonGroup`,
+    to: `  <div class="flex relative justify-end items-center resolve-actions">
+    <Button
+      v-if="showTransferToBot"
+      :label="t('CONVERSATION.RESOLVE_DROPDOWN.TRANSFER_TO_BOT')"
+      icon="i-lucide-bot"
+      size="sm"
+      color="slate"
+      class="me-2 outline outline-1 outline-n-container shadow rounded-lg"
+      :is-loading="isLoading"
+      :disabled="isLoading"
+      @click="transferToBot"
+    />
+    <ButtonGroup`,
+    reason: 'devolver-ao-bot: botão visível ao lado do Resolver',
+  },
+
+  // === KLaOS — alerta sonoro quando conv eh atribuida ao agente logado ===
+  // Hoje o som só toca em mensagem nova; quando uma conv é atribuída sem msg
+  // nova (ex: bot transferiu, time auto-assignou, outro atendente moveu), o
+  // atendente não tinha sinal sonoro de "tem uma conv pra você".
+  {
+    id: '/helper/actionCable.js',
+    from: `  onAssigneeChanged = payload => {
+    const { id } = payload;
+    if (id) {
+      this.app.$store.dispatch('updateConversation', payload);
+    }
+    this.fetchConversationStats();
+  };`,
+    to: `  onAssigneeChanged = payload => {
+    const { id } = payload;
+    if (id) {
+      this.app.$store.dispatch('updateConversation', payload);
+      DashboardAudioNotificationHelper.onAssigneeChanged(payload);
+    }
+    this.fetchConversationStats();
+  };`,
+    reason: 'audio-assignee: dispara handler de som no evento assignee.changed',
+  },
+  {
+    id: '/AudioAlerts/DashboardAudioNotificationHelper.js',
+    from: `  onNewMessage = message => {`,
+    to: `  // KLaOS custom: toca som quando uma conversa é atribuída ao agente logado
+  // (independente de quem fez a atribuição — bot, auto-assign, outro humano).
+  // Respeita o toggle geral (audioAlertType !== 'none') e o "only when hidden"
+  // pra não bombar o atendente quando ele está olhando o dashboard.
+  onAssigneeChanged = payload => {
+    if (!this.currentUser) return;
+
+    const { audioAlertType, playAlertOnlyWhenHidden } = this.notificationConfig;
+    if (audioAlertType.includes('none')) return;
+
+    const newAssigneeId = payload?.meta?.assignee?.id;
+    if (!newAssigneeId || newAssigneeId !== this.currentUser.id) return;
+
+    if (
+      WindowVisibilityHelper.isWindowVisible() &&
+      playAlertOnlyWhenHidden
+    ) {
+      return;
+    }
+
+    this.playAudioAlert();
+    showBadgeOnFavicon();
+  };
+
+  onNewMessage = message => {`,
+    reason: 'audio-assignee: handler que toca som quando assignee.id == currentUser.id',
+  },
 ];
 
 export default function klaosPatches() {

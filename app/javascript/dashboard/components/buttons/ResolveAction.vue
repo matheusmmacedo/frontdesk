@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useAlert } from 'dashboard/composables';
 import { useToggle } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
@@ -49,59 +49,15 @@ const isSnoozed = computed(
   () => currentChat.value.status === wootConstants.STATUS_TYPE.SNOOZED
 );
 
-// KLaOS custom — dropdown também precisa aparecer em estado quebrado:
-// status=pending + atribuição manual (humano/time). Antes de "Devolver ao bot"
-// existir, esse cenário era impossível; hoje pode acontecer se o atendente
-// devolve, atribui manualmente, e quer devolver de novo. Sem ampliar o gate
-// abaixo, o atendente fica sem caminho de saída.
 const showAdditionalActions = computed(
-  () =>
-    (!isPending.value && !isSnoozed.value) ||
-    hasManualAssignment.value
+  () => !isPending.value && !isSnoozed.value
 );
 
-// KLaOS custom — "Devolver ao bot" aparece quando a inbox tem agent_bot
-// configurado E há atribuição manual (assignee, team via meta, ou team_id no
-// top-level). Atribuição-só-pra-time (sem assignee) também conta — admin
-// pode atribuir só pro time e ainda querer devolver pro bot. Inbox sem bot
-// esconde o botão pra evitar conv órfã em pending.
-const inboxId = computed(() => currentChat.value?.inbox_id);
-
-// Lazy fetch — agentBotInbox só é populado sob demanda. Dispara quando a
-// conversa selecionada muda de inbox.
-watch(
-  inboxId,
-  newId => {
-    if (newId) store.dispatch('agentBots/fetchAgentBotInbox', newId);
-  },
-  { immediate: true }
-);
-
-// Checa o map agentBotInbox direto via store.state. fetchAgentBotInbox popula
-// só este map (inbox_id → bot_id), NÃO carrega a lista completa de bots em
-// records. getActiveAgentBot depende de records (que pode estar vazio em
-// fluxos onde a tela de settings de bots nunca foi visitada), então retornava
-// {} mesmo com a inbox tendo bot. Aqui basta saber que o id existe — não
-// precisamos dos detalhes do bot.
-const inboxHasBot = computed(() => {
-  const id = inboxId.value;
-  if (!id) return false;
-  const map = store.state.agentBots?.agentBotInbox || {};
-  return Boolean(map[Number(id)]);
-});
-
-const hasManualAssignment = computed(() => {
-  const chat = currentChat.value;
-  return (
-    Boolean(chat?.meta?.assignee?.id) ||
-    Boolean(chat?.assignee_id) ||
-    Boolean(chat?.meta?.team?.id) ||
-    Boolean(chat?.team_id)
-  );
-});
-
+// KLaOS custom — botão "Devolver ao bot" aparece em convs com humano atribuído.
+// Backend valida se faz sentido de fato devolver (inbox com bot). Se não tem bot,
+// conv fica pending e o admin resolve manualmente.
 const showTransferToBot = computed(
-  () => inboxHasBot.value && hasManualAssignment.value
+  () => currentChat.value?.meta?.assignee?.id != null
 );
 
 const transferToBot = async () => {
