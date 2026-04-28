@@ -26,6 +26,12 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
       bot_inbox = @conversation.inbox.agent_bot_inbox
       reattach_bot_id = bot_inbox&.agent_bot_id
 
+      Rails.logger.warn(
+        "[TransferToBot DEBUG] conv=#{@conversation.id} display=#{@conversation.display_id} " \
+        "inbox=#{@conversation.inbox_id} bot_inbox=#{bot_inbox&.id.inspect} " \
+        "abi.agent_bot_id=#{bot_inbox&.agent_bot_id.inspect} reattach_bot_id=#{reattach_bot_id.inspect}"
+      )
+
       @conversation.update_columns(
         assignee_id: nil,
         team_id: nil,
