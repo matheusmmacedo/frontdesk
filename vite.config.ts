@@ -22,6 +22,7 @@ import { defineConfig } from 'vite';
 import ruby from 'vite-plugin-ruby';
 import path from 'path';
 import vue from '@vitejs/plugin-vue';
+import klaosPatches from './custom/vite/klaos-patches.js';
 
 const isLibraryMode = process.env.BUILD_MODE === 'library';
 const isTestMode = process.env.TEST === 'true';
@@ -34,12 +35,12 @@ const vueOptions = {
   },
 };
 
-let plugins = [ruby(), vue(vueOptions)];
+let plugins = [klaosPatches(), ruby(), vue(vueOptions)];
 
 if (isLibraryMode) {
   plugins = [];
 } else if (isTestMode) {
-  plugins = [vue(vueOptions)];
+  plugins = [klaosPatches(), vue(vueOptions)];
 }
 
 export default defineConfig({
