@@ -3,11 +3,7 @@ import { ref, computed, watch } from 'vue';
 import { useAlert } from 'dashboard/composables';
 import { useToggle } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
-import {
-  useStore,
-  useStoreGetters,
-  useFunctionGetter,
-} from 'dashboard/composables/store';
+import { useStore, useStoreGetters } from 'dashboard/composables/store';
 import { useEmitter } from 'dashboard/composables/emitter';
 import { useKeyboardEvents } from 'dashboard/composables/useKeyboardEvents';
 import { useConversationRequiredAttributes } from 'dashboard/composables/useConversationRequiredAttributes';
@@ -81,12 +77,18 @@ watch(
   { immediate: true }
 );
 
-const activeAgentBot = useFunctionGetter(
-  'agentBots/getActiveAgentBot',
-  inboxId
-);
-
-const inboxHasBot = computed(() => Boolean(activeAgentBot.value?.id));
+// Checa o map agentBotInbox direto via store.state. fetchAgentBotInbox popula
+// só este map (inbox_id → bot_id), NÃO carrega a lista completa de bots em
+// records. getActiveAgentBot depende de records (que pode estar vazio em
+// fluxos onde a tela de settings de bots nunca foi visitada), então retornava
+// {} mesmo com a inbox tendo bot. Aqui basta saber que o id existe — não
+// precisamos dos detalhes do bot.
+const inboxHasBot = computed(() => {
+  const id = inboxId.value;
+  if (!id) return false;
+  const map = store.state.agentBots?.agentBotInbox || {};
+  return Boolean(map[Number(id)]);
+});
 
 const hasManualAssignment = computed(() => {
   const chat = currentChat.value;
