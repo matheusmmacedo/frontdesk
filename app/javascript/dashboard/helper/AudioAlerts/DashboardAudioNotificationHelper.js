@@ -168,6 +168,30 @@ export class DashboardAudioNotificationHelper {
     return shouldPlayAudio.some(Boolean);
   };
 
+  // KLaOS custom: toca som quando uma conversa é atribuída ao agente logado
+  // (independente de quem fez a atribuição — bot, auto-assign, outro humano).
+  // Respeita o toggle geral (audioAlertType !== 'none') e o "only when hidden"
+  // pra não bombar o atendente quando ele está olhando o dashboard.
+  onAssigneeChanged = payload => {
+    if (!this.currentUser) return;
+
+    const { audioAlertType, playAlertOnlyWhenHidden } = this.notificationConfig;
+    if (audioAlertType.includes('none')) return;
+
+    const newAssigneeId = payload?.meta?.assignee?.id;
+    if (!newAssigneeId || newAssigneeId !== this.currentUser.id) return;
+
+    if (
+      WindowVisibilityHelper.isWindowVisible() &&
+      playAlertOnlyWhenHidden
+    ) {
+      return;
+    }
+
+    this.playAudioAlert();
+    showBadgeOnFavicon();
+  };
+
   onNewMessage = message => {
     // If the user does not have the permission to view the conversation, then dismiss the alert
     // FIX ME: There shouldn't be a new message if the user has no access to the conversation.
