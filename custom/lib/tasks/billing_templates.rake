@@ -1,73 +1,93 @@
 # frozen_string_literal: true
 
-# Rake tasks to create/update Meta WhatsApp message templates
-# for the Mais Saude 24h billing flow.
+# Rake tasks to seed/sync Meta WhatsApp message templates for the
+# Mais Saude 24h billing flow.
+#
+# Source of truth: the WABA on Meta. This rake is **idempotent**:
+# - existing templates → PATCH components (no-op if identical, requeues approval if changed)
+# - missing templates  → POST create (goes to PENDING then APPROVED)
+#
+# Continuous sync of template state into the local DB happens via
+# `WhatsappConnections::TemplatesSyncJob` (every 3h) + Meta webhook
+# (`template_status_update`, when wired). This rake is **manual seed only**;
+# do NOT use it to "push state" to Meta on a schedule.
 #
 # Usage:
-#   rake billing_templates:sync CONNECTION_ID=<whatsapp_connection_id>
+#   rake billing_templates:sync        CONNECTION_ID=<whatsapp_connection_id>
+#   rake billing_templates:definitions
 
 namespace :billing_templates do
   FOOTER_CONTATO = <<~TEXT.chomp
-    Se você não reconhece essa cobrança ou tem alguma dúvida sobre o pagamento entre em contato com seu fornecedor:
     Telefone: (31) 98248-8131
     Email: adm@atendmedbh.com.br
   TEXT
 
-  PIX_BUTTON_URL = 'https://app.klaos.ai/pay/{{1}}'
+  PIX_BUTTON_URL    = 'https://app.klaos.ai/pay/{{1}}'
+  BOLETO_BUTTON_URL = 'https://app.klaos.ai/boleto/{{1}}'
 
+  PAY_BUTTONS = [
+    { type: 'URL', text: 'Pagar via PIX',     url: PIX_BUTTON_URL },
+    { type: 'URL', text: 'Ver Boleto (PDF)',  url: BOLETO_BUTTON_URL }
+  ].freeze
+
+  # Vars contract for the 6 main templates: nome_cliente, valor, data_vencimento, codigo_barras
+  STD_VARS = %w[nome_cliente valor data_vencimento codigo_barras].freeze
+
+  # Body texts mirror what is currently APPROVED on the WABA Klaus on Meta.
+  # If you change a body, Meta will re-queue the template for approval.
   TEMPLATES = {
     fatura_lembrete_5dias: {
       name: 'fatura_lembrete_5dias',
       language: 'pt_BR',
       category: 'UTILITY',
-      variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nInformamos que sua fatura da MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence em 5 dias, no dia {{3}}.\n\nRealize o pagamento antes do vencimento para evitar multas e juros.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
-      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
+      variables: STD_VARS,
+      body: "Olá {{1}}!\nInformamos que sua fatura da MAIS SAÚDE 24 HORAS, no valor de {{2}} vence em 5 dias, no dia {{3}}.\n\nRealize o pagamento antes do vencimento para evitar multas e juros.\n\nCódigo de barras do boleto:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: PAY_BUTTONS
     },
 
     fatura_emissao: {
       name: 'fatura_emissao',
       language: 'pt_BR',
       category: 'UTILITY',
-      variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nSua fatura da MAIS SAÚDE 24 HORAS foi emitida. O valor de R$ {{2}} vence no dia {{3}}.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
-      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
+      variables: STD_VARS,
+      body: "Olá {{1}}!\nSua fatura da MAIS SAÚDE 24 HORAS foi emitida. O valor de {{2}} vence no dia {{3}}.\n\nCódigo de barras do boleto:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: PAY_BUTTONS
     },
 
     cobranca_vencimento_hoje: {
       name: 'cobranca_vencimento_hoje',
       language: 'pt_BR',
       category: 'UTILITY',
-      variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} vence hoje {{3}}.\n\nEvite multas e juros, pague sua fatura em dia.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
-      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
+      variables: STD_VARS,
+      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de {{2}} vence hoje {{3}}.\n\nEvite multas e juros, pague sua fatura em dia.\n\nCódigo de barras do boleto:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: PAY_BUTTONS
     },
 
     cobranca_atraso_5dias: {
       name: 'cobranca_atraso_5dias',
       language: 'pt_BR',
       category: 'UTILITY',
-      variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
-      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
+      variables: STD_VARS,
+      body: "Olá {{1}}!\nQueremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nCódigo de barras do boleto:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: PAY_BUTTONS
     },
 
-    fatura_vencida_10dias: {
-      name: 'fatura_vencida_10dias',
+    boleto_atraso_10dias: {
+      name: 'boleto_atraso_10dias',
       language: 'pt_BR',
       category: 'UTILITY',
-      variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nSeu boleto da MAIS SAÚDE 24 HORAS no valor de R$ {{2}} venceu no dia {{3}} e ainda não identificamos o pagamento.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
-      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
+      variables: STD_VARS,
+      body: "Olá {{1}}!\nSeu boleto da MAIS SAÚDE 24 HORAS no valor de {{2}} venceu no dia {{3}} e ainda não identificamos o pagamento.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto.\n\nCódigo de barras do boleto:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: PAY_BUTTONS
     },
 
     fatura_atraso_15dias: {
       name: 'fatura_atraso_15dias',
       language: 'pt_BR',
       category: 'UTILITY',
-      variables: %w[nome_cliente valor data_vencimento link_pagamento],
-      body: "Olá {{1}}!\nO seu boleto da MAIS SAÚDE 24 HORAS ultrapassou o prazo permitido e será executado. Realize o pagamento hoje e envie uma cópia do comprovante com urgência para evitar protesto e cobranças extrajudiciais.\n\nValor de R$ {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nPara efetuar o pagamento e visualizar mais informações da cobrança, clique no link:\n{{4}}\n\n#{FOOTER_CONTATO}",
-      buttons: [{ type: 'URL', text: 'Pagar via PIX', url: PIX_BUTTON_URL }]
+      variables: STD_VARS,
+      body: "Olá {{1}}!\nO seu boleto da MAIS SAÚDE 24 HORAS ultrapassou o prazo permitido e será executado. Realize o pagamento hoje e envie uma cópia do comprovante com urgência para evitar protesto e cobranças extrajudiciais.\n\nValor de {{2}} venceu no dia {{3}}.\n\nLembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc.\n\nCódigo de barras do boleto:\n{{4}}\n\n#{FOOTER_CONTATO}",
+      buttons: PAY_BUTTONS
     },
 
     fatura_atraso_21dias: {
@@ -75,8 +95,8 @@ namespace :billing_templates do
       language: 'pt_BR',
       category: 'UTILITY',
       variables: %w[nome_cliente],
-      body: "Olá {{1}}\n\nInformamos que, devido à inadimplência, seu título foi encaminhado ao cartório de protesto e aos órgãos de proteção ao crédito (SPC e Serasa). Para regularizar sua situação e evitar restrições no CPF, entre em contato conosco.",
-      buttons: [{ type: 'URL', text: 'Falar no WhatsApp', url: 'https://wa.me/5531982488131' }]
+      body: "Olá {{1}}\n\nInformamos que, devido à inadimplência, seu título foi encaminhado ao cartório de protesto e aos órgãos de proteção ao crédito (SPC e Serasa). Para regularizar sua situação e evitar restrições no CPF, entre em contato pelo WhatsApp ou telefone abaixo.\n\nTelefone: (31) 98248-8131",
+      buttons: nil
     }
   }.freeze
 
@@ -89,9 +109,9 @@ namespace :billing_templates do
     variables.map do |var|
       case var
       when 'nome_cliente'    then 'Maria'
-      when 'valor'           then '150,00'
+      when 'valor'           then 'R$ 150,00'
       when 'data_vencimento' then '25/04/2026'
-      when 'link_pagamento'  then 'https://exemplo.com/pagamento/123'
+      when 'codigo_barras'   then '23793.38128 60000.000003 00058.650146 1 92650000015000'
       end
     end
   end
@@ -125,12 +145,12 @@ namespace :billing_templates do
     components
   end
 
-  desc 'Sync all billing templates to Meta (creates missing, updates existing)'
+  desc 'Seed/refresh billing templates on Meta (idempotent: PATCH if exists, POST if missing)'
   task sync: :environment do
     connection = find_connection
     crud = WhatsappConnections::Meta::TemplateCrudService.new(connection)
 
-    # Sync from Meta first to get current state
+    # Pull current state from Meta first so we know what exists.
     WhatsappConnections::Meta::TemplateSyncService.new(connection).perform
     existing = (connection.reload.message_templates || []).index_by { |t| t['name'] }
 
@@ -141,7 +161,7 @@ namespace :billing_templates do
         template_id = meta_tpl['id']
         puts "[UPDATE] #{tpl[:name]} (id: #{template_id})..."
         crud.update_template(template_id, { components: template_components(tpl) })
-        puts "  -> OK"
+        puts '  -> OK'
       else
         puts "[CREATE] #{tpl[:name]}..."
         payload = {
@@ -164,13 +184,14 @@ namespace :billing_templates do
   task definitions: :environment do
     puts "\n=== Billing Templates - Mais Saude 24h ===\n\n"
     TEMPLATES.each do |key, tpl|
-      puts "#{key}"
+      puts key.to_s
       puts "  Name:      #{tpl[:name]}"
-      puts "  Variables: #{tpl[:variables].map.with_index(1) { |v, i| '{{' + i.to_s + '}} = ' + v }.join(', ')}"
-      puts "  Body:"
+      puts "  Category:  #{tpl[:category]}"
+      puts "  Variables: #{tpl[:variables].map.with_index(1) { |v, i| "{{#{i}}} = #{v}" }.join(', ')}"
+      puts '  Body:'
       tpl[:body].lines.each { |l| puts "    #{l}" }
       if tpl[:buttons].present?
-        puts "  Buttons:"
+        puts '  Buttons:'
         tpl[:buttons].each { |b| puts "    [#{b[:type]}] #{b[:text]} → #{b[:url]}" }
       end
       puts
