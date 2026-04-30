@@ -186,6 +186,70 @@ Os 4 docs deixados pelo agente Frontdesk foram processados. DEV validado primeir
 
 ---
 
+## 2026-04-30 — MIGRATE_REGUA_TO_COBR.md aplicado em DEV
+
+Doc `docs/para-klaos-agent/MIGRATE_REGUA_TO_COBR.md` processado. Todos os 7 templates `cobr_*` já APPROVED na Meta foram propagados pra `waba_templates` do KLaOS DEV e a régua das 2 campaigns foi remapeada.
+
+### Migration Supabase: `seed_cobr_templates_dev` + `migrate_regua_to_cobr_dev`
+
+Sem commit em git (mudanças foram via `apply_migration` direto no projeto `szkzkyexagunvadzzaec`).
+
+**Step 1 — Seed `waba_templates`**
+7 rows inseridas via UPSERT na nova unique key `(waba_number_id, name, language)` (criada na rodada anterior pra fechar o ciclo do `CLEANUP_WABA_TEMPLATES.md`):
+
+| name | meta_template_id | status |
+|---|---|---|
+| cobr_d5_lembrete    | 967573122486341    | APPROVED |
+| cobr_d0_vencimento  | 26984168144553305  | APPROVED |
+| cobr_d1_vencido     | 1892848914751505   | APPROVED |
+| cobr_d7_atraso      | 967806542305040    | APPROVED |
+| cobr_d15_atraso     | 1483433960183870   | APPROVED |
+| cobr_d21_transbordo | 960619686455342    | APPROVED |
+| cobr_pagto_ok       | 1254671323072863   | APPROVED |
+
+`components=[]` em todas — sync diário (4h UTC) ou bridge `waba_template_changed` vai popular components reais quando rodar. Não bloqueia a migration; campaigns paused → dispatch não roda.
+
+**Steps 2/3/4 — `collection_sequence_steps`** (atomicamente, em 1 migration)
+- DELETE step com `boleto_atraso_10dias` (D+10) em ambas campaigns.
+- UPDATE FKs legacy → cobr_* nos 5 mappings: `fatura_lembrete_5dias→cobr_d5_lembrete`, `cobranca_vencimento_hoje→cobr_d0_vencimento`, `cobranca_atraso_5dias→cobr_d7_atraso` (com `day_offset 5→7`), `fatura_atraso_15dias→cobr_d15_atraso`, `fatura_atraso_21dias→cobr_d21_transbordo`.
+- INSERT step novo D+1 `cobr_d1_vencido` em ambas campaigns (`due_date_offset`, `stop_condition='on_payment'`, `chatwoot_label='cobranca-1d'`).
+- Renumeração `step_order` 1..N por campaign ordenado por `(day_offset asc, trigger_type='enrollment_offset' DESC tiebreaker)`.
+
+### Step 5 — Validação
+
+**Apresentação Gustavo** (paused, 7 steps):
+```
+1  -5  due_date_offset    cobr_d5_lembrete       lembrete-5d
+2   0  enrollment_offset  fatura_emissao         pendente        ← preservado
+3   0  due_date_offset    cobr_d0_vencimento     cobranca-0d
+4   1  due_date_offset    cobr_d1_vencido        cobranca-1d     ← NOVO
+5   7  due_date_offset    cobr_d7_atraso         cobranca-5d     ← era D+5
+6  15  due_date_offset    cobr_d15_atraso        cobranca-15d
+7  21  due_date_offset    cobr_d21_transbordo    cobranca-21d
+```
+
+**Demo Cliente — Régua WABA** (paused, 6 steps, handoff preservado em D+21):
+```
+1   0  enrollment_offset  fatura_emissao         pendente            ← preservado
+2   0  due_date_offset    cobr_d0_vencimento     cobranca-0d
+3   1  due_date_offset    cobr_d1_vencido        cobranca-1d         ← NOVO
+4   7  due_date_offset    cobr_d7_atraso         cobranca-5d         ← era D+5
+5  15  due_date_offset    cobr_d15_atraso        cobranca-15d
+6  21  due_date_offset    cobr_d21_transbordo    transbordo-humano   (is_handoff_step=true)
+```
+
+### Notas / coisas pra atenção do Frontdesk
+
+1. **`fatura_emissao` preservado** nos dois primeiros steps "D+0 enrollment_offset" das duas campaigns. Não está no `PLANO_TEMPLATES_META_FINAL.md` do Gustavo, mas o `MIGRATE_REGUA_TO_COBR.md` também não pediu remoção. Não toquei. Se for pra remover/substituir, mande novo doc com SQL específico ou eu olho com vocês.
+2. **`chatwoot_label` herdado** — o step que era D+5 (`cobranca-5d`) hoje aponta D+7 com `cobr_d7_atraso`, mas mantive o label original. Não afeta dispatch (label é só pro Chatwoot/UI), mas se quiser renomear pra `cobranca-7d` é ajuste cosmético — me digam.
+3. **`components=[]`** nas 7 rows cobr_*. Quando o Frontdesk POSTar `waba_template_changed` pra `KLAOS_BRIDGE_URL/api/webhooks/klaos/bridge-event` (mecanismo do round anterior), o handler vai chamar `wabaNumberService.syncTemplates` e popular components reais. Alternativa: aguardar sync diário 4h UTC.
+4. **Campaigns continuam `paused`** — nada de auto_enroll, nada de active, nada de enrollments criados. Conforme guard rails do briefing.
+5. **Templates legacy ainda em `waba_templates`** — não dropei (guard rail). Frontdesk deleta via Meta API → sync rasga sozinho.
+
+Pronto pro teste e2e com fixture `+5521964798660` (rake `klaos:billing:seed_test_client` ↔ `npm run billing:seed-test-debtor` no KLaOS) quando quiser, com triple-guard do `TEST_SAFETY_GUARDS.md`.
+
+---
+
 ## Formato pra novas entradas
 
 ```
