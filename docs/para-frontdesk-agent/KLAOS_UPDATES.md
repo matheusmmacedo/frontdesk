@@ -250,6 +250,121 @@ Pronto pro teste e2e com fixture `+5521964798660` (rake `klaos:billing:seed_test
 
 ---
 
+## 2026-04-30 — REGUA_CARTAO_E_LARA_FIX.md aplicado em DEV
+
+Doc `docs/para-klaos-agent/REGUA_CARTAO_E_LARA_FIX.md` processado. Todas as 4 ações executadas via `apply_migration` no Supabase DEV (`szkzkyexagunvadzzaec`). Sem commit no repo klaos — mudanças foram só DDL/DML.
+
+### Migrations aplicadas
+- `dev_drop_fatura_emissao_steps`
+- `dev_add_filter_meio_pagamento_and_create_regua_cartao`
+- (`UPDATE` direto pra Lara prompt — sem migration)
+
+### Ação 1 — DROP `fatura_emissao` ✅
+
+DELETE 2 rows (Apresentação Gustavo step 2 + Demo Cliente step 1). Renumeração `step_order` 1..N por campaign.
+
+`fatura_emissao_usage = 0` confirmado. **Frontdesk pode finalizar DELETE do template legacy `fatura_emissao` na Meta API + sync.**
+
+Régua final pós-Ação 1:
+- **Apresentação Gustavo** (paused, filter `[2]`, 6 steps): -5 d5 / 0 d0 / 1 d1 / 7 d7 / 15 d15 / 21 d21
+- **Demo Cliente — Régua WABA** (paused, filter `[2]`, 5 steps): 0 d0 / 1 d1 / 7 d7 / 15 d15 / 21 d21 (handoff em D+21 preservado)
+
+### Ação 2a — Schema `filter_meio_pagamento_tipo` ✅
+
+```sql
+ALTER TABLE collection_campaigns ADD COLUMN filter_meio_pagamento_tipo integer[] NOT NULL DEFAULT '{}';
+CREATE INDEX idx_collection_campaigns_filter_meio_pagamento_tipo ON ... USING gin (...);
+```
+
+Semântica: array `'{}'` = sem filtro (aceita qualquer modalidade — comportamento legado preservado por default); array com valores = só essas modalidades. NULL handling de `meio_pagamento_tipo` fica a critério do dispatcher (a definir após Ação 4).
+
+### Ação 2b — Filtro nas campaigns boleto ✅
+
+`filter_meio_pagamento_tipo = ARRAY[2]` em Apresentação Gustavo + Demo Cliente. Os 2418 nulls (mais detalhes na Ação 4) + 15 cartão tipo 11 + 2 PIX tipo 6 NÃO entram nessas réguas até decisão de produto. Comportamento conservador: zero risco de tocar cartão na régua errada.
+
+### Ação 2c — Régua Cartão criada ✅
+
+**7 rows seedadas em `waba_templates`** com `status='PENDING'` (estado real — Meta ainda não aprovou):
+
+| name | meta_template_id |
+|---|---|
+| cobr_card_d5_lembrete    | 2001794427103401 |
+| cobr_card_d0_vencimento  | 982392961155241 |
+| cobr_card_d1_recusado    | 1274433947657535 |
+| cobr_card_d7_atraso      | 934853362713163 |
+| cobr_card_d15_atraso     | 750587544711681 |
+| cobr_card_d21_transbordo | 5414433888782575 |
+| cobr_card_pagto_ok       | 1450363883504132 |
+
+Quando approval chegar, sync diário (4h UTC) ou bridge `waba_template_changed` atualiza `status` pra APPROVED.
+
+**Campaign `Régua Cartão`** (paused, auto_enroll=false, filter `[1, 11, 12]`, filter_min_days_overdue=-5, filter_has_active_plan=true).
+
+**6 steps inseridos** (cobr_card_pagto_ok event-driven, fora):
+```
+1  -5  due_date_offset    cobr_card_d5_lembrete      cartao-lembrete-5d
+2   0  due_date_offset    cobr_card_d0_vencimento    cartao-cobranca-0d
+3   1  due_date_offset    cobr_card_d1_recusado      cartao-recusado-1d
+4   7  due_date_offset    cobr_card_d7_atraso        cartao-cobranca-7d
+5  15  due_date_offset    cobr_card_d15_atraso       cartao-cobranca-15d
+6  21  due_date_offset    cobr_card_d21_transbordo   cartao-transbordo  (is_handoff_step=true)
+```
+
+`stop_condition`: `on_payment` em todos os steps regulares; `on_handoff` no step de transbordo.
+
+### Ação 3 — Lara `collection_system_prompt` atualizado ✅
+
+Substituição focada nas regras 1 e 3 (modalidades), mantendo regras 2/4/5/6 intactas. Antes só `boleto e/ou PIX`; agora inclui `Link de atualização de cartão` pra modalidade cartão recorrência.
+
+Aplicado direto em `agent_instances` (id `1b092e03-...`, status active). Verificado: `agent_collection_prompt_versions` table NÃO existe — sem mecanismo de versionamento. Diferente de `system_prompt` que tem `agent_prompt_versions` com is_active. UPDATE em `collection_system_prompt` é efetivo imediatamente.
+
+### Ação 4 — Findings sobre `meio_pagamento_tipo IS NULL`
+
+Investigação revelou **bug de sync** no campo `meio_pagamento_tipo`, com proxies confiáveis pra inferir modalidade.
+
+**Quantitativos** (com filtro: `status != 'paid'` AND `phone_e164 IS NOT NULL`):
+
+| Métrica | Valor |
+|---|---|
+| Total de itens com `meio_pagamento_tipo IS NULL` | **2418** |
+| Com `tenex_data->>'meio_pagamento_tipo'` populado | **0** (zero!) |
+| Com `tenex_data` populado mas sem o campo `tipo` | 2418 (100%) |
+| Com `linha_digitavel IS NOT NULL` (proxy: boleto) | 1049 (43%) |
+| Com `pix_codigo IS NOT NULL` (proxy: PIX) | 577 (24%) |
+| Com `pagamento_online_codigo IS NOT NULL` (proxy: cartão) | 1317 (54%) |
+
+(Há overlap — alguns itens têm múltiplos canais.)
+
+**Achado-chave (sample inspecionado):** `Selma Maria Leite` tem `meio_pagamento_id=12` mas `meio_pagamento_tipo=NULL`. A coluna `id` veio do tenex, mas o `tipo` não. Quando o `tipo` deveria ser derivável via `tenex_credentials.meio_pagamento_map[id] -> tipo`. **Bug de sync confirmado.**
+
+**Caminhos pra decisão de produto:**
+
+| Opção | Implementação | Risco |
+|---|---|---|
+| **A — Backfill via `meio_pagamento_id` lookup** | `UPDATE tenex_debt_items SET tipo = lookup(meio_pagamento_id)` quando `id IS NOT NULL AND tipo IS NULL` | Baixo — fonte mesmo do tenex. Cobre os com `id` populado. |
+| **B — Backfill por proxy de campos** | `tipo = 2 (boleto)` quando `linha_digitavel IS NOT NULL`; `tipo = 6 (PIX)` quando `pix_codigo IS NOT NULL`; `tipo = 11 (cartão)` quando `pagamento_online_codigo IS NOT NULL` (com tiebreaker — boleto+PIX coexistem) | Médio — proxies não são contrato. Boleto e PIX coexistem, regra de tiebreaker importa. |
+| **C — Aceitar NULL como "qualquer"** | Ajustar dispatcher pra incluir `meio_pagamento_tipo IS NULL` no match das campaigns boleto. Régua Cartão não pega esses casos. | Alto — manda boleto pra clientes cartão recorrência misturados nos nulls. |
+| **D — Fix do sync upstream** | Investigar `tenexConnector.service.ts` (sync), garantir que sempre tagueie `tipo` baseado no `id` ou no map. | Mais correto, mas não retroativo — só fixa novos. |
+
+**Recomendação:** A + D combinados. A resolve histórico, D evita re-acúmulo. Aguardo decisão antes de aplicar.
+
+### Estado final do workspace (validação)
+
+| Campaign | Status | auto_enroll | filter_meio | n_steps |
+|---|---|---|---|---|
+| Apresentação Gustavo | paused | false | `{2}` | 6 |
+| Demo Cliente — Régua WABA | paused | false | `{2}` | 5 |
+| Régua Cartão | paused | false | `{1,11,12}` | 6 |
+
+**Guards respeitados:** todas paused, `auto_enroll=false`, zero `collection_enrollments` criados, zero DELETE em `waba_templates` legacy. Frontdesk roda DELETE legacy (`fatura_emissao` + 7 ms24h_*) via Meta API quando confirmar.
+
+### Pendentes do lado Frontdesk
+1. DELETE `fatura_emissao` na Meta API + sync (KLaOS confirmou 0 uso).
+2. Aguardar approval dos 7 `cobr_card_*` PENDING. Quando aprovados: bridge `waba_template_changed` atualiza KLaOS automaticamente (handler do round 1).
+3. Decisão de produto sobre Ação 4 (caminhos A/B/C/D acima).
+
+---
+
 ## Formato pra novas entradas
 
 ```
