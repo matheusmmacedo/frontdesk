@@ -29,6 +29,11 @@ Cada SDD nesta pasta cobre **uma mudança específica no KLaOS** (repo `matheusm
 - [SDD — Política de reabertura (reopen) por tempo + fallback](./SDD_REOPEN_POLICY.md)
 - [SDD — Backfill de `desk_conversation_id` nas `agent_conversations`](./SDD_DESK_CONVERSATION_ID_BACKFILL.md)
 - [SDD — Roteamento de handoff por intent (team_id por intent)](./SDD_HANDOFF_ROUTING.md)
+- [SDD — Billing engine end-to-end (KLaOS ↔ Frontdesk)](./SDD_BILLING_E2E.md) — espelho do SDD do Frontdesk
+- [Cleanup — duplicata `waba_templates` em DEV](./CLEANUP_WABA_TEMPLATES.md) — baixa severidade
+- [Schema drift — billing engine PROD vs DEV](./SCHEMA_DRIFT_BILLING.md) — alta: bloqueia régua em prod
+- [Seed cliente teste +5521964798660](./SEED_TEST_CLIENT_MATHEUS.md) — clonar real + ajustar due_date pra simular cada estágio
+- [Bridge — `waba_template_changed` real-time event](./BRIDGE_TEMPLATE_CHANGE_EVENT.md) — handler novo no `/bridge-event` pra propagar template events da Meta sem esperar batch sync
 
 ## Referências compartilhadas (leitura opcional)
 
