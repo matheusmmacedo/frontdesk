@@ -69,11 +69,11 @@ Resposta esperada: `200 { "ok": true }` em <2s. Idempotência via `(waba_id, tem
 
 Em DEV, ativar handler depois deste deploy. Disparar manualmente alterando texto de `fatura_emissao` (ex via UI Templates Settings → Edit). Meta envia webhook `message_template_status_update` (status volta pra PENDING). Frontdesk re-sync local + POST pro KLaOS bridge. KLaOS deve receber payload + atualizar row.
 
-**Não esquecer setar env vars no Frontdesk:**
-- `KLAOS_BRIDGE_URL=https://api-dev.klaos.ai`
+**Env vars no Frontdesk (já setadas em DEV — auditoria 2026-04-30 17:30 UTC):**
+- `KLAOS_BRIDGE_WEBHOOK_URL=https://api-dev.klaos.ai/api/webhooks/klaos/bridge-event` (full URL)
 - `FRONTDESK_BRIDGE_SECRET=<shared>`
 
-(Hoje já existe pra outros eventos do bridge — confirmar valores.)
+Mesma env var canônica que `transfer_to_bot_controller` usa — single source of truth. O handler de template events (`WhatsappTemplateEventsHandler#notify_klaos_bridge`) consome a mesma var.
 
 ## Validação fim a fim
 

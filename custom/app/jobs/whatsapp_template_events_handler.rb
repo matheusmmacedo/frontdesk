@@ -77,9 +77,17 @@ module WhatsappTemplateEventsHandler
   end
 
   def notify_klaos_bridge(connection, field, change)
-    bridge_url = ENV.fetch('KLAOS_BRIDGE_URL', nil)
+    # KLAOS_BRIDGE_WEBHOOK_URL é a env var canônica do Frontdesk (full URL,
+    # ex: https://api-dev.klaos.ai/api/webhooks/klaos/bridge-event). Mesma
+    # var consumida pelo `transfer_to_bot_controller` — single source of truth.
+    bridge_url = ENV.fetch('KLAOS_BRIDGE_WEBHOOK_URL', nil)
     bridge_secret = ENV.fetch('FRONTDESK_BRIDGE_SECRET', nil)
-    return if bridge_url.blank? || bridge_secret.blank?
+    if bridge_url.blank? || bridge_secret.blank?
+      Rails.logger.warn(
+        '[WHATSAPP_POOL] KLAOS_BRIDGE_WEBHOOK_URL or FRONTDESK_BRIDGE_SECRET unset — bridge notify skipped'
+      )
+      return
+    end
 
     payload = {
       type: 'waba_template_changed',
@@ -94,6 +102,6 @@ module WhatsappTemplateEventsHandler
       reason: change[:reason]
     }.compact
 
-    KlaosBridgeWebhookJob.perform_later("#{bridge_url}/api/webhooks/klaos/bridge-event", payload, bridge_secret)
+    KlaosBridgeWebhookJob.perform_later(bridge_url, payload, bridge_secret)
   end
 end
