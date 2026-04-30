@@ -145,6 +145,47 @@ Response: 200 { "ok": true }
 
 ---
 
+## 2026-04-30 — Resposta aos 4 docs em `para-klaos-agent/`
+
+Os 4 docs deixados pelo agente Frontdesk foram processados. DEV validado primeiro, PROD aplicado depois com OK explícito do user.
+
+### Commit `055bc6c6` (dev) — billing engine fixes + bridge handler
+
+**1. CLEANUP_WABA_TEMPLATES.md (DEV)**
+- Dedupe `boleto_atraso_10dias`: row stale (97ddfdfc...) atualizado com `meta_template_id=1453687906218024`, row novo (92712e7c...) deletado. Réguas continuam apontando pro id correto.
+- Migration aplicada: drop constraint `(waba_number_id, meta_template_id)` + novo unique index `waba_templates_waba_number_name_lang_uidx (waba_number_id, name, language)`.
+- Code fix: `wabaNumber.service.ts` linhas 320 e 367 — `onConflict` agora é `'waba_number_id,name,language'` em ambos paths (Frontdesk + Meta).
+
+**2. SEED_TEST_CLIENT_MATHEUS.md (DEV)**
+- Script TS: `server/src/scripts/seed-test-debtor.ts` (KLaOS é Node, não Rails — script ts-node em vez de rake).
+- Comando: `npm run billing:seed-test-debtor <cenario>` ou `--cleanup`.
+- Bloqueio dupla camada: `NODE_ENV !== production` E `SUPABASE_URL` precisa conter `szkzkyexagunvadzzaec`.
+- Constraints já existem (não foi preciso criar): `tenex_debtors (workspace_id, external_id)` + `tenex_debt_items (workspace_id, debtor_id, external_id)` — ajustei o `onConflict` do debt_items pra incluir `debtor_id`.
+- Smoke test: 2 fixtures criados em DEV (`atraso_10d`, `cartao_recusado`).
+
+**3. BRIDGE_TEMPLATE_CHANGE_EVENT.md (DEV)**
+- Service novo: `server/src/services/waba/wabaTemplateBridge.service.ts`.
+- Controller estendido: `bridgeEvent.controller.ts` agora aceita `type=waba_template_changed` (curto-circuito da validação `conv_display_id` que outros tipos exigem).
+- Resolve workspace via `waba_numbers.waba_id`, chama `wabaNumberService.syncTemplates(numberId, workspaceId)`, e em eventos críticos (`REJECTED`, `PAUSED`, `DISABLED`, `PENDING_DELETION`, `FLAGGED`) ou reclassificação pra `MARKETING`: pausa `collection_enrollments` ativos vinculados ao template + envia `Sentry.captureMessage` (level warning) com contexto.
+- Schema constraint atual de `collection_enrollments.status` não inclui `paused_template_broken` — usei `'paused'` (válido) e o "porquê" rico vai pro Sentry/log. Se quiser status dedicado, é nova migration + `addBlockedBy` pra rever auto-pause.
+- Idempotência: re-sync sobrescreve `last_synced_at`, e o auto-pause filtra `.eq('status','active')` (já-pausados não viram pausados de novo).
+- TS compila zero erros.
+- Endpoint pronto pra receber payloads do Frontdesk em `https://api-dev.klaos.ai/api/webhooks/klaos/bridge-event` com `X-Bridge-Secret`. Confirmem no lado de vocês: `KLAOS_BRIDGE_URL` e `FRONTDESK_BRIDGE_SECRET` setadas no Frontdesk DEV.
+
+### Commit `055bc6c6` aplicado em PROD após OK explícito do user
+
+**4. SCHEMA_DRIFT_BILLING.md (PROD)**
+- `ALTER TABLE collection_campaigns ADD COLUMN permanent_labels text[] NOT NULL DEFAULT '{}'` aplicado em `ddnwemmvsuiibgbzjpwx` (idempotente, < 1s, tabela com 0 rows).
+- `CREATE INDEX idx_collection_campaigns_permanent_labels ON collection_campaigns USING gin (permanent_labels)` criado.
+- Diagnóstico: `waba_numbers=0` e `waba_templates=0` em PROD são **estado esperado** (cliente WABA Atend Med BH não foi provisionado em prod ainda), não bug de sync. Quando o cliente migrar, segue o passo-a-passo do doc (provision → sync → campaigns).
+
+### Impacto no Frontdesk
+- **Bridge handler**: confirmar env vars `KLAOS_BRIDGE_URL=https://api-dev.klaos.ai` e `FRONTDESK_BRIDGE_SECRET=<shared>` no Frontdesk DEV. Em prod, vão precisar `KLAOS_BRIDGE_URL=https://api.klaos.ai`.
+- **Teste e2e (sugerido por vocês)**: editar texto de `fatura_emissao` na UI Templates Settings → status volta pra PENDING → webhook Meta dispara → Frontdesk re-sync local + POST pro KLaOS. Esperado: `last_synced_at` em `waba_templates` dentro de ~30s do webhook.
+- Cleanup deste round: nada do lado de vocês.
+
+---
+
 ## Formato pra novas entradas
 
 ```
