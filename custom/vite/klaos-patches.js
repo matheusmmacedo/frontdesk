@@ -323,16 +323,16 @@ const showTransferToBot = computed(
     to: `                <span
                   class="text-xs px-1.5 py-0.5 rounded"
                   :class="{
-                    'text-blue-700 bg-blue-50': tmpl.category === 'UTILITY',
-                    'text-orange-700 bg-orange-100 font-semibold': tmpl.category === 'MARKETING',
-                    'text-purple-700 bg-purple-50': tmpl.category === 'AUTHENTICATION',
+                    'text-n-blue-11 bg-n-blue-3': tmpl.category === 'UTILITY',
+                    'text-n-amber-11 bg-n-amber-3 font-semibold': tmpl.category === 'MARKETING',
+                    'text-n-teal-11 bg-n-teal-3': tmpl.category === 'AUTHENTICATION',
                     'text-n-slate-9 bg-n-alpha-1': !['UTILITY','MARKETING','AUTHENTICATION'].includes(tmpl.category),
                   }"
                   :title="tmpl.category === 'MARKETING' ? 'MARKETING: requer opt-in. Risco de bloqueio da WABA se enviado em régua de cobrança.' : tmpl.category"
                 >
                   <span v-if="tmpl.category === 'MARKETING'">⚠ </span>{{ tmpl.category }}
                 </span>`,
-    reason: 'template-category-badge: cor distinta UTILITY (azul) vs MARKETING (laranja+aviso)',
+    reason: 'template-category-badge: cor distinta UTILITY (n-blue) vs MARKETING (n-amber+aviso); usa tokens n-* do design system Chatwoot pra Tailwind JIT gerar CSS',
   },
   {
     id: '/store/modules/labels.js',
