@@ -103,6 +103,75 @@ namespace :billing_templates do
       variables: STD_VARS_1VAL,
       body: 'Pagamento confirmado! Recebemos o valor de {{1}} referente à sua mensalidade do plano Mais Saúde. Obrigado por manter seus benefícios em dia.',
       buttons: nil
+    },
+
+    # ===== Família CARTÃO recorrência (meio_pagamento_tipo IN (1, 11, 12)) =====
+    # Cartão recorrência NÃO tem código de barras, NÃO tem PDF, NÃO tem PIX —
+    # só tem checkout_url / pagamento_online_codigo. Botão único "Atualizar
+    # Pagamento" ou "Pagar Agora" → KLaOS resolve o destino do code.
+
+    cobr_card_d5_lembrete: {
+      name: 'cobr_card_d5_lembrete',
+      language: 'pt_BR',
+      category: 'UTILITY',
+      variables: %w[nome_cliente valor data_vencimento],
+      body: "Olá {{1}}!\nInformamos que sua mensalidade da MAIS SAÚDE 24 HORAS, no valor de {{2}}, *vai ser cobrada no seu cartão de crédito em 5 dias, no dia {{3}}.*\n\nConfirme que seus dados de pagamento estão atualizados clicando no botão abaixo.\n\n#{STD_FOOTER}",
+      buttons: [{ type: 'URL', text: 'Atualizar Pagamento', url: 'https://app.klaos.ai/pay/{{1}}' }]
+    },
+
+    cobr_card_d0_vencimento: {
+      name: 'cobr_card_d0_vencimento',
+      language: 'pt_BR',
+      category: 'UTILITY',
+      variables: %w[nome_cliente valor data_vencimento],
+      body: "Olá {{1}}!\nSua mensalidade da MAIS SAÚDE 24 HORAS *vai ser cobrada no cartão hoje, dia {{3}}. O valor de {{2}}.*\n\nCaso prefira fazer o pagamento manualmente, use o link abaixo.\n\n#{STD_FOOTER}",
+      buttons: [{ type: 'URL', text: 'Pagar Agora', url: 'https://app.klaos.ai/pay/{{1}}' }]
+    },
+
+    cobr_card_d1_recusado: {
+      name: 'cobr_card_d1_recusado',
+      language: 'pt_BR',
+      category: 'UTILITY',
+      variables: %w[nome_cliente valor data_vencimento],
+      body: "*Pagamento Não Identificado*\n\nOlá {{1}}!\nTentamos realizar a cobrança no seu cartão de crédito, mas *não conseguimos concluir o pagamento da mensalidade no valor de {{2}}* gerada pela MAIS SAÚDE 24 HORAS, com vencimento em {{3}}.\n\nAtualize seus dados de pagamento ou faça uma nova tentativa pelo link abaixo.\n\n#{STD_FOOTER}",
+      buttons: [{ type: 'URL', text: 'Atualizar Pagamento', url: 'https://app.klaos.ai/pay/{{1}}' }]
+    },
+
+    cobr_card_d7_atraso: {
+      name: 'cobr_card_d7_atraso',
+      language: 'pt_BR',
+      category: 'UTILITY',
+      variables: %w[nome_cliente valor data_vencimento],
+      body: "Olá {{1}}!\nQueremos te lembrar que *a sua mensalidade da MAIS SAÚDE 24 HORAS, no valor de {{2}}, está em aberto há 7 dias, com vencimento em {{3}}.*\n\nRealize o pagamento pelo link abaixo para evitar a suspensão dos benefícios do plano.\n\n#{STD_FOOTER}",
+      buttons: [{ type: 'URL', text: 'Pagar Agora', url: 'https://app.klaos.ai/pay/{{1}}' }]
+    },
+
+    # Sem variável no body — espelha o tom enxuto do cobr_d15_atraso
+    cobr_card_d15_atraso: {
+      name: 'cobr_card_d15_atraso',
+      language: 'pt_BR',
+      category: 'UTILITY',
+      variables: [],
+      body: "Olá, identificamos que sua mensalidade da MAIS SAÚDE 24 HORAS continua em aberto, mesmo após várias tentativas de cobrança no seu cartão de crédito.\n\nVocê consegue realizar o pagamento hoje ainda?\n\n*Caso não consiga, sua mensalidade pode ser registrada no SPC.*\n\nAtualize seu pagamento pelo link abaixo.\n\n#{STD_FOOTER}",
+      buttons: [{ type: 'URL', text: 'Pagar Agora', url: 'https://app.klaos.ai/pay/{{1}}' }]
+    },
+
+    cobr_card_d21_transbordo: {
+      name: 'cobr_card_d21_transbordo',
+      language: 'pt_BR',
+      category: 'UTILITY',
+      variables: STD_VARS_1NAME,
+      body: "Olá {{1}}\n\nInformamos que, devido à inadimplência prolongada no pagamento da sua mensalidade no cartão, sua situação foi encaminhada para análise. Para regularizar e evitar restrições no CPF, entre em contato com urgência pelo WhatsApp ou telefone abaixo.\n\nTelefone: (31) 98248-8131",
+      buttons: nil
+    },
+
+    cobr_card_pagto_ok: {
+      name: 'cobr_card_pagto_ok',
+      language: 'pt_BR',
+      category: 'UTILITY',
+      variables: STD_VARS_1VAL,
+      body: 'Pagamento confirmado! Recebemos o valor de {{1}} referente à sua mensalidade do plano Mais Saúde no cartão de crédito. Obrigado por manter seus benefícios em dia.',
+      buttons: nil
     }
   }.freeze
 
