@@ -48,6 +48,17 @@ npm run golive:lara
 
 **Bloqueado:** régua de cobrança (collection_campaigns + steps com `cobr_*`/`cobr_card_*`) — depende dos 7+7 templates aparecerem em `waba_templates` PROD via sync do número WABA Klaus, que por sua vez depende do Frontdesk PROD configurado.
 
+### Adicional — schema + backfill PROD (2026-04-30 noite)
+
+Validei estado pós-sync Tenex em PROD (rodou 2026-05-01 02:11 com `last_sync_status=success`):
+
+- **Tenex credentials PROD:** OK — `api_url`, `tenex_subdomain=maisaudebh`, `meio_pagamento_map` populado (1, 2, 6, 11, 12), `sync_payment_types=[2,11,12]`, `is_active=true`. Nada a fazer aqui.
+- **Safety check:** 0 collection_campaigns, 0 enrollments, 0 sequence_steps em PROD — nada pode disparar mensagem.
+- **Schema migration aplicada em PROD:** `prod_add_filter_meio_pagamento_tipo` — coluna `filter_meio_pagamento_tipo INTEGER[] NOT NULL DEFAULT '{}'` + GIN index (mesma de DEV).
+- **Backfill `meio_pagamento_tipo`:** `backfill_tenex_debt_items_meio_tipo_prod` — inferiu 133 rows como boleto via `linha_digitavel` (proxy). Restantes 425 rows não têm proxy nenhum (gap do Tenex source, não bug nosso).
+- **Distribuição PROD pós-backfill:** 663 items totais → 210 boleto (32%), 28 cartão (4%), 0 PIX, 425 NULL (64%). Resolvido subiu de 15.8% → 35.9%.
+- **Comparação DEV:** DEV tinha mais proxies populados, ficou em 91% resolvido. PROD ficou em 36% — não é bug, só reflete os dados que o Tenex retorna pra cada workspace.
+
 
 
 ## 2026-04-23 — Resposta ao BUG_LIMPAR_INBOX_DELETION.md
