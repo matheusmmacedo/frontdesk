@@ -2,6 +2,54 @@
 
 Log cronológico de mudanças que o agente KLaOS fez que afetam o Frontdesk. Cada entrada: data, commit, resumo, impacto no Frontdesk.
 
+## 2026-04-30 — Go-Live PROD Mais Saúde 24h: script de replicação Lara DEV → PROD
+
+Resposta ao `SDD_GOLIVE_PROD_MAISSAUDE.md` (tasks KLaOS-side).
+
+**Já aplicado em PROD (idempotente):**
+- Workspace `9838d25b-60de-45e7-b7b7-31cc56b12ccc` renomeado pra "Mais Saúde 24h"
+- 2 feature_flags: `tenex_multi_meio_enabled=true`, `reopen_policy_enabled=true`
+- CRM baseline: 4 tags + 1 pipeline + 5 stages + 2 custom_fields
+- Migration `enable_tenex_multi_meio_and_subdomain_prod` (config Tenex)
+
+**Pronto pra rodar (depende de 3 inputs vindos do Frontdesk):**
+
+Script `server/src/scripts/golive-prod-lara.ts` (npm run `golive:lara`) faz a replicação atômica DEV → PROD da Lara em 10 steps:
+
+1. `uploaded_documents` (5 manual_text)
+2. `knowledge_bases` (Main KB)
+3. `knowledge_embeddings` (36 chunks com vector 1536-dim)
+4. `agent_instances` (Lara — `1b092e03-9418-4352-956c-db0a560d904a`, com bot_id/bot_token sobrescritos pra PROD)
+5. `agent_handoff_config`
+6. `agent_web_widget_configs`
+7. `agent_guardrail_configs`
+8. `agent_documents` (junction 5 rows)
+9. `agent_instance_tools` (6 tools — remap por `tool_name` pros `tool_definition_id` PROD)
+10. `agent_frontdesk_bridge` (WhatsApp Cobrança ativo)
+
+**DRY-RUN validado em PROD:** todos os 10 steps lêem DEV ✓ e validam workspace + 6 `agent_tool_definitions` em PROD ✓.
+
+**Inputs que preciso do Frontdesk:**
+- `BOT_ID_PROD` (bigint) — id do AgentBot Frontdesk em PROD
+- `INBOX_ID_PROD` (bigint) — id da inbox WhatsApp Cobrança Frontdesk PROD
+- `BOT_TOKEN_PROD` (text formato `salt:cipher` — token do bot, encryptado com `ENCRYPTION_SECRET` do KLaOS PROD)
+
+Quando chegarem, rodo:
+
+```bash
+SOURCE_SUPABASE_URL=https://szkzkyexagunvadzzaec.supabase.co \
+SOURCE_SUPABASE_SERVICE_KEY=<dev-key> \
+TARGET_SUPABASE_URL=https://ddnwemmvsuiibgbzjpwx.supabase.co \
+TARGET_SUPABASE_SERVICE_KEY=<prod-key> \
+BOT_ID_PROD=99 INBOX_ID_PROD=123 BOT_TOKEN_PROD="salt:cipher" \
+DRY_RUN=0 \
+npm run golive:lara
+```
+
+**Bloqueado:** régua de cobrança (collection_campaigns + steps com `cobr_*`/`cobr_card_*`) — depende dos 7+7 templates aparecerem em `waba_templates` PROD via sync do número WABA Klaus, que por sua vez depende do Frontdesk PROD configurado.
+
+
+
 ## 2026-04-23 — Resposta ao BUG_LIMPAR_INBOX_DELETION.md
 
 Lido o report. Duas correções importantes ao diagnóstico antes de tudo:
