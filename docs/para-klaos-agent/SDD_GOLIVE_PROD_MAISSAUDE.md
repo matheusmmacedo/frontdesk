@@ -394,6 +394,32 @@ SELECT
 
 ---
 
+## 15. waba_templates esperados em PROD após Phase 1
+
+Após Frontdesk PROD criar a Channel::Whatsapp ligada à WABA Klaus (`735467396201142`) e rodar o sync, esperar **17 templates pt_BR** populados em `waba_templates`:
+
+**14 originais (régua de cobrança)** — todos UTILITY:
+- `cobr_d0_vencimento`, `cobr_d1_vencido`, `cobr_d5_lembrete`, `cobr_d7_atraso`, `cobr_d15_atraso`, `cobr_d21_transbordo`, `cobr_pagto_ok`
+- `cobr_card_d0_vencimento`, `cobr_card_d1_recusado`, `cobr_card_d5_lembrete`, `cobr_card_d7_atraso_v2`, `cobr_card_d15_atraso_v2`, `cobr_card_d21_transbordo`, `cobr_card_pagto_ok`
+
+**3 portados em 2026-04-30** (Phase 0.5 do SDD master):
+- `agend_lembrete_24h` UTILITY (id Meta=`1519703886401935`)
+- `at_confirma_recebimento` UTILITY com QUICK_REPLY OK (id Meta=`1008814215141299`)
+- `cobr_aviso_protesto` **MARKETING** (id Meta=`1134431828842857`) — único MARKETING da régua
+
+**Validação esperada após sync**:
+```sql
+SELECT category, COUNT(*) FROM waba_templates
+WHERE workspace_id = '9838d25b-60de-45e7-b7b7-31cc56b12ccc'
+GROUP BY category;
+-- UTILITY=16, MARKETING=1
+```
+
+**Não confundir com DEV**: DEV `waba_templates=29` inclui templates legacy (deletados/abandonados durante iterações). PROD começa limpo com 17.
+
+---
+
 ## Histórico
 
 - **2026-04-30** — v1.0. Drift identificado via Supabase MCP comparando szkzkyexagunvadzzaec (DEV) vs ddnwemmvsuiibgbzjpwx (PROD).
+- **2026-04-30** — v1.1. Sincronizada com SDD Frontdesk v1.1: prefixo `agend_*`/`at_*`/`cobr_*` aprovado pelo cliente; 3 templates portados pra Klaus (`agend_lembrete_24h`, `at_confirma_recebimento`, `cobr_aviso_protesto`); `cobr_aviso_protesto` é **MARKETING** (cliente confirma); tags Frontdesk usam literal Qualizap (caixa-alta + acentos). Cross-ref: §15 desse doc para `waba_templates` esperados em PROD após Phase 1.

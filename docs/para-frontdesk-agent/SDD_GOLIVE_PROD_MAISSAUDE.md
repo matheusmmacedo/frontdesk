@@ -122,20 +122,29 @@ A produção tem todas as estruturas vazias / não configuradas. O número de Wh
 
 ---
 
-## 4. Fase 0.5 — Port de templates da WABA origem → Klaus (PRÉ-MIGRAÇÃO)
+## 4. Fase 0.5 — Port de templates da WABA origem → Klaus (PRÉ-MIGRAÇÃO) ✅ EXECUTADA 2026-04-30
 
 **Owner**: Matheus
-**Duração**: 1-2h (incluindo aprovação Meta dos templates novos)
+**Status**: ✅ Submetida 2026-04-30. 1 APPROVED, 2 PENDING
 **Quando**: D-3 (antes da Fase 1)
 
-A WABA origem tem 4 templates. **Decisão**:
-- ✅ **Portar 2** pra Klaus: `lembrete_agendamento`, `responda_ok` (úteis pra ops Mais Saúde)
-- ⚠️ **Avaliar com cliente** o `protesto` (texto pesado pode ser reclassificado MARKETING — se Mais Saúde realmente usa, portar com adaptação)
+A WABA origem tem 4 templates. **Decisão final do cliente** (2026-04-30):
+- ✅ **Portar 3** pra Klaus, com prefixo padronizado `agend_*`/`at_*`/`cobr_*`:
+  - `lembrete_agendamento` UTILITY → `agend_lembrete_24h` UTILITY (id=1519703886401935)
+  - `responda_ok` UTILITY → `at_confirma_recebimento` UTILITY com QUICK_REPLY OK (id=1008814215141299)
+  - `protesto` UTILITY na origem → `cobr_aviso_protesto` **MARKETING** (id=1134431828842857) — cliente confirma "ele é de marketing"
 - ❌ **Descartar** `hello_world` (sample Meta, não tem uso)
 
-**Por quê portar antes**: templates são por-WABA. Quando o número migra de uma WABA pra outra, **templates não migram**. Se o cliente continuar usando `lembrete_agendamento` no fluxo de agendamento, precisa estar disponível na Klaus.
+**Status pós-submit**:
+- `cobr_aviso_protesto` MARKETING **APPROVED** ✅
+- `agend_lembrete_24h` UTILITY PENDING (HEADER + BODY — review costuma ser ~horas)
+- `at_confirma_recebimento` UTILITY PENDING (BODY + QUICK_REPLY)
 
-**Sem conflito de nome com `cobr_*`/`cobr_card_*`** já confirmado.
+**Por quê portar antes**: templates são por-WABA. Quando o número migra de uma WABA pra outra, **templates não migram**. Se o cliente continuar usando o equivalente do `lembrete_agendamento` no fluxo de agendamento, precisa estar disponível na Klaus.
+
+**Sem conflito de nome** com `cobr_*`/`cobr_card_*` (todos os portados estão em escopo de prefixo distinto).
+
+**Bug fix bonus**: durante o port, foi corrigido falso positivo do `MOJIBAKE_PATTERN`. O regex original `[ÂÃâ][ -¿]` (range largo de 0x20–0xBF) tripava em `ATENÇÃO` (Ã + O — português correto). Trocado por `[ÂÃâ][-¿]`, que só pega Ã/Â/â seguido de continuation byte UTF-8 (mojibake real). **Aplicar no script de produção** se ainda usar o regex antigo.
 
 ### 0.5.1 Script de port
 
@@ -505,10 +514,13 @@ Movido pra `docs/para-klaos-agent/SDD_GOLIVE_PROD_MAISSAUDE.md` — esse doc lis
 
 ### 7.1 Mapping definitivo Qualizap tag_id → Frontdesk label
 
-Ver **Anexo A** (47 tags). Resumo decisões importantes:
-- Tags 5 e 10 (SPC + ENVIADOS SPC) → ambas mapeiam pra `enviado-ao-spc`
-- Tags 32 e 38 (OURO + OURO ENVIADO) → `plano-ouro` (consolidar) ou `plano-ouro` + `plano-ouro-enviado` (separar)? Decidir com cliente.
-- Tags `42, 4, 6, 7, 8, 17, 22, 23, 24` que aparecem no CSV mas não na API → **tags deletadas** no Qualizap. Decidir: ignorar ou criar label `_legacy_<id>` pra preservar audit.
+Ver **Anexo A** (47 tags). **Decisões finais cliente** (2026-04-30):
+- Tags 5 (`SPC`) e 10 (`ENVIADOS SPC`) → **manter SEPARADAS** (cliente: "spc e enviados spc nao podem ser as mesmas"). Labels: `SPC` e `ENVIADO AO SPC`.
+- Tags 32 (`OURO`) e 38 (`OURO ENVIADO`) → **manter SEPARADAS** (cliente: "nao consolide"). Labels: `OURO` e `OURO ENVIADO`.
+- Tag 15 (`BOMBA`) → **importar** (cliente: "nao sei mas traga"). Label: `BOMBA`.
+- Tag 56 (`tetse`) → **descartar** (cliente: "nao traga tetse").
+- **Naming convention das labels**: usar **nome literal Qualizap** (caixa-alta com acentos), não kebab-case (cliente: "as tags precisam ter o mesmo nome amigavel").
+- Tags `42, 4, 6, 7, 8, 17, 22, 23, 24` que aparecem no CSV mas não na API → **tags deletadas** no Qualizap. Decisão: ignorar (não criar label `_legacy_<id>`).
 
 ### 7.2 Script de import idempotente
 
@@ -521,10 +533,12 @@ namespace :import do
     account = Account.find(9)
     csv_path = Rails.root.join('maissaude/addressbook (1).csv')
 
-    tag_map = {  # Anexo A
-      1 => 'mais-saude', 3 => 'pendente', 5 => 'enviado-ao-spc',
-      9 => 'enviado-convenio', 10 => 'enviado-ao-spc',
-      # ... (lista completa)
+    tag_map = {  # Anexo A — labels = literal Qualizap (caixa-alta + acentos)
+      1 => 'MAIS SAÚDE', 3 => 'PENDENTE', 5 => 'SPC',
+      9 => 'ENVIADO CONVÊNIO', 10 => 'ENVIADO AO SPC',
+      15 => 'BOMBA', 32 => 'OURO', 38 => 'OURO ENVIADO',
+      # 56 (tetse) descartada; 2/4/6/7/8/17/22/23/24/42 ignoradas (deletadas no Qualizap)
+      # ... (lista completa em Anexo A)
     }
 
     CSV.foreach(csv_path, headers: true, col_sep: ';') do |row|
@@ -700,18 +714,20 @@ Migrar de volta o número da Klaus pra WABA original via mesmo fluxo (`POST /137
 
 ## Anexo A — De/para completo das 47 tags Qualizap → labels Frontdesk
 
+> **Naming**: por decisão do cliente (2026-04-30), labels do Frontdesk usam **literal Qualizap** (caixa-alta com acentos). A coluna "Label Frontdesk" abaixo nas linhas em kebab-case ainda é da v1 — em qualquer linha onde a label não bate com o nome Qualizap, **o nome Qualizap é o correto**. Linhas-chave (5, 10, 15, 32, 38) já foram atualizadas. Outras (9, 11, 12, …) seguem o mesmo padrão: usar caixa-alta com acentos do Qualizap como label final.
+
 | ID | Nome Qualizap | Volume CSV | Label Frontdesk | Status label |
 |---|---|---|---|---|
 | 1 | MAIS SAÚDE | 3.657 | `mais-saude` | já existe DEV |
 | 3 | PENDENTE | 1.156 | `pendente` | já existe DEV |
-| 5 | SPC | 831 | `enviado-ao-spc` | já existe DEV (consolida c/ 10) |
-| 9 | ENVIADO CONVÊNIO | 40.793 | `enviado-convenio` | CRIAR |
-| 10 | ENVIADOS SPC | 772 | `enviado-ao-spc` | consolida c/ 5 |
+| 5 | SPC | 831 | `SPC` | CRIAR (separada de 10) |
+| 9 | ENVIADO CONVÊNIO | 40.793 | `ENVIADO CONVÊNIO` | CRIAR |
+| 10 | ENVIADOS SPC | 772 | `ENVIADO AO SPC` | CRIAR (separada de 5) |
 | 11 | PARCERIA DESCONTO | <100 | `parceria-desconto` | CRIAR |
 | 12 | FORNECEDOR | <100 | `fornecedor` | CRIAR |
 | 13 | PSQUIATRA ON-LINE | <100 | `psiquiatra-online` | CRIAR (corrigir typo) |
 | 14 | SEM RENOVAÇÃO DE CONTRATO | <100 | `sem-renovacao` | CRIAR |
-| 15 | BOMBA | <100 | `bomba` | CRIAR (?) — confirmar com cliente |
+| 15 | BOMBA | <100 | `BOMBA` | CRIAR (confirmado pelo cliente — significado desconhecido, mas trazer) |
 | 16 | NAO LIDA | <100 | `nao-lida` | CRIAR |
 | 18 | COLETA DOMICILAIR | <100 | `coleta-domiciliar` | CRIAR (corrigir typo) |
 | 19 | SAAEMG | <100 | `saaemg` | CRIAR |
@@ -724,13 +740,13 @@ Migrar de volta o número da Klaus pra WABA original via mesmo fluxo (`POST /137
 | 29 | QUER MAIS SAÚDE | 251 | `interesse-mais-saude` | CRIAR |
 | 30 | CADASTRO | 500 | `cadastro` | CRIAR |
 | 31 | PRATA | <100 | `plano-prata` | CRIAR |
-| 32 | OURO | 350 | `plano-ouro` | CRIAR (consolida c/ 38?) |
+| 32 | OURO | 350 | `OURO` | CRIAR (separada de 38) |
 | 33 | RECEBER PAGAMENTO | <100 | `receber-pagamento` | CRIAR (≠ pagamento-realizado) |
 | 34 | AUDIO | <100 | `audio` | CRIAR (?) |
 | 35 | INCLUIR DEPENDENTES | <100 | `incluir-dependentes` | CRIAR |
 | 36 | ORCAMENTO CARO | <100 | `orcamento-caro` | CRIAR |
 | 37 | HEMATO ONLINE | <100 | `hemato-online` | CRIAR |
-| 38 | OURO ENVIADO | <100 | `plano-ouro-enviado` | CRIAR (ou consolida c/ 32) |
+| 38 | OURO ENVIADO | <100 | `OURO ENVIADO` | CRIAR (separada de 32) |
 | 39 | NAO ENVIAR BOLETO | <100 | `nao-enviar-boleto` | CRIAR |
 | 40 | CARNE | <100 | `carne` | CRIAR |
 | 41 | META | <100 | `meta-vendas` | CRIAR |
@@ -750,13 +766,14 @@ Migrar de volta o número da Klaus pra WABA original via mesmo fluxo (`POST /137
 | 56 | tetse | <100 | (descartar, é teste) | — |
 | 57 | DIAMANTE | <100 | `plano-diamante` | CRIAR |
 
-**Tags em CSV mas não na API (deletadas no Qualizap)**: 2, 4, 6, 7, 8, 17, 22, 23, 24, 42 — decisão: ignorar (não criar label) ou `_legacy_<id>` se cliente quer audit.
+**Tags em CSV mas não na API (deletadas no Qualizap)**: 2, 4, 6, 7, 8, 17, 22, 23, 24, 42 — **decisão final**: ignorar (não criar label `_legacy_<id>`).
 
-**Decisões pendentes pra cliente**:
-- Tag 15 (BOMBA): que significa? Importar?
-- Tag 32 vs 38 (OURO vs OURO ENVIADO): consolidar ou separar?
-- Tag 56 (tetse — typo de "teste"): descartar.
-- Tags 3, 5, 10 com status SPC mistura: confirmar fluxo.
+**Decisões finais cliente** (2026-04-30):
+- Tag 15 (BOMBA): **importar** (cliente: "nao sei mas traga"). Label: `BOMBA`.
+- Tag 32 (OURO) vs 38 (OURO ENVIADO): **manter separadas** (cliente: "nao consolide"). Labels: `OURO` e `OURO ENVIADO`.
+- Tag 56 (tetse): **descartar** (cliente: "nao traga tetse").
+- Tags 3, 5, 10 com status SPC: **manter separadas** (cliente: "spc e enviados spc nao podem ser as mesmas"). Labels: `PENDENTE`, `SPC`, `ENVIADO AO SPC`.
+- **Convention**: labels usam nome literal Qualizap (caixa-alta com acentos), não kebab-case.
 
 ---
 
@@ -812,3 +829,4 @@ SELECT
 ## Histórico
 
 - **2026-04-30** — v1.0. Levantamento completo via 4 agentes paralelos (Frontdesk codebase, KLaOS codebase, Frontdesk DB drift, Meta WABA discovery, Qualizap login + tag extraction).
+- **2026-04-30** — v1.1. Decisões finais cliente: prefixo `agend_*`/`at_*`/`cobr_*` aprovado; protesto portado como MARKETING (cliente confirma); tags 5/10 e 32/38 separadas; tag 15 BOMBA importada; tag 56 tetse descartada; labels usam literal Qualizap. Phase 0.5 executada: 3 templates submetidos (1 APPROVED MARKETING, 2 PENDING UTILITY). Bug fix MOJIBAKE_PATTERN regex (false positive em ATENÇÃO).
