@@ -9,21 +9,75 @@
 
 ## 0. Sumário do que precisa ser feito no KLaOS PROD
 
-Workspace existe em PROD (mesmo UUID que DEV) mas está vazio. Drift atual:
+Workspace existe em PROD (mesmo UUID que DEV). Auditoria de 100% das tabelas com `workspace_id`:
 
-| Tabela | DEV (`szkzkyexagunvadzzaec`) | PROD (`ddnwemmvsuiibgbzjpwx`) | Ação |
+### 0.1 Drift completo (DEV vs PROD)
+
+| Tabela | DEV | PROD | Ação |
 |---|---|---|---|
 | `agent_instances` (active) | 4 | **0** | Criar Lara |
-| `agent_instance_tools` (Lara) | 6 enabled | 0 | Bind 6 tools (definitions globais já existem em PROD ✅) |
+| `agent_instance_tools` (todos agents) | 17 | 0 | Bind 6 tools da Lara (defs globais já em PROD ✅) |
 | `agent_prompt_versions` (Lara) | 8 | 0 | Migrar versões (ou só current) |
 | `agent_documents` | 12 | 0 | Migrar metadados + blobs Supabase Storage |
-| `agent_connector_credentials` (tenex) | 1 | 0 | **Recriar via admin panel** (não copiar — encriptação) |
+| **`agent_handoff_config`** | **15** | **0** | ⚠️ **NÃO ESQUECER** — replicar handoff config |
+| `agent_guardrail_configs` | 1 | 0 | Replicar |
+| **`agent_web_widget_configs`** | **15** | **0** | ⚠️ **NÃO ESQUECER** — 15 configs de widget |
 | `agent_frontdesk_bridge` | 4 | 0 | Recriar bindings após Frontdesk bot existir |
-| `crm_workspace_tags` | 4 | 0 | Migrar 4 (prioridade-alta, teste, e2e-funcional, prioritário) |
-| `workspace_feature_flags` | 3 | 1 | Replicar 2 que faltam |
+| `agent_connector_credentials` (tenex) | 1 | **1** | ✅ JÁ EXISTE em PROD! validar URL+token apontando pra Tenex prod |
+| **`tenex_credentials`** | 1 | **1** | ✅ JÁ EXISTE — validar |
+| **`tenex_sync_logs`** | 940 | **912** | ✅ tenex sync rodando em PROD |
+| **`tenex_debtors`** | 2628 | 500 | tenex puxando dados |
+| **`tenex_debt_items`** | 4506 | 663 | tenex puxando dados |
+| `collection_campaigns` | 3 | 0 | Criar (status=paused) |
+| `collection_sequence_steps` | 17 | 0 | Criar (boleto + cartão) |
+| `collection_enrollments` | 3 | 0 | NÃO migrar (testes antigos) |
+| `collection_enrollment_events` | 21 | 0 | NÃO migrar |
+| **`crm_pipelines`** | 6 (1 real) | 0 | Replicar **só "Pipeline de Vendas"** (1 row, `is_default=true`) |
+| **`crm_pipeline_stages`** | 6 (defaults) | **6** | ✅ default Klaus já em PROD — não tocar |
+| **`crm_stages`** | 36 (5 reais do Pipeline de Vendas) | 0 | Replicar **5 stages reais**: Prospecção, Qualificação, Proposta, Negociação, Fechamento |
+| `crm_companies` | 11 | 0 | Replicar (dados de teste DEV) ou criar do zero pelo cliente? Decidir |
+| `crm_deals` | 29 | 0 | Idem (dados de teste) — provavelmente NÃO migrar |
+| `crm_contacts` | 32 | 0 | Idem |
+| `crm_custom_field_definitions` | 3 | 0 | Replicar (estrutura) |
+| `crm_triggers` | 3 | 0 | Replicar |
+| `crm_workspace_tags` | 4 | 0 | Replicar (prioridade-alta, teste, e2e-funcional, prioritário) |
+| `crm_goals` | 7 | 0 | Replicar |
+| `crm_email_templates` | 0 | 0 | OK |
+| `crm_nurturing_sequences` | 0 | 0 | OK |
+| `waba_numbers` | 1 | 0 | Criar após migration WABA + Frontdesk PROD setup |
+| `waba_number_assignments` | 1 | 0 | Idem |
+| **`waba_templates`** | 29 | 0 | ⚠️ DEV tem 29 (incluindo legacy) — em PROD criar via sync da Klaus (14 atuais) |
+| `whatsapp_phone_numbers` | 0 | 0 | OK (deprecated?) |
+| `frontdesk_accounts` | 1 | **1** | ✅ JÁ EXISTE — validar |
+| `frontdesk_inboxes` | 1 | **1** | ✅ JÁ EXISTE (provavelmente SAC) — validar/atualizar quando Frontdesk inbox WhatsApp criar |
+| `frontdesk_teams` | 1 | 0 | Criar 3 entries pra cobrança/cancelamento/contratos após Frontdesk teams existirem |
+| `frontdesk_users` | 11 | 5 | Deltas (provavelmente OK por agora — cliente convida) |
+| `frontdesk_agent_inboxes` | 0 | 0 | OK |
+| `funnel_desk_routing_rules` | 0 | 0 | OK |
+| `klaus_persona_configs` | 4 | **4** | ✅ JÁ EXISTE em PROD |
+| **`knowledge_entries`** | 12 | **23** | ⚠️ **PROD tem MAIS que DEV** — não sobrescrever! Cliente curou knowledge em PROD. Decidir: deixar PROD as-is, ou merge? |
+| `knowledge_bases` | 2 | 2 | ✅ idem |
+| `workspace_intelligence_profile` | 1 | 1 | ✅ |
+| `workspace_role_permissions` | 4 | 4 | ✅ |
 | `workspace_invitations` | 8 | 0 | Cliente convida via UI |
-| Tool definitions globais (6 nomes) | ✅ | ✅ ok | OK |
-| Régua (collection_sequences + steps) | ativa | inexistente | Criar com `status='paused'` |
+| `workspace_members` | 6 | 5 | Cliente convida |
+| `workspace_feature_flags` | 3 | 1 | Replicar 2 faltantes |
+| `workspace_addons` | 0 | 0 | OK |
+| `workspace_api_keys` | 0 | 0 | OK |
+| `workspace_event_filter_config` | 0 | 0 | OK |
+| `workspace_google_calendar` | 0 | 0 | OK |
+| `workspace_guardrail_configs` | 0 | 0 | OK |
+| `onboarding_sessions` | 0 | 0 | OK |
+| `web_chat_widgets` | 0 | 0 | OK |
+
+### 0.2 Pontos críticos a observar
+
+- ✅ **Tenex já está integrado em PROD** (`tenex_credentials=1`, sync logs 912). Validar se é prod URL/token (não sandbox).
+- ✅ **Knowledge base PROD já alimentado com 23 entries** (mais que DEV) — cliente curou. **NÃO sobrescrever**.
+- ✅ **Klaus persona configs já em PROD** (4 rows).
+- ⚠️ **`agent_handoff_config` (15) e `agent_web_widget_configs` (15)** — eu tinha esquecido na auditoria anterior. Replicar.
+- ⚠️ **`crm_pipelines`**: só 1 real ("Pipeline de Vendas"), demais são teste.
+- ⚠️ **`waba_templates` DEV tem 29** (legacy + atuais). Em PROD: deixar sync rodar a partir da Klaus (14 atuais), não copiar legacy.
 
 ---
 
