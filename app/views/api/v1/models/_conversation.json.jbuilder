@@ -3,14 +3,18 @@
 json.id conversation.display_id
 json.uuid conversation.uuid
 json.created_at conversation.created_at.to_i
-json.contact do
-  json.id conversation.contact.id
-  json.name conversation.contact.name
+if conversation.contact
+  json.contact do
+    json.id conversation.contact.id
+    json.name conversation.contact.name
+  end
 end
-json.inbox do
-  json.id conversation.inbox.id
-  json.name conversation.inbox.name
-  json.channel_type conversation.inbox.channel_type
+if conversation.inbox
+  json.inbox do
+    json.id conversation.inbox.id
+    json.name conversation.inbox.name
+    json.channel_type conversation.inbox.channel_type
+  end
 end
 json.messages do
   json.array! conversation.messages do |message|
