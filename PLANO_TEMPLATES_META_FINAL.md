@@ -1,6 +1,7 @@
 # PLANO DE SUBIDA DE TEMPLATES - META
 ## Versao Final com Negritos + Novos Nomes
 ### 08/04/2026 - AGUARDANDO APROVACAO INTERNA
+### 30/04/2026 - REVISADO E SUBIDO (com nomenclatura `cobr_*`, ver "ATUALIZACAO 2026-04-30" no fim do doc)
 
 ---
 
@@ -381,3 +382,70 @@ Todos os templates serao enviados com:
 
 **Status:** AGUARDANDO APROVACAO INTERNA
 **NAO ENVIADO A META**
+
+---
+
+# ATUALIZACAO 2026-04-30: SUBIDOS COM NOMENCLATURA `cobr_*`
+
+## Por que mudou o prefixo
+
+Os 7 templates `ms24h_*` aprovados pelo Gustavo foram criados na Meta em
+2026-04-09/10 (APPROVED). Em 2026-04-30 foram deletados acidentalmente
+durante limpeza de "órfãos" (templates não-referenciados pela régua atual)
+— a mancada veio de o agente não ter cruzado o nome da família com o
+plano oficial deste doc.
+
+Resultado: os 7 nomes `ms24h_*` ficaram com **lock de 30 dias** na Meta
+(política de cooldown pós-DELETE). Não dá pra recriar com mesmo nome
+até ~2026-05-30.
+
+Solução: re-subir com novo prefixo `cobr_*` (cobrança + estágio explícito,
+brand-agnostic — a WABA já é da Mais Saúde 24h).
+
+## Mapeamento de nomes
+
+| Plano original (lockado)        | Subido em 2026-04-30 (PENDING)  | Meta ID                  |
+|---------------------------------|---------------------------------|--------------------------|
+| `ms24h_fatura_geracao` (D-5)    | `cobr_d5_lembrete`              | `967573122486341`        |
+| `ms24h_vencimento_hoje` (D0)    | `cobr_d0_vencimento`            | `26984168144553305`      |
+| `ms24h_boleto_vencido` (D+1)    | `cobr_d1_vencido`               | `1892848914751505`       |
+| `ms24h_atraso_7dias` (D+7)      | `cobr_d7_atraso`                | `967806542305040`        |
+| `ms24h_atraso_15dias` (D+15)    | `cobr_d15_atraso`               | `1483433960183870`       |
+| `ms24h_transbordo_21dias` (D+21)| `cobr_d21_transbordo`           | `960619686455342`        |
+| `ms24h_pagamento_ok` (pagto)    | `cobr_pagto_ok`                 | `1254671323072863`       |
+
+## Texto
+
+Letter-perfect deste doc — negritos do Gustavo, "há 7 dias", "Boleto
+Vencido" corrigido, "Bom dia"/"URGENCIA"/"vamos perder acesso" removidos.
+
+## Encoding
+
+Submetidos via Ruby `JSON.generate(ascii_only: true)` — todos os acentos
+viraram `á`/`ú`/`ç`/etc no body do POST. Zero risco de
+shell/locale corromper bytes (vetor que quebrou o `ms24h_boleto_vencido_v2`
+mais cedo no mesmo dia).
+
+Guard adicional plantado em
+`custom/app/services/whatsapp_connections/meta/template_crud_service.rb`:
+método `validate_utf8_payload!` roda recursivo no body antes de qualquer
+POST/PATCH pra Meta, falhando com erro descritivo se detectar:
+- encoding inválida (`String#valid_encoding?`)
+- mojibake (`Ã£`, `Â `, `â`)
+- `?` colado a letra mid-word (`Ol?a`, `SA?DE`, `n?o`)
+
+## Próximos passos pra finalizar
+
+1. **Aguardar APPROVED** (minutos a horas, depende da Meta) — webhook
+   `message_template_status_update` chega no Frontdesk e propaga pro
+   KLaOS via bridge `waba_template_changed`.
+2. **KLaOS migra a régua** — atualizar `collection_sequence_steps`
+   trocando FK `waba_template_id` legacy → cobr_*. Doc detalhado em
+   `docs/para-klaos-agent/MIGRATE_REGUA_TO_COBR.md`.
+3. **Adicionar step D+1** novo (`cobr_d1_vencido`) que não existia antes.
+4. **Remover step D+10** (`boleto_atraso_10dias`) — não está na régua do
+   Gustavo.
+5. **Teste e2e** com fixture `+5521964798660` antes de qualquer dispatch
+   real (guards do `TEST_SAFETY_GUARDS.md` em vigor).
+6. **Após validação**: DELETE dos 8 templates legacy via Meta API +
+   force-sync.

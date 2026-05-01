@@ -313,6 +313,76 @@ const showTransferToBot = computed(
   onNewMessage = message => {`,
     reason: 'audio-assignee: handler que toca som quando assignee.id == currentUser.id',
   },
+  {
+    id: '/whatsappConnections/components/TemplateManager.vue',
+    from: `                <span
+                  class="text-xs text-n-slate-9 bg-n-alpha-1 px-1.5 py-0.5 rounded"
+                >
+                  {{ tmpl.category }}
+                </span>`,
+    to: `                <span
+                  class="text-xs px-1.5 py-0.5 rounded"
+                  :class="{
+                    'text-n-blue-11 bg-n-blue-3': tmpl.category === 'UTILITY',
+                    'text-n-amber-11 bg-n-amber-3 font-semibold': tmpl.category === 'MARKETING',
+                    'text-n-teal-11 bg-n-teal-3': tmpl.category === 'AUTHENTICATION',
+                    'text-n-slate-9 bg-n-alpha-1': !['UTILITY','MARKETING','AUTHENTICATION'].includes(tmpl.category),
+                  }"
+                  :title="tmpl.category === 'MARKETING' ? 'MARKETING: requer opt-in. Risco de bloqueio da WABA se enviado em régua de cobrança.' : tmpl.category"
+                >
+                  <span v-if="tmpl.category === 'MARKETING'">⚠ </span>{{ tmpl.category }}
+                </span>`,
+    reason: 'template-category-badge: cor distinta UTILITY (n-blue) vs MARKETING (n-amber+aviso); usa tokens n-* do design system Chatwoot pra Tailwind JIT gerar CSS',
+  },
+  {
+    id: '/store/modules/labels.js',
+    from: `  uiFlags: {
+    isFetching: false,
+    isFetchingItem: false,
+    isCreating: false,
+    isDeleting: false,
+  },`,
+    to: `  uiFlags: {
+    isFetching: false,
+    isFetchingItem: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+  },`,
+    reason: 'labels-store: adiciona isUpdating no state inicial (usado em EditLabel.vue, ausente fazia binding ficar undefined)',
+  },
+  {
+    id: '/settings/labels/Index.vue',
+    from: `import { useStoreGetters, useStore } from 'dashboard/composables/store';
+import { picoSearch } from '@scmmishra/pico-search';`,
+    to: `import { useStoreGetters, useStore } from 'dashboard/composables/store';
+import { useAdmin } from 'dashboard/composables/useAdmin';
+import { picoSearch } from '@scmmishra/pico-search';`,
+    reason: 'labels-admin-only: importa useAdmin pra esconder edit/delete pra agente comum',
+  },
+  {
+    id: '/settings/labels/Index.vue',
+    from: `const getters = useStoreGetters();
+const store = useStore();
+const { t } = useI18n();`,
+    to: `const getters = useStoreGetters();
+const store = useStore();
+const { t } = useI18n();
+const { isAdmin } = useAdmin();`,
+    reason: 'labels-admin-only: instancia composable useAdmin no setup',
+  },
+  {
+    id: '/settings/labels/Index.vue',
+    from: `              <BaseTableCell align="end">
+                <div class="flex gap-3 justify-end flex-shrink-0">
+                  <Button
+                    v-tooltip.top="$t('LABEL_MGMT.FORM.EDIT')"`,
+    to: `              <BaseTableCell align="end">
+                <div v-if="isAdmin" class="flex gap-3 justify-end flex-shrink-0">
+                  <Button
+                    v-tooltip.top="$t('LABEL_MGMT.FORM.EDIT')"`,
+    reason: 'labels-admin-only: esconde botões edit/delete pra não-admin (LabelPolicy backend exige administrator)',
+  },
 ];
 
 export default function klaosPatches() {

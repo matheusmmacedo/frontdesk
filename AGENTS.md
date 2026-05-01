@@ -1,5 +1,58 @@
 # Chatwoot Development Guidelines
 
+## 🛡️ Diretiva crítica de fork — JAMAIS perder upstream NEM customs
+
+Este repo é um **fork de Chatwoot upstream** (`chatwoot/chatwoot`). A camada de
+customização Klaos vive em **`custom/`** com a estrutura:
+
+```
+custom/
+  app/        ← overrides de controllers, models, jobs, views Chatwoot
+  config/     ← config Klaos (locales, routes, initializers)
+  lib/        ← libs custom Klaos
+  vite/       ← assets/JS custom
+```
+
+### Regra de ouro
+
+1. **NUNCA edite arquivos fora de `custom/`** sem justificativa explícita.
+2. Bug fix? Tente PRIMEIRO via override em `custom/app/...` (concerns, decorators,
+   prepends, monkey-patches isolados) em vez de patchar o original em `app/...`.
+3. Se for IMPOSSÍVEL fazer via custom (ex: bug em código que carrega ANTES dos
+   overrides; bug em rota/middleware sem extension point; bug em build/Webpack):
+   - Marque o verdict com `upstream_patch_justified: true` E **explique por quê**.
+   - Documente no PR description: o futuro `git merge upstream/main` vai conflitar.
+
+### Por que isso importa
+
+Upstream Chatwoot evolui constantemente. Patches sem isolamento → conflitos no merge
+→ ou perdemos a fix Klaos, ou perdemos a feature nova upstream. **Camada `custom/`
+é mergeada sem conflito** porque upstream não toca lá.
+
+### Padrão de override em Rails (Chatwoot)
+
+```ruby
+# custom/app/models/concerns/klaos_account_extensions.rb
+module KlaosAccountExtensions
+  extend ActiveSupport::Concern
+  included do
+    # adiciona behavior/validação Klaos
+  end
+end
+
+# custom/config/initializers/klaos_overrides.rb
+Rails.application.config.to_prepare do
+  Account.include KlaosAccountExtensions unless Account.include?(KlaosAccountExtensions)
+end
+```
+
+### Padrão de override em Vue (frontend Chatwoot)
+
+Componentes Vue: prefira **prop-based override** ou **slot fallback**. Se precisar
+substituir, copie o componente pra `custom/app/javascript/...` e re-aponte o import.
+
+---
+
 ## Build / Test / Lint
 
 - **Setup**: `bundle install && pnpm install`
