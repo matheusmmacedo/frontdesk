@@ -111,3 +111,28 @@ Practical checklist for any change impacting core logic or public APIs
 ## Branding / White-labeling note
 
 - For user-facing strings that currently contain "Chatwoot" but should adapt to branded/self-hosted installs, prefer applying `replaceInstallationName` from `shared/composables/useBranding` in the UI layer (for example tooltip and suggestion labels) instead of adding hardcoded brand-specific copy.
+
+---
+
+## Migrations & Auto-apply pelo runner
+
+<!-- DEVPILOT-MIGRATIONS-SKILL: gerenciado por scripts/update-agents-md-all-repos.mjs no zammad. Editar manualmente vai sobrescrever no próximo run. -->
+
+**Você NÃO precisa rodar `db:migrate` manualmente** — o `klaos-agent-runner`
+roda `bundle exec rails db:migrate` em cada etapa do pipeline:
+
+- Pipeline configurado: `dev` → `prod`
+- PR mergeado em `develop` → runner faz `bundle exec rails db:migrate` no
+  container daquele env.
+- Promote PR → main → roda em prod (env `prod` com
+  `requires_approval=true` exige humano).
+
+**Regras pra escrever a migration:**
+- Use o gerador: `bin/rails g migration AddXyzToFoos` (sem editar timestamps).
+- **Reversível:** todo `up` precisa de `down` correspondente, ou usar
+  `change` quando seguro.
+- **Sem dados em massa em transação:** UPDATE/DELETE em milhões de rows tem
+  que ir em `disable_ddl_transaction!` + batches de 1k.
+
+Ad-hoc/troubleshooting: `bin/rails dbconsole` no container.
+
