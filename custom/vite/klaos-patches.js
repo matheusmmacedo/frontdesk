@@ -362,7 +362,7 @@ const showTransferToBot = computed(
       <NextButton
         v-if="!isOnPrivateNote && !isEditorDisabled"
         v-tooltip.top-end="klaosPrefixEnabled ? 'Desativar assinatura *Atendente NOME*' : 'Ativar assinatura *Atendente NOME*'"
-        icon="i-ph-identification-badge"
+        icon="i-ph-user-bold"
         :variant="klaosPrefixEnabled ? 'solid' : 'faded'"
         color="slate"
         sm
