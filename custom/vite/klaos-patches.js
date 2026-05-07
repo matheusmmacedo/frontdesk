@@ -362,7 +362,7 @@ const showTransferToBot = computed(
       <NextButton
         v-if="!isOnPrivateNote && !isEditorDisabled"
         v-tooltip.top-end="klaosPrefixEnabled ? 'Desativar assinatura *Atendente NOME*' : 'Ativar assinatura *Atendente NOME*'"
-        icon="i-lucide-user-square"
+        icon="i-ph-identification-badge"
         :variant="klaosPrefixEnabled ? 'solid' : 'faded'"
         color="slate"
         sm
@@ -420,26 +420,42 @@ const showTransferToBot = computed(
     reason: 'klaos-prefix-toggle: listener que flipa o state local',
   },
   {
+    // Patcheia o chokepoint sendMessage — cobre TODOS os caminhos que constroem
+    // payload (getMessagePayload pra email/non-WA, getMultipleMessagesPayload pra
+    // WhatsApp/IG/Tiktok). Sem isso, no caminho WA o flag nunca é injetado.
     id: '/components/widgets/conversation/ReplyBox.vue',
-    from: `      if (this.toEmails && !this.isOnPrivateNote) {
-        messagePayload.toEmails = this.toEmails;
-      }
-      return messagePayload;
-    },`,
-    to: `      if (this.toEmails && !this.isOnPrivateNote) {
-        messagePayload.toEmails = this.toEmails;
-      }
-      // KLaOS — quando o toggle de "assinatura do atendente" está OFF, sinaliza pro
-      // backend (klaos_apply_human_prefix) pular o prepend nesta mensagem.
-      if (!this.klaosPrefixEnabled && !this.isPrivate) {
+    from: `    async sendMessage(
+      messagePayload,
+      editorMessage = '',
+      copilotAcceptedMessage = ''
+    ) {
+      try {
+        await this.$store.dispatch(
+          'createPendingMessageAndSend',
+          messagePayload
+        );`,
+    to: `    async sendMessage(
+      messagePayload,
+      editorMessage = '',
+      copilotAcceptedMessage = ''
+    ) {
+      // KLaOS — quando o toggle de "assinatura do atendente" está OFF, sinaliza
+      // pro backend (klaos_apply_human_prefix) pular o prepend. Aqui é o
+      // chokepoint comum a todos os caminhos (WA, IG, Tiktok, email, multi-msg).
+      // Mensagens privadas não recebem prefix de qualquer forma — não precisa
+      // setar o flag, mas não atrapalha (initializer trata).
+      if (!this.klaosPrefixEnabled && !messagePayload.private) {
         messagePayload.contentAttributes = {
           ...(messagePayload.contentAttributes || {}),
           skip_klaos_prefix: true,
         };
       }
-      return messagePayload;
-    },`,
-    reason: 'klaos-prefix-toggle: injeta content_attributes.skip_klaos_prefix no payload quando toggle OFF',
+      try {
+        await this.$store.dispatch(
+          'createPendingMessageAndSend',
+          messagePayload
+        );`,
+    reason: 'klaos-prefix-toggle: injeta skip_klaos_prefix no chokepoint sendMessage (cobre WA/IG/Tiktok/email)',
   },
 
   // === KLaOS — alerta sonoro quando conv eh atribuida ao agente logado ===
