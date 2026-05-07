@@ -131,6 +131,13 @@ Rails.application.config.to_prepare do
         return
       end
 
+      # Per-message opt-out — frontend (composer toggle) marca content_attributes['skip_klaos_prefix']=true
+      # quando o atendente quer enviar SEM a assinatura. Permite envio "raw" pontual sem mudar a config da account.
+      if content_attributes.is_a?(Hash) && content_attributes['skip_klaos_prefix']
+        Rails.logger.info("#{tag} skip: content_attributes.skip_klaos_prefix=true (per-message opt-out)")
+        return
+      end
+
       prefix = KlaosHumanMessagePrefix.render(template, sender)
       if prefix.blank?
         Rails.logger.warn("#{tag} skip: empty prefix rendered (template=#{template.inspect})")
