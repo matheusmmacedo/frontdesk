@@ -294,6 +294,154 @@ const showTransferToBot = computed(
     reason: 'unassigned-treat-bot-as-unassigned: backend filtra unassigned por assignee_id IS NULL mas meta.assignee vem com bot — sem isso list fica vazia e UI loopa fetch infinito',
   },
 
+  // === KLaOS — Toggle "assinatura do atendente" (prefixo *Atendente NOME*:) no composer ===
+  // Backend `klaos_apply_human_prefix` (custom/config/initializers/human_message_prefix.rb)
+  // prepende a string configurada em accounts.custom_attributes.klaos_human_message_template
+  // em toda mensagem outgoing humana. Esse toggle permite ao atendente DESLIGAR o prefixo
+  // numa mensagem específica sem alterar a config da account — útil quando o agente vai
+  // copiar/colar texto formatado, mandar link cru, ou se identificar de forma diferente.
+  //
+  // Estado: per-component (data() em ReplyBox), default ON, ephemeral (reseta ao navegar).
+  // Quando OFF, getMessagePayload injeta `contentAttributes: { skip_klaos_prefix: true }`
+  // no payload — o initializer lê isso no before_create e pula o prepend.
+  //
+  // Botão fica ao lado do signature toggle no ReplyBottomPanel. Solid quando ON, faded OFF.
+  {
+    id: '/widgets/WootWriter/ReplyBottomPanel.vue',
+    from: `    isEditorDisabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: [
+    'replaceText',
+    'toggleInsertArticle',
+    'selectWhatsappTemplate',
+    'selectContentTemplate',
+    'toggleQuotedReply',
+  ],`,
+    to: `    isEditorDisabled: {
+      type: Boolean,
+      default: false,
+    },
+    klaosPrefixEnabled: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  emits: [
+    'replaceText',
+    'toggleInsertArticle',
+    'selectWhatsappTemplate',
+    'selectContentTemplate',
+    'toggleQuotedReply',
+    'toggleKlaosPrefix',
+  ],`,
+    reason: 'klaos-prefix-toggle: registra prop klaosPrefixEnabled + emit toggleKlaosPrefix no ReplyBottomPanel',
+  },
+  {
+    id: '/widgets/WootWriter/ReplyBottomPanel.vue',
+    from: `      <NextButton
+        v-if="showMessageSignatureButton"
+        v-tooltip.top-end="signatureToggleTooltip"
+        icon="i-ph-signature"
+        slate
+        faded
+        sm
+        @click="toggleMessageSignature"
+      />`,
+    to: `      <NextButton
+        v-if="showMessageSignatureButton"
+        v-tooltip.top-end="signatureToggleTooltip"
+        icon="i-ph-signature"
+        slate
+        faded
+        sm
+        @click="toggleMessageSignature"
+      />
+      <NextButton
+        v-if="!isOnPrivateNote && !isEditorDisabled"
+        v-tooltip.top-end="klaosPrefixEnabled ? 'Desativar assinatura *Atendente NOME*' : 'Ativar assinatura *Atendente NOME*'"
+        icon="i-lucide-user-square"
+        :variant="klaosPrefixEnabled ? 'solid' : 'faded'"
+        color="slate"
+        sm
+        :aria-pressed="klaosPrefixEnabled"
+        @click="$emit('toggleKlaosPrefix')"
+      />`,
+    reason: 'klaos-prefix-toggle: botão do toggle ao lado do signature button',
+  },
+  {
+    id: '/components/widgets/conversation/ReplyBox.vue',
+    from: `      newConversationModalActive: false,
+      showArticleSearchPopover: false,
+      hasRecordedAudio: false,
+      copilotAcceptedMessages: {},
+    };
+  },`,
+    to: `      newConversationModalActive: false,
+      showArticleSearchPopover: false,
+      hasRecordedAudio: false,
+      copilotAcceptedMessages: {},
+      // KLaOS — per-message toggle pro prefixo "*Atendente NOME*: ". Default ON.
+      // Quando OFF, getMessagePayload injeta content_attributes.skip_klaos_prefix=true
+      // e o initializer human_message_prefix.rb pula o prepend.
+      klaosPrefixEnabled: true,
+    };
+  },`,
+    reason: 'klaos-prefix-toggle: state local em ReplyBox.data()',
+  },
+  {
+    id: '/components/widgets/conversation/ReplyBox.vue',
+    from: `        :is-editor-disabled="isEditorDisabled"
+        :on-file-upload="onFileUpload"
+        :on-send="onSendReply"`,
+    to: `        :is-editor-disabled="isEditorDisabled"
+        :klaos-prefix-enabled="klaosPrefixEnabled"
+        :on-file-upload="onFileUpload"
+        :on-send="onSendReply"`,
+    reason: 'klaos-prefix-toggle: passa state como prop pro ReplyBottomPanel',
+  },
+  {
+    id: '/components/widgets/conversation/ReplyBox.vue',
+    from: `        @select-whatsapp-template="openWhatsappTemplateModal"
+        @select-content-template="openContentTemplateModal"
+        @replace-text="replaceText"
+        @toggle-insert-article="toggleInsertArticle"
+        @toggle-quoted-reply="toggleQuotedReply"
+      />`,
+    to: `        @select-whatsapp-template="openWhatsappTemplateModal"
+        @select-content-template="openContentTemplateModal"
+        @replace-text="replaceText"
+        @toggle-insert-article="toggleInsertArticle"
+        @toggle-quoted-reply="toggleQuotedReply"
+        @toggle-klaos-prefix="klaosPrefixEnabled = !klaosPrefixEnabled"
+      />`,
+    reason: 'klaos-prefix-toggle: listener que flipa o state local',
+  },
+  {
+    id: '/components/widgets/conversation/ReplyBox.vue',
+    from: `      if (this.toEmails && !this.isOnPrivateNote) {
+        messagePayload.toEmails = this.toEmails;
+      }
+      return messagePayload;
+    },`,
+    to: `      if (this.toEmails && !this.isOnPrivateNote) {
+        messagePayload.toEmails = this.toEmails;
+      }
+      // KLaOS — quando o toggle de "assinatura do atendente" está OFF, sinaliza pro
+      // backend (klaos_apply_human_prefix) pular o prepend nesta mensagem.
+      if (!this.klaosPrefixEnabled && !this.isPrivate) {
+        messagePayload.contentAttributes = {
+          ...(messagePayload.contentAttributes || {}),
+          skip_klaos_prefix: true,
+        };
+      }
+      return messagePayload;
+    },`,
+    reason: 'klaos-prefix-toggle: injeta content_attributes.skip_klaos_prefix no payload quando toggle OFF',
+  },
+
   // === KLaOS — alerta sonoro quando conv eh atribuida ao agente logado ===
   // Hoje o som só toca em mensagem nova; quando uma conv é atribuída sem msg
   // nova (ex: bot transferiu, time auto-assignou, outro atendente moveu), o
