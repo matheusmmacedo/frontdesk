@@ -260,6 +260,40 @@ const showTransferToBot = computed(
     reason: 'minhas-sticky: ignora broadcasts transientes com assignee_type=AgentBot',
   },
 
+  // === KLaOS — "Não atribuídas" considera AgentBot como unassigned ===
+  // Sintoma: aba "Não atribuídas" trava em "Carregando conversas" e dispara
+  // loop infinito de fetches `?assignee_type=unassigned` (centenas/segundo).
+  //
+  // Causa: o backend filtra unassigned por `assignee_id IS NULL` (sem humano),
+  // mas o EventDataPresenter#push_meta popula `meta.assignee` com o BOT da
+  // inbox quando não há humano (BOT-first). Frontend `getUnAssignedChats` usa
+  // `!conversation.meta.assignee` — como tem bot, filtra fora → chatsOnView=[].
+  // O `conversationListPagination` vê lista vazia + count>0 → retorna page=1
+  // perpetuamente. IntersectionObserver no sentinel detecta vazio → dispara
+  // loadMoreConversations → fetchConversations → loop infinito.
+  //
+  // Fix: tratar conversa com assignee_type='AgentBot' como unassigned (porque
+  // pra todos os efeitos do dashboard humano, é). Espelha o conceito do backend.
+  {
+    id: '/store/modules/conversations/getters.js',
+    from: `  getUnAssignedChats: _state => activeFilters => {
+    return _state.allConversations.filter(conversation => {
+      const isUnAssigned = !conversation.meta.assignee;
+      const shouldFilter = applyPageFilters(conversation, activeFilters);
+      return isUnAssigned && shouldFilter;
+    });
+  },`,
+    to: `  getUnAssignedChats: _state => activeFilters => {
+    return _state.allConversations.filter(conversation => {
+      const { assignee, assignee_type: assigneeType } = conversation.meta;
+      const isUnAssigned = !assignee || assigneeType === 'AgentBot';
+      const shouldFilter = applyPageFilters(conversation, activeFilters);
+      return isUnAssigned && shouldFilter;
+    });
+  },`,
+    reason: 'unassigned-treat-bot-as-unassigned: backend filtra unassigned por assignee_id IS NULL mas meta.assignee vem com bot — sem isso list fica vazia e UI loopa fetch infinito',
+  },
+
   // === KLaOS — alerta sonoro quando conv eh atribuida ao agente logado ===
   // Hoje o som só toca em mensagem nova; quando uma conv é atribuída sem msg
   // nova (ex: bot transferiu, time auto-assignou, outro atendente moveu), o
