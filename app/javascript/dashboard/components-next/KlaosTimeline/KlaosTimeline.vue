@@ -9,8 +9,8 @@ Componente é instanciado dentro de ConversationBox quando o toggle KLaOS
 "Histórico do contato" está ativo. ConversationBox passa contact-id via prop.
 -->
 <script setup>
+/* global axios */
 import { computed, ref, watch, onMounted } from 'vue';
-import axios from 'axios';
 
 const props = defineProps({
   contactId: { type: [Number, String], required: true },
