@@ -14,6 +14,9 @@ Estratégia "réplica fiel":
   completo com o frame de template.
 - Mídia: image inline (clicável p/ abrir em nova aba), audio com player nativo,
   video, file fallback com nome.
+- Notas internas (private=true): bolha amarela + badge "nota interna".
+- Templates renomeados/excluídos no canal: badge vermelha + lista dos params
+  enviados (ainda dá pra ver os dados que o cliente recebeu).
 
 Endpoint: GET /api/custom/v1/accounts/:account_id/contacts/:contact_id/timeline
 -->
@@ -114,6 +117,8 @@ const formatTime = ts => {
 const isIncoming = m => m.message_type === 0;
 const isActivity = m => m.message_type === 2;
 const isTemplate = m => Boolean(m.template_meta);
+const isPrivateNote = m => Boolean(m.private);
+const isTemplateMissing = m => m.template_meta?.status === 'template_not_found';
 
 const senderLabel = m => {
   if (isIncoming(m)) return m.sender?.name || 'Cliente';
@@ -123,12 +128,31 @@ const senderLabel = m => {
 };
 
 // Texto que vai pro MessageFormatter:
-// - Templates: rendered_content (body já com placeholders substituídos)
-// - Resto: content cru
+// - Templates renderizados: rendered_content (body já com placeholders substituídos)
+// - Texto livre: content
+// Quando template não foi achado (renomeado/excluído) NÃO usamos content (que é só o nome do template);
+// o fallback de params é renderizado num bloco separado abaixo.
 const messageBodyText = m => {
   if (m.rendered_content) return m.rendered_content;
-  if (isTemplate(m) && !m.rendered_content) return m.content; // template_not_found → mostra nome cru
+  if (isTemplate(m)) return ''; // sem body renderizado → renderiza fallback de params
   return m.content || '';
+};
+
+// Params enviados ao Meta (processed_params.body) — usado no fallback quando
+// o template não foi achado em channel.message_templates (renomeado/excluído).
+const templateProcessedParams = m => {
+  const body = m.additional_attributes?.template_params?.processed_params?.body;
+  if (!body || typeof body !== 'object') return [];
+  return Object.entries(body).map(([key, value]) => ({ key, value: String(value ?? '') }));
+};
+
+// Detecta bubble realmente vazia (sem texto, sem template, sem anexo) — nesse
+// caso mostra um placeholder pra usuário não pensar que quebrou.
+const isEmptyBubble = m => {
+  if (messageBodyText(m)) return false;
+  if (isTemplate(m)) return false; // template tem fallback próprio
+  if ((m.attachments || []).length > 0) return false;
+  return true;
 };
 
 const formattedHtml = (text, isPrivate = false) => {
@@ -198,20 +222,30 @@ const openImage = url => {
         >
           <div class="flex flex-col max-w-[75%] gap-0.5">
             <div
-              class="text-xs text-n-slate-10 px-1"
-              :class="isIncoming(item.msg) ? 'text-left' : 'text-right'"
+              class="text-xs text-n-slate-10 px-1 flex flex-wrap items-center gap-1"
+              :class="isIncoming(item.msg) ? 'justify-start' : 'justify-end'"
             >
-              {{ senderLabel(item.msg) }}
-              <span v-if="isTemplate(item.msg)" class="ml-1 px-1 rounded bg-n-blue-3 text-n-blue-11">
+              <span>{{ senderLabel(item.msg) }}</span>
+              <span v-if="isPrivateNote(item.msg)" class="px-1 rounded bg-n-amber-3 text-n-amber-11 font-medium">
+                <span class="i-ph-note-pencil size-3 align-middle mr-0.5" />nota interna
+              </span>
+              <span v-if="isTemplate(item.msg)" class="px-1 rounded bg-n-blue-3 text-n-blue-11">
                 template · {{ item.msg.template_meta?.name }}
               </span>
-              · {{ formatTime(item.msg.created_at) }}
+              <span v-if="isTemplateMissing(item.msg)" class="px-1 rounded bg-n-ruby-3 text-n-ruby-11">
+                renomeado/excluído
+              </span>
+              <span>· {{ formatTime(item.msg.created_at) }}</span>
             </div>
             <div
               class="rounded-xl px-3 py-2 text-sm break-words"
-              :class="isIncoming(item.msg)
-                ? 'bg-n-slate-4 text-n-slate-12 rounded-bl-sm'
-                : 'bg-n-teal-3 text-n-teal-12 rounded-br-sm'"
+              :class="[
+                isPrivateNote(item.msg)
+                  ? 'bg-n-amber-3 text-n-amber-12 border border-n-amber-6 rounded-bl-sm'
+                  : isIncoming(item.msg)
+                    ? 'bg-n-slate-4 text-n-slate-12 rounded-bl-sm'
+                    : 'bg-n-teal-3 text-n-teal-12 rounded-br-sm',
+              ]"
             >
               <!-- Header do template (se houver) -->
               <div
@@ -226,6 +260,35 @@ const openImage = url => {
                 class="message-formatter whitespace-pre-wrap"
                 v-html="formattedHtml(messageBodyText(item.msg), item.msg.private)"
               />
+
+              <!-- Fallback para template não achado: lista os params que foram enviados -->
+              <div
+                v-if="isTemplateMissing(item.msg) && templateProcessedParams(item.msg).length"
+                class="text-xs"
+              >
+                <div class="text-n-slate-11 italic mb-1">
+                  Template <strong>{{ item.msg.template_meta?.name }}</strong> foi renomeado ou excluído.
+                  Variáveis enviadas:
+                </div>
+                <div class="flex flex-col gap-0.5 pl-2 border-l-2 border-n-alpha-2">
+                  <div
+                    v-for="param in templateProcessedParams(item.msg)"
+                    :key="param.key"
+                    class="break-words"
+                  >
+                    <span class="text-n-slate-10">{{ '{{' + param.key + '}}' }}:</span>
+                    <span class="ml-1">{{ param.value }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bubble verdadeiramente vazia (sem texto/template/anexo) -->
+              <div
+                v-else-if="isEmptyBubble(item.msg)"
+                class="text-xs italic text-n-slate-10"
+              >
+                (mensagem sem conteúdo)
+              </div>
 
               <!-- Footer do template -->
               <div
