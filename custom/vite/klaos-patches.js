@@ -581,6 +581,205 @@ const { isAdmin } = useAdmin();`,
                     v-tooltip.top="$t('LABEL_MGMT.FORM.EDIT')"`,
     reason: 'labels-admin-only: esconde botões edit/delete pra não-admin (LabelPolicy backend exige administrator)',
   },
+
+  // === KLaOS — Labels coloridas em ContactsCard (lista /contacts) ===
+  // Backend: custom/app/views/api/v1/models/_contact.json.jbuilder expõe `labels`
+  // (label_list do acts_as_taggable). camelcaseKeys do store mantém como `labels`.
+  // Aqui passamos pra ContactsCard, que renderiza as chips coloridas cruzando
+  // com o store de account labels (cor + título).
+  {
+    id: '/Contacts/Pages/ContactsList.vue',
+    from: `        :additional-attributes="contact.additionalAttributes"
+        :availability-status="contact.availabilityStatus"`,
+    to: `        :additional-attributes="contact.additionalAttributes"
+        :availability-status="contact.availabilityStatus"
+        :labels="contact.labels || []"`,
+    reason: 'contact-labels: passa labels do contato pro ContactsCard',
+  },
+  {
+    id: '/Contacts/ContactsCard/ContactsCard.vue',
+    from: `import countries from 'shared/constants/countries';`,
+    to: `import countries from 'shared/constants/countries';
+import { useMapGetter } from 'dashboard/composables/store';`,
+    reason: 'contact-labels: import store getter pra resolver cor das labels',
+  },
+  {
+    id: '/Contacts/ContactsCard/ContactsCard.vue',
+    from: `  isExpanded: { type: Boolean, default: false },
+  isUpdating: { type: Boolean, default: false },
+  selectable: { type: Boolean, default: false },
+  isSelected: { type: Boolean, default: false },
+});`,
+    to: `  isExpanded: { type: Boolean, default: false },
+  isUpdating: { type: Boolean, default: false },
+  selectable: { type: Boolean, default: false },
+  isSelected: { type: Boolean, default: false },
+  labels: { type: Array, default: () => [] },
+});
+
+// KLaOS — resolve cor + title das labels do contato cruzando com o store de
+// account labels. Se a label estiver no contato mas não no account (label deletada),
+// renderiza fallback cinza com o nome bruto pra não esconder informação.
+const accountLabels = useMapGetter('labels/getLabels');
+const klaosResolvedLabels = computed(() => {
+  const titles = props.labels || [];
+  const all = accountLabels.value || [];
+  return titles.map(title => {
+    const match = all.find(l => l.title === title);
+    return match
+      ? { title: match.title, color: match.color }
+      : { title, color: '#94a3b8' };
+  });
+});`,
+    reason: 'contact-labels: prop labels + resolução de cor pelo store',
+  },
+  {
+    id: '/Contacts/ContactsCard/ContactsCard.vue',
+    from: `            <Button
+              :label="t('CONTACTS_LAYOUT.CARD.VIEW_DETAILS')"
+              variant="link"
+              size="xs"
+              @click="onClickViewDetails"
+            />
+          </div>
+        </div>`,
+    to: `            <Button
+              :label="t('CONTACTS_LAYOUT.CARD.VIEW_DETAILS')"
+              variant="link"
+              size="xs"
+              @click="onClickViewDetails"
+            />
+          </div>
+          <div
+            v-if="klaosResolvedLabels.length"
+            class="flex flex-wrap items-center gap-1.5 mt-1.5"
+          >
+            <span
+              v-for="lbl in klaosResolvedLabels"
+              :key="lbl.title"
+              class="inline-flex items-center gap-1 px-2 h-5 rounded-md text-xs font-medium bg-n-alpha-1 text-n-slate-12"
+            >
+              <span
+                class="size-2 rounded-sm flex-shrink-0"
+                :style="{ background: lbl.color }"
+              />
+              {{ lbl.title }}
+            </span>
+          </div>
+        </div>`,
+    reason: 'contact-labels: chips coloridas (dot + título) abaixo do email/phone',
+  },
+
+  // === KLaOS — Labels da conversa + link editar contato no ConversationHeader ===
+  // No header da conversa (topo do painel central), exibe:
+  //   1. Nome do contato como link → /contacts/:id (página de edição completa)
+  //   2. Chips coloridas das labels da conversa (chat.labels) ao lado do InboxName
+  //
+  // Cor resolvida cruzando chat.labels (array de strings) com store labels/getLabels
+  // (lista de account labels com {title, color}). Fallback cinza se label foi removida.
+  {
+    id: '/widgets/conversation/ConversationHeader.vue',
+    from: `import { useInbox } from 'dashboard/composables/useInbox';
+import { useI18n } from 'vue-i18n';`,
+    to: `import { useInbox } from 'dashboard/composables/useInbox';
+import { useMapGetter } from 'dashboard/composables/store';
+import { useI18n } from 'vue-i18n';`,
+    reason: 'conv-header-labels: import store getter pra resolver cor das labels',
+  },
+  {
+    id: '/widgets/conversation/ConversationHeader.vue',
+    from: `const hasSlaPolicyId = computed(() => props.chat?.sla_policy_id);
+</script>`,
+    to: `const hasSlaPolicyId = computed(() => props.chat?.sla_policy_id);
+
+// KLaOS — link "editar contato" no nome do contato + chips coloridas das labels da conv
+const klaosContactEditRoute = computed(() => ({
+  name: 'contacts_edit',
+  params: {
+    accountId: accountId.value,
+    contactId: props.chat?.meta?.sender?.id,
+  },
+}));
+
+const klaosAccountLabels = useMapGetter('labels/getLabels');
+const klaosConversationLabels = computed(() => {
+  const titles = Array.isArray(props.chat?.labels) ? props.chat.labels : [];
+  const all = klaosAccountLabels.value || [];
+  return titles.map(title => {
+    const match = all.find(l => l.title === title);
+    return match
+      ? { title: match.title, color: match.color }
+      : { title, color: '#94a3b8' };
+  });
+});
+</script>`,
+    reason: 'conv-header-labels: computed pra rota de edição + labels resolvidas',
+  },
+  {
+    id: '/widgets/conversation/ConversationHeader.vue',
+    from: `        <div class="flex flex-row items-center max-w-full gap-1 p-0 m-0">
+          <span
+            class="text-sm font-medium truncate leading-tight text-n-slate-12"
+          >
+            {{ currentContact.name }}
+          </span>
+          <fluent-icon
+            v-if="!isHMACVerified"
+            v-tooltip="$t('CONVERSATION.UNVERIFIED_SESSION')"
+            size="14"
+            class="text-n-amber-10 my-0 mx-0 min-w-[14px] flex-shrink-0"
+            icon="warning"
+          />
+        </div>`,
+    to: `        <div class="flex flex-row items-center max-w-full gap-1 p-0 m-0">
+          <router-link
+            v-tooltip.bottom="'Editar dados do contato'"
+            :to="klaosContactEditRoute"
+            class="text-sm font-medium truncate leading-tight text-n-slate-12 hover:text-n-brand hover:underline"
+          >
+            {{ currentContact.name }}
+          </router-link>
+          <fluent-icon
+            v-if="!isHMACVerified"
+            v-tooltip="$t('CONVERSATION.UNVERIFIED_SESSION')"
+            size="14"
+            class="text-n-amber-10 my-0 mx-0 min-w-[14px] flex-shrink-0"
+            icon="warning"
+          />
+        </div>`,
+    reason: 'conv-header-edit-link: nome do contato vira link pro /contacts/:id (editar dados)',
+  },
+  {
+    id: '/widgets/conversation/ConversationHeader.vue',
+    from: `        <div
+          class="flex items-center gap-2 overflow-hidden text-xs conversation--header--actions text-ellipsis whitespace-nowrap"
+        >
+          <InboxName v-if="hasMultipleInboxes" :inbox="inbox" class="!mx-0" />
+          <span v-if="isSnoozed" class="font-medium text-n-amber-10">
+            {{ snoozedDisplayText }}
+          </span>
+        </div>`,
+    to: `        <div
+          class="flex items-center gap-2 overflow-hidden text-xs conversation--header--actions text-ellipsis whitespace-nowrap"
+        >
+          <InboxName v-if="hasMultipleInboxes" :inbox="inbox" class="!mx-0" />
+          <span v-if="isSnoozed" class="font-medium text-n-amber-10">
+            {{ snoozedDisplayText }}
+          </span>
+          <span
+            v-for="lbl in klaosConversationLabels"
+            :key="lbl.title"
+            class="inline-flex items-center gap-1 px-1.5 h-5 rounded-md font-medium bg-n-alpha-1 text-n-slate-12"
+          >
+            <span
+              class="size-1.5 rounded-sm flex-shrink-0"
+              :style="{ background: lbl.color }"
+            />
+            {{ lbl.title }}
+          </span>
+        </div>`,
+    reason: 'conv-header-labels: chips coloridas (dot + título) ao lado do InboxName',
+  },
 ];
 
 export default function klaosPatches() {
