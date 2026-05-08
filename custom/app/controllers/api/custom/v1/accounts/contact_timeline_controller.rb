@@ -133,11 +133,18 @@ class Api::Custom::V1::Accounts::ContactTimelineController < Api::V1::Accounts::
     # ou msg.private? em todo lugar. Usar msg.private resolve pra Object#private
     # (visibility modifier) e quebra a serialização. Read via read_attribute pra
     # ser explícito.
+    rendered = klaos_render_template_body(msg)
     {
       id: msg.id,
       conversation_id: msg.conversation_id,
       message_type: msg.message_type_before_type_cast,
       content: msg.content,
+      # Quando msg é um template (additional_attributes.template_params), expande
+      # o body do template substituindo {{1}}/{{2}}/etc pelos valores reais.
+      # Permite a Linha do tempo mostrar a mensagem que o cliente realmente
+      # recebeu, em vez do nome cru do template (ex: "fatura_emissao").
+      rendered_content: rendered[:body],
+      template_meta: rendered[:meta],
       content_attributes: msg.content_attributes,
       content_type: msg.content_type,
       private: msg.read_attribute(:private),
@@ -146,8 +153,72 @@ class Api::Custom::V1::Accounts::ContactTimelineController < Api::V1::Accounts::
       created_at: msg.created_at.to_i,
       sender_type: msg.sender_type,
       sender: sender ? serialize_sender(sender) : nil,
-      attachments: msg.attachments.map { |a| serialize_attachment(a) }
+      attachments: msg.attachments.map { |a| serialize_attachment(a) },
+      additional_attributes: msg.additional_attributes
     }
+  end
+
+  # Renderiza o body de uma mensagem-template substituindo placeholders
+  # {{1}}, {{2}}... pelos valores em additional_attributes.template_params.processed_params.body.
+  # Também extrai header/footer/buttons como metadata visual.
+  # Retorna { body: String|nil, meta: Hash|nil } — nil quando não é template.
+  def klaos_render_template_body(msg)
+    tparams = msg.additional_attributes&.[]('template_params')
+    return { body: nil, meta: nil } unless tparams.is_a?(Hash)
+
+    name = tparams['name']
+    language = tparams['language']
+    processed = tparams['processed_params'] || {}
+    return { body: nil, meta: nil } if name.blank?
+
+    channel = msg.inbox&.channel
+    templates = channel&.respond_to?(:message_templates) ? (channel.message_templates || []) : []
+    template = templates.find do |t|
+      t['name'] == name &&
+        (language.blank? || t['language']&.downcase == language.to_s.downcase)
+    end
+    return { body: nil, meta: { name: name, status: 'template_not_found' } } if template.blank?
+
+    body_component = (template['components'] || []).find { |c| c['type'].to_s.upcase == 'BODY' }
+    body_text = body_component&.[]('text').to_s
+    body_text = klaos_substitute_placeholders(body_text, processed['body'] || {})
+
+    header_component = (template['components'] || []).find { |c| c['type'].to_s.upcase == 'HEADER' }
+    header_text = header_component&.[]('text').to_s
+    header_text = klaos_substitute_placeholders(header_text, processed['header'] || {}) if header_text.present?
+
+    footer_component = (template['components'] || []).find { |c| c['type'].to_s.upcase == 'FOOTER' }
+    footer_text = footer_component&.[]('text').to_s
+
+    buttons_component = (template['components'] || []).find { |c| c['type'].to_s.upcase == 'BUTTONS' }
+    buttons = (buttons_component&.[]('buttons') || []).map { |b| { type: b['type'], text: b['text'], url: b['url'], phone_number: b['phone_number'] } }
+
+    {
+      body: body_text.presence,
+      meta: {
+        name: name,
+        category: template['category'],
+        language: template['language'],
+        header: header_text.presence,
+        footer: footer_text.presence,
+        buttons: buttons
+      }
+    }
+  rescue StandardError => e
+    Rails.logger.warn("[TimelineCtrl] template render failed msg=#{msg.id}: #{e.class}: #{e.message}")
+    { body: nil, meta: { name: tparams&.[]('name'), error: e.message } }
+  end
+
+  def klaos_substitute_placeholders(text, params_hash)
+    return text if text.blank? || params_hash.blank?
+
+    # processed_params.body vem como {"1" => "Matheus", "2" => "R$ 114,90"} —
+    # substitui {{1}}, {{2}}... e também variantes nomeadas {{name}} (parameter_format=NAMED)
+    out = text.dup
+    params_hash.each do |key, value|
+      out = out.gsub("{{#{key}}}", value.to_s)
+    end
+    out
   end
 
   def serialize_sender(sender)
