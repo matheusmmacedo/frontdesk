@@ -276,7 +276,8 @@ const openImage = url => {
                     :key="param.key"
                     class="break-words"
                   >
-                    <span class="text-n-slate-10">{{ '{{' + param.key + '}}' }}:</span>
+                    <!-- "{{ key }}: value" sem usar literal {{ }} pra não quebrar o parser do Vue -->
+                    <span class="text-n-slate-10">&#123;&#123;{{ param.key }}&#125;&#125;:</span>
                     <span class="ml-1">{{ param.value }}</span>
                   </div>
                 </div>
