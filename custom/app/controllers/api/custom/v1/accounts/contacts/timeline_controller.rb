@@ -106,6 +106,10 @@ class Api::Custom::V1::Accounts::Contacts::TimelineController < Api::V1::Account
 
   def serialize_message(msg)
     sender = msg.sender
+    # ⚠ msg.private (sem `?`) colide com Ruby keyword — Chatwoot usa msg[:private]
+    # ou msg.private? em todo lugar. Usar msg.private resolve pra Object#private
+    # (visibility modifier) e quebra a serialização. Read via read_attribute pra
+    # ser explícito.
     {
       id: msg.id,
       conversation_id: msg.conversation_id,
@@ -113,7 +117,7 @@ class Api::Custom::V1::Accounts::Contacts::TimelineController < Api::V1::Account
       content: msg.content,
       content_attributes: msg.content_attributes,
       content_type: msg.content_type,
-      private: msg.private,
+      private: msg.read_attribute(:private),
       status: msg.status,
       source_id: msg.source_id,
       created_at: msg.created_at.to_i,
