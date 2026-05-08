@@ -72,6 +72,14 @@ class Api::Custom::V1::Accounts::Contacts::TimelineController < Api::V1::Account
   end
 
   def serialize_conversation(conv)
+    # Conversation não tem coluna resolved_at no upstream Chatwoot. KLaOS guarda
+    # via custom initializer track_resolved_timestamp em
+    # additional_attributes['klaos_resolved_at'] (ISO8601). Convertemos pra epoch
+    # se existir; senão null. Mantemos a chave 'resolved_at' pra simplificar o
+    # consumo no front (formatConvBoundary).
+    klaos_resolved = conv.additional_attributes&.[]('klaos_resolved_at')
+    resolved_epoch = klaos_resolved.present? ? Time.parse(klaos_resolved).to_i : nil
+
     {
       id: conv.id,
       display_id: conv.display_id,
@@ -79,7 +87,19 @@ class Api::Custom::V1::Accounts::Contacts::TimelineController < Api::V1::Account
       created_at: conv.created_at.to_i,
       inbox_id: conv.inbox_id,
       inbox_name: conv.inbox&.name,
-      resolved_at: conv.resolved_at&.to_i,
+      resolved_at: resolved_epoch,
+      cached_label_list: conv.cached_label_list
+    }
+  rescue ArgumentError
+    # data malformada em additional_attributes — não deixa quebrar o request
+    {
+      id: conv.id,
+      display_id: conv.display_id,
+      status: conv.status,
+      created_at: conv.created_at.to_i,
+      inbox_id: conv.inbox_id,
+      inbox_name: conv.inbox&.name,
+      resolved_at: nil,
       cached_label_list: conv.cached_label_list
     }
   end
