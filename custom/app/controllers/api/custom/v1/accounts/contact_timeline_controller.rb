@@ -55,20 +55,24 @@ class Api::Custom::V1::Accounts::ContactTimelineController < Api::V1::Accounts::
     page = page.first(limit).reverse
     Rails.logger.info("[TimelineCtrl] page.size=#{page.size} has_more=#{has_more}")
 
-    serialized_convs = convs.map { |c|
-      serialize_conversation(c)
-    rescue StandardError => e
-      Rails.logger.error("[TimelineCtrl] serialize_conv crash conv=#{c.id}: #{e.class}: #{e.message}")
-      { id: c.id, error: e.message }
-    }
+    serialized_convs = convs.map do |c|
+      begin
+        serialize_conversation(c)
+      rescue StandardError => e
+        Rails.logger.error("[TimelineCtrl] serialize_conv crash conv=#{c.id}: #{e.class}: #{e.message}")
+        { id: c.id, error: e.message }
+      end
+    end
     Rails.logger.info("[TimelineCtrl] convs serialized")
 
-    serialized_msgs = page.map { |m|
-      serialize_message(m)
-    rescue StandardError => e
-      Rails.logger.error("[TimelineCtrl] serialize_msg crash msg=#{m.id}: #{e.class}: #{e.message} backtrace=#{e.backtrace[0..3].join(' | ')}")
-      { id: m.id, error: e.message }
-    }
+    serialized_msgs = page.map do |m|
+      begin
+        serialize_message(m)
+      rescue StandardError => e
+        Rails.logger.error("[TimelineCtrl] serialize_msg crash msg=#{m.id}: #{e.class}: #{e.message} backtrace=#{e.backtrace[0..3].join(' | ')}")
+        { id: m.id, error: e.message }
+      end
+    end
     Rails.logger.info("[TimelineCtrl] msgs serialized")
 
     render json: {
