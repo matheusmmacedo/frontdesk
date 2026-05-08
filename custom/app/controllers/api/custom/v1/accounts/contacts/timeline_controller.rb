@@ -39,8 +39,10 @@ class Api::Custom::V1::Accounts::Contacts::TimelineController < Api::V1::Account
   before_action :set_contact
 
   def index
+    Rails.logger.info("[TimelineCtrl] start contact_id=#{params[:contact_id]} account=#{Current.account&.id}")
     convs = @contact.conversations.where(account_id: Current.account.id).order(:created_at)
     conv_ids = convs.pluck(:id)
+    Rails.logger.info("[TimelineCtrl] convs.count=#{conv_ids.size}")
 
     messages_scope = Message.where(conversation_id: conv_ids).order(created_at: :desc, id: :desc)
     messages_scope = messages_scope.where('messages.id < ?', params[:before]) if params[:before].present?
@@ -50,7 +52,24 @@ class Api::Custom::V1::Accounts::Contacts::TimelineController < Api::V1::Account
 
     page = messages_scope.limit(limit + 1).to_a
     has_more = page.size > limit
-    page = page.first(limit).reverse # cronológico ASC pra render
+    page = page.first(limit).reverse
+    Rails.logger.info("[TimelineCtrl] page.size=#{page.size} has_more=#{has_more}")
+
+    serialized_convs = convs.map { |c|
+      serialize_conversation(c)
+    rescue StandardError => e
+      Rails.logger.error("[TimelineCtrl] serialize_conv crash conv=#{c.id}: #{e.class}: #{e.message}")
+      { id: c.id, error: e.message }
+    }
+    Rails.logger.info("[TimelineCtrl] convs serialized")
+
+    serialized_msgs = page.map { |m|
+      serialize_message(m)
+    rescue StandardError => e
+      Rails.logger.error("[TimelineCtrl] serialize_msg crash msg=#{m.id}: #{e.class}: #{e.message} backtrace=#{e.backtrace[0..3].join(' | ')}")
+      { id: m.id, error: e.message }
+    }
+    Rails.logger.info("[TimelineCtrl] msgs serialized")
 
     render json: {
       contact: {
@@ -59,8 +78,8 @@ class Api::Custom::V1::Accounts::Contacts::TimelineController < Api::V1::Account
         phone_number: @contact.phone_number,
         thumbnail: @contact.avatar_url
       },
-      conversations: convs.map { |c| serialize_conversation(c) },
-      messages: page.map { |m| serialize_message(m) },
+      conversations: serialized_convs,
+      messages: serialized_msgs,
       has_more: has_more
     }, status: :ok
   end
