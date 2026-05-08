@@ -8,6 +8,6 @@
 
 Rails.application.routes.append do
   get '/api/custom/v1/accounts/:account_id/contacts/:contact_id/timeline',
-      to: 'api/custom/v1/accounts/contacts/timeline#index',
+      to: 'api/custom/v1/accounts/contact_timeline#index',
       as: :api_custom_v1_account_contact_timeline
 end

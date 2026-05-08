@@ -32,7 +32,7 @@
 #     has_more: bool
 #   }
 
-class Api::Custom::V1::Accounts::Contacts::TimelineController < Api::V1::Accounts::BaseController
+class Api::Custom::V1::Accounts::ContactTimelineController < Api::V1::Accounts::BaseController
   DEFAULT_LIMIT = 60
   MAX_LIMIT = 100
 
