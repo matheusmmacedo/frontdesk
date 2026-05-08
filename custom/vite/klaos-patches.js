@@ -780,6 +780,109 @@ const klaosConversationLabels = computed(() => {
         </div>`,
     reason: 'conv-header-labels: chips coloridas (dot + título) ao lado do InboxName',
   },
+
+  // === KLaOS — Timeline unificada do contato (toggle no ConversationBox) ===
+  // Caminho B do design "todas as convs em uma única view": injeta um toggle
+  // "Histórico do contato" acima da MessagesView. Quando ON, swap o painel
+  // central pra renderizar TODAS as msgs do contato (todas as convs) em ordem
+  // cronológica com divisores. Read-only — ReplyBox continua funcional na
+  // conv ativa, então o atendente pode ler tudo + responder na conv atual sem
+  // sair da tela.
+  //
+  // Backend: GET /api/custom/v1/accounts/:id/contacts/:cid/timeline
+  // Componente: app/javascript/dashboard/components-next/KlaosTimeline/KlaosTimeline.vue
+  {
+    id: '/widgets/conversation/ConversationBox.vue',
+    from: `import MessagesView from './MessagesView.vue';`,
+    to: `import MessagesView from './MessagesView.vue';
+import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
+    reason: 'klaos-timeline: import componente KlaosTimeline',
+  },
+  {
+    id: '/widgets/conversation/ConversationBox.vue',
+    from: `  components: {
+    ConversationHeader,
+    DashboardAppFrame,
+    EmptyState,
+    MessagesView,
+  },`,
+    to: `  components: {
+    ConversationHeader,
+    DashboardAppFrame,
+    EmptyState,
+    MessagesView,
+    KlaosTimeline,
+  },`,
+    reason: 'klaos-timeline: registra KlaosTimeline como componente',
+  },
+  {
+    id: '/widgets/conversation/ConversationBox.vue',
+    from: `  data() {
+    return { activeIndex: 0 };
+  },`,
+    to: `  data() {
+    return {
+      activeIndex: 0,
+      // KLaOS — toggle pra alternar entre msgs da conv atual e timeline
+      // unificada de TODAS as convs do contato. Estado local (reseta ao
+      // trocar de conv via watcher). Read-only quando ON; ReplyBox continua
+      // ativo pro atendente responder na conv atual.
+      klaosShowTimeline: false,
+    };
+  },`,
+    reason: 'klaos-timeline: state local pro toggle',
+  },
+  {
+    id: '/widgets/conversation/ConversationBox.vue',
+    from: `    'currentChat.id'() {
+      this.fetchLabels();
+      this.activeIndex = 0;
+    },
+  },`,
+    to: `    'currentChat.id'() {
+      this.fetchLabels();
+      this.activeIndex = 0;
+      // Sai da timeline ao trocar de conv — força o atendente reabrir
+      // explicitamente pra evitar "sumiço" da conv que ele acabou de clicar.
+      this.klaosShowTimeline = false;
+    },
+  },`,
+    reason: 'klaos-timeline: reseta toggle ao trocar de conversa',
+  },
+  {
+    id: '/widgets/conversation/ConversationBox.vue',
+    from: `    <div v-show="!activeIndex" class="flex h-full min-h-0 m-0">
+      <MessagesView
+        v-if="currentChat.id"
+        :inbox-id="inboxId"
+        :is-inbox-view="isInboxView"
+      />`,
+    to: `    <div v-if="currentChat.id && currentChat.meta && currentChat.meta.sender" class="flex-shrink-0 flex items-center justify-end gap-2 px-3 py-1.5 border-b border-n-weak bg-n-alpha-1">
+      <button
+        class="inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded-md transition-colors"
+        :class="klaosShowTimeline
+          ? 'bg-n-brand text-white'
+          : 'bg-n-alpha-2 text-n-slate-11 hover:bg-n-alpha-3'"
+        @click="klaosShowTimeline = !klaosShowTimeline"
+      >
+        <span class="i-ph-clock-counter-clockwise size-3.5" />
+        {{ klaosShowTimeline ? 'Voltar à conversa atual' : 'Histórico do contato' }}
+      </button>
+    </div>
+    <div v-show="!activeIndex" class="flex h-full min-h-0 m-0">
+      <KlaosTimeline
+        v-if="klaosShowTimeline && currentChat.id && currentChat.meta && currentChat.meta.sender"
+        :contact-id="currentChat.meta.sender.id"
+        :account-id="$route.params.accountId"
+        :current-conversation-id="currentChat.id"
+      />
+      <MessagesView
+        v-else-if="currentChat.id"
+        :inbox-id="inboxId"
+        :is-inbox-view="isInboxView"
+      />`,
+    reason: 'klaos-timeline: toggle button + swap MessagesView/KlaosTimeline',
+  },
 ];
 
 export default function klaosPatches() {
