@@ -16,7 +16,7 @@
 # Combo:
 #   enable_audio_alerts                           = 'all'   → todo evento
 #   always_play_audio_alert                       = true    → aba ativa também
-#   alert_if_unread_assigned_conversation_exist   = true    → repete 30s
+#   alert_if_unread_assigned_conversation_exist   = false   → SEM repetição 30s (invasivo)
 #   notification_tone                             = 'ding'  → tom padrão
 #
 # Usuário sempre pode desligar em Perfil → Notificações de áudio.
@@ -25,7 +25,7 @@ module KlaosAudioAlertsDefault
   AUDIO_DEFAULTS = {
     'enable_audio_alerts' => 'all',
     'always_play_audio_alert' => true,
-    'alert_if_unread_assigned_conversation_exist' => true,
+    'alert_if_unread_assigned_conversation_exist' => false,
     'notification_tone' => 'ding'
   }.freeze
 
