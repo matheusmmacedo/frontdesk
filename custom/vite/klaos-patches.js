@@ -1037,6 +1037,112 @@ import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
     },`,
     reason: 'emoji-frequents: resolve ícone da tab a partir de categories (inclui Frequentes virtual)',
   },
+
+  // === KLaOS — botão de etiquetas inline na barra do compositor ===
+  // Atalho pro time de cobrança: adicionar/remover etiqueta sem precisar abrir
+  // o painel direito + expandir "Ações da conversa". Reaproveita LabelDropdown
+  // (mesmo picker do sidebar) + useConversationLabels (lê a conv do store, não
+  // precisa de conversationId). Popover abre PRA CIMA (bottom-full) porque a
+  // barra fica no rodapé. v-on-clickaway no wrapper fecha ao clicar fora.
+  // Ancoramos no botão de quoted-reply (não tocado por outro patch) pra evitar
+  // conflito com o patch klaos-prefix-toggle que mexe no botão de assinatura.
+  {
+    id: '/widgets/WootWriter/ReplyBottomPanel.vue',
+    from: `import NextButton from 'dashboard/components-next/button/Button.vue';`,
+    to: `import NextButton from 'dashboard/components-next/button/Button.vue';
+import LabelDropdown from 'shared/components/ui/label/LabelDropdown.vue';
+import { useConversationLabels } from 'dashboard/composables/useConversationLabels';`,
+    reason: 'label-composer-button: import LabelDropdown + useConversationLabels',
+  },
+  {
+    id: '/widgets/WootWriter/ReplyBottomPanel.vue',
+    from: `  components: { NextButton, FileUpload, VideoCallButton },`,
+    to: `  components: { NextButton, FileUpload, VideoCallButton, LabelDropdown },`,
+    reason: 'label-composer-button: registra LabelDropdown como componente',
+  },
+  {
+    id: '/widgets/WootWriter/ReplyBottomPanel.vue',
+    from: `  setup(props) {
+    const { setSignatureFlagForInbox, fetchSignatureFlagFromUISettings } =
+      useUISettings();
+
+    const uploadRef = ref(false);`,
+    to: `  setup(props) {
+    const { setSignatureFlagForInbox, fetchSignatureFlagFromUISettings } =
+      useUISettings();
+
+    // KLaOS — etiquetas inline no compositor. useConversationLabels lê a
+    // conversa selecionada direto do store, então funciona aqui sem props.
+    const {
+      accountLabels: klaosAccountLabels,
+      savedLabels: klaosSavedLabels,
+      activeLabels: klaosActiveLabels,
+      addLabelToConversation: klaosAddLabel,
+      removeLabelFromConversation: klaosRemoveLabel,
+    } = useConversationLabels();
+    const klaosShowLabelDropdown = ref(false);
+
+    const uploadRef = ref(false);`,
+    reason: 'label-composer-button: wira useConversationLabels + estado do dropdown no setup',
+  },
+  {
+    id: '/widgets/WootWriter/ReplyBottomPanel.vue',
+    from: `    return {
+      setSignatureFlagForInbox,
+      fetchSignatureFlagFromUISettings,
+      uploadRef,
+    };`,
+    to: `    return {
+      setSignatureFlagForInbox,
+      fetchSignatureFlagFromUISettings,
+      uploadRef,
+      klaosAccountLabels,
+      klaosSavedLabels,
+      klaosActiveLabels,
+      klaosAddLabel,
+      klaosRemoveLabel,
+      klaosShowLabelDropdown,
+    };`,
+    reason: 'label-composer-button: expõe estado/handlers de etiqueta pro template',
+  },
+  {
+    id: '/widgets/WootWriter/ReplyBottomPanel.vue',
+    from: `      <NextButton
+        v-if="showQuotedReplyToggle"
+        v-tooltip.top-end="quotedReplyToggleTooltip"
+        icon="i-ph-quotes"`,
+    to: `      <div
+        v-if="!isEditorDisabled"
+        v-on-clickaway="() => (klaosShowLabelDropdown = false)"
+        class="relative flex items-center"
+      >
+        <NextButton
+          v-tooltip.top-end="'Etiquetas da conversa'"
+          icon="i-ph-tag"
+          :variant="klaosActiveLabels.length ? 'solid' : 'faded'"
+          color="slate"
+          sm
+          :aria-pressed="klaosShowLabelDropdown"
+          @click="klaosShowLabelDropdown = !klaosShowLabelDropdown"
+        />
+        <div
+          v-if="klaosShowLabelDropdown"
+          class="absolute left-0 z-[9999] p-2 mb-2 border rounded-lg shadow-lg bottom-full w-60 box-border bg-n-alpha-3 backdrop-blur-[100px] border-n-strong"
+        >
+          <LabelDropdown
+            :account-labels="klaosAccountLabels"
+            :selected-labels="klaosSavedLabels"
+            @add="klaosAddLabel"
+            @remove="klaosRemoveLabel"
+          />
+        </div>
+      </div>
+      <NextButton
+        v-if="showQuotedReplyToggle"
+        v-tooltip.top-end="quotedReplyToggleTooltip"
+        icon="i-ph-quotes"`,
+    reason: 'label-composer-button: botão i-ph-tag + popover LabelDropdown (abre pra cima) antes do quoted-reply',
+  },
 ];
 
 export default function klaosPatches() {
