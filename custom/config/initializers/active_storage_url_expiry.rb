@@ -16,4 +16,7 @@
 # expiry com que foram assinadas.
 
 Rails.application.config.active_storage.service_urls_expire_in = 24.hours
-Rails.logger.info '[ActiveStorage] service_urls_expire_in = 24h'
+
+# Rails.logger é nil durante rake assets:precompile (build time), então safe-nav.
+# No runtime (web/worker boot) o logger existe e a linha aparece.
+Rails.logger&.info '[ActiveStorage] service_urls_expire_in = 24h'
