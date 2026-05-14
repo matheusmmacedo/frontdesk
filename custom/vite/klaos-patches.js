@@ -1118,7 +1118,7 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
       >
         <NextButton
           v-tooltip.top-end="'Etiquetas da conversa'"
-          icon="i-ph-tag"
+          icon="i-lucide-tag"
           :variant="klaosActiveLabels.length ? 'solid' : 'faded'"
           color="slate"
           sm
@@ -1141,7 +1141,7 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
         v-if="showQuotedReplyToggle"
         v-tooltip.top-end="quotedReplyToggleTooltip"
         icon="i-ph-quotes"`,
-    reason: 'label-composer-button: botão i-ph-tag + popover LabelDropdown (abre pra cima) antes do quoted-reply',
+    reason: 'label-composer-button: botão i-lucide-tag + popover LabelDropdown (abre pra cima) antes do quoted-reply. Usa i-lucide-tag (não i-ph-tag) porque Tailwind JIT só gera CSS de ícone presente em arquivo-fonte — i-lucide-tag já é usado em Sidebar.vue',
   },
 ];
 
