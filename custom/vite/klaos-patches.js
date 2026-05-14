@@ -883,6 +883,154 @@ import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
       />`,
     reason: 'klaos-timeline: toggle button + swap MessagesView/KlaosTimeline',
   },
+
+  // === KLaOS — emoji picker com "Frequentes" sincronizados ===
+  // Persiste contador de uso de cada emoji em user.ui_settings.emoji_frequents
+  // (já existe API PUT /api/v1/profile/set_ui_settings, action store updateUISettings).
+  // Top 16 viram categoria "Frequentes" no início do picker. Cap em 64 entries
+  // pra não inflar JSON. Reset gracioso se store/user indisponível (widget).
+  {
+    id: '/shared/components/emoji/EmojiInput.vue',
+    from: `  computed: {
+    categories() {
+      return [...this.emojis];
+    },
+    filterEmojisByCategory() {
+      const selectedCategoryName = this.emojis.find(category =>
+        category.name === this.selectedKey ? category.name : null
+      );
+      return selectedCategoryName?.emojis;
+    },`,
+    to: `  computed: {
+    // KLaOS — top 16 emojis mais usados pelo usuário atual, lidos de
+    // user.ui_settings.emoji_frequents (persistido server-side, sincroniza
+    // entre máquinas). Map { emoji: count } → array ordenado por uso desc.
+    klaosFrequentEmojis() {
+      const store = this.$store;
+      const user = store && store.getters && store.getters.getCurrentUser;
+      const frequents = (user && user.ui_settings && user.ui_settings.emoji_frequents) || {};
+      return Object.entries(frequents)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 16)
+        .map(([emoji, count], i) => ({ emoji, slug: 'klaos-freq-' + i, count }));
+    },
+    categories() {
+      const base = [...this.emojis];
+      if (this.klaosFrequentEmojis.length > 0) {
+        return [
+          { name: 'Frequentes', slug: 'klaos-frequentes', emojis: this.klaosFrequentEmojis },
+          ...base,
+        ];
+      }
+      return base;
+    },
+    filterEmojisByCategory() {
+      if (this.selectedKey === 'Frequentes') {
+        return this.klaosFrequentEmojis;
+      }
+      const selectedCategoryName = this.emojis.find(category =>
+        category.name === this.selectedKey ? category.name : null
+      );
+      return selectedCategoryName?.emojis;
+    },`,
+    reason: 'emoji-frequents: prepend "Frequentes" como categoria virtual no picker',
+  },
+  {
+    id: '/shared/components/emoji/EmojiInput.vue',
+    from: `  methods: {
+    changeCategory(category) {`,
+    to: `  methods: {
+    // KLaOS — incrementa contador de uso do emoji em user.ui_settings.emoji_frequents.
+    // Cap em 64 entries pra evitar JSON gigante. Defensivo: silencia em contextos
+    // sem store/user (widget client-side compartilha esse componente).
+    klaosRecordFrequent(emoji) {
+      const store = this.$store;
+      const user = store && store.getters && store.getters.getCurrentUser;
+      if (!user) return;
+      const current = (user.ui_settings && user.ui_settings.emoji_frequents) || {};
+      const updated = { ...current, [emoji]: (current[emoji] || 0) + 1 };
+      const capped = Object.fromEntries(
+        Object.entries(updated)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 64)
+      );
+      store.dispatch('updateUISettings', {
+        uiSettings: { emoji_frequents: capped },
+      });
+    },
+    klaosHandleEmojiClick(emoji) {
+      this.klaosRecordFrequent(emoji);
+      this.onClick(emoji);
+    },
+    changeCategory(category) {`,
+    reason: 'emoji-frequents: handler que incrementa contador antes de forward pro onClick original',
+  },
+  {
+    id: '/shared/components/emoji/EmojiInput.vue',
+    from: `        <div class="emoji--row">
+          <button
+            v-for="item in filterEmojisByCategory"
+            :key="item.slug"
+            v-dompurify-html="item.emoji"
+            class="emoji--item"
+            track-by="$index"
+            @click="onClick(item.emoji)"
+          />
+        </div>`,
+    to: `        <div class="emoji--row">
+          <button
+            v-for="item in filterEmojisByCategory"
+            :key="item.slug"
+            v-dompurify-html="item.emoji"
+            class="emoji--item"
+            track-by="$index"
+            @click="klaosHandleEmojiClick(item.emoji)"
+          />
+        </div>`,
+    reason: 'emoji-frequents: usa handler custom no botão de categoria',
+  },
+  {
+    id: '/shared/components/emoji/EmojiInput.vue',
+    from: `          <div v-if="category.emojis.length > 0" class="emoji--row">
+            <button
+              v-for="item in category.emojis"
+              :key="item.slug"
+              v-dompurify-html="item.emoji"
+              class="emoji--item"
+              track-by="$index"
+              @click="onClick(item.emoji)"
+            />
+          </div>`,
+    to: `          <div v-if="category.emojis.length > 0" class="emoji--row">
+            <button
+              v-for="item in category.emojis"
+              :key="item.slug"
+              v-dompurify-html="item.emoji"
+              class="emoji--item"
+              track-by="$index"
+              @click="klaosHandleEmojiClick(item.emoji)"
+            />
+          </div>`,
+    reason: 'emoji-frequents: usa handler custom no botão dentro do search result',
+  },
+  {
+    id: '/shared/components/emoji/EmojiInput.vue',
+    from: `    getFirstEmojiByCategoryName(categoryName) {
+      const categoryItem = this.emojis.find(category =>
+        category.name === categoryName ? category : null
+      );
+      return categoryItem ? categoryItem.emojis[0].emoji : '';
+    },`,
+    to: `    getFirstEmojiByCategoryName(categoryName) {
+      // KLaOS — usa this.categories (que inclui "Frequentes" virtual) pra resolver
+      // o ícone da tab no footer. Sem isso, tab "Frequentes" fica sem emoji.
+      const categoryItem = this.categories.find(category =>
+        category.name === categoryName ? category : null
+      );
+      return categoryItem && categoryItem.emojis[0] ? categoryItem.emojis[0].emoji : '';
+    },`,
+    reason: 'emoji-frequents: resolve ícone da tab a partir de categories (inclui Frequentes virtual)',
+  },
 ];
 
 export default function klaosPatches() {
