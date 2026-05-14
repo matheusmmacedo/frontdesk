@@ -943,11 +943,17 @@ import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
     // KLaOS — incrementa contador de uso do emoji em user.ui_settings.emoji_frequents.
     // Cap em 64 entries pra evitar JSON gigante. Defensivo: silencia em contextos
     // sem store/user (widget client-side compartilha esse componente).
+    //
+    // CRÍTICO: o backend (ProfilesController#update) faz assign_attributes na coluna
+    // JSONB ui_settings — REPLACE total, não merge. Por isso temos que espalhar
+    // allSettings inteiro no payload, senão apagamos todas as outras chaves do
+    // usuário (audio alerts, ordem do sidebar, accordions, etc).
     klaosRecordFrequent(emoji) {
       const store = this.$store;
       const user = store && store.getters && store.getters.getCurrentUser;
       if (!user) return;
-      const current = (user.ui_settings && user.ui_settings.emoji_frequents) || {};
+      const allSettings = user.ui_settings || {};
+      const current = allSettings.emoji_frequents || {};
       const updated = { ...current, [emoji]: (current[emoji] || 0) + 1 };
       const capped = Object.fromEntries(
         Object.entries(updated)
@@ -955,7 +961,7 @@ import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
           .slice(0, 64)
       );
       store.dispatch('updateUISettings', {
-        uiSettings: { emoji_frequents: capped },
+        uiSettings: { ...allSettings, emoji_frequents: capped },
       });
     },
     klaosHandleEmojiClick(emoji) {
