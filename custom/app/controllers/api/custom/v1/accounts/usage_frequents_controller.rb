@@ -67,8 +67,10 @@ class Api::Custom::V1::Accounts::UsageFrequentsController < Api::V1::Accounts::B
   private
 
   def cached(kind, &block)
+    # v2: corrigido SQL do templates (?-operator do JSONB conflitava com
+    # placeholder do ActiveRecord; troquei pra `IS NOT NULL`).
     Rails.cache.fetch(
-      "klaos:usage_frequents:#{Current.account.id}:#{kind}",
+      "klaos:usage_frequents:#{Current.account.id}:#{kind}:v2",
       expires_in: CACHE_TTL,
       &block
     )
@@ -94,12 +96,15 @@ class Api::Custom::V1::Accounts::UsageFrequentsController < Api::V1::Accounts::B
     # Só conta uso humano (sender_type='User'). Bot/automação envia template
     # via API direto (sender_type='AgentBot') e fica fora do ranking — atende
     # ao pedido "considera humano, não bot".
+    #
+    # Importante: o operador `?` do JSONB (key-exists) conflita com placeholders
+    # do ActiveRecord, então filtramos por `->>name IS NOT NULL` em vez do `?`.
     Message
       .joins(:conversation)
       .where(conversations: { account_id: Current.account.id })
       .where(message_type: :outgoing)
       .where(sender_type: 'User')
-      .where("messages.additional_attributes->'template_params' ? 'name'")
+      .where("messages.additional_attributes->'template_params'->>'name' IS NOT NULL")
       .group("messages.additional_attributes->'template_params'->>'name'")
       .count
       .sort_by { |_, v| -v }
