@@ -902,17 +902,32 @@ import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
       return selectedCategoryName?.emojis;
     },`,
     to: `  computed: {
-    // KLaOS — top 16 emojis mais usados pelo usuário atual, lidos de
-    // user.ui_settings.emoji_frequents (persistido server-side, sincroniza
-    // entre máquinas). Map { emoji: count } → array ordenado por uso desc.
+    // KLaOS — top 16 emojis mais usados. Hierarquia personal → global:
+    // pessoal sempre vence; global preenche pra atendente novo ver Frequentes
+    // útil desde o primeiro acesso. Sync entre máquinas via user.ui_settings
+    // + account.custom_attributes (dual-write em klaosRecordFrequent).
     klaosFrequentEmojis() {
+      if (typeof window !== 'undefined' && window.klaosGlobalFrequents) {
+        window.klaosGlobalFrequents.fetch();
+      }
       const store = this.$store;
       const user = store && store.getters && store.getters.getCurrentUser;
-      const frequents = (user && user.ui_settings && user.ui_settings.emoji_frequents) || {};
-      return Object.entries(frequents)
-        .sort((a, b) => b[1] - a[1])
+      const personal = (user && user.ui_settings && user.ui_settings.emoji_frequents) || {};
+      const global = (typeof window !== 'undefined' && window.klaosGlobalFrequents
+        ? window.klaosGlobalFrequents.get('emojis')
+        : null) || {};
+      const keys = new Set([...Object.keys(personal), ...Object.keys(global)]);
+      return [...keys]
+        .sort((a, b) => {
+          const pa = personal[a] || 0;
+          const pb = personal[b] || 0;
+          if (pa !== pb) return pb - pa;
+          const ga = global[a] || 0;
+          const gb = global[b] || 0;
+          return gb - ga;
+        })
         .slice(0, 16)
-        .map(([emoji, count], i) => ({ emoji, slug: 'klaos-freq-' + i, count }));
+        .map((emoji, i) => ({ emoji, slug: 'klaos-freq-' + i }));
     },
     categories() {
       const base = [...this.emojis];
@@ -963,6 +978,11 @@ import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
       store.dispatch('updateUISettings', {
         uiSettings: { ...allSettings, emoji_frequents: capped },
       });
+      // KLaOS — dual-write: também incrementa contador GLOBAL da conta pra
+      // ranking servir como fallback de novos atendentes
+      if (typeof window !== 'undefined' && window.klaosGlobalFrequents) {
+        window.klaosGlobalFrequents.track('emoji', emoji);
+      }
     },
     klaosHandleEmojiClick(emoji) {
       this.klaosRecordFrequent(emoji);
@@ -1158,15 +1178,27 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
     from: `  const accountLabels = computed(() => getters['labels/getLabels'].value);`,
     to: `  const accountLabels = computed(() => {
     const labels = getters['labels/getLabels'].value;
-    // KLaOS — ordena por frequência de uso pessoal (user.ui_settings.label_frequents),
-    // depois alfabético. Etiquetas nunca usadas pelo atendente vão pro fim da lista.
+    // KLaOS — hierarquia personal → global → alfabético.
+    // Personal: user.ui_settings.label_frequents (incrementado em addLabelToConversation)
+    // Global: window.klaosGlobalFrequents.get('labels') (derivado de taggings,
+    //         deterministico, sem dual-write necessário — taggings é fonte da verdade)
+    if (typeof window !== 'undefined' && window.klaosGlobalFrequents) {
+      window.klaosGlobalFrequents.fetch();
+    }
     const user = getters.getCurrentUser.value;
-    const frequents =
+    const personal =
       (user && user.ui_settings && user.ui_settings.label_frequents) || {};
+    const global =
+      (typeof window !== 'undefined' && window.klaosGlobalFrequents
+        ? window.klaosGlobalFrequents.get('labels')
+        : null) || {};
     return [...labels].sort((a, b) => {
-      const fa = frequents[a.title] || 0;
-      const fb = frequents[b.title] || 0;
-      if (fa !== fb) return fb - fa;
+      const pa = personal[a.title] || 0;
+      const pb = personal[b.title] || 0;
+      if (pa !== pb) return pb - pa;
+      const ga = global[a.title] || 0;
+      const gb = global[b.title] || 0;
+      if (ga !== gb) return gb - ga;
       return (a.title || '').localeCompare(b.title || '');
     });
   });`,
@@ -1242,16 +1274,25 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
       }));
     },`,
     to: `    items() {
-      // KLaOS — ordena por frequência de uso pessoal (user.ui_settings.canned_frequents),
-      // depois alfabético. Backend já filtra via ILIKE quando há search; aqui só reordenamos
-      // o resultado pra que respostas mais usadas pelo atendente apareçam primeiro.
+      // KLaOS — hierarquia personal → global → alfabético.
+      // Backend já filtra via ILIKE quando há search; aqui só reordenamos.
+      if (typeof window !== 'undefined' && window.klaosGlobalFrequents) {
+        window.klaosGlobalFrequents.fetch();
+      }
       const user = this.$store.getters.getCurrentUser;
-      const frequents =
+      const personal =
         (user && user.ui_settings && user.ui_settings.canned_frequents) || {};
+      const global =
+        (typeof window !== 'undefined' && window.klaosGlobalFrequents
+          ? window.klaosGlobalFrequents.get('canned')
+          : null) || {};
       const sorted = [...this.cannedMessages].sort((a, b) => {
-        const fa = frequents[a.short_code] || 0;
-        const fb = frequents[b.short_code] || 0;
-        if (fa !== fb) return fb - fa;
+        const pa = personal[a.short_code] || 0;
+        const pb = personal[b.short_code] || 0;
+        if (pa !== pb) return pb - pa;
+        const ga = global[a.short_code] || 0;
+        const gb = global[b.short_code] || 0;
+        if (ga !== gb) return gb - ga;
         return (a.short_code || '').localeCompare(b.short_code || '');
       });
       return sorted.map(cannedMessage => ({
@@ -1269,11 +1310,9 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
     },`,
     to: `    handleMentionClick(item = {}) {
       this.$emit('replace', item.description);
-      // KLaOS — incrementa contador em user.ui_settings.canned_frequents pra
-      // que items() reordene o picker por uso. Cap em 128 entries.
-      // Merge ui_settings completo no payload — backend faz REPLACE da coluna
-      // JSONB, não merge. Bug do emoji v1 (47811234b) já causou perda de
-      // configs por causa disso.
+      // KLaOS — dual-write: incrementa contador PESSOAL (user.ui_settings)
+      // E GLOBAL (account.custom_attributes via POST). Cap personal em 128.
+      // Merge ui_settings completo no payload — backend faz REPLACE da JSONB.
       const user = this.$store.getters.getCurrentUser;
       if (user && item.key) {
         const allSettings = user.ui_settings || {};
@@ -1290,6 +1329,14 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
         this.$store.dispatch('updateUISettings', {
           uiSettings: { ...allSettings, canned_frequents: capped },
         });
+      }
+      // Global: POST track pra account.custom_attributes.canned_frequents
+      if (
+        typeof window !== 'undefined' &&
+        window.klaosGlobalFrequents &&
+        item.key
+      ) {
+        window.klaosGlobalFrequents.track('canned', item.key);
       }
     },`,
     reason: 'canned-frequents: incrementa contador em handleMentionClick, com merge ui_settings completo',
@@ -1320,9 +1367,7 @@ const klaosStore = useStore();
 
 function handleMentionClick(item = {}) {
   emit('selectEmoji', item.emoji);
-  // KLaOS — incrementa contador em user.ui_settings.emoji_frequents.
-  // Cap em 64 entries. Merge ui_settings completo no payload — backend faz
-  // REPLACE da coluna JSONB. Mesma lição dos outros frequents.
+  // KLaOS — dual-write: pessoal (ui_settings) + global (account.custom_attributes).
   const user = klaosStore.getters.getCurrentUser;
   if (user && item.emoji) {
     const allSettings = user.ui_settings || {};
@@ -1339,6 +1384,9 @@ function handleMentionClick(item = {}) {
     klaosStore.dispatch('updateUISettings', {
       uiSettings: { ...allSettings, emoji_frequents: capped },
     });
+  }
+  if (typeof window !== 'undefined' && window.klaosGlobalFrequents && item.emoji) {
+    window.klaosGlobalFrequents.track('emoji', item.emoji);
   }
 }`,
     reason: 'emoji-frequents-keyboard: registra emoji no atalho :nome além do picker direto',
@@ -1359,15 +1407,25 @@ function handleMentionClick(item = {}) {
   const list = whatsAppTemplateMessages.value.filter(template =>
     template.name.toLowerCase().includes(query.value.toLowerCase())
   );
-  // KLaOS — ordena por user.ui_settings.template_frequents desc, alfabético
-  // como desempate. Templates nunca usados pelo atendente vão pro fim.
+  // KLaOS — hierarquia personal → global → alfabético.
+  // Global vem do endpoint /usage_frequents (derivado de messages humanos).
+  if (typeof window !== 'undefined' && window.klaosGlobalFrequents) {
+    window.klaosGlobalFrequents.fetch();
+  }
   const user = store.getters.getCurrentUser;
-  const frequents =
+  const personal =
     (user && user.ui_settings && user.ui_settings.template_frequents) || {};
+  const global =
+    (typeof window !== 'undefined' && window.klaosGlobalFrequents
+      ? window.klaosGlobalFrequents.get('templates')
+      : null) || {};
   return [...list].sort((a, b) => {
-    const fa = frequents[a.name] || 0;
-    const fb = frequents[b.name] || 0;
-    if (fa !== fb) return fb - fa;
+    const pa = personal[a.name] || 0;
+    const pb = personal[b.name] || 0;
+    if (pa !== pb) return pb - pa;
+    const ga = global[a.name] || 0;
+    const gb = global[b.name] || 0;
+    if (ga !== gb) return gb - ga;
     return (a.name || '').localeCompare(b.name || '');
   });
 });`,
@@ -1408,6 +1466,77 @@ const getTemplateBody = template => {`,
     from: `          @click="emit('onSelect', template)"`,
     to: `          @click="klaosOnSelect(template)"`,
     reason: 'template-frequents: usa wrapper klaosOnSelect no click do botão de template',
+  },
+
+  // === KLaOS — Global Usage Frequents (hierarchia personal → global) ===
+  //
+  // Instala helper window.klaosGlobalFrequents no boot do app (patcheado no
+  // store/index.js que é carregado universalmente). Helper expõe:
+  //   - fetch()        — busca /api/custom/v1/accounts/:id/usage_frequents (lazy, idempotente)
+  //   - get(kind)      — retorna o map de counters globais pra uma categoria
+  //   - track(t, key)  — POST pra incrementar account.custom_attributes (emoji|canned)
+  //
+  // Hierarquia de ordenação aplicada em labels/templates/emojis/canned:
+  //   personal[key] || global[key] || 0  → alfabético desempate
+  //
+  // Atendente novo (sem ui_settings.X_frequents) entra com ranking decente.
+  // À medida que usa, frequents pessoal sobrescreve o global por item.
+  {
+    id: '/dashboard/store/index.js',
+    from: `import { createStore } from 'vuex';`,
+    to: `import { createStore } from 'vuex';
+
+// KLaOS — Global Usage Frequents helper. Instalado uma vez no boot do store
+// (esse arquivo carrega universalmente). Lazy-fetch dos counters globais
+// derivados/armazenados na conta + dual-write track pros que precisam
+// (emoji/canned não-derivam, têm que ser incrementados explicitamente).
+if (typeof window !== 'undefined' && !window.klaosGlobalFrequents) {
+  window.klaosGlobalFrequents = {
+    data: { labels: {}, templates: {}, emojis: {}, canned: {} },
+    loaded: false,
+    loading: false,
+    _accountId() {
+      const m = window.location.pathname.match(/\\/accounts\\/(\\d+)/);
+      return m ? m[1] : null;
+    },
+    fetch() {
+      if (this.loaded || this.loading) return;
+      const aid = this._accountId();
+      if (!aid) return;
+      this.loading = true;
+      window.axios
+        .get('/api/custom/v1/accounts/' + aid + '/usage_frequents')
+        .then(res => {
+          if (res && res.data) this.data = res.data;
+          this.loaded = true;
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    get(kind) {
+      return (this.data && this.data[kind]) || {};
+    },
+    track(type, key) {
+      const aid = this._accountId();
+      if (!aid || !key) return;
+      window.axios
+        .post('/api/custom/v1/accounts/' + aid + '/usage_frequents/track', {
+          type,
+          key,
+        })
+        .then(() => {
+          // Reflete localmente pra próximo sort já considerar o novo count
+          const bucket = this.data[type + 's'];
+          if (bucket) bucket[key] = (bucket[key] || 0) + 1;
+        })
+        .catch(() => {});
+    },
+  };
+}
+`,
+    reason: 'global-frequents: instala window.klaosGlobalFrequents helper no boot do store',
   },
 ];
 
