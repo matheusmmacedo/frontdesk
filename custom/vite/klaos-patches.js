@@ -1635,6 +1635,100 @@ const klaosSearchQuery = ref('');`,
     />`,
     reason: 'inline-search: input de busca acima das tabs (Minhas/Não atribuídas/Todos)',
   },
+
+  // ─── Etiquetas: atalho no card da conversa ─────────────────────────────
+  // Adiciona prefixo "Etiquetas:" antes das chips no card. Clicar nele
+  // navega pra conversa (clique do card) e abre o picker de labels.
+  // Coordenação via sessionStorage (TTL 10s) lido pelo LabelBox no mount.
+  {
+    id: '/conversationCardComponents/CardLabels.vue',
+    from: `const props = defineProps({
+  conversationLabels: {
+    type: Array,
+    required: true,
+  },
+});`,
+    to: `const props = defineProps({
+  conversationLabels: {
+    type: Array,
+    required: true,
+  },
+  conversationId: {
+    type: [Number, String],
+    default: null,
+  },
+});
+
+const klaosFocusLabels = () => {
+  // sinaliza pro LabelBox abrir o picker assim que a conversa montar
+  try {
+    sessionStorage.setItem(
+      'klaos:focusLabelsConv',
+      JSON.stringify({ id: props.conversationId, ts: Date.now() })
+    );
+  } catch (e) { /* ignore quota */ }
+};`,
+    reason: 'card-labels: declara conversationId + flag pro picker abrir',
+  },
+  {
+    id: '/conversationCardComponents/CardLabels.vue',
+    from: `      <slot name="before" />
+      <woot-label`,
+    to: `      <slot name="before" />
+      <span
+        class="text-xs leading-5 font-medium text-n-slate-11 hover:text-n-brand cursor-pointer mr-1.5 whitespace-nowrap select-none"
+        title="Adicionar ou remover etiquetas"
+        @click="klaosFocusLabels"
+      >
+        Etiquetas:
+      </span>
+      <woot-label`,
+    reason: 'card-labels: render prefixo "Etiquetas:" clicável antes das chips',
+  },
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: `      <CardLabels
+        v-if="showLabelsSection"
+        :conversation-labels="chat.labels"
+        class="mt-0.5 mx-2 mb-0"
+      >`,
+    to: `      <CardLabels
+        v-if="showLabelsSection"
+        :conversation-labels="chat.labels"
+        :conversation-id="chat.id"
+        class="mt-0.5 mx-2 mb-0"
+      >`,
+    reason: 'conv-card: passa conversation-id pro CardLabels (atalho etiquetas)',
+  },
+  {
+    id: '/conversation/labels/LabelBox.vue',
+    from: `import { ref } from 'vue';`,
+    to: `import { ref, onMounted } from 'vue';`,
+    reason: 'label-box: importa onMounted pra auto-abrir picker via atalho do card',
+  },
+  {
+    id: '/conversation/labels/LabelBox.vue',
+    from: `    useKeyboardEvents(keyboardEvents);
+    return {`,
+    to: `    useKeyboardEvents(keyboardEvents);
+
+    // KLaOS: se veio do atalho "Etiquetas:" no card da lista, abre o dropdown.
+    // Lê flag com TTL de 10s pra não disparar em navegações antigas.
+    onMounted(() => {
+      try {
+        const raw = sessionStorage.getItem('klaos:focusLabelsConv');
+        if (!raw) return;
+        sessionStorage.removeItem('klaos:focusLabelsConv');
+        const { ts } = JSON.parse(raw) || {};
+        if (!ts || Date.now() - ts > 10000) return;
+        // pequeno delay esperando dropdown montar
+        setTimeout(() => { showSearchDropdownLabel.value = true; }, 250);
+      } catch (e) { /* noop */ }
+    });
+
+    return {`,
+    reason: 'label-box: auto-abre picker quando vier do atalho "Etiquetas:" do card',
+  },
 ];
 
 export default function klaosPatches() {
