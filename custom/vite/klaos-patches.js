@@ -1667,6 +1667,8 @@ const klaosFocusLabels = () => {
       JSON.stringify({ id: props.conversationId, ts: Date.now() })
     );
   } catch (e) { /* ignore quota */ }
+  // se o LabelBox já está montado (mesma conv), dispara evento direto
+  try { window.dispatchEvent(new CustomEvent('klaos:focus-labels')); } catch (e) { /* noop */ }
 };`,
     reason: 'card-labels: declara conversationId + flag pro picker abrir',
   },
@@ -1685,25 +1687,85 @@ const klaosFocusLabels = () => {
       <woot-label`,
     reason: 'card-labels: render prefixo "Etiquetas:" clicável antes das chips',
   },
+  // v2: estilo hiperlink (underline + cor brand) no prefix "Etiquetas:"
+  {
+    id: '/conversationCardComponents/CardLabels.vue',
+    from: `class="text-xs leading-5 font-medium text-n-slate-11 hover:text-n-brand cursor-pointer mr-1.5 whitespace-nowrap select-none"`,
+    to: `class="text-xs leading-5 font-medium text-n-brand underline underline-offset-2 hover:text-n-brand/80 cursor-pointer mr-1.5 whitespace-nowrap select-none"`,
+    reason: 'card-labels: estilo hiperlink (underline + cor brand) no "Etiquetas:"',
+  },
+  // v2: tooltip nas chips mostra o NOME da etiqueta (era description)
+  {
+    id: '/components/ui/Label.vue',
+    from: `:title="description"`,
+    to: `:title="title + (description ? ' — ' + description : '')"`,
+    reason: 'woot-label: tooltip nativo mostra o nome (e descrição se houver)',
+  },
+  // v2: torna o título "Etiquetas" do sidebar clicável (mesmo atalho)
+  {
+    id: '/dashboard/conversation/ConversationAction.vue',
+    from: `    <ContactDetailsItem
+      compact
+      :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_LABELS')"
+    />
+    <ConversationLabels :conversation-id="conversationId" />`,
+    to: `    <div class="overflow-auto py-0 px-0">
+      <div class="items-center flex justify-between mb-1.5">
+        <a
+          class="text-sm font-medium text-n-brand underline underline-offset-2 hover:text-n-brand/80 cursor-pointer select-none"
+          :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_LABELS')"
+          @click="window.dispatchEvent(new CustomEvent('klaos:focus-labels'))"
+        >
+          {{ $t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_LABELS') }}
+        </a>
+      </div>
+    </div>
+    <ConversationLabels :conversation-id="conversationId" />`,
+    reason: 'conv-action: título "Etiquetas" no sidebar vira link clicável',
+  },
+  // Move o CardLabels do final do card pra logo embaixo do <h4> nome,
+  // e passa o conversation-id pro atalho funcionar.
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: `        {{ currentContact.name }}
+      </h4>
+      <VoiceCallStatus`,
+    to: `        {{ currentContact.name }}
+      </h4>
+      <CardLabels
+        v-if="showLabelsSection"
+        :conversation-labels="chat.labels"
+        :conversation-id="chat.id"
+        class="mt-0.5 mx-2 mb-1"
+      >
+        <template v-if="hasSlaPolicyId" #before>
+          <SLACardLabel :chat="chat" class="ltr:mr-1 rtl:ml-1" />
+        </template>
+      </CardLabels>
+      <VoiceCallStatus`,
+    reason: 'conv-card: move CardLabels pra logo embaixo do nome (atalho + ordem)',
+  },
   {
     id: '/widgets/conversation/ConversationCard.vue',
     from: `      <CardLabels
         v-if="showLabelsSection"
         :conversation-labels="chat.labels"
         class="mt-0.5 mx-2 mb-0"
-      >`,
-    to: `      <CardLabels
-        v-if="showLabelsSection"
-        :conversation-labels="chat.labels"
-        :conversation-id="chat.id"
-        class="mt-0.5 mx-2 mb-0"
-      >`,
-    reason: 'conv-card: passa conversation-id pro CardLabels (atalho etiquetas)',
+      >
+        <template v-if="hasSlaPolicyId" #before>
+          <SLACardLabel :chat="chat" class="ltr:mr-1 rtl:ml-1" />
+        </template>
+      </CardLabels>
+    </div>
+    <ContextMenu`,
+    to: `    </div>
+    <ContextMenu`,
+    reason: 'conv-card: remove o CardLabels do local antigo (final do card)',
   },
   {
     id: '/conversation/labels/LabelBox.vue',
     from: `import { ref } from 'vue';`,
-    to: `import { ref, onMounted } from 'vue';`,
+    to: `import { ref, onMounted, onBeforeUnmount } from 'vue';`,
     reason: 'label-box: importa onMounted pra auto-abrir picker via atalho do card',
   },
   {
@@ -1712,18 +1774,25 @@ const klaosFocusLabels = () => {
     return {`,
     to: `    useKeyboardEvents(keyboardEvents);
 
-    // KLaOS: se veio do atalho "Etiquetas:" no card da lista, abre o dropdown.
-    // Lê flag com TTL de 10s pra não disparar em navegações antigas.
+    // KLaOS: dois caminhos pra abrir o picker programaticamente:
+    //   1. flag sessionStorage (TTL 10s) — set pelo atalho do CardLabels da
+    //      lista; consumida quando o LabelBox monta após navegação.
+    //   2. evento global 'klaos:focus-labels' — pro caso do LabelBox já estar
+    //      montado (mesma conversa) ou do link no sidebar disparar.
+    const klaosOpenPicker = () => { showSearchDropdownLabel.value = true; };
     onMounted(() => {
+      window.addEventListener('klaos:focus-labels', klaosOpenPicker);
       try {
         const raw = sessionStorage.getItem('klaos:focusLabelsConv');
         if (!raw) return;
         sessionStorage.removeItem('klaos:focusLabelsConv');
         const { ts } = JSON.parse(raw) || {};
         if (!ts || Date.now() - ts > 10000) return;
-        // pequeno delay esperando dropdown montar
-        setTimeout(() => { showSearchDropdownLabel.value = true; }, 250);
+        setTimeout(klaosOpenPicker, 250);
       } catch (e) { /* noop */ }
+    });
+    onBeforeUnmount(() => {
+      window.removeEventListener('klaos:focus-labels', klaosOpenPicker);
     });
 
     return {`,
