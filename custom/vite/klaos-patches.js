@@ -1209,6 +1209,206 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
   };`,
     reason: 'label-frequents: incrementa contador em add, com merge ui_settings completo (não repetir bug 47811234b)',
   },
+
+  // === KLaOS — fix do filtro de respostas prontas + ordenação por uso ===
+  //
+  // BUG real do upstream: a API client de canned_responses concatena o
+  // searchKey direto na URL SEM encodeURIComponent. Quando o short_code tem
+  // caracteres especiais de URL (`+`, `&`, `?`, etc), o backend recebe
+  // garbled. Caso Mais Saúde: short_codes "+CDI", "+CPF", "+CDF" etc — o
+  // atendente digita "/+cdi" → URL "?search=+cdi" → `+` decodifica como
+  // espaço → backend faz ILIKE '% cdi%' → não bate em "+CDI".
+  //
+  // Frequência: persiste contador em user.ui_settings.canned_frequents,
+  // incrementa quando atendente seleciona uma resposta (handleMentionClick).
+  // Ordena por uso desc + alfabético, no `items` computed. Backend já filtra
+  // por ILIKE quando há search; aqui só reordenamos o que ele retorna.
+  //
+  // CRÍTICO: merge ui_settings completo no dispatch (mesma lição dos bugs
+  // anteriores do emoji v1 e labels).
+  {
+    id: '/api/cannedResponse.js',
+    from: `    const url = searchKey ? \`\${this.url}?search=\${searchKey}\` : this.url;`,
+    to: `    const url = searchKey ? \`\${this.url}?search=\${encodeURIComponent(searchKey)}\` : this.url;`,
+    reason: 'canned-search-encoding: encodeURIComponent no searchKey pra não decodificar + como espaço (caso Mais Saúde: short_codes +CDI/+CPF/etc)',
+  },
+  {
+    id: '/widgets/conversation/CannedResponse.vue',
+    from: `    items() {
+      return this.cannedMessages.map(cannedMessage => ({
+        label: cannedMessage.short_code,
+        key: cannedMessage.short_code,
+        description: cannedMessage.content,
+      }));
+    },`,
+    to: `    items() {
+      // KLaOS — ordena por frequência de uso pessoal (user.ui_settings.canned_frequents),
+      // depois alfabético. Backend já filtra via ILIKE quando há search; aqui só reordenamos
+      // o resultado pra que respostas mais usadas pelo atendente apareçam primeiro.
+      const user = this.$store.getters.getCurrentUser;
+      const frequents =
+        (user && user.ui_settings && user.ui_settings.canned_frequents) || {};
+      const sorted = [...this.cannedMessages].sort((a, b) => {
+        const fa = frequents[a.short_code] || 0;
+        const fb = frequents[b.short_code] || 0;
+        if (fa !== fb) return fb - fa;
+        return (a.short_code || '').localeCompare(b.short_code || '');
+      });
+      return sorted.map(cannedMessage => ({
+        label: cannedMessage.short_code,
+        key: cannedMessage.short_code,
+        description: cannedMessage.content,
+      }));
+    },`,
+    reason: 'canned-frequents: ordena items por user.ui_settings.canned_frequents desc + alfabético',
+  },
+  {
+    id: '/widgets/conversation/CannedResponse.vue',
+    from: `    handleMentionClick(item = {}) {
+      this.$emit('replace', item.description);
+    },`,
+    to: `    handleMentionClick(item = {}) {
+      this.$emit('replace', item.description);
+      // KLaOS — incrementa contador em user.ui_settings.canned_frequents pra
+      // que items() reordene o picker por uso. Cap em 128 entries.
+      // Merge ui_settings completo no payload — backend faz REPLACE da coluna
+      // JSONB, não merge. Bug do emoji v1 (47811234b) já causou perda de
+      // configs por causa disso.
+      const user = this.$store.getters.getCurrentUser;
+      if (user && item.key) {
+        const allSettings = user.ui_settings || {};
+        const current = allSettings.canned_frequents || {};
+        const updated = {
+          ...current,
+          [item.key]: (current[item.key] || 0) + 1,
+        };
+        const capped = Object.fromEntries(
+          Object.entries(updated)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 128)
+        );
+        this.$store.dispatch('updateUISettings', {
+          uiSettings: { ...allSettings, canned_frequents: capped },
+        });
+      }
+    },`,
+    reason: 'canned-frequents: incrementa contador em handleMentionClick, com merge ui_settings completo',
+  },
+
+  // === KLaOS — emoji frequents também no atalho :nome (keyboardEmojiSelector) ===
+  // Bug constatado: Gustavo manda muitos 👍 mas o contador só registra cliques
+  // direto no picker (EmojiInput.vue). Ele usa atalho `:thumbs_up` via tiptap
+  // suggestion (trigger ':') → keyboardEmojiSelector.vue → emite selectEmoji.
+  // Patcheamos pra ALSO registrar nessa via.
+  {
+    id: '/WootWriter/keyboardEmojiSelector.vue',
+    from: `import MentionBox from '../mentions/MentionBox.vue';`,
+    to: `import MentionBox from '../mentions/MentionBox.vue';
+import { useStore } from 'dashboard/composables/store';`,
+    reason: 'emoji-frequents-keyboard: import useStore pra dispatcher updateUISettings',
+  },
+  {
+    id: '/WootWriter/keyboardEmojiSelector.vue',
+    from: `function handleMentionClick(item = {}) {
+  emit('selectEmoji', item.emoji);
+}`,
+    to: `// KLaOS — store pra registrar emoji_frequents quando o atendente usa o
+// atalho de teclado :nome (trigger ':' do tiptap). Sem esse patch, só o
+// click direto no picker contava — atendente que prefere teclado nunca
+// aparecia no ranking de mais usados.
+const klaosStore = useStore();
+
+function handleMentionClick(item = {}) {
+  emit('selectEmoji', item.emoji);
+  // KLaOS — incrementa contador em user.ui_settings.emoji_frequents.
+  // Cap em 64 entries. Merge ui_settings completo no payload — backend faz
+  // REPLACE da coluna JSONB. Mesma lição dos outros frequents.
+  const user = klaosStore.getters.getCurrentUser;
+  if (user && item.emoji) {
+    const allSettings = user.ui_settings || {};
+    const current = allSettings.emoji_frequents || {};
+    const updated = {
+      ...current,
+      [item.emoji]: (current[item.emoji] || 0) + 1,
+    };
+    const capped = Object.fromEntries(
+      Object.entries(updated)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 64)
+    );
+    klaosStore.dispatch('updateUISettings', {
+      uiSettings: { ...allSettings, emoji_frequents: capped },
+    });
+  }
+}`,
+    reason: 'emoji-frequents-keyboard: registra emoji no atalho :nome além do picker direto',
+  },
+
+  // === KLaOS — templates Meta ordenados por uso humano ===
+  // TemplatesPicker é exclusivo da UI do atendente. Bot/automação envia template
+  // via API direto (sem passar por esse picker), então o contador captura SÓ
+  // uso humano por construção — atende o pedido "considera humano, não bot".
+  {
+    id: '/WhatsappTemplates/TemplatesPicker.vue',
+    from: `const filteredTemplateMessages = computed(() =>
+  whatsAppTemplateMessages.value.filter(template =>
+    template.name.toLowerCase().includes(query.value.toLowerCase())
+  )
+);`,
+    to: `const filteredTemplateMessages = computed(() => {
+  const list = whatsAppTemplateMessages.value.filter(template =>
+    template.name.toLowerCase().includes(query.value.toLowerCase())
+  );
+  // KLaOS — ordena por user.ui_settings.template_frequents desc, alfabético
+  // como desempate. Templates nunca usados pelo atendente vão pro fim.
+  const user = store.getters.getCurrentUser;
+  const frequents =
+    (user && user.ui_settings && user.ui_settings.template_frequents) || {};
+  return [...list].sort((a, b) => {
+    const fa = frequents[a.name] || 0;
+    const fb = frequents[b.name] || 0;
+    if (fa !== fb) return fb - fa;
+    return (a.name || '').localeCompare(b.name || '');
+  });
+});`,
+    reason: 'template-frequents: ordena filteredTemplateMessages por user.ui_settings.template_frequents',
+  },
+  {
+    id: '/WhatsappTemplates/TemplatesPicker.vue',
+    from: `const getTemplateBody = template => {`,
+    to: `// KLaOS — wrapper do onSelect que registra uso humano em
+// user.ui_settings.template_frequents antes de emitir o evento.
+// Cap 128. Merge ui_settings completo no payload (backend faz REPLACE).
+const klaosOnSelect = template => {
+  emit('onSelect', template);
+  const user = store.getters.getCurrentUser;
+  if (user && template && template.name) {
+    const allSettings = user.ui_settings || {};
+    const current = allSettings.template_frequents || {};
+    const updated = {
+      ...current,
+      [template.name]: (current[template.name] || 0) + 1,
+    };
+    const capped = Object.fromEntries(
+      Object.entries(updated)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 128)
+    );
+    store.dispatch('updateUISettings', {
+      uiSettings: { ...allSettings, template_frequents: capped },
+    });
+  }
+};
+
+const getTemplateBody = template => {`,
+    reason: 'template-frequents: wrapper klaosOnSelect que incrementa contador antes de emitir',
+  },
+  {
+    id: '/WhatsappTemplates/TemplatesPicker.vue',
+    from: `          @click="emit('onSelect', template)"`,
+    to: `          @click="klaosOnSelect(template)"`,
+    reason: 'template-frequents: usa wrapper klaosOnSelect no click do botão de template',
+  },
 ];
 
 export default function klaosPatches() {
