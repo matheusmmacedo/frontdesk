@@ -1143,6 +1143,72 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
         icon="i-ph-quotes"`,
     reason: 'label-composer-button: botão i-lucide-tag + popover LabelDropdown (abre pra cima) antes do quoted-reply. Usa i-lucide-tag (não i-ph-tag) porque Tailwind JIT só gera CSS de ícone presente em arquivo-fonte — i-lucide-tag já é usado em Sidebar.vue',
   },
+
+  // === KLaOS — ordena etiquetas por frequência de uso (label_frequents) ===
+  // Igual emoji frequents: persiste contador em user.ui_settings.label_frequents
+  // e ordena o accountLabels do composable por uso desc + alfabético desempate.
+  // Afeta AMBOS os pickers (sidebar LabelBox + botão do compositor) porque os
+  // dois consomem useConversationLabels.
+  //
+  // CRÍTICO: merge ui_settings completo no payload — backend faz REPLACE da
+  // coluna JSONB (assign_attributes), não merge. Bug do emoji v1 (47811234b)
+  // apagou audio config do Gustavo por causa disso. Não repetir.
+  {
+    id: '/composables/useConversationLabels.js',
+    from: `  const accountLabels = computed(() => getters['labels/getLabels'].value);`,
+    to: `  const accountLabels = computed(() => {
+    const labels = getters['labels/getLabels'].value;
+    // KLaOS — ordena por frequência de uso pessoal (user.ui_settings.label_frequents),
+    // depois alfabético. Etiquetas nunca usadas pelo atendente vão pro fim da lista.
+    const user = getters.getCurrentUser.value;
+    const frequents =
+      (user && user.ui_settings && user.ui_settings.label_frequents) || {};
+    return [...labels].sort((a, b) => {
+      const fa = frequents[a.title] || 0;
+      const fb = frequents[b.title] || 0;
+      if (fa !== fb) return fb - fa;
+      return (a.title || '').localeCompare(b.title || '');
+    });
+  });`,
+    reason: 'label-frequents: ordena accountLabels por user.ui_settings.label_frequents desc + alfabético',
+  },
+  {
+    id: '/composables/useConversationLabels.js',
+    from: `  const addLabelToConversation = value => {
+    const result = activeLabels.value.map(item => item.title);
+    result.push(value.title);
+    onUpdateLabels(result);
+  };`,
+    to: `  const addLabelToConversation = value => {
+    const result = activeLabels.value.map(item => item.title);
+    result.push(value.title);
+    onUpdateLabels(result);
+    // KLaOS — incrementa contador em user.ui_settings.label_frequents pra
+    // que o accountLabels reordene os pickers por uso. Cap em 128 entries
+    // (mais que suficiente — maioria das contas tem ~50 etiquetas).
+    // Merge ui_settings completo no payload pra NÃO apagar outras chaves
+    // (audio alerts, accordions, emoji_frequents, etc) — backend faz
+    // REPLACE da coluna JSONB, não merge. Bug do emoji v1 já causou isso.
+    const user = getters.getCurrentUser.value;
+    if (user) {
+      const allSettings = user.ui_settings || {};
+      const current = allSettings.label_frequents || {};
+      const updated = {
+        ...current,
+        [value.title]: (current[value.title] || 0) + 1,
+      };
+      const capped = Object.fromEntries(
+        Object.entries(updated)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 128)
+      );
+      store.dispatch('updateUISettings', {
+        uiSettings: { ...allSettings, label_frequents: capped },
+      });
+    }
+  };`,
+    reason: 'label-frequents: incrementa contador em add, com merge ui_settings completo (não repetir bug 47811234b)',
+  },
 ];
 
 export default function klaosPatches() {
