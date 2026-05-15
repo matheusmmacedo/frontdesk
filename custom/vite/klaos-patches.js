@@ -1209,6 +1209,91 @@ import { useConversationLabels } from 'dashboard/composables/useConversationLabe
   };`,
     reason: 'label-frequents: incrementa contador em add, com merge ui_settings completo (não repetir bug 47811234b)',
   },
+
+  // === KLaOS — fix do filtro de respostas prontas + ordenação por uso ===
+  //
+  // BUG real do upstream: a API client de canned_responses concatena o
+  // searchKey direto na URL SEM encodeURIComponent. Quando o short_code tem
+  // caracteres especiais de URL (`+`, `&`, `?`, etc), o backend recebe
+  // garbled. Caso Mais Saúde: short_codes "+CDI", "+CPF", "+CDF" etc — o
+  // atendente digita "/+cdi" → URL "?search=+cdi" → `+` decodifica como
+  // espaço → backend faz ILIKE '% cdi%' → não bate em "+CDI".
+  //
+  // Frequência: persiste contador em user.ui_settings.canned_frequents,
+  // incrementa quando atendente seleciona uma resposta (handleMentionClick).
+  // Ordena por uso desc + alfabético, no `items` computed. Backend já filtra
+  // por ILIKE quando há search; aqui só reordenamos o que ele retorna.
+  //
+  // CRÍTICO: merge ui_settings completo no dispatch (mesma lição dos bugs
+  // anteriores do emoji v1 e labels).
+  {
+    id: '/api/cannedResponse.js',
+    from: `    const url = searchKey ? \`\${this.url}?search=\${searchKey}\` : this.url;`,
+    to: `    const url = searchKey ? \`\${this.url}?search=\${encodeURIComponent(searchKey)}\` : this.url;`,
+    reason: 'canned-search-encoding: encodeURIComponent no searchKey pra não decodificar + como espaço (caso Mais Saúde: short_codes +CDI/+CPF/etc)',
+  },
+  {
+    id: '/widgets/conversation/CannedResponse.vue',
+    from: `    items() {
+      return this.cannedMessages.map(cannedMessage => ({
+        label: cannedMessage.short_code,
+        key: cannedMessage.short_code,
+        description: cannedMessage.content,
+      }));
+    },`,
+    to: `    items() {
+      // KLaOS — ordena por frequência de uso pessoal (user.ui_settings.canned_frequents),
+      // depois alfabético. Backend já filtra via ILIKE quando há search; aqui só reordenamos
+      // o resultado pra que respostas mais usadas pelo atendente apareçam primeiro.
+      const user = this.$store.getters.getCurrentUser;
+      const frequents =
+        (user && user.ui_settings && user.ui_settings.canned_frequents) || {};
+      const sorted = [...this.cannedMessages].sort((a, b) => {
+        const fa = frequents[a.short_code] || 0;
+        const fb = frequents[b.short_code] || 0;
+        if (fa !== fb) return fb - fa;
+        return (a.short_code || '').localeCompare(b.short_code || '');
+      });
+      return sorted.map(cannedMessage => ({
+        label: cannedMessage.short_code,
+        key: cannedMessage.short_code,
+        description: cannedMessage.content,
+      }));
+    },`,
+    reason: 'canned-frequents: ordena items por user.ui_settings.canned_frequents desc + alfabético',
+  },
+  {
+    id: '/widgets/conversation/CannedResponse.vue',
+    from: `    handleMentionClick(item = {}) {
+      this.$emit('replace', item.description);
+    },`,
+    to: `    handleMentionClick(item = {}) {
+      this.$emit('replace', item.description);
+      // KLaOS — incrementa contador em user.ui_settings.canned_frequents pra
+      // que items() reordene o picker por uso. Cap em 128 entries.
+      // Merge ui_settings completo no payload — backend faz REPLACE da coluna
+      // JSONB, não merge. Bug do emoji v1 (47811234b) já causou perda de
+      // configs por causa disso.
+      const user = this.$store.getters.getCurrentUser;
+      if (user && item.key) {
+        const allSettings = user.ui_settings || {};
+        const current = allSettings.canned_frequents || {};
+        const updated = {
+          ...current,
+          [item.key]: (current[item.key] || 0) + 1,
+        };
+        const capped = Object.fromEntries(
+          Object.entries(updated)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 128)
+        );
+        this.$store.dispatch('updateUISettings', {
+          uiSettings: { ...allSettings, canned_frequents: capped },
+        });
+      }
+    },`,
+    reason: 'canned-frequents: incrementa contador em handleMentionClick, com merge ui_settings completo',
+  },
 ];
 
 export default function klaosPatches() {
