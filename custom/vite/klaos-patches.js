@@ -1538,6 +1538,103 @@ if (typeof window !== 'undefined' && !window.klaosGlobalFrequents) {
 `,
     reason: 'global-frequents: instala window.klaosGlobalFrequents helper no boot do store',
   },
+
+  // === KLaOS — busca inline por nome em cima das tabs (Minhas/Não atribuídas/Todos) ===
+  // Filtro client-side sobre as conversas já carregadas (lista paginada).
+  // Combina com tab atual (não substitui). Match por:
+  //   - nome do contato (ILIKE)
+  //   - email
+  //   - últimos N dígitos do telefone (regex strip dígitos)
+  //   - display_id exato (quando o input é puramente numérico)
+  // Limitação v1: só busca no que está carregado. Conversas ainda não puxadas
+  // pelo scroll não aparecem. v2 pode ser server-side se virar gargalo.
+  {
+    id: '/components/ChatList.vue',
+    from: `const chatLists = useMapGetter('getFilteredConversations');`,
+    to: `const chatLists = useMapGetter('getFilteredConversations');
+// KLaOS — busca inline por nome (client-side, sobre os já carregados)
+const klaosSearchQuery = ref('');`,
+    reason: 'inline-search: declara ref klaosSearchQuery no setup',
+  },
+  {
+    id: '/components/ChatList.vue',
+    from: `  if (activeFolder.value) {
+    const { payload } = activeFolder.value.query;
+    localConversationList = localConversationList.filter(conversation => {
+      return matchesFilters(conversation, payload);
+    });
+  }
+
+  return localConversationList;
+});`,
+    to: `  if (activeFolder.value) {
+    const { payload } = activeFolder.value.query;
+    localConversationList = localConversationList.filter(conversation => {
+      return matchesFilters(conversation, payload);
+    });
+  }
+
+  // KLaOS — busca inline por nome/email/phone/display_id (case-insensitive,
+  // dígitos do telefone ignoram máscara). Filtra DEPOIS de tab/folder pra
+  // resultados combinarem (ex: "Minhas" + "joão" = só os joãos atribuídos a mim).
+  const klaosQ = klaosSearchQuery.value.trim().toLowerCase();
+  if (klaosQ) {
+    const klaosDigits = klaosQ.replace(/\\D/g, '');
+    localConversationList = localConversationList.filter(conv => {
+      const sender = (conv && conv.meta && conv.meta.sender) || {};
+      const name = (sender.name || '').toLowerCase();
+      const email = (sender.email || '').toLowerCase();
+      const phone = (sender.phone_number || '').replace(/\\D/g, '');
+      const displayId = String((conv && conv.display_id) || '');
+      if (name.includes(klaosQ)) return true;
+      if (email && email.includes(klaosQ)) return true;
+      if (klaosDigits.length >= 3 && phone && phone.includes(klaosDigits)) return true;
+      if (klaosDigits.length > 0 && displayId === klaosDigits) return true;
+      return false;
+    });
+  }
+
+  return localConversationList;
+});`,
+    reason: 'inline-search: filtra conversationList por klaosSearchQuery (nome/email/phone/display_id)',
+  },
+  {
+    id: '/components/ChatList.vue',
+    from: `    <ChatTypeTabs
+      v-if="!hasAppliedFiltersOrActiveFolders"
+      :items="assigneeTabItems"
+      :active-tab="activeAssigneeTab"
+      is-compact
+      @chat-tab-change="updateAssigneeTab"
+    />`,
+    to: `    <!-- KLaOS — busca inline por nome -->
+    <div class="px-4 pt-2 pb-1">
+      <div class="flex items-center gap-2 px-2.5 h-8 rounded-lg bg-n-alpha-black2 outline outline-1 outline-n-weak focus-within:outline-n-brand">
+        <span class="i-lucide-search size-3.5 text-n-slate-11 flex-shrink-0" />
+        <input
+          v-model="klaosSearchQuery"
+          type="search"
+          placeholder="Buscar por nome, telefone ou #ID"
+          class="reset-base w-full h-full bg-transparent text-n-slate-12 !text-sm !outline-0 !border-0 !p-0 !m-0"
+        />
+        <button
+          v-if="klaosSearchQuery"
+          class="flex-shrink-0 size-4 grid place-content-center text-n-slate-11 hover:text-n-slate-12"
+          @click="klaosSearchQuery = ''"
+        >
+          <span class="i-lucide-x size-3.5" />
+        </button>
+      </div>
+    </div>
+    <ChatTypeTabs
+      v-if="!hasAppliedFiltersOrActiveFolders"
+      :items="assigneeTabItems"
+      :active-tab="activeAssigneeTab"
+      is-compact
+      @chat-tab-change="updateAssigneeTab"
+    />`,
+    reason: 'inline-search: input de busca acima das tabs (Minhas/Não atribuídas/Todos)',
+  },
 ];
 
 export default function klaosPatches() {
