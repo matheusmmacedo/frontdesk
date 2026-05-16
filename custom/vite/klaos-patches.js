@@ -766,19 +766,25 @@ const klaosConversationLabels = computed(() => {
           <span v-if="isSnoozed" class="font-medium text-n-amber-10">
             {{ snoozedDisplayText }}
           </span>
+        </div>
+        <div
+          v-if="klaosConversationLabels.length"
+          class="flex items-center gap-1.5 overflow-hidden text-xs whitespace-nowrap mt-0.5"
+        >
+          <a
+            class="text-xs font-medium text-n-brand underline underline-offset-2 hover:text-n-brand/80 cursor-pointer select-none"
+            title="Adicionar ou remover etiquetas"
+            @click.stop="() => window.dispatchEvent(new CustomEvent('klaos:focus-labels'))"
+          >Etiquetas:</a>
           <span
             v-for="lbl in klaosConversationLabels"
             :key="lbl.title"
-            class="inline-flex items-center gap-1 px-1.5 h-5 rounded-md font-medium bg-n-alpha-1 text-n-slate-12"
-          >
-            <span
-              class="size-1.5 rounded-sm flex-shrink-0"
-              :style="{ background: lbl.color }"
-            />
-            {{ lbl.title }}
-          </span>
+            :title="lbl.title"
+            class="size-3 rounded-full flex-shrink-0 outline outline-1 outline-n-slate-4"
+            :style="{ background: lbl.color }"
+          />
         </div>`,
-    reason: 'conv-header-labels: chips coloridas (dot + título) ao lado do InboxName',
+    reason: 'conv-header-labels: nova linha "Etiquetas:" (hiperlink) + bolinhas com tooltip',
   },
 
   // === KLaOS — Timeline unificada do contato (toggle no ConversationBox) ===
