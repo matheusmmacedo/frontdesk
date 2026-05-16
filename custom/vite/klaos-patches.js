@@ -712,6 +712,19 @@ const klaosConversationLabels = computed(() => {
       : { title, color: '#94a3b8' };
   });
 });
+
+// Clica em "Etiquetas:" do header → garante painel direito aberto +
+// abre o dropdown de adicionar/remover etiquetas (LabelBox). Se o painel
+// estava fechado, aguarda 200ms pro LabelBox montar antes de despachar o
+// evento que abre o picker.
+const klaosOpenLabelsPicker = async () => {
+  try {
+    await store.dispatch('updateUISettings', { is_contact_sidebar_open: true });
+  } catch (e) { /* noop */ }
+  setTimeout(() => {
+    window.dispatchEvent(new CustomEvent('klaos:focus-labels'));
+  }, 200);
+};
 </script>`,
     reason: 'conv-header-labels: computed pra rota de edição + labels resolvidas',
   },
@@ -774,7 +787,7 @@ const klaosConversationLabels = computed(() => {
           <a
             class="text-xs font-medium text-n-brand underline underline-offset-2 hover:text-n-brand/80 cursor-pointer select-none"
             title="Adicionar ou remover etiquetas"
-            @click.stop="() => window.dispatchEvent(new CustomEvent('klaos:focus-labels'))"
+            @click.stop="klaosOpenLabelsPicker"
           >Etiquetas:</a>
           <span
             v-for="lbl in klaosConversationLabels"
@@ -1738,11 +1751,20 @@ const klaosFocusLabels = () => {
     to: `:title="title + (description ? ' — ' + description : '')"`,
     reason: 'woot-label: tooltip nativo mostra o nome (e descrição se houver)',
   },
+  // v4: tira o título "Etiquetas da conversa" do sidebar (usuário pediu).
+  // O LabelBox renderiza só as bolinhas + botão "+" pra adicionar.
+  {
+    id: '/dashboard/conversation/ConversationAction.vue',
+    from: `    <ContactDetailsItem
+      compact
+      :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_LABELS')"
+    />
+    <ConversationLabels :conversation-id="conversationId" />`,
+    to: `    <ConversationLabels :conversation-id="conversationId" />`,
+    reason: 'sidebar: remove título "Etiquetas da conversa" — só bolinhas',
+  },
   // v3: sidebar LabelBox vira só bolinhas coloridas (sem chips/texto).
   // Hover na bolinha mostra o nome (tooltip nativo). Clicar abre o picker.
-  // (O título "Etiquetas da conversa" continua sendo o ContactDetailsItem
-  // original — não é link mais; a UX de adicionar/remover acontece pelas
-  // bolinhas + AddLabel button "+" do LabelBox.)
   {
     id: '/conversation/labels/LabelBox.vue',
     from: `        <woot-label
