@@ -1687,6 +1687,37 @@ const klaosFocusLabels = () => {
       <woot-label`,
     reason: 'card-labels: render prefixo "Etiquetas:" clicável antes das chips',
   },
+  // v3: chips do card de lista viram bolinhas (sem texto). Hover mostra nome.
+  // Mantemos via overlay no <woot-label> — esconde o texto, força tamanho de
+  // bolinha. Deixar o componente original e só "mascarar" via CSS evita ter
+  // que substituir o v-for inteiro e reduz fragilidade do patch.
+  {
+    id: '/conversationCardComponents/CardLabels.vue',
+    from: `      <woot-label
+        v-for="(label, index) in activeLabels"
+        :key="label ? label.id : index"
+        :title="label.title"
+        :description="label.description"
+        :color="label.color"
+        variant="smooth"
+        class="!mb-0 max-w-[calc(100%-0.5rem)]"
+        small
+        :class="{
+          'invisible absolute': !showAllLabels && index > labelPosition,
+        }"
+      />`,
+    to: `      <span
+        v-for="(label, index) in activeLabels"
+        :key="label ? label.id : index"
+        :title="label.title"
+        class="size-3 rounded-full flex-shrink-0 mr-1 outline outline-1 outline-n-slate-4 cursor-pointer label hover:scale-110 transition-transform"
+        :style="{ background: label.color }"
+        :class="{
+          'invisible absolute': !showAllLabels && index > labelPosition,
+        }"
+      />`,
+    reason: 'card-labels: chips → bolinhas (sem texto, com tooltip nome)',
+  },
   // v2: estilo hiperlink (underline + cor brand) no prefix "Etiquetas:"
   {
     id: '/conversationCardComponents/CardLabels.vue',
@@ -1701,27 +1732,34 @@ const klaosFocusLabels = () => {
     to: `:title="title + (description ? ' — ' + description : '')"`,
     reason: 'woot-label: tooltip nativo mostra o nome (e descrição se houver)',
   },
-  // v2: torna o título "Etiquetas" do sidebar clicável (mesmo atalho)
+  // v3: sidebar LabelBox vira só bolinhas coloridas (sem chips/texto).
+  // Hover na bolinha mostra o nome (tooltip nativo). Clicar abre o picker.
+  // (O título "Etiquetas da conversa" continua sendo o ContactDetailsItem
+  // original — não é link mais; a UX de adicionar/remover acontece pelas
+  // bolinhas + AddLabel button "+" do LabelBox.)
   {
-    id: '/dashboard/conversation/ConversationAction.vue',
-    from: `    <ContactDetailsItem
-      compact
-      :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_LABELS')"
-    />
-    <ConversationLabels :conversation-id="conversationId" />`,
-    to: `    <div class="overflow-auto py-0 px-0">
-      <div class="items-center flex justify-between mb-1.5">
-        <a
-          class="text-sm font-medium text-n-brand underline underline-offset-2 hover:text-n-brand/80 cursor-pointer select-none"
-          :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_LABELS')"
-          @click="window.dispatchEvent(new CustomEvent('klaos:focus-labels'))"
-        >
-          {{ $t('CONVERSATION_SIDEBAR.ACCORDION.CONVERSATION_LABELS') }}
-        </a>
-      </div>
-    </div>
-    <ConversationLabels :conversation-id="conversationId" />`,
-    reason: 'conv-action: título "Etiquetas" no sidebar vira link clicável',
+    id: '/conversation/labels/LabelBox.vue',
+    from: `        <woot-label
+          v-for="label in activeLabels"
+          :key="label.id"
+          :title="label.title"
+          :description="label.description"
+          show-close
+          :color="label.color"
+          variant="smooth"
+          class="max-w-[calc(100%-0.5rem)]"
+          @remove="removeLabelFromConversation"
+        />`,
+    to: `        <button
+          v-for="label in activeLabels"
+          :key="label.id"
+          type="button"
+          :title="label.title + (label.description ? ' — ' + label.description : '')"
+          class="size-4 rounded-full flex-shrink-0 mr-1 mb-1 outline outline-1 outline-n-slate-4 hover:scale-110 transition-transform cursor-pointer"
+          :style="{ background: label.color }"
+          @click="toggleLabels"
+        />`,
+    reason: 'sidebar-labels: chips → bolinhas com tooltip; click abre picker',
   },
   // Move o CardLabels do final do card pra logo embaixo do <h4> nome,
   // e passa o conversation-id pro atalho funcionar.
