@@ -715,15 +715,20 @@ const klaosConversationLabels = computed(() => {
 
 // Clica em "Etiquetas:" do header → garante painel direito aberto +
 // abre o dropdown de adicionar/remover etiquetas (LabelBox). Se o painel
-// estava fechado, aguarda 200ms pro LabelBox montar antes de despachar o
+// estava fechado, aguarda 250ms pro LabelBox montar antes de despachar o
 // evento que abre o picker.
 const klaosOpenLabelsPicker = async () => {
   try {
-    await store.dispatch('updateUISettings', { is_contact_sidebar_open: true });
+    const current = store.getters.getUISettings || {};
+    if (!current.is_contact_sidebar_open) {
+      await store.dispatch('updateUISettings', {
+        uiSettings: { ...current, is_contact_sidebar_open: true },
+      });
+    }
   } catch (e) { /* noop */ }
   setTimeout(() => {
     window.dispatchEvent(new CustomEvent('klaos:focus-labels'));
-  }, 200);
+  }, 250);
 };
 </script>`,
     reason: 'conv-header-labels: computed pra rota de edição + labels resolvidas',
