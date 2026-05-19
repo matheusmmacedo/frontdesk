@@ -40,9 +40,14 @@ module ActiveStorageProxyWithContentLength
     response.headers['Cache-Control'] = 'public, max-age=3155695200'
     response.headers['Accept-Ranges'] = 'bytes'
 
+    # `action_dispositions` foi removido no Rails 7.1.5; inline a lógica:
+    # inline pra content_types permitidos, attachment pra outros.
+    requested = params[:disposition].presence || 'inline'
+    disposition = ActiveStorage.content_types_allowed_inline.include?(@blob.content_type) ? requested : 'attachment'
+
     send_data data,
               filename: @blob.filename.sanitized,
-              disposition: action_dispositions(params[:disposition] || 'inline', @blob.content_type),
+              disposition: disposition,
               type: @blob.content_type
   end
 end
