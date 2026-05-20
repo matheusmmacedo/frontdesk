@@ -814,13 +814,13 @@ const klaosRemoveLabel = async title => {
           <span
             v-for="lbl in klaosConversationLabels"
             :key="lbl.title"
-            class="inline-flex items-center gap-1 pl-1.5 pr-0.5 py-0.5 rounded-full bg-n-alpha-2 text-n-slate-12 max-w-[160px]"
+            :title="lbl.title"
+            class="inline-flex items-center gap-1 pl-1 pr-0.5 py-0.5 rounded-full bg-n-alpha-2"
           >
             <span
-              class="size-2 rounded-full flex-shrink-0"
+              class="size-2.5 rounded-full flex-shrink-0"
               :style="{ background: lbl.color }"
             />
-            <span class="truncate">{{ lbl.title }}</span>
             <button
               type="button"
               title="Remover etiqueta"
