@@ -191,7 +191,12 @@ class Api::Custom::V1::Accounts::ContactTimelineController < Api::V1::Accounts::
     footer_text = footer_component&.[]('text').to_s
 
     buttons_component = (template['components'] || []).find { |c| c['type'].to_s.upcase == 'BUTTONS' }
-    buttons = (buttons_component&.[]('buttons') || []).map { |b| { type: b['type'], text: b['text'], url: b['url'], phone_number: b['phone_number'] } }
+    # processed_params.buttons traz o valor real de cada botão dinâmico, na MESMA
+    # ordem da definição. Ex: [{type:'url', parameter:'SsUvvVC_LY'}, ...]
+    button_params = processed['buttons'].is_a?(Array) ? processed['buttons'] : []
+    buttons = (buttons_component&.[]('buttons') || []).each_with_index.map do |b, idx|
+      { type: b['type'], text: b['text'], url: klaos_resolve_button_url(b['url'], button_params[idx]), phone_number: b['phone_number'] }
+    end
 
     {
       body: body_text.presence,
@@ -219,6 +224,21 @@ class Api::Custom::V1::Accounts::ContactTimelineController < Api::V1::Accounts::
       out = out.gsub("{{#{key}}}", value.to_s)
     end
     out
+  end
+
+  # Resolve a URL de um botão de template. Botões URL dinâmicos têm a definição
+  # com placeholder (ex: "https://app.klaos.ai/pay/{{1}}") e o valor real vem em
+  # processed_params.buttons[idx].parameter (ex: "SsUvvVC_LY") → URL final
+  # "https://app.klaos.ai/pay/SsUvvVC_LY". Botões estáticos voltam a url como é.
+  # Retorna nil se não houver url (QUICK_REPLY, etc).
+  def klaos_resolve_button_url(url, button_param)
+    return nil if url.blank?
+    return url unless url.include?('{{')
+
+    param = button_param.is_a?(Hash) ? (button_param['parameter'] || button_param['value']) : button_param
+    return url if param.blank?
+
+    url.gsub(/\{\{\s*\d+\s*\}\}/, param.to_s)
   end
 
   def serialize_sender(sender)

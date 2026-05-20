@@ -58,7 +58,8 @@ const fetchPage = async ({ before } = {}) => {
     }
     hasMore.value = !!res.data.has_more;
   } catch (e) {
-    error.value = e?.response?.data?.error || e.message || 'Erro ao carregar histórico';
+    error.value =
+      e?.response?.data?.error || e.message || 'Erro ao carregar histórico';
   } finally {
     isLoading.value = false;
   }
@@ -66,51 +67,133 @@ const fetchPage = async ({ before } = {}) => {
 
 const loadOlder = () => {
   if (!hasMore.value || messages.value.length === 0) return;
-  const oldestId = messages.value[0].id;
+  // Cursor = menor id carregado. Robusto mesmo se a ordem visual reagrupar.
+  const oldestId = messages.value.reduce(
+    (min, m) => (m.id < min ? m.id : min),
+    messages.value[0].id
+  );
   fetchPage({ before: oldestId });
 };
 
-watch(() => props.contactId, () => {
-  messages.value = [];
-  conversations.value = [];
-  hasMore.value = false;
-  fetchPage();
-});
+watch(
+  () => props.contactId,
+  () => {
+    messages.value = [];
+    conversations.value = [];
+    hasMore.value = false;
+    fetchPage();
+  }
+);
 
 onMounted(() => fetchPage());
 
+// Chave de dia (ano-mês-dia no fuso local do browser) pra agrupar separadores.
+const dayKey = ts => {
+  if (!ts) return null;
+  const d = new Date(ts * 1000);
+  if (Number.isNaN(d.getTime())) return null;
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+};
+
+// Agrupa mensagens em BLOCOS por conversa, com as conversas em ordem
+// cronológica de INÍCIO (conv.created_at). Isso evita o "desalinho" antigo:
+// quando lock_to_single_conversation estava OFF, conversas se sobrepunham no
+// tempo (ex: conv A 15:35→18:50 e conv B 15:45→15:46 dentro dela). Ordenar
+// tudo por created_at global intercalava as mensagens e fazia o divisor
+// repetir/fragmentar. Agora cada conversa é um bloco contínuo, e dentro do
+// bloco entram separadores por DIA.
 const itemsWithDividers = computed(() => {
   const items = [];
-  let lastConvId = null;
+
+  const msgsByConv = {};
   for (const m of messages.value) {
-    if (m.conversation_id !== lastConvId) {
-      const conv = conversationsById.value[m.conversation_id];
-      if (conv) items.push({ kind: 'divider', conv, key: `div-${conv.id}-${m.id}` });
-      lastConvId = m.conversation_id;
+    (msgsByConv[m.conversation_id] ||= []).push(m);
+  }
+
+  const orderedConvs = Object.keys(msgsByConv)
+    .map(id => {
+      const conv = conversationsById.value[id];
+      const firstMsgTs = Math.min(
+        ...msgsByConv[id].map(m => m.created_at || 0)
+      );
+      return { id, conv, sortTs: conv?.created_at ?? firstMsgTs };
+    })
+    .sort((a, b) => a.sortTs - b.sortTs);
+
+  for (const { id, conv } of orderedConvs) {
+    items.push({
+      kind: 'divider',
+      conv: conv || { id, display_id: id, status: null },
+      key: `div-${id}`,
+    });
+
+    const msgs = msgsByConv[id]
+      .slice()
+      .sort((a, b) => a.created_at - b.created_at || a.id - b.id);
+
+    let lastDay = null;
+    for (const m of msgs) {
+      const day = dayKey(m.created_at);
+      if (day && day !== lastDay) {
+        items.push({ kind: 'day', ts: m.created_at, key: `day-${id}-${day}` });
+        lastDay = day;
+      }
+      items.push({ kind: 'message', msg: m, key: `msg-${m.id}` });
     }
-    items.push({ kind: 'message', msg: m, key: `msg-${m.id}` });
   }
   return items;
 });
 
-const STATUS_LABEL = { 0: 'aberta', 1: 'resolvida', 2: 'pendente', 3: 'adiada' };
+const STATUS_LABEL = {
+  0: 'aberta',
+  1: 'resolvida',
+  2: 'pendente',
+  3: 'adiada',
+};
 const formatConvBoundary = conv => {
-  // resolved_at vem do additional_attributes.klaos_resolved_at; created_at é fallback.
-  const dt = conv.resolved_at || conv.created_at;
-  const d = dt ? new Date(dt * 1000) : null;
-  const dateStr = d && !isNaN(d.getTime())
-    ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
-    : '—';
+  // Data do divisor = INÍCIO da conversa (created_at). Antes usava resolved_at
+  // (fim da conversa), mas o divisor fica no TOPO do bloco — então mostrava uma
+  // data que não batia com onde as mensagens daquela conversa começam. Era a
+  // origem do "desalinho de datas".
+  const d = conv.created_at ? new Date(conv.created_at * 1000) : null;
+  const dateStr =
+    d && !isNaN(d.getTime())
+      ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
+      : null;
   const status = STATUS_LABEL[conv.status] || conv.status || '';
+  const statusPart = status ? ` · ${status}` : '';
   const isCurrent = String(conv.id) === String(props.currentConversationId);
-  return `Conversa #${conv.display_id} · ${conv.inbox_name || ''} · ${status} · ${dateStr}${isCurrent ? ' · atual' : ''}`;
+  // display_id pode vir nulo em dados antigos/sincronizados → cai pro id, e se
+  // nada existir omite o "#" em vez de mostrar "#undefined". Sem data → omite o
+  // trecho "iniciada" em vez de mostrar "—".
+  const idLabel = conv.display_id ?? conv.id;
+  const idPart = idLabel != null && idLabel !== '' ? ` #${idLabel}` : '';
+  const datePart = dateStr ? ` · iniciada ${dateStr}` : '';
+  return `Conversa${idPart} · ${conv.inbox_name || ''}${statusPart}${datePart}${isCurrent ? ' · atual' : ''}`;
+};
+
+const formatDay = ts => {
+  const d = new Date(ts * 1000);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
 };
 
 const formatTime = ts => {
   if (!ts) return '';
   const d = new Date(ts * 1000);
   if (isNaN(d.getTime())) return '';
-  return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
 
 // message_type: 0=incoming, 1=outgoing, 2=activity, 3=template
@@ -143,7 +226,10 @@ const messageBodyText = m => {
 const templateProcessedParams = m => {
   const body = m.additional_attributes?.template_params?.processed_params?.body;
   if (!body || typeof body !== 'object') return [];
-  return Object.entries(body).map(([key, value]) => ({ key, value: String(value ?? '') }));
+  return Object.entries(body).map(([key, value]) => ({
+    key,
+    value: String(value ?? ''),
+  }));
 };
 
 // Detecta bubble realmente vazia (sem texto, sem template, sem anexo) — nesse
@@ -168,26 +254,32 @@ const openImage = url => {
 </script>
 
 <template>
-  <div class="klaos-timeline flex flex-col h-full min-h-0 w-full bg-n-surface-1 overflow-hidden">
-    <div class="flex-shrink-0 px-4 py-2 border-b border-n-weak bg-n-alpha-1 text-sm text-n-slate-11">
+  <div
+    class="klaos-timeline flex flex-col h-full min-h-0 w-full bg-n-surface-1 overflow-hidden"
+  >
+    <div
+      class="flex-shrink-0 px-4 py-2 border-b border-n-weak bg-n-alpha-1 text-sm text-n-slate-11"
+    >
       <span class="i-ph-clock-counter-clockwise mr-1.5 align-middle" />
       Linha do tempo unificada — todas as conversas com este contato
       <span v-if="conversations.length" class="ml-2 text-xs text-n-slate-10">
-        ({{ conversations.length }} conversa{{ conversations.length === 1 ? '' : 's' }})
+        ({{ conversations.length }} conversa{{
+          conversations.length === 1 ? '' : 's'
+        }})
       </span>
     </div>
 
     <div class="flex-1 min-h-0 overflow-y-auto px-4 py-3">
       <div v-if="hasMore && !isLoading" class="text-center mb-3">
-        <button
-          class="text-xs text-n-brand hover:underline"
-          @click="loadOlder"
-        >
+        <button class="text-xs text-n-brand hover:underline" @click="loadOlder">
           Carregar mensagens mais antigas
         </button>
       </div>
 
-      <div v-if="isLoading && messages.length === 0" class="text-center text-sm text-n-slate-11 py-8">
+      <div
+        v-if="isLoading && messages.length === 0"
+        class="text-center text-sm text-n-slate-11 py-8"
+      >
         Carregando histórico...
       </div>
 
@@ -195,22 +287,45 @@ const openImage = url => {
         {{ error }}
       </div>
 
-      <div v-if="!isLoading && !error && messages.length === 0" class="text-center text-sm text-n-slate-11 py-8">
+      <div
+        v-if="!isLoading && !error && messages.length === 0"
+        class="text-center text-sm text-n-slate-11 py-8"
+      >
         Nenhuma mensagem encontrada para este contato.
       </div>
 
       <template v-for="item in itemsWithDividers" :key="item.key">
         <!-- Divisor entre conversas -->
-        <div v-if="item.kind === 'divider'" class="flex items-center gap-2 my-4">
+        <div
+          v-if="item.kind === 'divider'"
+          class="flex items-center gap-2 my-4"
+        >
           <div class="flex-1 h-px bg-n-strong" />
-          <span class="text-xs text-n-slate-10 font-medium px-2 py-0.5 rounded bg-n-alpha-1">
+          <span
+            class="text-xs text-n-slate-10 font-medium px-2 py-0.5 rounded bg-n-alpha-1"
+          >
             {{ formatConvBoundary(item.conv) }}
           </span>
           <div class="flex-1 h-px bg-n-strong" />
         </div>
 
+        <!-- Separador por dia (dentro do bloco de uma conversa) -->
+        <div
+          v-else-if="item.kind === 'day'"
+          class="flex items-center justify-center my-3"
+        >
+          <span
+            class="text-[11px] uppercase tracking-wide text-n-slate-10 font-medium px-3 py-0.5 rounded-full bg-n-alpha-2 first-letter:uppercase"
+          >
+            {{ formatDay(item.ts) }}
+          </span>
+        </div>
+
         <!-- Activity message (italic, centralizada) -->
-        <div v-else-if="isActivity(item.msg)" class="text-center text-xs text-n-slate-10 my-2 italic">
+        <div
+          v-else-if="isActivity(item.msg)"
+          class="text-center text-xs text-n-slate-10 my-2 italic"
+        >
           {{ item.msg.content }}
         </div>
 
@@ -226,13 +341,23 @@ const openImage = url => {
               :class="isIncoming(item.msg) ? 'justify-start' : 'justify-end'"
             >
               <span>{{ senderLabel(item.msg) }}</span>
-              <span v-if="isPrivateNote(item.msg)" class="px-1 rounded bg-n-amber-3 text-n-amber-11 font-medium">
-                <span class="i-ph-note-pencil size-3 align-middle mr-0.5" />nota interna
+              <span
+                v-if="isPrivateNote(item.msg)"
+                class="px-1 rounded bg-n-amber-3 text-n-amber-11 font-medium"
+              >
+                <span class="i-ph-note-pencil size-3 align-middle mr-0.5" />nota
+                interna
               </span>
-              <span v-if="isTemplate(item.msg)" class="px-1 rounded bg-n-blue-3 text-n-blue-11">
+              <span
+                v-if="isTemplate(item.msg)"
+                class="px-1 rounded bg-n-blue-3 text-n-blue-11"
+              >
                 template · {{ item.msg.template_meta?.name }}
               </span>
-              <span v-if="isTemplateMissing(item.msg)" class="px-1 rounded bg-n-ruby-3 text-n-ruby-11">
+              <span
+                v-if="isTemplateMissing(item.msg)"
+                class="px-1 rounded bg-n-ruby-3 text-n-ruby-11"
+              >
                 renomeado/excluído
               </span>
               <span>· {{ formatTime(item.msg.created_at) }}</span>
@@ -258,19 +383,27 @@ const openImage = url => {
               <div
                 v-if="messageBodyText(item.msg)"
                 class="message-formatter whitespace-pre-wrap"
-                v-html="formattedHtml(messageBodyText(item.msg), item.msg.private)"
+                v-html="
+                  formattedHtml(messageBodyText(item.msg), item.msg.private)
+                "
               />
 
               <!-- Fallback para template não achado: lista os params que foram enviados -->
               <div
-                v-if="isTemplateMissing(item.msg) && templateProcessedParams(item.msg).length"
+                v-if="
+                  isTemplateMissing(item.msg) &&
+                  templateProcessedParams(item.msg).length
+                "
                 class="text-xs"
               >
                 <div class="text-n-slate-11 italic mb-1">
-                  Template <strong>{{ item.msg.template_meta?.name }}</strong> foi renomeado ou excluído.
-                  Variáveis enviadas:
+                  Template
+                  <strong>{{ item.msg.template_meta?.name }}</strong> foi
+                  renomeado ou excluído. Variáveis enviadas:
                 </div>
-                <div class="flex flex-col gap-0.5 pl-2 border-l-2 border-n-alpha-2">
+                <div
+                  class="flex flex-col gap-0.5 pl-2 border-l-2 border-n-alpha-2"
+                >
                   <div
                     v-for="param in templateProcessedParams(item.msg)"
                     :key="param.key"
@@ -304,16 +437,39 @@ const openImage = url => {
                 v-if="item.msg.template_meta?.buttons?.length"
                 class="mt-2 flex flex-col gap-1 pt-2 border-t border-n-alpha-2"
               >
-                <span
+                <template
                   v-for="(btn, btnIdx) in item.msg.template_meta.buttons"
                   :key="btnIdx"
-                  class="text-xs text-n-blue-11 text-center py-1 rounded bg-n-alpha-1"
                 >
-                  <span v-if="btn.type === 'URL'" class="i-ph-link size-3 mr-1 align-middle" />
-                  <span v-else-if="btn.type === 'PHONE_NUMBER'" class="i-ph-phone size-3 mr-1 align-middle" />
-                  <span v-else class="i-ph-arrow-right size-3 mr-1 align-middle" />
-                  {{ btn.text }}
-                </span>
+                  <!-- URL clicável (botões tipo "Pagar com Pix/Boleto") -->
+                  <a
+                    v-if="btn.type === 'URL' && btn.url"
+                    :href="btn.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-xs text-n-blue-11 text-center py-1 rounded bg-n-alpha-1 hover:bg-n-alpha-3 hover:underline transition-colors"
+                  >
+                    <span class="i-ph-link size-3 mr-1 align-middle" />
+                    {{ btn.text }}
+                  </a>
+                  <!-- Telefone clicável -->
+                  <a
+                    v-else-if="btn.type === 'PHONE_NUMBER' && btn.phone_number"
+                    :href="`tel:${btn.phone_number}`"
+                    class="text-xs text-n-blue-11 text-center py-1 rounded bg-n-alpha-1 hover:bg-n-alpha-3 hover:underline transition-colors"
+                  >
+                    <span class="i-ph-phone size-3 mr-1 align-middle" />
+                    {{ btn.text }}
+                  </a>
+                  <!-- QUICK_REPLY (ou URL sem link resolvido): não navega -->
+                  <span
+                    v-else
+                    class="text-xs text-n-slate-11 text-center py-1 rounded bg-n-alpha-1"
+                  >
+                    <span class="i-ph-arrow-right size-3 mr-1 align-middle" />
+                    {{ btn.text }}
+                  </span>
+                </template>
               </div>
 
               <!-- Attachments -->
