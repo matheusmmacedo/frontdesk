@@ -159,11 +159,17 @@ const formatConvBoundary = conv => {
   const dateStr =
     d && !isNaN(d.getTime())
       ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
-      : '—';
+      : null;
   const status = STATUS_LABEL[conv.status] || conv.status || '';
   const statusPart = status ? ` · ${status}` : '';
   const isCurrent = String(conv.id) === String(props.currentConversationId);
-  return `Conversa #${conv.display_id} · ${conv.inbox_name || ''}${statusPart} · iniciada ${dateStr}${isCurrent ? ' · atual' : ''}`;
+  // display_id pode vir nulo em dados antigos/sincronizados → cai pro id, e se
+  // nada existir omite o "#" em vez de mostrar "#undefined". Sem data → omite o
+  // trecho "iniciada" em vez de mostrar "—".
+  const idLabel = conv.display_id ?? conv.id;
+  const idPart = idLabel != null && idLabel !== '' ? ` #${idLabel}` : '';
+  const datePart = dateStr ? ` · iniciada ${dateStr}` : '';
+  return `Conversa${idPart} · ${conv.inbox_name || ''}${statusPart}${datePart}${isCurrent ? ' · atual' : ''}`;
 };
 
 const formatDay = ts => {
