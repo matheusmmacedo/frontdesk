@@ -803,7 +803,6 @@ const klaosRemoveLabel = async title => {
           </span>
         </div>
         <div
-          v-if="klaosConversationLabels.length"
           class="flex items-center flex-wrap gap-1.5 text-xs mt-0.5"
         >
           <a
@@ -830,8 +829,14 @@ const klaosRemoveLabel = async title => {
               <span class="i-ph-x size-2.5" />
             </button>
           </span>
+          <a
+            v-if="!klaosConversationLabels.length"
+            class="text-xs text-n-slate-10 italic cursor-pointer hover:text-n-brand select-none"
+            title="Adicionar etiquetas"
+            @click.stop="klaosOpenLabelsPicker"
+          >adicionar</a>
         </div>`,
-    reason: 'conv-header-labels: linha "Etiquetas:" + chips com x pra remover inline',
+    reason: 'conv-header-labels: atalho "Etiquetas:" sempre visível (+ chips com x quando houver)',
   },
 
   // === KLaOS — Timeline unificada do contato (toggle no ConversationBox) ===
