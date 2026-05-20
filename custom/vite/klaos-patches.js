@@ -730,8 +730,25 @@ const klaosOpenLabelsPicker = async () => {
     window.dispatchEvent(new CustomEvent('klaos:focus-labels'));
   }, 250);
 };
+
+// Remove UMA etiqueta direto pelo "x" do chip, sem abrir o picker. Manda a
+// lista atual de labels da conversa menos a removida pro store
+// (conversationLabels/update espera a lista completa nova).
+const klaosRemoveLabel = async title => {
+  try {
+    const convId = props.chat?.id;
+    if (!convId) return;
+    const current = Array.isArray(props.chat?.labels) ? props.chat.labels : [];
+    const next = current.filter(t => t !== title);
+    if (next.length === current.length) return;
+    await store.dispatch('conversationLabels/update', {
+      conversationId: convId,
+      labels: next,
+    });
+  } catch (e) { /* noop */ }
+};
 </script>`,
-    reason: 'conv-header-labels: computed pra rota de edição + labels resolvidas',
+    reason: 'conv-header-labels: computed pra rota de edição + labels resolvidas + remoção inline',
   },
   {
     id: '/widgets/conversation/ConversationHeader.vue',
@@ -787,22 +804,34 @@ const klaosOpenLabelsPicker = async () => {
         </div>
         <div
           v-if="klaosConversationLabels.length"
-          class="flex items-center gap-1.5 overflow-hidden text-xs whitespace-nowrap mt-0.5"
+          class="flex items-center flex-wrap gap-1.5 text-xs mt-0.5"
         >
           <a
             class="text-xs font-medium text-n-brand underline underline-offset-2 hover:text-n-brand/80 cursor-pointer select-none"
-            title="Adicionar ou remover etiquetas"
+            title="Adicionar etiquetas"
             @click.stop="klaosOpenLabelsPicker"
           >Etiquetas:</a>
           <span
             v-for="lbl in klaosConversationLabels"
             :key="lbl.title"
-            :title="lbl.title"
-            class="size-3 rounded-full flex-shrink-0 outline outline-1 outline-n-slate-4"
-            :style="{ background: lbl.color }"
-          />
+            class="inline-flex items-center gap-1 pl-1.5 pr-0.5 py-0.5 rounded-full bg-n-alpha-2 text-n-slate-12 max-w-[160px]"
+          >
+            <span
+              class="size-2 rounded-full flex-shrink-0"
+              :style="{ background: lbl.color }"
+            />
+            <span class="truncate">{{ lbl.title }}</span>
+            <button
+              type="button"
+              title="Remover etiqueta"
+              class="flex items-center justify-center size-3.5 rounded-full flex-shrink-0 text-n-slate-11 hover:bg-n-alpha-3 hover:text-n-ruby-11"
+              @click.stop="klaosRemoveLabel(lbl.title)"
+            >
+              <span class="i-ph-x size-2.5" />
+            </button>
+          </span>
         </div>`,
-    reason: 'conv-header-labels: nova linha "Etiquetas:" (hiperlink) + bolinhas com tooltip',
+    reason: 'conv-header-labels: linha "Etiquetas:" + chips com x pra remover inline',
   },
 
   // === KLaOS — Timeline unificada do contato (toggle no ConversationBox) ===
