@@ -821,13 +821,14 @@ const klaosRemoveLabel = async title => {
               class="block rounded-full outline outline-1 outline-n-slate-4"
               :style="{ background: lbl.color, width: '13px', height: '13px' }"
             />
-            <button
-              type="button"
+            <span
+              role="button"
+              tabindex="0"
               title="Remover etiqueta"
-              class="absolute top-0 right-0 flex items-center justify-center rounded-full bg-n-background border border-n-strong text-n-slate-11 hover:text-n-ruby-11 hover:border-n-ruby-8"
+              class="absolute top-0 right-0 flex items-center justify-center rounded-full bg-n-background border border-n-strong text-n-slate-11 cursor-pointer hover:text-n-ruby-11 hover:border-n-ruby-8"
               :style="{ width: '11px', height: '11px', fontSize: '9px', lineHeight: '1', fontWeight: '700' }"
               @click.stop="klaosRemoveLabel(lbl.title)"
-            >×</button>
+            >×</span>
           </span>
           <a
             v-if="!klaosConversationLabels.length"
