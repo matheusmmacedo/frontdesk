@@ -31,10 +31,11 @@
 #
 # ── Comportamento ──────────────────────────────────────────────────────────────
 #
-#   • Só aplica em `sender_type == 'User'` + outgoing + não-privada
-#   • Não toca em mensagens do bot (sender_type == 'AgentBot')
+#   • Aplica em `sender_type == 'User'` (humano) E `'AgentBot'` (bot), outgoing + não-privada
+#   • Pro bot, o template usa o nome do bot (ex: "**Atendente LARA:**")
 #   • Não toca em notas privadas
 #   • Idempotente: se content já começa com o prefix, não duplica
+#     (cobre o caso do KLaOS já ter prefixado a mensagem do bot)
 #   • Se template estiver vazio/null → comportamento default do Chatwoot (sem prefix)
 #
 # ── Config via SQL (até UI estar pronta) ───────────────────────────────────────
@@ -106,8 +107,12 @@ Rails.application.config.to_prepare do
     define_method :klaos_apply_human_prefix do
       tag = "[KlaosHumanMessagePrefix] conv=#{conversation_id} sender=#{sender_type}/#{sender_id} mt=#{message_type.inspect} priv=#{private}"
 
-      unless sender_type == 'User'
-        Rails.logger.debug("#{tag} skip: not User")
+      # Aplica em humanos (User) E bots (AgentBot). Pro bot, o template renderiza
+      # o nome do bot (ex: "**Atendente LARA:**"). O KLaOS já prefixa ALGUMAS
+      # mensagens do bot — o check idempotente abaixo evita duplicar; as que vêm
+      # sem prefixo ganham aqui, deixando o bot SEMPRE assinado.
+      unless %w[User AgentBot].include?(sender_type)
+        Rails.logger.debug("#{tag} skip: sender_type=#{sender_type} (nem User nem AgentBot)")
         return
       end
       if private
