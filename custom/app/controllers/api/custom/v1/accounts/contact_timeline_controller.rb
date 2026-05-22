@@ -256,7 +256,10 @@ class Api::Custom::V1::Accounts::ContactTimelineController < Api::V1::Accounts::
       file_type: att.file_type,
       data_url: att.file_url,
       thumb_url: att.thumb_url,
-      file_size: att.file_size,
+      # Attachment não tem #file_size (o byte_size fica no blob do ActiveStorage).
+      # Usar att.file_size lançava NoMethodError → serialize_message inteiro
+      # caía no rescue e a mensagem voltava SEM anexos (mídia sumia do histórico).
+      file_size: (att.file.byte_size if att.file.attached?),
       extension: att.extension,
       fallback_title: att.fallback_title,
       coordinates_lat: att.coordinates_lat,
