@@ -1,22 +1,24 @@
 # frozen_string_literal: true
 
-# ACTIVE STORAGE SIGNED URL EXPIRY — 24h
+# ACTIVE STORAGE SIGNED URL EXPIRY — 7 dias
 #
 # Default Rails: 5 min (300s). Cenário ruim na prática:
 # atendente abre conversa com anexos → URLs assinadas Supabase carregadas
-# no Vue → fica > 5 min na tela (longa conversa, multitask) → URLs expiram
-# → próximo render de <img>/<audio> dá 403 → aparece quebrado.
+# no Vue → fica na tela (aba aberta, multitask) → URLs expiram → próximo
+# render de <img>/<audio> dá 403/indisponível.
 #
-# 24h cobre uma jornada inteira de atendente sem precisar recarregar a
-# página. Trade-off de segurança: signed URL vaza, vale por 24h em vez
-# de 5 min. Pro nosso threat model (URLs ficam só no app autenticado, não
-# são compartilhadas externamente) é aceitável.
+# Áudio/vídeo usam modo REDIRECT (precisam do Content-Length do Supabase pro
+# player calcular duração). O redirect 302 resolve numa signed URL Supabase
+# cujo TTL = este valor, e o browser cacheia o 302 por esse mesmo tempo.
+# Com 24h, mídia ficava "indisponível após um tempo" quando a aba passava de
+# ~24h. 7 dias (máximo do S3/Supabase) cobre qualquer jornada — na prática
+# elimina o problema enquanto o proxy com Content-Length (fix definitivo) não
+# entra. Trade-off de segurança: signed URL vale 7d; threat model interno
+# (URLs só no app autenticado), aceitável.
 #
-# Apenas afeta URLs *novas* geradas após o boot. URLs antigas mantém o
-# expiry com que foram assinadas.
+# Apenas afeta URLs *novas* geradas após o boot.
 
-Rails.application.config.active_storage.service_urls_expire_in = 24.hours
+Rails.application.config.active_storage.service_urls_expire_in = 7.days
 
 # Rails.logger é nil durante rake assets:precompile (build time), então safe-nav.
-# No runtime (web/worker boot) o logger existe e a linha aparece.
-Rails.logger&.info '[ActiveStorage] service_urls_expire_in = 24h'
+Rails.logger&.info '[ActiveStorage] service_urls_expire_in = 7 days'
