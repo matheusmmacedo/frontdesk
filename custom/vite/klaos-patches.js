@@ -839,6 +839,17 @@ const klaosRemoveLabel = async title => {
         </div>`,
     reason: 'conv-header-labels: atalho "Etiquetas:" sempre visível (+ chips com x quando houver)',
   },
+  {
+    // KLaOS — o header tinha altura FIXA (h-24 mobile / xl:h-12 = 48px desktop),
+    // dimensionada pra 2 linhas (nome + inbox). A linha de etiquetas virou a 3ª
+    // e estourava: cortava o topo do nome e ficava estranho no responsivo.
+    // Troca pra min-height (cresce com o conteúdo) — acomoda a linha de
+    // etiquetas sem cortar o nome, e o flex-wrap das etiquetas cuida do responsivo.
+    id: '/widgets/conversation/ConversationHeader.vue',
+    from: `px-3 pt-3 pb-2 h-24 xl:h-12`,
+    to: `px-3 pt-3 pb-2 min-h-[6rem] xl:min-h-[3rem]`,
+    reason: 'conv-header: altura flexível (min-h) pra caber a linha de etiquetas sem cortar o nome',
+  },
 
   // === KLaOS — Timeline unificada do contato (toggle no ConversationBox) ===
   // Caminho B do design "todas as convs em uma única view": injeta um toggle
