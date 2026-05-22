@@ -1128,27 +1128,38 @@ import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
     reason: 'emoji-frequents: resolve ícone da tab a partir de categories (inclui Frequentes virtual)',
   },
   {
-    // KLaOS — abre o picker JÁ na categoria "Frequentes" (estilo WhatsApp):
-    // os mais usados aparecem em cima, com título claro, pro atendente clicar
-    // de cara. Antes ficavam só como uma aba (emoji) confusa no rodapé.
+    // KLaOS — mostra "Frequentes" como PRIMEIRA seção da view padrão do picker
+    // (estilo WhatsApp): os mais usados aparecem em cima E todos os outros emojis
+    // continuam visíveis/roláveis abaixo. (Antes eu abria direto na categoria
+    // Frequentes, o que escondia os demais emojis — bug.)
     id: '/shared/components/emoji/EmojiInput.vue',
-    from: `  mounted() {
-    this.focusSearchInput();
-  },`,
-    to: `  created() {
-    // KLaOS — se há emojis frequentes, abre direto neles (estilo WhatsApp).
-    // Setado em created (antes do 1º render) pra não dar flash da view padrão.
-    if (this.klaosFrequentEmojis && this.klaosFrequentEmojis.length > 0) {
-      this.selectedKey = 'Frequentes';
-    }
-  },
-  mounted() {
-    // Só foca a busca se não abriu nos Frequentes.
-    if (this.selectedKey === 'Search') {
-      this.focusSearchInput();
-    }
-  },`,
-    reason: 'emoji-frequents: abre o picker na categoria Frequentes (WhatsApp-style, em cima)',
+    from: `    filterAllEmojisBySearch() {
+      return this.emojis.map(category => {
+        const allEmojis = category.emojis.filter(emoji =>
+          emoji.slug.replaceAll('_', ' ').includes(this.search.toLowerCase())
+        );
+        return allEmojis.length > 0
+          ? { ...category, emojis: allEmojis }
+          : { ...category, emojis: [] };
+      });
+    },`,
+    to: `    filterAllEmojisBySearch() {
+      const base = this.emojis.map(category => {
+        const allEmojis = category.emojis.filter(emoji =>
+          emoji.slug.replaceAll('_', ' ').includes(this.search.toLowerCase())
+        );
+        return allEmojis.length > 0
+          ? { ...category, emojis: allEmojis }
+          : { ...category, emojis: [] };
+      });
+      // KLaOS — sem busca, prepend "Frequentes" no topo; todos os outros emojis
+      // seguem visíveis abaixo. Com busca ativa, não mostra Frequentes.
+      if (this.search === '' && this.klaosFrequentEmojis && this.klaosFrequentEmojis.length > 0) {
+        return [{ name: 'Frequentes', slug: 'klaos-frequentes', emojis: this.klaosFrequentEmojis }, ...base];
+      }
+      return base;
+    },`,
+    reason: 'emoji-frequents: Frequentes como 1ª seção da view padrão (sem esconder os demais)',
   },
 
   // === KLaOS — botão de etiquetas inline na barra do compositor ===
