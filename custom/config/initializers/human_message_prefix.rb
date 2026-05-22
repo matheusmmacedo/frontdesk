@@ -83,9 +83,10 @@ module KlaosHumanMessagePrefix
   def render(template, user)
     return '' if template.blank? || user.blank?
 
-    name = user.name.to_s
+    name = klaos_clean_name(user.name.to_s)
     first = name.split(/\s+/).first.to_s
-    display = (user.respond_to?(:display_name) ? user.display_name.presence : nil) || name
+    raw_display = (user.respond_to?(:display_name) ? user.display_name.presence : nil) || name
+    display = klaos_clean_name(raw_display)
 
     template
       .gsub('{NAME_UPPER}', name.upcase)
@@ -94,6 +95,18 @@ module KlaosHumanMessagePrefix
       .gsub('{FIRST_NAME}', first)
       .gsub('{DISPLAY_NAME_UPPER}', display.upcase)
       .gsub('{DISPLAY_NAME}', display)
+  end
+
+  # O KLaOS registra bots no Chatwoot como "Display | slug"
+  # (ex: "Lara | lara", "Qualificador de Leads | qualificador-de-leads"). O slug
+  # é interno — tira ele pra assinatura sair limpa em QUALQUER variável
+  # ({NAME}, {NAME_UPPER}, {FIRST_NAME}...), não só por sorte com {FIRST_NAME}.
+  # Humanos (User) não têm " | " no nome → no-op. Idempotente e seguro.
+  def klaos_clean_name(raw)
+    str = raw.to_s
+    return str unless str.include?(' | ')
+
+    str.split(' | ').first.to_s.strip
   end
 end
 
