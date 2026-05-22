@@ -1116,6 +1116,29 @@ import KlaosTimeline from 'next/KlaosTimeline/KlaosTimeline.vue';`,
     },`,
     reason: 'emoji-frequents: resolve ícone da tab a partir de categories (inclui Frequentes virtual)',
   },
+  {
+    // KLaOS — abre o picker JÁ na categoria "Frequentes" (estilo WhatsApp):
+    // os mais usados aparecem em cima, com título claro, pro atendente clicar
+    // de cara. Antes ficavam só como uma aba (emoji) confusa no rodapé.
+    id: '/shared/components/emoji/EmojiInput.vue',
+    from: `  mounted() {
+    this.focusSearchInput();
+  },`,
+    to: `  created() {
+    // KLaOS — se há emojis frequentes, abre direto neles (estilo WhatsApp).
+    // Setado em created (antes do 1º render) pra não dar flash da view padrão.
+    if (this.klaosFrequentEmojis && this.klaosFrequentEmojis.length > 0) {
+      this.selectedKey = 'Frequentes';
+    }
+  },
+  mounted() {
+    // Só foca a busca se não abriu nos Frequentes.
+    if (this.selectedKey === 'Search') {
+      this.focusSearchInput();
+    }
+  },`,
+    reason: 'emoji-frequents: abre o picker na categoria Frequentes (WhatsApp-style, em cima)',
+  },
 
   // === KLaOS — botão de etiquetas inline na barra do compositor ===
   // Atalho pro time de cobrança: adicionar/remover etiqueta sem precisar abrir
