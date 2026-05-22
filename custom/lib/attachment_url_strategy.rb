@@ -1,36 +1,41 @@
 # frozen_string_literal: true
 
-# ATTACHMENT URL STRATEGY — proxy pra imagem/file, redirect pra áudio/vídeo
+# ATTACHMENT URL STRATEGY — toda mídia pelo proxy custom com Content-Length
 #
-# Contexto: ActiveStorage proxy mode (resolve_model_to_route = :rails_storage_proxy)
-# resolve o "indisponível intermitente" pra imagens (URLs estáveis,
-# Cache-Control 100 anos, browser cacheia eternamente).
+# Contexto/histórico:
+#   - Imagem: proxy mode (resolve_model_to_route = :rails_storage_proxy) resolveu
+#     o "indisponível intermitente" (URL estável, cache longo).
+#   - Áudio/vídeo: o proxy upstream usa ActionController::Live → chunked → SEM
+#     Content-Length → player HTML5 dá "Infinity:NaN". Por isso ficaram em
+#     REDIRECT (signed URL Supabase tem Content-Length nativo) — MAS a signed URL
+#     expira (service_urls_expire_in) → "indisponível após um tempo".
 #
-# Mas proxy mode usa send_blob_stream → ActionController::Live → chunked
-# transfer encoding → SEM Content-Length. Player HTML5 <audio>/<video>
-# precisa de Content-Length pra calcular `duration` no metadata load
-# → sem isso aparece "Infinity:NaN".
+# Fix definitivo: TODA mídia (image/audio/video) passa a usar o proxy custom
+# (Api::Custom::V1::MediaController), que serve o blob com Content-Length +
+# Accept-Ranges + Cache-Control longo + retry. Resultado:
+#   - URL permanente e cacheável (Cloudflare) → nunca expira.
+#   - Content-Length presente → player calcula duração (sem Infinity:NaN).
+#   - Range/seek funciona.
 #
-# Solução: pra áudio/vídeo, força o uso de redirect URL (signed Supabase),
-# que tem Content-Length nativo. Pra imagem/file, mantém proxy (mais
-# importante o cache estável que duração de player).
+# Documentos (file) seguem no proxy upstream (super) — não precisam de duração.
 #
-# Trade-off: signed URL áudio/vídeo expira em 24h (service_urls_expire_in).
-# Pra atendimento normal (áudio escutado em minutos/horas) é OK. Se ficar
-# pendente >24h, refresh resolve.
+# Attachment#download_url continua direto pro Supabase (Meta WhatsApp fetcha de lá).
 
 module AttachmentUrlStrategy
-  AUDIO_VIDEO_TYPES = %w[audio video].freeze
+  MEDIA_TYPES = %w[image audio video].freeze
 
   def file_url
     return '' unless file.attached?
+    return super unless MEDIA_TYPES.include?(file_type)
 
-    if AUDIO_VIDEO_TYPES.include?(file_type)
-      # Força redirect (não proxy) — gera signed URL Supabase com
-      # Content-Length nativo pro player HTML5 ler duração.
-      Rails.application.routes.url_helpers.rails_storage_redirect_url(file)
-    else
-      super
-    end
+    blob = file.blob
+    Rails.application.routes.url_helpers.klaos_media_url(
+      signed_id: blob.signed_id,
+      filename: blob.filename.to_s
+    )
+  rescue StandardError => e
+    # Rota custom indisponível / host ausente → cai pro comportamento upstream.
+    Rails.logger&.warn("[AttachmentUrlStrategy] fallback pra super: #{e.class}: #{e.message}")
+    super
   end
 end
