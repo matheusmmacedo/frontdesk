@@ -37,8 +37,10 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
       @conversation.assignee_agent_bot_id = reattach_bot_id
       @conversation.status = :pending
       @conversation.save!
+      activity = "Conversa devolvida ao bot por #{current_user.name}"
+      activity += ' (com análise imediata)' if analyze_now?
       @conversation.messages.create!(
-        content: "Conversa devolvida ao bot por #{current_user.name}",
+        content: activity,
         message_type: :activity,
         account_id: @conversation.account_id,
         inbox_id: @conversation.inbox_id
@@ -67,6 +69,13 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
     render json: { error: 'Forbidden' }, status: :forbidden
   end
 
+  # Quando true, o atendente pediu pro bot analisar a conversa AGORA e responder
+  # se fizer sentido (em vez de só esperar a próxima mensagem do cliente). Vai no
+  # payload do bridge — o agente KLaOS implementa a decisão "devo responder?".
+  def analyze_now?
+    ActiveModel::Type::Boolean.new.cast(params[:analyze_now]) || false
+  end
+
   def notify_klaos_bridge(conversation, user)
     webhook_url = conversation.account.custom_attributes&.dig('klaos_bridge_webhook_url') ||
                   ENV['KLAOS_BRIDGE_WEBHOOK_URL']
@@ -91,6 +100,11 @@ class Api::V1::Accounts::TransferToBotController < Api::V1::Accounts::BaseContro
       conv_display_id: conversation.display_id,
       workspace_id: workspace_id,
       chatwoot_account_id: conversation.account_id,
+      # KLaOS: quando true, rodar o agente sobre o histórico AGORA e responder se
+      # fizer sentido (não esperar a próxima mensagem do cliente). Contrato em
+      # docs/para-klaos-agent/BRIDGE_ANALYZE_ON_TRANSFER.md. Campo aditivo —
+      # KLaOS ignora até implementar (backward-compatible).
+      analyze_now: analyze_now?,
       reason: "initiator:#{user.id}:#{user.name}"
     }
 

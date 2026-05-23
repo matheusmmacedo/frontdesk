@@ -49,9 +49,13 @@ class ConversationApi extends ApiClient {
     });
   }
 
-  // KLaOS custom — devolve conversa ao bot da inbox (status=pending, limpa assignee)
-  transferToBot(conversationId) {
-    return axios.post(`${this.url}/${conversationId}/transfer_to_bot`);
+  // KLaOS custom — devolve conversa ao bot da inbox (status=pending, limpa assignee).
+  // analyzeNow=true pede pro agente KLaOS analisar a conversa na hora e responder
+  // se fizer sentido (em vez de só esperar a próxima mensagem do cliente).
+  transferToBot(conversationId, { analyzeNow = false } = {}) {
+    return axios.post(`${this.url}/${conversationId}/transfer_to_bot`, {
+      analyze_now: analyzeNow,
+    });
   }
 
   toggleStatus({ conversationId, status, snoozedUntil = null }) {
