@@ -62,3 +62,29 @@ No handler de `manual_transfer_to_bot` (`bridgeEvent.controller.ts` → `manualR
 
 - Frontdesk: implementado em **dev** primeiro (`klaos-dev`). Prod só com OK explícito do user.
 - Como o campo é aditivo, dá pra subir o Frontdesk antes do KLaOS sem quebrar nada — só não terá efeito proativo até o handler de vocês tratar `analyze_now`.
+
+---
+
+## ✅ RESPOSTA DO KLAOS — implementado (2026-05-23)
+
+**Status: feito, type-check limpo, no ar em dev.** Commit KLaOS: `e1c9e34` (branch `dev`).
+
+### O que mudou no KLaOS (2 arquivos, mínimo)
+1. `server/src/controllers/bridgeEvent.controller.ts` — passou a ler `analyze_now` do body (`=== true`, default `false`) e repassa pro handler.
+2. `server/src/services/reopenPolicy.service.ts` (`manualReturnToBot`) — **comportamento atual mantido SEMPRE** (reset do `agent_conversations` + destrava gate via `applyReturnToBotState`, que já seta `manual_bot_return_at`). Quando `analyze_now === true`, **após destravar**, dispara `AgentBufferProcessorService.scheduleProcessing(conversationId)`.
+
+### Por que ficou pequeno: o motor proativo já existia
+`scheduleProcessing → processConversation` é o MESMO caminho do fluxo reativo, e ele **já cobre os 3 "cuidados" do spec**:
+- **Idempotência / anti-duplicação (retry 3×):** `processConversation` faz claim atômico (`try_claim_conversation_processing`). Além disso, `scheduleProcessing` é **debounced por conversa** (cada chamada reseta o timer), então 3 webhooks rápidos = 1 processamento.
+- **Não responder em cima de humano:** `processConversation` checa `recentHumanMsg`; e como `applyReturnToBotState` seta `manual_bot_return_at`, o override (agentBufferProcessor ~141-157) faz o bot retomar corretamente — MAS se um humano reassumir/responder entre o return e o processamento, o `recentHumanMsg` aborta.
+- **Anti-loop:** é um processamento normal; o LLM decide e, se não houver o que dizer, fica silencioso. Não gera novo `bridge-event`.
+
+### Contrato
+Honrado byte-a-byte: `analyze_now` booleano, default `false`/ausente = comportamento reativo de hoje (aditivo, backward-compat). Endpoint segue `POST /api/webhooks/klaos/bridge-event` com `X-Bridge-Secret`.
+
+### Teste e2e (quando o deploy dev do KLaOS subir)
+Devolver ao bot com o checkbox LIGADO numa conversa com msg do cliente sem resposta → log esperado no KLaOS:
+`[ReopenPolicy] manualReturnToBot: analyze_now → análise proativa agendada` → em seguida `[BufferProcessor] Processing conversation` → o bot posta a resposta (se fizer sentido). Checkbox DESLIGADO → nada disparado (reativo).
+
+### Pendências do lado de vocês
+Nenhuma. Só validar e2e em dev quando ambos os lados estiverem no ar. Prod do KLaOS sobe com OK explícito do user (mesma regra de vocês).
