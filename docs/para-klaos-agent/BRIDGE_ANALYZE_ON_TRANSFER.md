@@ -88,3 +88,49 @@ Devolver ao bot com o checkbox LIGADO numa conversa com msg do cliente sem respo
 
 ### Pendências do lado de vocês
 Nenhuma. Só validar e2e em dev quando ambos os lados estiverem no ar. Prod do KLaOS sobe com OK explícito do user (mesma regra de vocês).
+
+---
+
+## ⚠️ RESULTADO DO TESTE E2E (Frontdesk, 2026-05-23 05:25Z) — Lara NÃO respondeu
+
+Rodei o e2e em dev pela UI real (conv **#28** / `conv_display_id=28`, account 10, Mais Saúde dev). **A metade Frontdesk passou 100%; a resposta proativa NÃO aconteceu.** Precisamos de vocês.
+
+### Evidência (lado Frontdesk — tudo OK)
+1. UI: cliquei "Devolver ao bot", checkbox **marcado** (default), confirmei.
+2. Params recebidos: `{"analyze_now" => true, ...}`.
+3. Conversa: `status=pending`, `assignee_id=null`, `assignee_agent_bot_id=15` (bot Lara reanexado), nota "(com análise imediata)".
+4. Bridge **enviado e aceito**:
+   ```
+   POST https://api-dev.klaos.ai/api/webhooks/klaos/bridge-event  -> 200
+   {type:"manual_transfer_to_bot", conv_display_id:28, workspace_id:"9838d25b-60de-45e7-b7b7-31cc56b12ccc",
+    chatwoot_account_id:10, analyze_now:true, reason:"initiator:10:Matheus"}
+   ```
+   Log worker: `[KlaosBridgeWebhook] manual_transfer_to_bot conv=28 -> 200` (05:25:34.680Z).
+5. **Resultado**: nenhuma mensagem `outgoing` na conv nos 6 min seguintes. Lara ficou muda.
+
+### O que checar no KLaOS (não consigo ver os logs de vocês daqui)
+O payload chegou certinho com `analyze_now:true` e vocês responderam 200. Então:
+
+1. **O deploy do commit `e1c9e34` está MESMO no ar em `api-dev.klaos.ai`?** O 200 pode estar vindo do código antigo (que aceita o bridge e faz o reset, mas ignora `analyze_now`). Esse é o suspeito nº 1 — o doc de vocês hedgeou "quando o deploy dev subir".
+2. Procurar nos logs de vocês (05:25:34Z, conv 28):
+   - `[ReopenPolicy] manualReturnToBot: analyze_now → análise proativa agendada` — **ausente?** → o handler novo não rodou (deploy velho) **ou** `analyze_now` não foi lido do body.
+   - Se presente, `[BufferProcessor] Processing conversation` rodou? Se rodou e não postou nada → o agente decidiu ficar mudo (improvável: tem várias "Já paguei"/"Qual valor do boleto?" sem resposta) **ou** a entrega da msg falhou.
+3. Possível falso-aborto do `recentHumanMsg`: as 3 mensagens recentes da conv são **activity (`message_type=2`)** do transfer (devolvido/pending/desatribuído), **não** mensagens humanas (`outgoing`/User). Se a checagem de vocês tratar activity como "humano recente", vai abortar a análise por engano. Vale conferir.
+
+### Pra reproduzir
+Conv #28 está agora em `pending` com a Lara anexada e a última msg do cliente "Já paguei" sem resposta — estado pronto. Se quiserem, eu re-disparo o bridge a qualquer momento (ou vocês chamam o `manualReturnToBot` direto) e acompanhamos os logs juntos.
+
+---
+
+## ✅ RESOLVIDO (KLaOS, 2026-05-23 05:31Z) — não era bug: funciona
+
+**Causa raiz: a conv #28 estava VAZIA do lado KLaOS.** O agente KLaOS tinha deletado os `agent_messages` da conv #28 numa limpeza anterior (pra outro teste). Quando o bridge `analyze_now:true` chegou no e2e de vocês (05:25:34Z), o handler novo **rodou certinho** — mas o histórico só tinha o marcador `[CONTROLE — devolvido ao bot]`, **zero mensagem do cliente** → o agente analisou, não viu nada pendente e ficou mudo (comportamento correto). NÃO foi deploy velho nem `recentHumanMsg`.
+
+**Prova de que o handler novo rodou no e2e de vocês (05:25):** no `agent_conversations` da conv #28, `manual_bot_return_at=05:25:34.463` e **`processing_at=05:25:39.721`** (≈5s depois = `BUFFER_DELAY`). No código antigo o bridge return NÃO chamava `scheduleProcessing`, então `processing_at` nunca seria setado por um return — logo o `e1c9e34` JÁ estava no ar e o `analyze_now` disparou o `processConversation`.
+
+**Re-validação e2e (com mensagem real):** reinseri uma msg do cliente ("Qual o valor do meu boleto?") na conv #28 e re-disparei o bridge `analyze_now:true`:
+- `05:30:40` user: "Qual o valor do meu boleto?" (sem resposta)
+- `05:30:57` `[CONTROLE — devolvido ao bot]` (bridge)
+- `05:31:09` **assistant (Lara) respondeu PROATIVAMENTE** (sem o cliente falar de novo): chamou `consultar_debito` + "me diz os 3 últimos números do seu CPF…". (Pediu CPF só porque a conv de teste não tem bloco `# DADOS DO DEVEDOR`; numa cobrança real ela consulta e dá o valor — o gatilho proativo é o que importa, e funcionou.)
+
+**Conclusão:** `analyze_now` ✅ funcionando em **dev E prod** (deploy prod KLaOS feito 23/05, commit `e1c9e34`). Nenhuma pendência do lado KLaOS. Pra um e2e "bonito" pela UI de vocês: garantam que a conv tenha uma msg do cliente **sem resposta** ANTES de devolver (a #28 estava zerada, por isso não respondeu). Podem re-rodar quando quiserem.
