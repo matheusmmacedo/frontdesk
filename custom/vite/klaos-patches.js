@@ -146,6 +146,12 @@ const PATCHES = [
   },
   {
     id: '/components/buttons/ResolveAction.vue',
+    from: "import Button from 'dashboard/components-next/button/Button.vue';",
+    to: "import Button from 'dashboard/components-next/button/Button.vue';\nimport TransferToBotButton from 'next/KlaosTransferToBot/TransferToBotButton.vue';",
+    reason: 'devolver-ao-bot: import componente custom (botão + diálogo + checkbox análise)',
+  },
+  {
+    id: '/components/buttons/ResolveAction.vue',
     from: `// KLaOS custom — botão "Devolver ao bot" aparece em convs com humano atribuído.
 // Backend valida se faz sentido de fato devolver (inbox com bot). Se não tem bot,
 // conv fica pending e o admin resolve manualmente.
@@ -222,19 +228,9 @@ const showTransferToBot = computed(
     from: `  <div class="flex relative justify-end items-center resolve-actions">
     <ButtonGroup`,
     to: `  <div class="flex relative justify-end items-center resolve-actions">
-    <Button
-      v-if="showTransferToBot"
-      :label="t('CONVERSATION.RESOLVE_DROPDOWN.TRANSFER_TO_BOT')"
-      icon="i-lucide-bot"
-      size="sm"
-      color="slate"
-      class="mr-3 outline outline-1 outline-n-container shadow rounded-lg"
-      :is-loading="isLoading"
-      :disabled="isLoading"
-      @click="transferToBot"
-    />
+    <TransferToBotButton v-if="showTransferToBot" />
     <ButtonGroup`,
-    reason: 'devolver-ao-bot: botão visível ao lado do Resolver',
+    reason: 'devolver-ao-bot: botão visível (componente custom com diálogo + checkbox de análise)',
   },
 
   // === KLaOS — "Minhas" sticky contra broadcasts transientes do bot ===
