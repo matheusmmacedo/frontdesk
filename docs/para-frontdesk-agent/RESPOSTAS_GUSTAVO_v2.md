@@ -8,7 +8,7 @@
 - **O que foi feito** (descrição gerencial, NÃO técnica — sem jargão interno, sem nomes de classe/arquivo).
 - **Como o Gustavo testa** (passo a passo curto que ele consegue executar).
 
-Tom: **gerencial, simples, direto**. **JAMAIS** dizer que foi erro nosso/bug nosso/falha nossa — explicar a causa de forma técnica neutra (ex.: "ajustamos a configuração X pra Y", "o comportamento foi atualizado pra Z"). Quando precisar mencionar causa, descrever como melhoria ou ajuste de comportamento, nunca como assunção de culpa.
+Tom: **gerencial, simples, direto**. **JAMAIS** dizer que foi erro nosso/bug nosso/falha nossa — explicar a causa de forma técnica neutra (ex.: "ajustamos a configuração X pra Y", "o comportamento foi atualizado pra Z"). Quando precisar mencionar causa, descrever como melhoria ou ajuste de comportamento, nunca como assunção de culpa. A plataforma se chama **Frontdesk** em toda comunicação.
 
 Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gustavo v2 — itens 1/2/6/7/8/9/10/11/12 preenchidos` — eu pego daqui e colo no doc final pro Gustavo no Drive.
 
@@ -16,16 +16,13 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 
 ## 1 — Ordem dos templates de resposta (protesto em 1º)
 **Relato do Gustavo:** "Desconfigurou e não está mais na ordem dos mais usados. Colocar de novo na ordem — o mais usado inicialmente é o de protesto."
-**Ex.:** —
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **Status:** em verificação.
+> **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> O Frontdesk já ordena os templates **automaticamente pelos mais usados** — não é manual. Conforme a operação for usando, o ranking se ajusta sozinho, e o "protesto" volta pro topo na medida em que for o template mais disparado.
+> A ordenação dos templates pelos mais usados existe no Frontdesk (ordenação automática, sem precisar configurar manualmente). Vamos verificar por que essa ordem deixou de refletir o uso da operação e reposicionar o "protesto" no topo. Te respondemos com prazo até quarta.
 >
-> Vamos checar por que a ordem deixou de refletir o uso da operação (a contagem pode ter "esquentado" depois de uma atualização e o ranking atual estar baseado em pouco histórico). Reposicionamos o "protesto" no topo e te avisamos.
->
-> **Como testar:** abrir uma conversa → seletor de templates → "protesto" aparece no topo da lista.
+> **Como testar (após o ajuste):** dentro de uma conversa, no campo de mensagem, abrir o seletor de templates → o template de **protesto** aparece no topo da lista.
 
 ---
 
@@ -34,11 +31,11 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 **Ex.:** PAULO ROBERTO DE ARRUDA PINTO
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **Status:** vamos ajustar.
+> **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> Hoje, ao disparar uma notificação ativa pra um contato, o Frontdesk não atribui a conversa automaticamente ao atendente que enviou — fica precisando atribuir manualmente ou reabrir pra ela cair em "Minhas". Vamos ajustar pra que, **ao enviar a notificação, a conversa já apareça em "Minhas" do remetente na hora**, sem precisar pesquisar/reabrir. Te avisamos quando estiver no ar.
+> Hoje o Frontdesk não atribui automaticamente a conversa ao atendente que disparou a notificação. Vamos ajustar pra que, **ao enviar a notificação, a conversa caia direto em "Minhas" do remetente**, sem precisar pesquisar ou reabrir. Te respondemos com prazo até quarta.
 >
-> **Como testar (depois do ajuste):** disparar um template pra um contato → a conversa aparece direto em "Minhas" do atendente que enviou.
+> **Como testar (após o ajuste):** disparar um template pra um contato → abrir a aba **"Minhas"** no topo da lista de conversas → a conversa do contato está lá.
 
 ---
 
@@ -46,13 +43,13 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 **Relato do Gustavo:** "Pra negrito tem que voltar o asterisco várias vezes — primeiro fica itálico. Não usamos itálico, só negrito. Deixar 1 asterisco no começo e fim = negrito."
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **Status:** vamos ajustar.
+> **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> Hoje o editor do Frontdesk segue o padrão de formatação universal (Markdown): `*texto*` (um asterisco) faz **itálico** e `**texto**` (dois asteriscos) faz **negrito**. Vamos ajustar pro estilo WhatsApp — **um asterisco = negrito** — pra ficar igual à digitação que a operação já está acostumada. Te avisamos quando estiver no ar.
+> Hoje o editor do Frontdesk usa o padrão universal de formatação (Markdown): `*texto*` (um asterisco) faz **itálico** e `**texto**` (dois asteriscos) faz **negrito**. Vamos ajustar pro estilo WhatsApp — **um asterisco = negrito** — pra ficar igual à digitação que a operação já está acostumada. Te respondemos com prazo até quarta.
 >
-> **Enquanto isso (paliativo):** pra negrito, digitar `**texto**` (dois asteriscos) — o cliente recebe em negrito no WhatsApp.
+> **Enquanto isso (paliativo imediato):** pra negrito, usar `**texto**` (dois asteriscos no começo e dois no fim). O cliente recebe em negrito no WhatsApp normalmente.
 >
-> **Como testar (depois do ajuste):** digitar `*urgente*` → cliente recebe **urgente** em negrito (não itálico).
+> **Como testar (após o ajuste):** digitar `*urgente*` (um asterisco) no editor → cliente recebe **urgente** em negrito (não itálico).
 
 ---
 
@@ -60,42 +57,52 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 **Relato do Gustavo:** "A reabertura não está funcionando, a mensagem não abre. Deveria reabrir com a bolinha verde (não-lida) e alertar com o sinal sonoro configurado pra cada agente."
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **Status:** funciona — depende de uma configuração rápida por atendente.
+> **Status:** parte funciona com configuração rápida (passo a passo abaixo), parte entra na rotina — **prazo informado até quarta (27/05)** pra parte da reabertura.
 >
-> A reabertura automática **já está ligada** no Frontdesk da Mais Saúde — quando o cliente manda nova mensagem numa conversa resolvida, ela reabre sozinha e aparece com a bolinha verde (não-lida). O **som de alerta** depende de uma autorização que o navegador pede a cada atendente (uma única vez):
+> **A — Reabertura automática (msg nova reabre a conversa):** vamos verificar o comportamento na conta da Mais Saúde — entra na rotina, prazo até quarta. O Frontdesk **já tem** essa lógica nativa, mas a Mais Saúde tem uma particularidade que precisamos checar (lock de uma conversa por contato) — confirmamos o comportamento e ajustamos.
 >
-> 1. No primeiro acesso, o navegador (Chrome) pergunta "Permitir notificações" → clicar em **Permitir**.
-> 2. No perfil do atendente, deixar "Alertas sonoros" marcado como "Todas as conversas".
+> **B — Bolinha verde (não-lida):** já funciona automaticamente. Quando chega mensagem nova, a conversa aparece na lista com a marcação de "não-lida".
 >
-> Estamos confirmando se há algum ajuste fino na configuração de notificação por atendente da Mais Saúde — se houver, deixamos pronto e te avisamos.
+> **C — Alerta sonoro por atendente:** **funciona — depende de uma configuração rápida por atendente (uma vez só):**
 >
-> **Como testar:** com o navegador autorizado e o Frontdesk aberto, resolver uma conversa → cliente manda nova mensagem → a conversa reabre na hora, fica verde/não-lida e toca o som.
+> **Passo a passo pra cada atendente (Yasmin, Marta, Gustavo, Daniel...):**
+> 1. Na primeira vez que abrir o Frontdesk, o navegador (Chrome) vai perguntar **"Permitir notificações"** — clicar em **Permitir**.
+> 2. Clicar no **avatar** no canto **inferior esquerdo** da barra lateral.
+> 3. No menu que abre, clicar em **"Configurações do Perfil"**.
+> 4. Rolar até a seção **"Alertas de áudio"**.
+> 5. Em **"Eventos de alerta para conversas"**, escolher uma das opções:
+>    - **"Conversas atribuídas"** (recomendado pra Yasmin/Marta/Daniel — só as conversas delas tocam som)
+>    - **"Todas as conversas"** (recomendado pro Gustavo se quiser ouvir tudo)
+> 6. Em **"Condições"**, deixar marcado **"Enviar alertas a cada 30 segundos até que todas as conversas atribuídas sejam lidas"** (assim não passa batido).
+> 7. Pronto — fechar a janela. Não precisa salvar; a configuração já fica.
+>
+> **Como testar:** com o Frontdesk aberto (e navegador autorizado), pedir pra alguém mandar uma mensagem teste → o som toca + a conversa aparece na lista com a bolinha de não-lida.
 
 ---
 
 ## 8 — Caminho do admin pra acompanhar/assumir/transferir conversas em tempo real
 **Relato do Gustavo:** "Como admin, qual o caminho pra acompanhar conversas em tempo real e interagir? E as colaboradoras puxarem conversa de outra (ex.: uma passou mal e saiu)?"
-**Observação:** parte é how-to (já existe na plataforma — descrever o passo a passo), parte pode ser gap de UX (se tiver, descrever o ajuste).
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **Status:** já existe — passo a passo abaixo.
+> **Status:** **já existe no Frontdesk — passo a passo abaixo.** É o mesmo padrão simples que o QUALIZAP, com 3 caminhos.
 >
-> Como administrador, você consegue **ver, assumir e transferir todas as conversas** da Mais Saúde direto pelo Frontdesk:
+> **Caminho 1 — Ver TODAS as conversas em tempo real (visão admin):**
+> 1. Na barra lateral esquerda, clicar em **"Conversas"** → **"Todas as conversas"**.
+> 2. No topo da lista, escolher a aba **"Todos"** (em vez de "Minhas" ou "Não atribuídas").
+> 3. Pronto — você vê todas as conversas, de todos os atendentes, ao vivo, sem precisar recarregar a página.
 >
-> **Pra ver todas em tempo real**
-> 1. Menu lateral → **Conversas** → **Todas as conversas**.
-> 2. No topo da lista, escolher a aba **Todos** (em vez de "Minhas") → aparece tudo, de todos os atendentes, ao vivo.
->
-> **Pra você assumir uma conversa de outra atendente**
+> **Caminho 2 — Você (admin) assumir a conversa de uma atendente:**
 > 1. Abrir a conversa.
-> 2. No canto superior direito, no campo do atendente atribuído, clicar e escolher **Atribuir a mim**.
-> 3. Pronto — você já pode responder no lugar dela.
+> 2. No **painel à direita** da conversa (Detalhes da conversa), procurar a seção **"Agente atribuído"** (ou "Atribuído a").
+> 3. Clicar no nome da atendente atual → na lista que abre, escolher o **seu próprio nome**.
+> 4. Pronto — você já pode responder no lugar dela. Ela perde a atribuição automaticamente.
 >
-> **Pra transferir entre atendentes (uma passou mal e saiu)**
-> 1. Abrir a conversa da atendente que saiu.
-> 2. No mesmo campo do atendente, escolher **outra agente** da lista — a conversa passa pra ela na hora.
+> **Caminho 3 — Transferir entre atendentes (uma passou mal e saiu):**
+> 1. Abrir a conversa da atendente que saiu (você consegue por "Todas as conversas" → "Todos").
+> 2. No mesmo painel à direita, em **"Agente atribuído"**, clicar e escolher **outra agente** da lista.
+> 3. Pronto — a conversa cai pra outra agente na hora.
 >
-> Tudo isso funciona em tempo real, sem precisar recarregar a página. Se for útil, gravamos um vídeo de 1min mostrando os 3 caminhos.
+> Os 3 caminhos funcionam em tempo real (sem refresh). Se for útil pra você passar pra equipe, gravamos um vídeo de 1 minuto mostrando os 3.
 
 ---
 
@@ -103,11 +110,24 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 **Relato do Gustavo:** "Fica desconectado e não recebo mensagem. Queria igual ao QUALIZAP que uso hoje — 100% online o tempo todo."
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **Status:** vamos ajustar — em andamento.
+> **Status:** **já existe no Frontdesk — passo a passo abaixo.**
 >
-> O Frontdesk tem uma configuração de **"sempre online"** por atendente — quando ligada, a pessoa não sai do ar por inatividade e continua recebendo mensagem em tempo real, igual ao QUALIZAP. Estamos ativando essa configuração pra **todos os atendentes da Mais Saúde** (Gustavo, Yasmin, Marta, Daniel etc.). Te avisamos assim que aplicado.
+> Cada atendente consegue **deixar o status dela como "sempre online"** em 4 cliques. Quando isso está ligado, ela não sai do ar por inatividade — fica online o tempo todo, igual ao QUALIZAP.
 >
-> **Como testar (depois de aplicado):** deixar o Frontdesk aberto sem interagir por ~30min → continua mostrando "online" e a próxima mensagem do cliente cai direto na conversa, sem precisar dar refresh.
+> **Passo a passo (cada atendente faz no próprio login):**
+> 1. Clicar no **avatar** no canto **inferior esquerdo** da barra lateral.
+> 2. No menu que abre, procurar a opção **"Marcar offline automaticamente"** (é um interruptor / toggle).
+> 3. **Desligar** esse interruptor.
+> 4. Pronto — ela não vai mais ser marcada offline por ficar parada. Continua online recebendo mensagem em tempo real.
+>
+> **Alternativa (você como admin faz pra todas de uma vez):**
+> 1. **Configurações** (engrenagem na barra lateral) → **"Agentes"**.
+> 2. Editar cada atendente → desligar **"Marcar offline automaticamente"**.
+> 3. Salvar.
+>
+> Se quiser, a gente já aplica isso pra todos os atendentes da Mais Saúde (Gustavo, Yasmin, Marta, Daniel etc.) num passo só — só pedir.
+>
+> **Como testar:** depois de desligado, deixar o Frontdesk aberto sem mexer por ~30 minutos → o status continua como "Online" e a próxima mensagem cai na conversa em tempo real.
 
 ---
 
@@ -115,11 +135,11 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 **Relato do Gustavo:** "Pra facilitar a gestão, no lugar de 'não atribuídas' escrever 'inteligência artificial'."
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **Status:** vamos ajustar.
+> **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> Vamos renomear o rótulo **"Não atribuídas"** pra **"Inteligência Artificial"** nas abas e na barra lateral — fica claro pra equipe que aquelas conversas estão com a Lara, não abandonadas. Te avisamos quando estiver no ar.
+> Vamos renomear o rótulo **"Não atribuídas"** pra **"Inteligência Artificial"** nas abas no topo da lista de conversas e em todos os pontos da plataforma que usam esse termo — fica claro pra equipe que aquelas conversas estão sendo cuidadas pela Lara, não estão abandonadas. Te respondemos com prazo até quarta.
 >
-> **Como testar (depois do ajuste):** abrir "Conversas" → o rótulo aparece como **"Inteligência Artificial"** no lugar de "Não atribuídas".
+> **Como testar (após o ajuste):** abrir a lista de conversas → no topo, em vez de **"Minhas / Não atribuídas / Todos"** vai aparecer **"Minhas / Inteligência Artificial / Todos"**.
 
 ---
 
@@ -128,33 +148,40 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 **Ex.:** CÁSSIA OLIVEIRA FELIPE NOVATO
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **Status:** vamos ajustar — em andamento.
+> **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> Hoje a busca de contato considera o acento (digitar "cassia" não acha "CÁSSIA"). Vamos ajustar pra **ignorar acento e cedilha** — digitar "cassia" vai trazer "CÁSSIA", "luis" vai trazer "Luís", "concicao" vai trazer "Conceição", etc. Te avisamos quando estiver no ar.
+> Hoje a busca de contato no Frontdesk considera o acento (digitar "cassia" não acha "CÁSSIA"). Vamos ajustar pra **ignorar acento e cedilha** — digitar "cassia" vai trazer "CÁSSIA", "luis" vai trazer "Luís", "concicao" vai trazer "Conceição", etc. Te respondemos com prazo até quarta.
 >
-> **Como testar (depois do ajuste):** no campo de busca de contato, digitar "cassia" (sem acento) → "CÁSSIA OLIVEIRA FELIPE NOVATO" aparece na lista.
+> **Como testar (após o ajuste):** no campo **"Buscar por nome, telefone ou #ID"** da lista de conversas (ou em **Contatos**), digitar "cassia" sem acento → "CÁSSIA OLIVEIRA FELIPE NOVATO" aparece nos resultados.
 
 ---
 
 ## 12 — Mídia: tempo real + ✓✓ de entrega + envio de imagem/áudio
 **Relato do Gustavo:** (4 sub-itens)
 - 12.1 — Imagens só aparecem após atualizar a página (deveria ser tempo real).
-- 12.2 — Não conseguem ouvir áudios recebidos. **(já endereçado — confirmar a resolução pro Gustavo testar)**
+- 12.2 — Não conseguem ouvir áudios recebidos.
 - 12.3 — Ao enviar print/imagem dá erro e não tem ✓/✓✓ de entrega.
 - 12.4 — Ao enviar áudio idem — erro + sem ✓✓; "em alguns recebem, em outros não".
 
 ✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
-> **12.1 — Imagem em tempo real:** ✅ **resolvido (25/05/2026).** Ajustamos o caminho que serve a mídia das mensagens recebidas — agora a imagem que o cliente envia **aparece na conversa na hora**, sem precisar dar refresh. Saiu junto com o ajuste do áudio (mesma causa, mesma correção).
-> **Como testar:** cliente manda uma imagem → ela aparece na conversa da Yasmin em segundos, sem refresh.
+> **12.1 — Imagem recebida em tempo real:** ✅ **resolvido em 25/05/2026.** Ajustamos a entrega da mídia no Frontdesk — agora a imagem que o cliente envia **aparece na conversa em tempo real**, sem precisar atualizar a página. Saiu junto com o ajuste do áudio (mesma causa, mesma correção).
+> **Como testar:** cliente manda uma imagem → ela aparece na conversa da atendente em segundos, sem refresh.
 >
-> **12.2 — Ouvir áudio recebido:** ✅ **resolvido (25/05/2026).** A entrega da mídia foi ajustada — os áudios que o cliente envia agora **tocam direto** no player do Frontdesk.
-> **Como testar:** cliente manda áudio → Yasmin (ou qualquer atendente) abre a conversa, clica no play do áudio → toca normal. Vale também pros áudios antigos: basta reabrir a conversa que eles voltam a tocar.
+> ---
 >
-> **12.3 — Enviar imagem (erro + sem ✓/✓✓):** vamos ajustar — em andamento. Estamos investigando o erro intermitente ao enviar imagem pelo atendente e o aparecimento dos ✓/✓✓ (status de entrega: enviado / entregue / lido) na mensagem enviada. Te avisamos quando estiver no ar.
-> **Como testar (depois do ajuste):** atendente envia uma imagem → cliente recebe sem erro e aparecem os ✓ (enviado) → ✓✓ (entregue) → ✓✓ azul (lido) na mensagem do atendente.
+> **12.2 — Ouvir áudio recebido:** ✅ **resolvido em 25/05/2026.** A entrega da mídia foi ajustada — os áudios que o cliente envia agora **tocam direto** no player do Frontdesk.
+> **Como testar:** cliente manda um áudio → atendente abre a conversa, clica no botão de play no áudio → toca normal. Vale também pros áudios **antigos** da conversa: basta a atendente reabrir a conversa que eles voltam a tocar.
 >
-> **12.4 — Enviar áudio (erro + sem ✓✓):** ✅ **erro de envio resolvido (22/05/2026).** O erro intermitente ao enviar áudio foi ajustado — não dá mais "falha ao enviar". A parte dos ✓/✓✓ na mensagem enviada vai junto com o item 12.3 acima.
-> **Como testar:** atendente grava um áudio e envia → cliente recebe sem erro, em qualquer formato (Android/iPhone). Os ✓✓ entram junto com a entrega do 12.3.
+> ---
+>
+> **12.3 — Enviar imagem (erro + sem ✓/✓✓):** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
+> Vamos investigar o erro intermitente ao enviar imagem pelo atendente e o aparecimento dos ✓/✓✓ (status de entrega: enviado / entregue / lido) na mensagem enviada. Te respondemos com prazo até quarta.
+> **Como testar (após o ajuste):** atendente envia uma imagem → cliente recebe sem erro e aparecem na mensagem do atendente: ✓ (enviado pela rede) → ✓✓ (entregue no WhatsApp do cliente) → ✓✓ azul (lido).
+>
+> ---
+>
+> **12.4 — Enviar áudio (erro + sem ✓✓):** ✅ **erro de envio resolvido em 22/05/2026** — não dá mais "falha ao enviar". A parte dos ✓/✓✓ na mensagem enviada vai junto com o item 12.3 (entra na rotina, prazo até quarta).
+> **Como testar:** atendente grava um áudio e envia → cliente recebe sem erro (em Android e iPhone). Os ✓✓ entram junto com o ajuste do 12.3.
 
 ---
 
