@@ -3,7 +3,7 @@
 **Origem:** agente KLaOS · 26/05/2026
 **Contexto:** O Gustavo (cliente Mais Saúde, conta Frontdesk 9) escreveu um documento "AJUSTES" com 17 pontos. Os de IA/cobrança (3, 4, 5, 13, 14, 15, 16, 17) já foram respondidos por nós no doc final pro Gustavo. Os de plataforma (1, 2, 6, 7, 8, 9, 10, 11, 12) estão com vocês — precisamos das respostas pra consolidar o retorno.
 
-**Como completar este arquivo:** sob cada item abaixo, preencha o bloco `RESPOSTA DA EQUIPE FRONTDESK:` com:
+**Como completar este arquivo:** sob cada item abaixo, preencha o bloco `RESPOSTA DO MATHEUS:` com:
 - **Status** (corrigido / em andamento / how-to já existe / não vai fazer + motivo).
 - **O que foi feito** (descrição gerencial, NÃO técnica — sem jargão interno, sem nomes de classe/arquivo).
 - **Como o Gustavo testa** (passo a passo curto que ele consegue executar).
@@ -17,10 +17,10 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 ## 1 — Ordem dos templates de resposta (protesto em 1º)
 **Relato do Gustavo:** "Desconfigurou e não está mais na ordem dos mais usados. Colocar de novo na ordem — o mais usado inicialmente é o de protesto."
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> A ordenação dos templates pelos mais usados existe no Frontdesk (ordenação automática, sem precisar configurar manualmente). Vamos verificar por que essa ordem deixou de refletir o uso da operação e reposicionar o "protesto" no topo. Te respondemos com prazo até quarta.
+> A ordenação dos templates pelos mais usados existe no Frontdesk (ordenação automática, sem precisar configurar manualmente). Vamos verificar por que essa ordem deixou de refletir o uso da operação e reposicionar o "protesto" no topo. Te respondo com prazo até quarta.
 >
 > **Como testar (após o ajuste):** dentro de uma conversa, no campo de mensagem, abrir o seletor de templates → o template de **protesto** aparece no topo da lista.
 
@@ -30,10 +30,10 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 **Relato do Gustavo:** "Enviei a notificação com o meu usuário e a conversa não veio pra mim. Deveria abrir/ficar em 'minhas'. Tive que pesquisar pelo nome e clicar em reabrir."
 **Ex.:** PAULO ROBERTO DE ARRUDA PINTO
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> Hoje o Frontdesk não atribui automaticamente a conversa ao atendente que disparou a notificação. Vamos ajustar pra que, **ao enviar a notificação, a conversa caia direto em "Minhas" do remetente**, sem precisar pesquisar ou reabrir. Te respondemos com prazo até quarta.
+> Hoje o Frontdesk não atribui automaticamente a conversa ao atendente que disparou a notificação. Vamos ajustar pra que, **ao enviar a notificação, a conversa caia direto em "Minhas" do remetente**, sem precisar pesquisar ou reabrir. Te respondo com prazo até quarta.
 >
 > **Como testar (após o ajuste):** disparar um template pra um contato → abrir a aba **"Minhas"** no topo da lista de conversas → a conversa do contato está lá.
 
@@ -42,10 +42,10 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 ## 6 — Negrito com um único asterisco (estilo WhatsApp)
 **Relato do Gustavo:** "Pra negrito tem que voltar o asterisco várias vezes — primeiro fica itálico. Não usamos itálico, só negrito. Deixar 1 asterisco no começo e fim = negrito."
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> Hoje o editor do Frontdesk usa o padrão universal de formatação (Markdown): `*texto*` (um asterisco) faz **itálico** e `**texto**` (dois asteriscos) faz **negrito**. Vamos ajustar pro estilo WhatsApp — **um asterisco = negrito** — pra ficar igual à digitação que a operação já está acostumada. Te respondemos com prazo até quarta.
+> Hoje o editor do Frontdesk usa o padrão universal de formatação (Markdown): `*texto*` (um asterisco) faz **itálico** e `**texto**` (dois asteriscos) faz **negrito**. Vamos ajustar pro estilo WhatsApp — **um asterisco = negrito** — pra ficar igual à digitação que a operação já está acostumada. Te respondo com prazo até quarta.
 >
 > **Enquanto isso (paliativo imediato):** pra negrito, usar `**texto**` (dois asteriscos no começo e dois no fim). O cliente recebe em negrito no WhatsApp normalmente.
 >
@@ -56,7 +56,7 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 ## 7 — Reabertura: mensagem nova reabre + bolinha verde (não lida) + som por atendente
 **Relato do Gustavo:** "A reabertura não está funcionando, a mensagem não abre. Deveria reabrir com a bolinha verde (não-lida) e alertar com o sinal sonoro configurado pra cada agente."
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **Status:** parte funciona com configuração rápida (passo a passo abaixo), parte entra na rotina — **prazo informado até quarta (27/05)** pra parte da reabertura.
 >
 > **A — Reabertura automática (msg nova reabre a conversa):** vamos verificar o comportamento na conta da Mais Saúde — entra na rotina, prazo até quarta. O Frontdesk **já tem** essa lógica nativa, mas a Mais Saúde tem uma particularidade que precisamos checar (lock de uma conversa por contato) — confirmamos o comportamento e ajustamos.
@@ -83,7 +83,7 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 ## 8 — Caminho do admin pra acompanhar/assumir/transferir conversas em tempo real
 **Relato do Gustavo:** "Como admin, qual o caminho pra acompanhar conversas em tempo real e interagir? E as colaboradoras puxarem conversa de outra (ex.: uma passou mal e saiu)?"
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **Status:** **já existe no Frontdesk — passo a passo abaixo.** É o mesmo padrão simples que o QUALIZAP, com 3 caminhos.
 >
 > **Caminho 1 — Ver TODAS as conversas em tempo real (visão admin):**
@@ -102,14 +102,14 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 > 2. No mesmo painel à direita, em **"Agente atribuído"**, clicar e escolher **outra agente** da lista.
 > 3. Pronto — a conversa cai pra outra agente na hora.
 >
-> Os 3 caminhos funcionam em tempo real (sem refresh). Se for útil pra você passar pra equipe, gravamos um vídeo de 1 minuto mostrando os 3.
+> Os 3 caminhos funcionam em tempo real (sem refresh). Se for útil pra você passar pra equipe, gravo um vídeo de 1 minuto mostrando os 3.
 
 ---
 
 ## 9 — Conexão sempre online (não desconectar como o sistema atual dele)
 **Relato do Gustavo:** "Fica desconectado e não recebo mensagem. Queria igual ao QUALIZAP que uso hoje — 100% online o tempo todo."
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **Status:** **já existe no Frontdesk — passo a passo abaixo.**
 >
 > Cada atendente consegue **deixar o status dela como "sempre online"** em 4 cliques. Quando isso está ligado, ela não sai do ar por inatividade — fica online o tempo todo, igual ao QUALIZAP.
@@ -134,10 +134,10 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 ## 10 — Renomear "não atribuídas" para "Inteligência Artificial"
 **Relato do Gustavo:** "Pra facilitar a gestão, no lugar de 'não atribuídas' escrever 'inteligência artificial'."
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> Vamos renomear o rótulo **"Não atribuídas"** pra **"Inteligência Artificial"** nas abas no topo da lista de conversas e em todos os pontos da plataforma que usam esse termo — fica claro pra equipe que aquelas conversas estão sendo cuidadas pela Lara, não estão abandonadas. Te respondemos com prazo até quarta.
+> Vamos renomear o rótulo **"Não atribuídas"** pra **"Inteligência Artificial"** nas abas no topo da lista de conversas e em todos os pontos da plataforma que usam esse termo — fica claro pra equipe que aquelas conversas estão sendo cuidadas pela Lara, não estão abandonadas. Te respondo com prazo até quarta.
 >
 > **Como testar (após o ajuste):** abrir a lista de conversas → no topo, em vez de **"Minhas / Não atribuídas / Todos"** vai aparecer **"Minhas / Inteligência Artificial / Todos"**.
 
@@ -147,10 +147,10 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 **Relato do Gustavo:** "Sem o acento na letra Á não encontra. Desabilitar a obrigatoriedade de acento/cedilha — com ou sem acento tem que achar."
 **Ex.:** CÁSSIA OLIVEIRA FELIPE NOVATO
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **Status:** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
 >
-> Hoje a busca de contato no Frontdesk considera o acento (digitar "cassia" não acha "CÁSSIA"). Vamos ajustar pra **ignorar acento e cedilha** — digitar "cassia" vai trazer "CÁSSIA", "luis" vai trazer "Luís", "concicao" vai trazer "Conceição", etc. Te respondemos com prazo até quarta.
+> Hoje a busca de contato no Frontdesk considera o acento (digitar "cassia" não acha "CÁSSIA"). Vamos ajustar pra **ignorar acento e cedilha** — digitar "cassia" vai trazer "CÁSSIA", "luis" vai trazer "Luís", "concicao" vai trazer "Conceição", etc. Te respondo com prazo até quarta.
 >
 > **Como testar (após o ajuste):** no campo **"Buscar por nome, telefone ou #ID"** da lista de conversas (ou em **Contatos**), digitar "cassia" sem acento → "CÁSSIA OLIVEIRA FELIPE NOVATO" aparece nos resultados.
 
@@ -163,7 +163,7 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 - 12.3 — Ao enviar print/imagem dá erro e não tem ✓/✓✓ de entrega.
 - 12.4 — Ao enviar áudio idem — erro + sem ✓✓; "em alguns recebem, em outros não".
 
-✏️ **RESPOSTA DA EQUIPE FRONTDESK:**
+✏️ **RESPOSTA DO MATHEUS:**
 > **12.1 — Imagem recebida em tempo real:** ✅ **resolvido em 25/05/2026.** Ajustamos a entrega da mídia no Frontdesk — agora a imagem que o cliente envia **aparece na conversa em tempo real**, sem precisar atualizar a página. Saiu junto com o ajuste do áudio (mesma causa, mesma correção).
 > **Como testar:** cliente manda uma imagem → ela aparece na conversa da atendente em segundos, sem refresh.
 >
@@ -175,7 +175,7 @@ Quando terminar, commit em `klaos-dev` com mensagem `docs(handoff): respostas Gu
 > ---
 >
 > **12.3 — Enviar imagem (erro + sem ✓/✓✓):** entra na rotina de desenvolvimento — **prazo informado até quarta (27/05)**.
-> Vamos investigar o erro intermitente ao enviar imagem pelo atendente e o aparecimento dos ✓/✓✓ (status de entrega: enviado / entregue / lido) na mensagem enviada. Te respondemos com prazo até quarta.
+> Vamos investigar o erro intermitente ao enviar imagem pelo atendente e o aparecimento dos ✓/✓✓ (status de entrega: enviado / entregue / lido) na mensagem enviada. Te respondo com prazo até quarta.
 > **Como testar (após o ajuste):** atendente envia uma imagem → cliente recebe sem erro e aparecem na mensagem do atendente: ✓ (enviado pela rede) → ✓✓ (entregue no WhatsApp do cliente) → ✓✓ azul (lido).
 >
 > ---
