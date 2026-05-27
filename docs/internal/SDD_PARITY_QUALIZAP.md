@@ -30,6 +30,30 @@
 > 7. **i18n strings novas** → quando hardcoded em componente Klaos*, **OK** (não polui upstream). Quando precisa override de string upstream → patch via klaos-patches.
 >
 > **Critério de aceite por feature**: `git merge upstream/master` em branch limpo deve aplicar **zero conflito** nos arquivos upstream. Se conflitar, a feature está mal-modularizada e precisa refatorar.
+
+---
+
+## ⚠️ Princípio companheiro — REAPROVEITAR O CHATWOOT, REDESENHAR O LAYOUT
+
+> **Regra de avaliação por feature:** antes de implementar QUALQUER paridade, perguntar:
+>
+> 1. **O Chatwoot upstream JÁ TEM essa funcionalidade no backend?** → Reaproveitar (endpoint, modelo, serviço, ActionCable). Não reescrever motor.
+> 2. **O Chatwoot tem layout/UX pra isso?** → Avaliar: o layout dele é "limpo o suficiente" ou "torto"? Se torto, **trocar o layout** (via Vue patch / componente Klaos*) **mantendo o backend dele intacto**.
+>
+> **Exemplos práticos** dessa filosofia:
+> - **Auto-attribuir** (ponto 2): Chatwoot tem `auto_assignment` por inbox (round-robin) + `assignee_id` no modelo Conversation. **Reusar** o `assignee_id` + criar só um hook custom de quando setar. NÃO reescrever assignment.
+> - **✓✓ delivery status** (ponto 12): Chatwoot tem `message.status` (sent/delivered/read) + `MessageMeta.vue` que renderiza. **Layout do MessageMeta é ok**, reusar. Backend webhook Meta já processa via `process_statuses`. **Reusar tudo.**
+> - **Painel de Agentes em tempo real** (O.1): Chatwoot tem `ActionCable` + `OnlineStatusTracker` + endpoint `/agents` com `availability_status`. **Reusar backend completo.** Layout do Chatwoot pra isso é **inexistente/torto** (só mostra avatar com bolinha colorida na sidebar) → **redesenhar visual completo** estilo Kualiz com cores KLaOS.
+> - **Reabertura** (ponto 7): Chatwoot tem comportamento nativo + nosso `lock_to_single_conversation`. **Reusar.** Layout (bolinha verde, som, etc.) já está na UI. **Reusar.**
+> - **Custom Views / Pastas** (item 10 e oportunidade): Chatwoot tem **CustomFilter** completo. **Reusar backend** (já investigado). O bug que bati foi de serialização específica, não da feature em si — resolver bug ou usar i18n escopado.
+>
+> **Quando NÃO reaproveitar (= redesenhar layout):**
+> - Sidebar / navegação principal — Chatwoot tem layout denso e técnico, Kualiz tem top-bar simples com 10 áreas claras. Redesenhar top-bar.
+> - Lista de conversas — Chatwoot mostra info técnica (channel icon, status), Kualiz mostra **tempo desde última msg em destaque**, etiqueta como ícone, ações inline. Redesenhar ConversationCard.
+> - Header da conversa — Chatwoot tem botão Resolver + dropdown. Kualiz tem 4 botões claros + alerta janela 24h banner. Redesenhar header.
+> - Tela inicial do agente — Chatwoot manda direto pra lista, Kualiz tem "Gerenciar filas" + cronômetro + frase motivacional. Redesenhar home.
+>
+> **Resultado**: backend = 95% Chatwoot intocado. Frontend = mix (60% Chatwoot reusado + 40% Klaos* custom redesenhado pra UX limpo). Merge upstream continua viável.
 >
 > **Já temos histórico de bons patches modulares** que servem de referência:
 > - `custom/lib/attachment_url_strategy.rb` + `custom/config/initializers/attachment_url_strategy.rb` (módulo Ruby prepended em Attachment).
