@@ -374,16 +374,18 @@ Visão do admin tem lista de canais (API OFICIAL, Reserva Boletos, Facebook, Ins
 
 ## 5. Anexos — screenshots capturadas nesta sessão
 
+Pasta: `docs/internal/screenshots/`
+
 | # | Tela | Arquivo |
 |---|---|---|
-| 01 | Login do Kualiz v12.1.7 | `kualiz-01-login.png` |
-| 02 | KPI Dashboard (admin) | `kualiz-02-kpi-dashboard.png` |
-| 03 | Painel de Agentes (admin, real-time grid) | `kualiz-03-painel-agentes.png` |
-| 04 | Painel de Atendimentos (admin, todas as conversas) | `kualiz-04-painel-atendimentos.png` |
-| 05 | Visualizar Conversa (modal admin, read-only) | `kualiz-05-abrir-atendimento.png` |
-| 06 | Agente Dashboard (Gerenciar filas + turno + status) | `kualiz-06-agente-dashboard.png` |
-| 07 | Painel de Filas — submenu (Filas / Minhas tarefas / Meus agendamentos) | `kualiz-07-painel-filas.png` |
-| 08 | Filas submenu (mais detalhe) | `kualiz-08-filas-submenu.png` |
+| 01 | Login do Kualiz v12.1.7 | [kualiz-01-login.png](./screenshots/kualiz-01-login.png) |
+| 02 | KPI Dashboard (admin) | [kualiz-02-kpi-dashboard.png](./screenshots/kualiz-02-kpi-dashboard.png) |
+| 03 | ★ Painel de Agentes (real-time grid) | [kualiz-03-painel-agentes.png](./screenshots/kualiz-03-painel-agentes.png) |
+| 04 | ★ Painel de Atendimentos (todas as conversas) | [kualiz-04-painel-atendimentos.png](./screenshots/kualiz-04-painel-atendimentos.png) |
+| 05 | Modal "Visualizar Conversa" (admin read-only) | [kualiz-05-abrir-atendimento.png](./screenshots/kualiz-05-abrir-atendimento.png) |
+| 06 | Agente Dashboard (Gerenciar filas + turno + status) | [kualiz-06-agente-dashboard.png](./screenshots/kualiz-06-agente-dashboard.png) |
+| 07 | Submenu "Painel de Filas" (Filas / Minhas tarefas / Meus agendamentos) | [kualiz-07-painel-filas.png](./screenshots/kualiz-07-painel-filas.png) |
+| 08 | Filas submenu (detalhe) | [kualiz-08-filas-submenu.png](./screenshots/kualiz-08-filas-submenu.png) |
 
 > Telas que **não** consegui acessar nesta sessão (futuro): chat ao vivo dentro de fila (agente atendendo), CRM, Tarefas, Contatos, Relatórios, Configurações, Chat Interno. Cobrir em sessão posterior se for útil pro plano P2/P3.
 
