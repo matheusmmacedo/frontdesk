@@ -100,14 +100,14 @@ const PATCHES = [
   {
     id: '/settings/settings.routes.js',
     from: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';",
-    to: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';\nimport klaosMessagePrefix from './klaosMessagePrefix/klaosMessagePrefix.routes';",
-    reason: 'register KLaOS message prefix settings route import',
+    to: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';\nimport klaosMessagePrefix from './klaosMessagePrefix/klaosMessagePrefix.routes';\nimport klaosMetaHealth from './klaosMetaHealth/klaosMetaHealth.routes';",
+    reason: 'register KLaOS message prefix + meta health settings route imports',
   },
   {
     id: '/settings/settings.routes.js',
     from: '...whatsappConnections.routes,\n  ],\n};',
-    to: '...whatsappConnections.routes,\n    ...klaosMessagePrefix.routes,\n  ],\n};',
-    reason: 'register KLaOS message prefix routes in settings route array',
+    to: '...whatsappConnections.routes,\n    ...klaosMessagePrefix.routes,\n    ...klaosMetaHealth.routes,\n  ],\n};',
+    reason: 'register KLaOS message prefix + meta health routes in settings route array',
   },
   {
     id: '/sidebar/Sidebar.vue',
@@ -128,8 +128,14 @@ const PATCHES = [
           label: 'Formato do Nome',
           icon: 'i-lucide-id-card',
           to: accountScopedRoute('klaos_message_prefix_index'),
+        },
+        {
+          name: 'Settings KLaOS Meta Health',
+          label: 'Saúde do WhatsApp',
+          icon: 'i-lucide-activity',
+          to: accountScopedRoute('klaos_meta_health_index'),
         },`,
-    reason: 'add Formato do Nome (KLaOS message prefix) entry in settings sidebar',
+    reason: 'add Formato do Nome + Saúde do WhatsApp (Fase 2 fix áudio) entries in settings sidebar',
   },
 
   // === KLaOS — "Devolver ao bot" como botão visível + visibilidade correta ===
