@@ -11,7 +11,6 @@
 // Permissão: administrator.
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useAccount } from 'dashboard/composables/useAccount';
-import axios from 'axios';
 
 const { accountId } = useAccount();
 const inboxes = ref([]);
@@ -22,7 +21,12 @@ let pollingTimer = null;
 
 const fetchData = async () => {
   try {
-    const resp = await axios.get(`/api/custom/v1/accounts/${accountId.value}/meta_health`);
+    // Usa axios global (window.axios) que tem os auth headers
+    // (access-token/client/uid) setados em APIHelper.js. Importar
+    // 'axios' direto cria instância sem auth → 401.
+    const resp = await window.axios.get(
+      `/api/custom/v1/accounts/${accountId.value}/meta_health`
+    );
     inboxes.value = resp.data.inboxes || [];
     generatedAt.value = resp.data.generated_at;
     error.value = null;
