@@ -2013,6 +2013,51 @@ const assigneeTabItems = computed(() => {
     reason: 'keep-agents-online: renderiza toggle entre AudioTranscription e AccountId',
   },
 
+  // === KLaOS — Snooze: data-attr na ConversationCard pro pulse ===
+  // Adiciona data-klaos-conversation-id no root da card pra o componente
+  // SnoozeReopenAlert achar e aplicar/remover a CSS class .klaos-pulse
+  // durante 60s após reabertura.
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: '@click="onCardClick"\n    @contextmenu="openContextMenu($event)"',
+    to: ':data-klaos-conversation-id="chat.id"\n    @click="onCardClick"\n    @contextmenu="openContextMenu($event)"',
+    reason: 'snooze-pulse: data-attr na card pro SnoozeReopenAlert localizar e pulsar',
+  },
+
+  // === KLaOS — Snooze: monta SnoozeReopenAlert no App.vue ===
+  {
+    id: '/dashboard/App.vue',
+    from: "import WootSnackbarBox from './components/SnackbarContainer.vue';",
+    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';",
+    reason: 'snooze-reopen-alert: import componente do alerta',
+  },
+  {
+    id: '/dashboard/App.vue',
+    from: '    WootSnackbarBox,\n    PendingEmailVerificationBanner,',
+    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    PendingEmailVerificationBanner,',
+    reason: 'snooze-reopen-alert: registra componente',
+  },
+  {
+    id: '/dashboard/App.vue',
+    from: '    <WootSnackbarBox />\n    <NetworkNotification />',
+    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <NetworkNotification />',
+    reason: 'snooze-reopen-alert: monta no App pra escutar transições snoozed→open globalmente',
+  },
+
+  // === KLaOS — Snooze: troca CustomSnoozeModal por KlaosCustomSnoozeModal (Item snooze) ===
+  // Corrige 3 bugs reportados pelo Gustavo:
+  //   B1 calendário em inglês (lang hardcoded antigo)
+  //   B2 calendário colapsado (prop `inline` não existe na lib v1.x)
+  //   B3 só data sem hora (type=datetime quebrado)
+  // A troca preserva o contrato de eventos (close, chooseTime) do upstream
+  // pra CmdBarConversationSnooze não precisar mudar.
+  {
+    id: '/commands/CmdBarConversationSnooze.vue',
+    from: "import CustomSnoozeModal from 'dashboard/components/CustomSnoozeModal.vue';",
+    to: "import CustomSnoozeModal from 'next/KlaosSnooze/KlaosCustomSnoozeModal.vue';",
+    reason: 'snooze: usa modal custom KLaOS (PT-BR + inline + hora) no lugar do upstream',
+  },
+
   // === KLaOS — Wire do UnassignedLabelInput em Conf > Geral (Item 10) ===
   // Patches em Index.vue DEPOIS dos patches do Item 9 — usam o resultado
   // (KeepAgentsOnlineToggle import + render) como âncora.
@@ -2033,6 +2078,27 @@ const assigneeTabItems = computed(() => {
     from: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
     to: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
     reason: 'rotulo-unassigned: renderiza input abaixo do toggle online',
+  },
+
+  // === KLaOS — Wire do SnoozeReopenAlertToggle em Conf > Geral (Item snooze B5) ===
+  // Patches APÓS Item 10 — usa UnassignedLabelInput como âncora.
+  {
+    id: '/settings/account/Index.vue',
+    from: "import UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';",
+    to: "import UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';\nimport SnoozeReopenAlertToggle from 'next/KlaosAccountSettings/SnoozeReopenAlertToggle.vue';",
+    reason: 'snooze-alert-toggle: import componente custom',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SectionLayout,',
+    to: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SnoozeReopenAlertToggle,\n    SectionLayout,',
+    reason: 'snooze-alert-toggle: registra componente no options API',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
+    to: '    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <div class="mt-6">\n      <SnoozeReopenAlertToggle />\n    </div>\n    <AccountId />',
+    reason: 'snooze-alert-toggle: renderiza abaixo do label IA',
   },
 ];
 
