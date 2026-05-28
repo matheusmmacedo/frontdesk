@@ -1945,6 +1945,30 @@ const klaosFocusLabels = () => {
     return {`,
     reason: 'label-box: auto-abre picker quando vier do atalho "Etiquetas:" do card',
   },
+
+  // === KLaOS — Toggle "Manter agentes online até logout manual" em Conf > Geral ===
+  // Wiring de KeepAgentsOnlineToggle.vue (componente Klaos*) dentro da página
+  // Configurações > Conta. Liga toggle por conta (multi-tenant): quando ON,
+  // backend trata todos os agentes da conta como auto_offline=false.
+  // Itens tocados: import, components register, render no template.
+  {
+    id: '/settings/account/Index.vue',
+    from: "import AudioTranscription from './components/AudioTranscription.vue';",
+    to: "import AudioTranscription from './components/AudioTranscription.vue';\nimport KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';",
+    reason: 'keep-agents-online: import componente custom (toggle por conta)',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    AudioTranscription,\n    SectionLayout,',
+    to: '    AudioTranscription,\n    KeepAgentsOnlineToggle,\n    SectionLayout,',
+    reason: 'keep-agents-online: registra componente no options API',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    <AudioTranscription v-if="showAudioTranscriptionConfig" />\n    <AccountId />',
+    to: '    <AudioTranscription v-if="showAudioTranscriptionConfig" />\n    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
+    reason: 'keep-agents-online: renderiza toggle entre AudioTranscription e AccountId',
+  },
 ];
 
 export default function klaosPatches() {
