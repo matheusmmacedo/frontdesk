@@ -66,6 +66,34 @@
 
 ---
 
+## ⚠️ Princípio crítico — MULTI-TENANT (a Frontdesk não é só da Mais Saúde)
+
+> **Regra fixa do projeto** (definida em 2026-05-28, durante reavaliação da Onda 1 com o Matheus): a aplicação Frontdesk é **multi-tenant** — atende **vários clientes** simultaneamente. Toda paridade que viermos a trazer da Kualiz **DEVE servir para todos os clientes**, não pode ser hardcoded para a Mais Saúde.
+>
+> **Critério de aceite por feature:**
+>
+> 1. **Custom-safe** — vive em `custom/`, sobrevive a `git merge upstream/develop`.
+> 2. **Multi-tenant** — funciona para qualquer conta. Se o comportamento precisa variar por cliente, vira **toggle/campo configurável** (em `account.custom_attributes`, `inbox.custom_attributes`, ou `account_user.ui_settings` conforme o escopo). Cliente liga/preenche; quem não quer, mantém o default.
+> 3. **Reaproveitamento antes de criação** — se o Chatwoot já tem o motor (modelo, endpoint, serviço, ActionCable), **prepended/sobrescrito**, não duplicado. O que reescrevemos é a **UI**, não o motor.
+>
+> **Anti-padrão proibido** (já cometido e corrigido):
+> - ❌ "Cria um initializer que aplica `auto_offline=false` só pras accs 9 e 10."
+> - ✅ Em vez disso: `account.custom_attributes[:auto_offline_default]` + campo em Configurações → Geral por conta.
+>
+> **Como aplicar o filtro no momento de implementar cada item:**
+>
+> Antes de codar, perguntar:
+> 1. "Esse comportamento serve a TODOS os clientes? Ou só faz sentido pra Mais Saúde?"
+>    - Se serve todos → genérico, ativo por padrão.
+>    - Se só pra Mais Saúde → vira **toggle/campo** com default `off`/`null`. Mais Saúde liga; outros nem sabem que existe.
+> 2. "O Chatwoot já tem motor pra isso?"
+>    - Se sim → **reaproveito** (prepend/concern/wiring custom). Só **redesenho UI** se a UI dele é torta/inexistente.
+>    - Se não → componente Klaos* novo + modelo custom em `custom/`.
+> 3. "Tem feature parecida no Frontdesk que dá pra evoluir?"
+>    - Se sim → **adequo UI/comportamento** dela em vez de criar paralelo.
+
+---
+
 ## 0. Visão geral do Kualiz
 
 ### Topologia (admin x agente)
@@ -354,6 +382,139 @@ Visão do admin tem lista de canais (API OFICIAL, Reserva Boletos, Facebook, Ins
 
 ---
 
+## 2.B Oportunidades DESCOBERTAS NO DEEP-DIVE (não no scan inicial)
+
+> Estas só apareceram quando entrei em Configurações de fato. Não estavam nos 17 pontos, mas são significativas.
+
+### O.16 — Role "Supervisora" (intermediário entre Admin e Atendente) — ★ GAP estrutural
+**Visto em**: `Configurações > Usuários` (kualiz-10).
+**O que é**: o Kualiz tem **3 roles** (Administrador 5 · Supervisora 8 · Atendente 12). A Supervisora pode acompanhar produtividade e atendimentos do time mas não tem poder de mudar configs do sistema. O Frontdesk só tem **2 roles** (administrator/agent) — admin tem TUDO, agent tem só a operação.
+
+**Impacto**: Mais Saúde tem **8 supervisoras**. Hoje no Frontdesk elas viraram admin → têm acesso a coisas que não deveriam. Falta o nível intermediário.
+
+**Plano de paridade (P2)**:
+- Criar `accounts.account_users.role = supervisor` (extender enum: administrator/supervisor/agent).
+- Em `custom/app/models/concerns/klaos_supervisor_role.rb` (concern prepended em AccountUser).
+- Permissões granulares: ver Painel de Agentes + Painel de Atendimentos + Relatórios; SEM editar configs/integrações/agentes.
+
+### O.17 — Permissões granulares por usuário (com toggle)
+**Visto em**: `Configurações > Usuário expandido > Permissões` (kualiz-12).
+**O que é**: cada usuário tem aba dedicada de Permissões (toggles tipo "Gestão de tarefas"). Sistema preparado pra granularidade fina, não roles fixos.
+
+**Plano de paridade (P3)**: extender o modelo de Frontdesk com permissões granulares opcionais sobre o role. Por exemplo, um Atendente que pode editar etiquetas (sem virar admin).
+
+### O.18 — Notificações Push por dispositivo com revogação manual — ★ governance
+**Visto em**: `Configurações > Usuário > Notificações Push` (kualiz-13).
+**O que é**: cada usuário lista os **dispositivos registrados pra receber push** (com validade do token de sessão). O admin pode **revogar manualmente** — usuário deixa de receber notificações naquele device até relogar.
+
+**Impacto**: governance de tokens. Útil pra LGPD/segurança (devolvimento de dispositivo de funcionário desligado).
+
+**Plano de paridade (P3)**: surfacar a tabela `notification_subscriptions` do Chatwoot (já existe) com UI de listagem + botão de revogar. Backend já tem (Chatwoot), falta só UI.
+
+### O.19 — Tipos de Pausa configuráveis com tempo máx + cota/dia + alerta — ★★ FEATURE GOLD
+**Visto em**: `Configurações > Pausas` (kualiz-15).
+**O que é**: o admin **cadastra os motivos de pausa permitidos** (Almoço 60min×1/dia, ALMOÇO 30M 30min×1/dia, Banheiro 5min×3/dia, Reunião 1440min×10/dia). Cada motivo tem:
+- **Tempo máximo** por pausa (em minutos).
+- **Vezes por dia** permitidas.
+- **Ação quando estoura**: "Alertar" (notifica admin).
+
+**Quando o agente entra em pausa, ele escolhe o motivo da lista** — não é texto livre. Resulta em **operação rastreável** (Painel de Agentes mostra o motivo e o tempo atual).
+
+**Impacto**: gestão de SLA/produtividade real. Frontdesk hoje tem só `availability_status = busy` sem motivo/tempo/cota.
+
+**Plano de paridade (P2)**:
+- Nova entidade `klaos_pause_reasons` (motivo, max_minutes, max_per_day, action).
+- Modelo `klaos_agent_pause_event` (agente, motivo, started_at, ended_at, exceeded).
+- UI: dropdown na hora de pausar (em vez de só "ficar busy"), + listagem no Painel de Agentes mostrando motivo + tempo restante, + alerta automático quando passa o limite.
+- Tudo em `custom/` — zero toque em upstream Chatwoot.
+
+### O.20 — Backup local de atendimentos antigos + política de retenção
+**Visto em**: modal "Exclusão de dados" + `Configurações > Geral > Backup e Housekeeping` (mencionada).
+**O que é**: o Kualiz mostra **proativamente** que a cota de storage está sendo excedida e que vai apagar atendimentos antigos em data específica. Admin pode fazer **backup local** em Configurações > Geral antes que apague.
+
+**Plano de paridade (P3)**: surfacar política de retenção do Frontdesk + endpoint de export por inbox/período. Não é P0 mas é higiene de dados.
+
+### O.21 — Botões "Reiniciar servidor" / "Apagar caches locais" no admin
+**Visto em**: `Configurações > Geral` (kualiz-16).
+**O que é**: admin tem botões diretos:
+- "Atualizar licença"
+- "Apagar caches locais"
+- "Reiniciar servidor"
+- "Reiniciar servidor e invalidar sessões"
+
+**Não vamos trazer isso** — no Frontdesk admin não deve poder reiniciar o servidor (a infra é Railway, separada). Mas **invalidar sessões** seria útil ("forçar logout de todos" em incidentes de segurança). Considerar P4.
+
+### O.22 — Aba "IA" + Aba "Telefonia" em Configurações > Geral
+**Visto em**: `Configurações > Geral` (kualiz-16, tabs no topo).
+**O que é**: Kualiz tem **abas dedicadas pra IA e Telefonia** dentro da config global. Sugere que IA é built-in (não é "integração externa" como o nosso KLaOS) e Telefonia (canal de voz) é parte do sistema.
+
+**Implicação pro Frontdesk**: nosso modelo de IA externa (KLaOS) e canal-só-WhatsApp é compatível, mas o Gustavo está acostumado com **menu mental** que tem IA + Voz integrados. Não é gap funcional, é **mapa mental** — explicar pra ele que no Frontdesk a IA mora num produto irmão (KLaOS) e a voz é roadmap futuro.
+
+### O.23 — Integração BigQuery nativa pra analytics
+**Visto em**: `Configurações > Geral > Configuração Geral` (kualiz-16, seção "Integração BigQuery").
+**O que é**: campos pra Auth Key + Project ID do BigQuery. Exporta dados de atendimento pra warehouse. **Toggle**: "Excluir registros atualizados" (presumo: pula re-export de registros já mandados).
+
+**Plano de paridade (P4)**: avaliar custo/benefício. Mais Saúde provavelmente não usa BigQuery hoje. Se for relevante no futuro, exportador modular.
+
+### O.24 — Configuração "Bloquear criar contatos com mesmo número"
+**Visto em**: `Configurações > Geral` (kualiz-16, checkbox).
+**O que é**: opção pra impedir duplicação de contatos por número. Defensive UX.
+
+**Plano de paridade (P2)**: Frontdesk hoje **permite** duplicar contato com mesmo número (já vi acontecer). Adicionar validação custom no `Contact` antes de create.
+
+### O.25 — Cap de licença explícito + chave global de API
+**Visto em**: `Configurações > Geral` (kualiz-16).
+**O que é**: admin vê quantos slots de Agente/Supervisor/Admin estão usados vs comprados ("Agentes: 12 - Sup/Adms: 50"). E tem uma **Chave global de API** pra integrar com sistemas externos (não a chave por usuário).
+
+**Plano de paridade**: Frontdesk tem API tokens por usuário. Chave global ficaria como P4 (raramente precisa).
+
+### O.26 — Documentação da API acessível direto da config (devexp)
+**Visto em**: `Configurações > Filas` botão topo direito "Documentação da API" (kualiz-14).
+**O que é**: link direto pra documentação da API ao lado do "+ Adicionar". Quando admin vai criar fila via API, encontra a doc na hora.
+
+**Plano de paridade (P3)**: link pra docs da API do Frontdesk nas telas relevantes. Pequeno toque de devexp.
+
+---
+
+## 3.0 — Onda 1 (entrega rápida) com filtro multi-tenant aplicado
+
+> Resultado da reavaliação de 2026-05-28: dos 9 pontos do Gustavo + 12.3 (envio de imagem), 7 viram itens de **Onda 1** — esforço Trivial/Pequeno/Médio, baixo risco, podem entrar em DEV → Playwright pesado → PROD individualmente. Cada um foi passado pelo **filtro multi-tenant** (§ Princípio crítico) e **filtro de reaproveitamento Chatwoot**.
+>
+> **Ordem de execução** (do mais barato/seguro → mais arriscado):
+
+| # | Item Gustavo | Capability genérica (multi-tenant) | Onde mora a config por conta | Reusa do Chatwoot |
+|---|---|---|---|---|
+| 1 | **9** — sempre online | Toggle "Manter agentes online até logout manual" (impede `auto_offline` automático) | `account.custom_attributes[:auto_offline_default]` (boolean) + checkbox em Configurações → Geral | ✅ Reusa `account_user.auto_offline` (campo já existe) — só sobrescreve default via concern prepended em `AccountUser` |
+| 2 | **10** — "Não atribuídas" | Rótulo customizável da aba "Não atribuídas" | `account.custom_attributes[:unassigned_label]` (string, default `nil` → fallback i18n nativo) + campo em Configurações → Geral | ✅ Reusa label nativo — getter custom em Vue retorna override se presente |
+| 3 | **6** — `*` = negrito WhatsApp | Toggle "Single-asterisk = bold no editor WhatsApp" (default `true` para inboxes WhatsApp Cloud) | `inbox.custom_attributes[:single_asterisk_bold]` (boolean, default `true` para WhatsApp Cloud, `false` para outros canais) | ✅ Reusa `Messages::MarkdownRenderers::WhatsAppRenderer`, prepended para swap `emph`↔`strong` quando flag ativa |
+| 4 | **11** — busca sem acento | **Sem config** — sempre on. Habilitar `unaccent` no PG e usar em todas as buscas de contato/conversa | n/a (multi-tenant nato — beneficia todos sem ligar nada) | ✅ Reusa query do `Api::V1::Accounts::ContactsController#index`, prepend só substitui `ILIKE` por `unaccent ILIKE unaccent` |
+| 5 | **1** — protesto no topo dos templates | Investigar por que esfriou + **pino manual por usuário** (template fixado fica acima da ordenação por frequência) | `account_user.ui_settings[:pinned_templates]` (array de IDs) — cada agente pina o seu | ✅ Reusa `top_templates_controller` custom já existente, estende com pin override |
+| 6 | **2** — auto-atribuir template ativo | Toggle "Auto-atribuir conversa ao remetente ao enviar template ativo" (default `false`) | `account.custom_attributes[:auto_assign_on_template_send]` (boolean) + checkbox em Configurações → Geral | ✅ Reusa `Conversation#assignee_id` (campo nativo) — hook `after_create` em Message customizado |
+| 7 | **12.3** — envio de imagem + ✓✓ | **Sem config** — sempre on. Estender resilience de upload para image (igual áudio) + validar webhook status Meta em prod | n/a (multi-tenant nato) | ✅ Reusa `MessageMeta.vue` nativo (✓✓) + pattern de `whatsapp/cloud_service_resilience.rb` que já fizemos pra áudio |
+
+### Ciclo por item (regra fixa)
+
+Para **CADA** linha da tabela acima:
+
+1. **Explicar antes** — Claude detalha aqui no chat: arquivos exatos tocados, riscos, plano de teste. Matheus aprova/ajusta.
+2. **Implementar em `klaos-dev`** (regra fixa — nunca direto em prod).
+3. **Deploy DEV** (push → Railway redeploy automático).
+4. **Playwright pesado**:
+   - Login no Frontdesk dev (`app-desk-dev.klaos.ai`)
+   - Login no Kualiz (`gustavo` / `Atendmedbh756`) para comparar UX lado-a-lado quando faz sentido
+   - Cenários: golden path + edge cases + regressão (verificar que feature não quebrou cliente sem o toggle ligado)
+5. **Reportar** com prints.
+6. **Aprovação explícita** do Matheus para subir a prod.
+7. **Merge `klaos-dev` → `klaos-production`** + deploy.
+8. **Smoke test em PROD** com login real.
+9. Próximo item.
+
+### Onda 2 (entrega depois — aprovação explícita)
+
+Tudo do §2 e §2.B. Filtro multi-tenant já aplicado nos itens grandes (O.1 Painel de Agentes, O.16 Role Supervisora, O.19 Pausas tipadas) — todos genéricos para qualquer cliente. Detalhe modular na tabela do §3 abaixo.
+
+---
+
 ## 3. Plano de paridade (prioridade × esforço × **localização modular**)
 
 > Cada item indica **onde o código vive** pra sobreviver a `git merge upstream/master`. Veja §0.5 (princípio modular).
@@ -379,6 +540,17 @@ Visão do admin tem lista de canais (API OFICIAL, Reserva Boletos, Facebook, Ins
 | **O.2** — Painel de Produtividade | **P3** | Grande | Componente `KlaosProductivity.vue` + controller custom de relatórios em `custom/app/controllers/api/custom/v1/accounts/productivity_reports_controller.rb` |
 | **O.4** — Filas com prioridade/capacidade | **P3** | Muito grande | Estender Inbox via `custom/app/models/concerns/klaos_queue_capacity.rb` (concern prepended) + UI patches. Não criar tabela nova se possível. |
 | **O.6** — Chat Interno | **P4** | Muito grande | Nova entidade `klaos_internal_chats` em `custom/app/models/`, controllers custom, Vue novo. Isolado de upstream. |
+| **O.16** — Role "Supervisora" intermediário | **P2** | Médio | `custom/app/models/concerns/klaos_supervisor_role.rb` (concern em AccountUser) + migration custom estendendo enum role + UI patch pra esconder áreas de config pro supervisor |
+| **O.17** — Permissões granulares por usuário | **P3** | Grande | Nova tabela `klaos_user_permissions` em `custom/db/migrate/` + model `klaos_user_permission.rb` + concern em User. Frontend: aba "Permissões" via componente custom |
+| **O.18** — Notif Push: revogação por dispositivo | **P3** | Pequeno | Componente Vue novo `KlaosPushDevices.vue` no perfil. Backend reusa `notification_subscriptions` (Chatwoot já tem). Endpoint custom de revoke. |
+| **O.19** — Pausas tipadas c/ tempo+cota+alerta ★ | **P2** | Grande | Nova entidade `klaos_pause_reasons` + `klaos_agent_pause_events` (migrations + models em `custom/`) + UI no Painel de Agentes (componente Klaos*) + dropdown na pausa. Integra com `availability_status` nativo. |
+| **O.20** — Política de retenção visível + backup | **P3** | Médio | `custom/app/jobs/klaos_retention_alert_job.rb` (calcula quota, dispara modal) + export controller custom |
+| **O.21** — Invalidar todas as sessões | **P4** | Pequeno | Endpoint custom em `custom/app/controllers/api/custom/v1/security_controller.rb` que limpa Redis SSO tokens. Usado raramente. |
+| **O.22** — IA + Telefonia abas (apenas comunicação) | n/a | n/a | Não é dev — explicar pro Gustavo que a IA mora no produto irmão (KLaOS) e Voz é roadmap. |
+| **O.23** — BigQuery export | **P4** | Médio | Job custom em `custom/app/jobs/klaos_bigquery_export_job.rb` se cliente pedir. |
+| **O.24** — Bloquear contatos duplicados por número | **P2** | Pequeno | `custom/config/initializers/contact_uniqueness_guard.rb` — `before_create` em Contact, valida número único por inbox |
+| **O.25** — Cap de licença visível | **P4** | Pequeno | Já temos `INSTALLATION_PRICING_PLAN_QUANTITY=10000` no Frontdesk. UI pra surfacar. |
+| **O.26** — Link "Documentação da API" nas telas | **P3** | Trivial | Patches pequenos em klaos-patches.js |
 
 **Convenção**: P0 imediato, P1 = rotina dev (Mais Saúde), P2 = sprint atual ou próxima, P3 = roadmap próximo trimestre, P4 = avaliar custo/benefício.
 
@@ -400,6 +572,7 @@ Visão do admin tem lista de canais (API OFICIAL, Reserva Boletos, Facebook, Ins
 
 Pasta: `docs/internal/screenshots/`
 
+### 5.1 Telas principais (mapeamento inicial)
 | # | Tela | Arquivo |
 |---|---|---|
 | 01 | Login do Kualiz v12.1.7 | [kualiz-01-login.png](./screenshots/kualiz-01-login.png) |
@@ -411,7 +584,39 @@ Pasta: `docs/internal/screenshots/`
 | 07 | Submenu "Painel de Filas" (Filas / Minhas tarefas / Meus agendamentos) | [kualiz-07-painel-filas.png](./screenshots/kualiz-07-painel-filas.png) |
 | 08 | Filas submenu (detalhe) | [kualiz-08-filas-submenu.png](./screenshots/kualiz-08-filas-submenu.png) |
 
-> Telas que **não** consegui acessar nesta sessão (futuro): chat ao vivo dentro de fila (agente atendendo), CRM, Tarefas, Contatos, Relatórios, Configurações, Chat Interno. Cobrir em sessão posterior se for útil pro plano P2/P3.
+### 5.2 Deep-dive em Configurações (admin)
+| # | Tela | Arquivo |
+|---|---|---|
+| 09 | Menu de Configurações (14 seções) | [kualiz-09-configuracoes-menu.png](./screenshots/kualiz-09-configuracoes-menu.png) |
+| 10 | Config > Usuários (3 roles: Admin 5 / Supervisora 8 / Atendente 12) | [kualiz-10-config-usuarios.png](./screenshots/kualiz-10-config-usuarios.png) |
+| 11 | Config > Usuário expandido (4 abas: Geral/Permissões/Notif Push/Variáveis) | [kualiz-11-user-expanded.png](./screenshots/kualiz-11-user-expanded.png) |
+| 12 | Config > Usuário > Permissões (toggle "Gestão de tarefas") | [kualiz-12-user-permissoes.png](./screenshots/kualiz-12-user-permissoes.png) |
+| 13 | Config > Usuário > Notificações Push (lista de dispositivos + revogar) | [kualiz-13-user-notif-push.png](./screenshots/kualiz-13-user-notif-push.png) |
+| 14 | Config > Filas (com badge "WA", status "Autenticado", "Doc da API") | [kualiz-14-config-filas.png](./screenshots/kualiz-14-config-filas.png) |
+| 15 | ★ Config > Pausas (motivos tipados c/ tempo máx + cota dia + alerta) | [kualiz-15-config-pausas.png](./screenshots/kualiz-15-config-pausas.png) |
+| 16 | ★ Config > Geral (5 abas: Geral / Segurança / Backup&Housekeeping / IA / Telefonia) | [kualiz-16-config-geral.png](./screenshots/kualiz-16-config-geral.png) |
+
+### 5.3 Honestidade — o que ficou de fora desta varredura
+Para o SDD ser fonte real (não chute), explicito o que **eu vi** vs o que ainda **inferi**:
+
+**Vi de verdade (observação direta + DOM via evaluate)**:
+- Login · KPI Dashboard · Painel de Agentes · Painel de Atendimentos · Modal Visualizar Conversa · Agente Dashboard · Submenu Painel de Filas
+- Configurações: menu completo (14 seções) · Usuários (lista + 4 abas internas: Geral/Permissões/Notif Push/Variáveis) · Filas (lista) · Pausas (lista com tempo/cota/ação) · Geral (visão da aba Geral com 5 sub-abas no topo)
+
+**Não consegui entrar (limite read-only / clique não navegou / tempo)**:
+- Tela do agente atendendo de fato (não posso tirar o agente Gustavo da pausa — viola "não modificar nada").
+- Chat ao vivo dentro de uma fila ativa (idem).
+- Composer do agente (negrito `*` ao vivo) — depende da tela acima.
+- Seletor de templates dentro do composer — idem.
+- Contatos (não navegou via top-bar nesta sessão; URL chutei errado).
+- Painel de Produtividade (aba ao lado de Painel de Agentes — só vi a aba existe).
+- Relatórios (top-bar) — só sei que existe.
+- CRM / Tarefas / Chat Interno / Notificações — só item de menu visto.
+- Configurações > Filas/Pausas com formulário de criação aberto (não cliquei + pra não criar nada).
+- Configurações > sub-abas: Segurança, Backup&Housekeeping, IA, Telefonia (vi os nomes das abas, não entrei).
+- Configurações > Cadastros / Etiquetas / Grupos / Automação / Monitoramento de Produtividade / Log de Auditoria / CRM e Tarefas / Campanhas (vi nome no menu, não entrei).
+
+**Plano**: cada item do §3 que for entrar em rotina de implementação tem uma **flag de verificação prévia** — antes de codar, voltar ao Kualiz na tela específica pra **confirmar com observação direta** (não premissa). Sessão atual é o **mapa do território**, não o cadastro de cada rua.
 
 ---
 
