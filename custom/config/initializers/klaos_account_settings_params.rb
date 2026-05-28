@@ -14,7 +14,8 @@
 # item 2 auto_assign_on_template_send), basta estender esta lista.
 module KlaosAccountSettingsParams
   KLAOS_SETTINGS_KEYS = [
-    :auto_offline_default
+    :auto_offline_default,
+    :unassigned_label
   ].freeze
 
   private

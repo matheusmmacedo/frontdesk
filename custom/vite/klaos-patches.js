@@ -1946,6 +1946,49 @@ const klaosFocusLabels = () => {
     reason: 'label-box: auto-abre picker quando vier do atalho "Etiquetas:" do card',
   },
 
+  // === KLaOS — Rótulo customizável da aba "Não atribuídas" (item 10 Gustavo) ===
+  // Permite cada conta definir o nome da aba. Mais Saúde quer "Inteligência
+  // Artificial" porque as conversas não atribuídas estão com a IA. Outros
+  // clientes podem ter outros nomes (ex: "Triagem", "Bot"). Multi-tenant via
+  // account.settings.unassigned_label.
+  {
+    id: '/components/ChatList.vue',
+    from: `const assigneeTabItems = computed(() => {
+  return filterItemsByPermission(
+    ASSIGNEE_TYPE_TAB_PERMISSIONS,
+    userPermissions.value,
+    item => item.permissions
+  ).map(({ key, count: countKey }) => ({
+    key,
+    name: t(\`CHAT_LIST.ASSIGNEE_TYPE_TABS.\${key}\`),
+    count: conversationStats.value[countKey] || 0,
+  }));
+});`,
+    to: `// KLaOS custom — rótulo customizável da aba "Não atribuídas" por conta.
+// Lê account.settings.unassigned_label; em branco/null = padrão i18n.
+const klaosCurrentAccount = computed(() =>
+  store.getters['accounts/getAccount'](currentAccountId.value)
+);
+const klaosUnassignedLabel = computed(
+  () => klaosCurrentAccount.value?.settings?.unassigned_label || null
+);
+
+const assigneeTabItems = computed(() => {
+  return filterItemsByPermission(
+    ASSIGNEE_TYPE_TAB_PERMISSIONS,
+    userPermissions.value,
+    item => item.permissions
+  ).map(({ key, count: countKey }) => ({
+    key,
+    name:
+      (key === 'unassigned' && klaosUnassignedLabel.value) ||
+      t(\`CHAT_LIST.ASSIGNEE_TYPE_TABS.\${key}\`),
+    count: conversationStats.value[countKey] || 0,
+  }));
+});`,
+    reason: 'rotulo-unassigned: aba customizavel por conta via account.settings.unassigned_label',
+  },
+
   // === KLaOS — Toggle "Manter agentes online até logout manual" em Conf > Geral ===
   // Wiring de KeepAgentsOnlineToggle.vue (componente Klaos*) dentro da página
   // Configurações > Conta. Liga toggle por conta (multi-tenant): quando ON,
@@ -1968,6 +2011,28 @@ const klaosFocusLabels = () => {
     from: '    <AudioTranscription v-if="showAudioTranscriptionConfig" />\n    <AccountId />',
     to: '    <AudioTranscription v-if="showAudioTranscriptionConfig" />\n    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
     reason: 'keep-agents-online: renderiza toggle entre AudioTranscription e AccountId',
+  },
+
+  // === KLaOS — Wire do UnassignedLabelInput em Conf > Geral (Item 10) ===
+  // Patches em Index.vue DEPOIS dos patches do Item 9 — usam o resultado
+  // (KeepAgentsOnlineToggle import + render) como âncora.
+  {
+    id: '/settings/account/Index.vue',
+    from: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';",
+    to: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';\nimport UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';",
+    reason: 'rotulo-unassigned: import componente custom',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    KeepAgentsOnlineToggle,\n    SectionLayout,',
+    to: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SectionLayout,',
+    reason: 'rotulo-unassigned: registra componente no options API',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
+    to: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
+    reason: 'rotulo-unassigned: renderiza input abaixo do toggle online',
   },
 ];
 
