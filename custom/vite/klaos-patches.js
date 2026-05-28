@@ -1989,26 +1989,6 @@ const assigneeTabItems = computed(() => {
     reason: 'rotulo-unassigned: aba customizavel por conta via account.settings.unassigned_label',
   },
 
-  // === KLaOS — Wire do UnassignedLabelInput em Conf > Geral ===
-  {
-    id: '/settings/account/Index.vue',
-    from: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';",
-    to: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';\nimport UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';",
-    reason: 'rotulo-unassigned: import componente custom',
-  },
-  {
-    id: '/settings/account/Index.vue',
-    from: '    KeepAgentsOnlineToggle,\n    SectionLayout,',
-    to: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SectionLayout,',
-    reason: 'rotulo-unassigned: registra componente no options API',
-  },
-  {
-    id: '/settings/account/Index.vue',
-    from: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
-    to: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
-    reason: 'rotulo-unassigned: renderiza input abaixo do toggle online',
-  },
-
   // === KLaOS — Toggle "Manter agentes online até logout manual" em Conf > Geral ===
   // Wiring de KeepAgentsOnlineToggle.vue (componente Klaos*) dentro da página
   // Configurações > Conta. Liga toggle por conta (multi-tenant): quando ON,
@@ -2031,6 +2011,28 @@ const assigneeTabItems = computed(() => {
     from: '    <AudioTranscription v-if="showAudioTranscriptionConfig" />\n    <AccountId />',
     to: '    <AudioTranscription v-if="showAudioTranscriptionConfig" />\n    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
     reason: 'keep-agents-online: renderiza toggle entre AudioTranscription e AccountId',
+  },
+
+  // === KLaOS — Wire do UnassignedLabelInput em Conf > Geral (Item 10) ===
+  // Patches em Index.vue DEPOIS dos patches do Item 9 — usam o resultado
+  // (KeepAgentsOnlineToggle import + render) como âncora.
+  {
+    id: '/settings/account/Index.vue',
+    from: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';",
+    to: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';\nimport UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';",
+    reason: 'rotulo-unassigned: import componente custom',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    KeepAgentsOnlineToggle,\n    SectionLayout,',
+    to: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SectionLayout,',
+    reason: 'rotulo-unassigned: registra componente no options API',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
+    to: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
+    reason: 'rotulo-unassigned: renderiza input abaixo do toggle online',
   },
 ];
 
