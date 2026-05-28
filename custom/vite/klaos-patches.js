@@ -2019,6 +2019,53 @@ const assigneeTabItems = computed(() => {
     reason: 'keep-agents-online: renderiza toggle entre AudioTranscription e AccountId',
   },
 
+  // === KLaOS — Fix bug "mensagem vazia enviada" do composer (ReplyBox.vue) ===
+  // Bug nativo Chatwoot (confirmado via git blame + diff vs upstream/develop):
+  //   onFinishRecorder seta `hasRecordedAudio=true` INCONDICIONALMENTE,
+  //   mesmo quando o file vem null (gravação falhou). Daí isReplyButtonDisabled
+  //   libera o botão Send mesmo com composer vazio + sem arquivos →
+  //   POST com content='' chega no backend → Meta rejeita ("text.body required"
+  //   ou "Template not found").
+  //
+  // Reproduzimos em DEV (msg 13804) com POST direto. Histórico Mais Saúde prod
+  // mostra 3 ocorrências em 7 dias (msgs 24060/22156/22158/18549).
+  //
+  // Fix em 2 patches:
+  //   1. onFinishRecorder: guard `if (!file) return;` ANTES de setar a flag
+  //   2. isReplyButtonDisabled: só libera quando hasRecordedAudio + arquivo
+  //      de áudio realmente presente em attachedFiles
+  //
+  // Defesa em profundidade: backend também adicionou KlaosEmptyMessageGuard
+  // pra rejeitar no save mesmo se o front escapar.
+  {
+    id: '/widgets/conversation/ReplyBox.vue',
+    from: `    onFinishRecorder(file) {
+      this.recordingAudioState = 'stopped';
+      this.hasRecordedAudio = true;`,
+    to: `    onFinishRecorder(file) {
+      this.recordingAudioState = 'stopped';
+      // KLaOS guard: sem file (gravação falhou no encode/upload) não pode
+      // setar hasRecordedAudio — senão Send fica habilitado e manda vazio.
+      if (!file) return;
+      this.hasRecordedAudio = true;`,
+    reason: 'empty-msg-fix: guard sem file em onFinishRecorder',
+  },
+  {
+    id: '/widgets/conversation/ReplyBox.vue',
+    from: 'if (this.hasAttachments || this.hasRecordedAudio) return false;',
+    to: `// KLaOS: hasRecordedAudio só vale se o arquivo do áudio realmente
+      // foi anexado (attachedFiles tem item com isRecordedAudio:true).
+      // Sem essa checagem, gravação que falhou no upload deixava o botão
+      // habilitado e mandava msg vazia.
+      const klaosHasRecordedAudioFile = this.attachedFiles?.some(f => f.isRecordedAudio);
+      if (this.hasAttachments || (this.hasRecordedAudio && klaosHasRecordedAudioFile)) return false;
+      if (this.hasRecordedAudio && !klaosHasRecordedAudioFile) {
+        // Reset defensivo: flag está ON mas arquivo sumiu (upload falhou).
+        this.hasRecordedAudio = false;
+      }`,
+    reason: 'empty-msg-fix: isReplyButtonDisabled exige file real do áudio',
+  },
+
   // === KLaOS — Snooze: data-attr na ConversationCard pro pulse ===
   // Adiciona data-klaos-conversation-id no root da card pra o componente
   // SnoozeReopenAlert achar e aplicar/remover a CSS class .klaos-pulse
