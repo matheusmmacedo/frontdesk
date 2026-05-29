@@ -2183,6 +2183,31 @@ const assigneeTabItems = computed(() => {
     reason: 'sort-latest: esconde dropdown de sort no UI',
   },
 
+  // === KLaOS — O.8 Botões grandes status do agente na sidebar ===
+  // Substitui o "abrir avatar → clicar status" enterrado por 3 botões
+  // grandes Online/Pausa/Offline sempre visíveis acima do avatar.
+  {
+    id: '/components-next/sidebar/Sidebar.vue',
+    from: "import SidebarProfileMenu from './SidebarProfileMenu.vue';",
+    to: "import SidebarProfileMenu from './SidebarProfileMenu.vue';\nimport KlaosAgentStatusButtons from 'next/KlaosAgent/StatusButtons.vue';",
+    reason: 'O.8 status-buttons: import componente custom',
+  },
+  {
+    id: '/components-next/sidebar/Sidebar.vue',
+    from: `      <div
+        class="px-1 py-1.5 flex-shrink-0 flex w-full z-50 gap-2 items-center border-t border-n-weak shadow-[0px_-2px_4px_0px_rgba(27,28,29,0.02)]"
+        :class="isEffectivelyCollapsed ? 'justify-center' : 'justify-between'"
+      >
+        <SidebarProfileMenu`,
+    to: `      <KlaosAgentStatusButtons v-if="!isEffectivelyCollapsed" class="border-t border-n-weak" />
+      <div
+        class="px-1 py-1.5 flex-shrink-0 flex w-full z-50 gap-2 items-center border-t border-n-weak shadow-[0px_-2px_4px_0px_rgba(27,28,29,0.02)]"
+        :class="isEffectivelyCollapsed ? 'justify-center' : 'justify-between'"
+      >
+        <SidebarProfileMenu`,
+    reason: 'O.8 status-buttons: renderiza 3 botões acima do avatar',
+  },
+
   // === KLaOS — O.10 Banner janela 24h WhatsApp REFORÇADO ===
   // Upstream tem banner cinza/rosa claro discreto. Agente fica travado e
   // não saca o motivo. Substituímos por banner âmbar gritante com ícone
