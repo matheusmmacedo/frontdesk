@@ -2034,6 +2034,45 @@ const assigneeTabItems = computed(() => {
     to: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
     reason: 'rotulo-unassigned: renderiza input abaixo do toggle online',
   },
+
+  // === KLaOS — Fix bug "mensagem vazia enviada" do composer (ReplyBox.vue) ===
+  // Bug nativo Chatwoot (confirmado via git blame + diff vs upstream/develop):
+  // onFinishRecorder seta `hasRecordedAudio=true` INCONDICIONALMENTE, mesmo
+  // quando file vem null (gravação falhou). isReplyButtonDisabled libera o
+  // botão Send → POST com content='' → Meta rejeita "text.body required".
+  //
+  // Reproduzimos em DEV (msg 13804/13805) com POST direto. Histórico Mais
+  // Saúde prod mostra ~3 ocorrências/dia (msg 24060/22156/22158/18549).
+  //
+  // Fix em 2 patches + initializer backend (KlaosEmptyMessageGuard).
+  {
+    id: '/widgets/conversation/ReplyBox.vue',
+    from: `    onFinishRecorder(file) {
+      this.recordingAudioState = 'stopped';
+      this.hasRecordedAudio = true;`,
+    to: `    onFinishRecorder(file) {
+      this.recordingAudioState = 'stopped';
+      // KLaOS guard: sem file (gravação falhou no encode/upload) não pode
+      // setar hasRecordedAudio — senão Send fica habilitado e manda vazio.
+      if (!file) return;
+      this.hasRecordedAudio = true;`,
+    reason: 'empty-msg-fix: guard sem file em onFinishRecorder',
+  },
+  {
+    id: '/widgets/conversation/ReplyBox.vue',
+    from: 'if (this.hasAttachments || this.hasRecordedAudio) return false;',
+    to: `// KLaOS: hasRecordedAudio só vale se o arquivo do áudio realmente
+      // foi anexado (attachedFiles tem item com isRecordedAudio:true).
+      // Sem essa checagem, gravação que falhou no upload deixava o botão
+      // habilitado e mandava msg vazia.
+      const klaosHasRecordedAudioFile = this.attachedFiles?.some(f => f.isRecordedAudio);
+      if (this.hasAttachments || (this.hasRecordedAudio && klaosHasRecordedAudioFile)) return false;
+      if (this.hasRecordedAudio && !klaosHasRecordedAudioFile) {
+        // Reset defensivo: flag está ON mas arquivo sumiu (upload falhou).
+        this.hasRecordedAudio = false;
+      }`,
+    reason: 'empty-msg-fix: isReplyButtonDisabled exige file real do áudio',
+  },
 ];
 
 export default function klaosPatches() {
