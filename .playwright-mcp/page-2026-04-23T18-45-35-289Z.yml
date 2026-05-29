@@ -1,0 +1,162 @@
+- generic [ref=e2]:
+  - generic [ref=e9]:
+    - complementary [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - img "KlaOS" [ref=e15]
+            - generic [ref=e16]: KlaOS
+          - button [ref=e17] [cursor=pointer]:
+            - img
+        - button "GMB - Glocal My Business" [ref=e20] [cursor=pointer]:
+          - generic [ref=e21]: GMB - Glocal My Business
+          - img
+        - navigation [ref=e22]:
+          - link "Início" [ref=e23] [cursor=pointer]:
+            - /url: /
+            - img [ref=e25]
+            - generic [ref=e28]: Início
+          - link "KlaOS GPT" [ref=e29] [cursor=pointer]:
+            - /url: /copilot
+            - img [ref=e30]
+            - generic [ref=e32]: KlaOS GPT
+          - button "Inteligência" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+            - generic [ref=e45]: Inteligência
+            - img [ref=e46]
+          - link "CRM" [ref=e48] [cursor=pointer]:
+            - /url: /crm/deals/kanban
+            - img [ref=e49]
+            - generic [ref=e53]: CRM
+          - button "Atendimento" [ref=e55] [cursor=pointer]:
+            - img [ref=e56]
+            - generic [ref=e59]: Atendimento
+            - img [ref=e60]
+          - link "Engines" [ref=e62] [cursor=pointer]:
+            - /url: /engines
+            - img [ref=e63]
+            - generic [ref=e73]: Engines
+          - link "Configurações" [ref=e74] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e75]
+            - generic [ref=e78]: Configurações
+        - generic [ref=e80]: v1.0 · KlaOS
+    - main [ref=e81]:
+      - generic [ref=e82]:
+        - generic [ref=e83]:
+          - generic [ref=e84]: KlaOS
+          - img [ref=e85]
+          - generic [ref=e87]: Frontdesk
+        - generic [ref=e88]:
+          - button "Toggle CMO Chat" [ref=e89] [cursor=pointer]:
+            - img
+          - button "Change language" [ref=e91] [cursor=pointer]:
+            - img
+          - button "Notifications" [ref=e94] [cursor=pointer]:
+            - img
+            - generic [ref=e219]: 9+
+          - button "Matheus" [ref=e96] [cursor=pointer]:
+            - img "Matheus" [ref=e97]
+      - generic [ref=e221]:
+        - generic [ref=e222]:
+          - generic [ref=e223]:
+            - img [ref=e225]
+            - generic [ref=e227]:
+              - heading "Frontdesk" [level=1] [ref=e228]
+              - paragraph [ref=e229]: Plataforma centralizada de atendimento ao cliente
+          - generic [ref=e230]:
+            - button "Atualizar" [ref=e231] [cursor=pointer]:
+              - img
+              - text: Atualizar
+            - button "Abrir Frontdesk" [ref=e232] [cursor=pointer]:
+              - img
+              - text: Abrir Frontdesk
+        - generic [ref=e233]:
+          - generic [ref=e234]:
+            - generic [ref=e236]:
+              - generic [ref=e237]: Status da Conexão
+              - generic [ref=e238]: Ativo
+            - generic [ref=e241]:
+              - generic [ref=e242]:
+                - generic [ref=e243]:
+                  - generic [ref=e244]: Nome da Conta
+                  - generic [ref=e245]: GMB - Glocal My Business
+                - generic [ref=e246]:
+                  - generic [ref=e247]: ID da Conta
+                  - generic [ref=e248]: "#10"
+              - generic [ref=e250]:
+                - generic [ref=e251]:
+                  - img [ref=e253]
+                  - generic [ref=e257]:
+                    - generic [ref=e258]: Abrir Painel de Atendimento
+                    - generic [ref=e259]: Acesse a interface completa do Frontdesk
+                - button "Abrir" [ref=e260] [cursor=pointer]:
+                  - text: Abrir
+                  - img
+          - generic [ref=e261]:
+            - generic [ref=e263]: Estatísticas
+            - generic [ref=e264]:
+              - generic [ref=e266]:
+                - img [ref=e268]
+                - generic [ref=e273]:
+                  - generic [ref=e274]: Usuários Ativos
+                  - generic [ref=e275]: "5"
+              - generic [ref=e277]:
+                - img [ref=e279]
+                - generic [ref=e282]:
+                  - generic [ref=e283]: Caixas de Entrada
+                  - generic [ref=e284]: "0"
+              - generic [ref=e285]:
+                - img [ref=e286]
+                - text: "Última sincronização: 12/03/2026, 10:29:31"
+        - generic [ref=e290]:
+          - button "Painel" [ref=e291] [cursor=pointer]:
+            - img [ref=e292]
+            - text: Painel
+          - button "Conversas" [ref=e294] [cursor=pointer]:
+            - img [ref=e295]
+            - text: Conversas
+          - button "Canais" [ref=e297] [cursor=pointer]:
+            - img [ref=e298]
+            - text: Canais
+          - button "Bridge IA" [ref=e301] [cursor=pointer]:
+            - img [ref=e302]
+            - text: Bridge IA
+          - button "Configurações" [ref=e305] [cursor=pointer]:
+            - img [ref=e306]
+            - text: Configurações
+        - generic [ref=e310]:
+          - generic [ref=e311]:
+            - generic [ref=e314]:
+              - img [ref=e316]
+              - generic [ref=e318]:
+                - paragraph [ref=e319]: "-"
+                - paragraph [ref=e320]: Conversas Ativas
+            - generic [ref=e323]:
+              - img [ref=e325]
+              - generic [ref=e330]:
+                - paragraph [ref=e331]: "-"
+                - paragraph [ref=e332]: Handoffs (24h)
+            - generic [ref=e335]:
+              - img [ref=e337]
+              - generic [ref=e340]:
+                - paragraph [ref=e341]: "-"
+                - paragraph [ref=e342]: Resolvidas Hoje
+            - generic [ref=e345]:
+              - img [ref=e347]
+              - generic [ref=e352]:
+                - paragraph [ref=e353]: "-"
+                - paragraph [ref=e354]: Sessões Humanas
+          - generic [ref=e355]:
+            - generic [ref=e356]:
+              - generic [ref=e357]: Canais Integrados
+              - generic [ref=e358]:
+                - button [ref=e359] [cursor=pointer]:
+                  - img
+                - button "Adicionar Canal" [ref=e360] [cursor=pointer]:
+                  - img
+                  - text: Adicionar Canal
+            - img [ref=e363]
+    - button "Abrir Klaus" [ref=e217] [cursor=pointer]:
+      - img "Klaus" [ref=e218]
+  - region "Notifications alt+T"

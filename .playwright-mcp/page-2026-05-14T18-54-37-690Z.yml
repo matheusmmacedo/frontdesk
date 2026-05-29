@@ -1,0 +1,219 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - listitem [ref=e45]:
+              - link "Menções" [ref=e46]:
+                - /url: /app/accounts/10/mentions/conversations
+                - generic [ref=e47]: Menções
+            - listitem [ref=e48]:
+              - link "Não atendidas" [ref=e49]:
+                - /url: /app/accounts/10/unattended/conversations
+                - generic [ref=e50]: Não atendidas
+            - generic:
+              - generic: Canais
+            - list [ref=e51]:
+              - generic [ref=e52]:
+                - listitem [ref=e53]:
+                  - link "KLaOS Cobranca" [ref=e54]:
+                    - /url: /app/accounts/10/inbox/30
+                    - generic [ref=e57]: KLaOS Cobranca
+                - listitem [ref=e58]:
+                  - link "TESTE QA" [ref=e59]:
+                    - /url: /app/accounts/10/inbox/37
+                    - generic [ref=e62]: TESTE QA
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e63]:
+              - generic [ref=e64]:
+                - listitem [ref=e65]:
+                  - link "cancelado" [ref=e66]:
+                    - /url: /app/accounts/10/label/cancelado
+                    - generic [ref=e69]: cancelado
+                - listitem [ref=e70]:
+                  - link "cancelamento-pendente" [ref=e71]:
+                    - /url: /app/accounts/10/label/cancelamento-pendente
+                    - generic [ref=e74]: cancelamento-pendente
+                - listitem [ref=e75]:
+                  - link "cobranca_1d" [ref=e76]:
+                    - /url: /app/accounts/10/label/cobranca_1d
+                    - generic [ref=e79]: cobranca_1d
+                - listitem [ref=e80]:
+                  - link "cobranca-0d" [ref=e81]:
+                    - /url: /app/accounts/10/label/cobranca-0d
+                    - generic [ref=e84]: cobranca-0d
+                - listitem [ref=e85]:
+                  - link "cobranca-15d" [ref=e86]:
+                    - /url: /app/accounts/10/label/cobranca-15d
+                    - generic [ref=e89]: cobranca-15d
+                - listitem [ref=e90]:
+                  - link "cobranca-7d" [ref=e91]:
+                    - /url: /app/accounts/10/label/cobranca-7d
+                    - generic [ref=e94]: cobranca-7d
+                - listitem [ref=e95]:
+                  - link "cobranca-boleto-pendente" [ref=e96]:
+                    - /url: /app/accounts/10/label/cobranca-boleto-pendente
+                    - generic [ref=e99]: cobranca-boleto-pendente
+                - listitem [ref=e100]:
+                  - link "cobranca-cartao-pendente" [ref=e101]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-pendente
+                    - generic [ref=e104]: cobranca-cartao-pendente
+                - listitem [ref=e105]:
+                  - link "cobranca-cartao-recusado" [ref=e106]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-recusado
+                    - generic [ref=e109]: cobranca-cartao-recusado
+                - listitem [ref=e110]:
+                  - link "cobranca-d21" [ref=e111]:
+                    - /url: /app/accounts/10/label/cobranca-d21
+                    - generic [ref=e114]: cobranca-d21
+                - listitem [ref=e115]:
+                  - link "cobranca-negociacao" [ref=e116]:
+                    - /url: /app/accounts/10/label/cobranca-negociacao
+                    - generic [ref=e119]: cobranca-negociacao
+                - listitem [ref=e120]:
+                  - link "cobranca-promessa" [ref=e121]:
+                    - /url: /app/accounts/10/label/cobranca-promessa
+                    - generic [ref=e124]: cobranca-promessa
+                - listitem [ref=e125]:
+                  - link "cobranca-promessa-hoje" [ref=e126]:
+                    - /url: /app/accounts/10/label/cobranca-promessa-hoje
+                    - generic [ref=e129]: cobranca-promessa-hoje
+                - listitem [ref=e130]:
+                  - link "cobranca-segunda-via" [ref=e131]:
+                    - /url: /app/accounts/10/label/cobranca-segunda-via
+                    - generic [ref=e134]: cobranca-segunda-via
+                - listitem [ref=e135]:
+                  - link "enviado-ao-spc" [ref=e136]:
+                    - /url: /app/accounts/10/label/enviado-ao-spc
+                    - generic [ref=e139]: enviado-ao-spc
+                - listitem [ref=e140]:
+                  - link "mais-saude" [ref=e141]:
+                    - /url: /app/accounts/10/label/mais-saude
+                    - generic [ref=e144]: mais-saude
+                - listitem [ref=e145]:
+                  - link "pagamento-realizado" [ref=e146]:
+                    - /url: /app/accounts/10/label/pagamento-realizado
+                    - generic [ref=e149]: pagamento-realizado
+                - listitem [ref=e150]:
+                  - link "pendente" [ref=e151]:
+                    - /url: /app/accounts/10/label/pendente
+                    - generic [ref=e154]: pendente
+                - listitem [ref=e155]:
+                  - link "qa-test2" [ref=e156]:
+                    - /url: /app/accounts/10/label/qa-test2
+                    - generic [ref=e159]: qa-test2
+                - listitem [ref=e160]:
+                  - link "qa-test3" [ref=e161]:
+                    - /url: /app/accounts/10/label/qa-test3
+                    - generic [ref=e164]: qa-test3
+                - listitem [ref=e165]:
+                  - link "qa-test4" [ref=e166]:
+                    - /url: /app/accounts/10/label/qa-test4
+                    - generic [ref=e169]: qa-test4
+                - listitem [ref=e170]:
+                  - link "quer-cancelar" [ref=e171]:
+                    - /url: /app/accounts/10/label/quer-cancelar
+                    - generic [ref=e174]: quer-cancelar
+              - generic:
+                - img
+        - listitem [ref=e175] [cursor=pointer]:
+          - button "Contatos" [ref=e176]:
+            - generic [ref=e180]: Contatos
+        - listitem [ref=e181] [cursor=pointer]:
+          - button "Relatórios" [ref=e182]:
+            - generic [ref=e186]: Relatórios
+        - listitem [ref=e187] [cursor=pointer]:
+          - button "Campanhas" [ref=e188]:
+            - generic [ref=e192]: Campanhas
+        - listitem [ref=e193] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e194]:
+            - generic [ref=e198]: Central de Ajuda
+        - listitem [ref=e199] [cursor=pointer]:
+          - button "Configurações" [ref=e200]:
+            - generic [ref=e204]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e208] [cursor=pointer]:
+      - img [ref=e211]:
+        - generic [ref=e212]: M
+      - generic [ref=e213]:
+        - generic [ref=e214]: Matheus
+        - generic [ref=e215]: matheus@matheus.pro.br
+  - main [ref=e218]:
+    - generic [ref=e382]:
+      - generic [ref=e383]:
+        - generic [ref=e384]:
+          - button "Anterior" [ref=e385] [cursor=pointer]: Anterior
+          - img [ref=e388]:
+            - generic [ref=e389]: D
+          - generic [ref=e390]:
+            - link "Davi" [ref=e392] [cursor=pointer]:
+              - /url: /app/accounts/10/contacts/1413
+            - generic "KLaOS Cobranca" [ref=e394]:
+              - generic [ref=e396]: KLaOS Cobranca
+        - generic [ref=e398]:
+          - generic [ref=e399]:
+            - button "Devolver ao bot" [ref=e400] [cursor=pointer]:
+              - generic [ref=e402]: Devolver ao bot
+            - button "Abrir" [ref=e404] [cursor=pointer]:
+              - generic [ref=e405]: Abrir
+          - button [ref=e407] [cursor=pointer]
+      - button "Histórico do contato" [ref=e410] [cursor=pointer]: Histórico do contato
+      - generic [ref=e412]:
+        - generic [ref=e413]:
+          - generic [ref=e415]:
+            - text: Você só pode responder a esta conversa usando um modelo de mensagem devido a
+            - link "Restrições de janela de mensagem de 24 horas" [ref=e416] [cursor=pointer]:
+              - /url: https://business.whatsapp.com/policy#:~:text=You%20may%20reply%20to%20a,messages%20via%20approved%20Message%20Templates.
+          - list [ref=e417]:
+            - listitem [ref=e418]
+            - generic [ref=e422]:
+              - paragraph [ref=e425]: Teste
+              - time [ref=e428]: May 11, 3:55 PM
+            - generic "Davi atribuiu a si mesmo essa conversa" [ref=e432]
+            - generic [ref=e434]:
+              - img [ref=e437]:
+                - generic [ref=e438]: D
+              - generic [ref=e440]:
+                - paragraph [ref=e443]:
+                  - strong [ref=e444]: "Atendente DAVI:"
+                  - text: Confirme o recebimento desta mensagem respondendo OK!
+                - time [ref=e447]: May 12, 5:24 PM
+          - generic [ref=e450]:
+            - generic [ref=e451]:
+              - button "Responder Mensagem Privada" [ref=e452] [cursor=pointer]:
+                - generic [ref=e453]: Responder
+                - generic [ref=e454]: Mensagem Privada
+              - generic [ref=e456]:
+                - button [disabled] [ref=e458]
+                - button [ref=e460] [cursor=pointer]
+            - generic [ref=e462]:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - paragraph: You can only reply using a template message due to 24-hour message window restriction
+            - generic [ref=e463]:
+              - button [ref=e465] [cursor=pointer]
+              - button "Enviar (CTRL + ↵)" [disabled] [ref=e468]:
+                - generic [ref=e469]: Enviar (CTRL + ↵)
+        - button [ref=e471] [cursor=pointer]

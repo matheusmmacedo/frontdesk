@@ -1,0 +1,48 @@
+- generic [ref=e2]:
+  - generic [ref=e9]:
+    - button "Change language" [ref=e12] [cursor=pointer]:
+      - img
+    - generic [ref=e14]:
+      - img "KLaOS" [ref=e16]
+      - generic [ref=e17]:
+        - heading "Entrar na sua conta" [level=1] [ref=e18]
+        - paragraph [ref=e19]: Bem-vindo de volta ao KlaOS
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - text: E-mail
+            - generic [ref=e23]:
+              - img [ref=e24]
+              - textbox "E-mail" [ref=e27]:
+                - /placeholder: você@exemplo.com
+          - generic [ref=e28]:
+            - text: Senha
+            - generic [ref=e29]:
+              - img [ref=e30]
+              - textbox "Senha" [ref=e33]:
+                - /placeholder: Mínimo 8 caracteres
+              - button "Show password" [ref=e34] [cursor=pointer]:
+                - img [ref=e35]
+          - generic [ref=e38]:
+            - generic [ref=e39] [cursor=pointer]:
+              - checkbox "Remember me" [ref=e40]
+              - generic [ref=e41]: Remember me
+            - link "Esqueceu sua senha?" [ref=e42] [cursor=pointer]:
+              - /url: /auth/forgot-password
+          - button "Entrar" [ref=e43] [cursor=pointer]
+        - paragraph [ref=e44]:
+          - text: Não tem uma conta?
+          - link "Cadastre-se" [ref=e45] [cursor=pointer]:
+            - /url: /auth/signup
+        - paragraph [ref=e46]:
+          - text: Ao entrar, você concorda com nossa
+          - link "Política de Privacidade" [ref=e47] [cursor=pointer]:
+            - /url: /privacy
+          - text: e Termos de Serviço
+    - generic [ref=e48]:
+      - img [ref=e55]
+      - generic [ref=e58]:
+        - img [ref=e60]
+        - heading "Secure Authentication" [level=2] [ref=e62]
+        - paragraph [ref=e63]: Your data is protected with industry-standard encryption and security measures. Sign in with confidence.
+  - region "Notifications alt+T"

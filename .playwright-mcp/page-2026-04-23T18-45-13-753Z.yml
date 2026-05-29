@@ -1,0 +1,132 @@
+- generic [ref=e2]:
+  - generic [ref=e65]:
+    - complementary [ref=e66]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - img "KlaOS" [ref=e71]
+            - generic [ref=e72]: KlaOS
+          - button [ref=e73] [cursor=pointer]:
+            - img
+        - button "GMB - Glocal My Business" [ref=e76] [cursor=pointer]:
+          - generic [ref=e77]: GMB - Glocal My Business
+          - img
+        - navigation [ref=e78]:
+          - link "Início" [ref=e79] [cursor=pointer]:
+            - /url: /
+            - img [ref=e81]
+            - generic [ref=e84]: Início
+          - link "KlaOS GPT" [ref=e85] [cursor=pointer]:
+            - /url: /copilot
+            - img [ref=e86]
+            - generic [ref=e88]: KlaOS GPT
+          - button "Inteligência" [ref=e90] [cursor=pointer]:
+            - img [ref=e91]
+            - generic [ref=e101]: Inteligência
+            - img [ref=e102]
+          - link "CRM" [ref=e104] [cursor=pointer]:
+            - /url: /crm/deals/kanban
+            - img [ref=e105]
+            - generic [ref=e109]: CRM
+          - button "Atendimento" [ref=e111] [cursor=pointer]:
+            - img [ref=e112]
+            - generic [ref=e115]: Atendimento
+            - img [ref=e116]
+          - link "Engines" [ref=e118] [cursor=pointer]:
+            - /url: /engines
+            - img [ref=e119]
+            - generic [ref=e129]: Engines
+          - link "Configurações" [ref=e130] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e131]
+            - generic [ref=e134]: Configurações
+        - generic [ref=e136]: v1.0 · KlaOS
+    - main [ref=e137]:
+      - generic [ref=e138]:
+        - generic [ref=e139]:
+          - generic [ref=e140]: KlaOS
+          - img [ref=e141]
+          - generic [ref=e143]: Inicio
+        - generic [ref=e144]:
+          - button "Toggle CMO Chat" [ref=e145] [cursor=pointer]:
+            - img
+          - button "Change language" [ref=e147] [cursor=pointer]:
+            - img
+          - button "Notifications" [ref=e150] [cursor=pointer]:
+            - img
+          - button "Matheus" [ref=e152] [cursor=pointer]:
+            - img "Matheus" [ref=e153]
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - heading "Bem-vindo ao KlaOS" [level=1] [ref=e158]
+          - paragraph [ref=e159]: Seu sistema operacional de crescimento está pronto para começar
+        - generic [ref=e160]:
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - img [ref=e164]
+              - generic [ref=e167]: ...
+            - paragraph [ref=e168]: Engines Ativas
+            - paragraph [ref=e169]: Explore e ative engines
+          - generic [ref=e171]:
+            - generic [ref=e172]:
+              - img [ref=e173]
+              - generic [ref=e177]: ...
+            - paragraph [ref=e178]: Documentos na Base
+            - paragraph [ref=e179]: Adicione conhecimento sobre seu negócio
+          - generic [ref=e181]:
+            - generic [ref=e182]:
+              - img [ref=e183]
+              - generic [ref=e186]: ...
+            - paragraph [ref=e187]: Sessões com Klaus
+            - paragraph [ref=e188]: Converse com o KlaOS GPT
+        - generic [ref=e189]:
+          - heading "Ações Rápidas" [level=2] [ref=e190]
+          - generic [ref=e191]:
+            - generic [ref=e195] [cursor=pointer]:
+              - img [ref=e196]
+              - heading "Falar com Klaus" [level=3] [ref=e199]
+              - paragraph [ref=e200]: Converse com o KlaOS GPT
+              - button "Começar" [ref=e201]:
+                - text: Começar
+                - img
+            - generic [ref=e205] [cursor=pointer]:
+              - img [ref=e206]
+              - heading "Adicionar Conhecimento" [level=3] [ref=e210]
+              - paragraph [ref=e211]: Faça upload de documentos
+              - button "Começar" [ref=e212]:
+                - text: Começar
+                - img
+            - generic [ref=e216] [cursor=pointer]:
+              - img [ref=e217]
+              - heading "Abrir Frontdesk" [level=3] [ref=e227]
+              - paragraph [ref=e228]: Gerencie conversas e atendimento
+              - button "Começar" [ref=e229]:
+                - text: Começar
+                - img
+        - generic [ref=e230]:
+          - heading "Status do Sistema" [level=2] [ref=e231]
+          - generic [ref=e232]:
+            - generic [ref=e235]:
+              - img [ref=e237]
+              - generic [ref=e240]:
+                - generic [ref=e241]:
+                  - paragraph [ref=e242]: Knowledge Engine
+                  - img [ref=e243]
+                - paragraph [ref=e245]: Base de conhecimento operacional
+            - generic [ref=e248]:
+              - img [ref=e250]
+              - generic [ref=e253]:
+                - generic [ref=e254]:
+                  - paragraph [ref=e255]: KlaOS GPT
+                  - img [ref=e256]
+                - paragraph [ref=e258]: IA de crescimento pronta
+            - generic [ref=e261]:
+              - img [ref=e263]
+              - generic [ref=e265]:
+                - generic [ref=e266]:
+                  - paragraph [ref=e267]: Tag Engine
+                  - img [ref=e268]
+                - paragraph [ref=e270]: Aguardando instalação
+    - button "Abrir Klaus" [ref=e271] [cursor=pointer]:
+      - img "Klaus" [ref=e272]
+  - region "Notifications alt+T"

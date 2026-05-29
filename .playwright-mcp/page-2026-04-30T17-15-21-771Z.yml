@@ -1,0 +1,291 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e18]:
+        - link "Pesquisar..." [ref=e19] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e21]: Pesquisar...
+        - button [ref=e23] [cursor=pointer]
+    - navigation [ref=e25]:
+      - list [ref=e26]:
+        - listitem [ref=e27] [cursor=pointer]:
+          - button "Caixa de Entrada 2" [ref=e28]:
+            - generic [ref=e31]:
+              - generic [ref=e32]: Caixa de Entrada
+              - generic [ref=e33]: "2"
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+        - listitem [ref=e40] [cursor=pointer]:
+          - button "Contatos" [ref=e41]:
+            - generic [ref=e45]: Contatos
+        - listitem [ref=e46] [cursor=pointer]:
+          - button "Relatórios" [ref=e47]:
+            - generic [ref=e51]: Relatórios
+        - listitem [ref=e52] [cursor=pointer]:
+          - button "Campanhas" [ref=e53]:
+            - generic [ref=e57]: Campanhas
+        - listitem [ref=e58] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e59]:
+            - generic [ref=e63]: Central de Ajuda
+        - listitem [ref=e64] [cursor=pointer]:
+          - button "Configurações" [ref=e65]:
+            - generic [ref=e69]: Configurações
+          - list [ref=e71]:
+            - listitem [ref=e72]:
+              - link "Conta" [ref=e73]:
+                - /url: /app/accounts/10/settings/general
+                - generic [ref=e76]: Conta
+            - listitem [ref=e77]:
+              - link "Formato do Nome" [ref=e78]:
+                - /url: /app/accounts/10/settings/klaos-message-prefix
+                - generic [ref=e81]: Formato do Nome
+            - listitem [ref=e82]:
+              - link "Agentes" [ref=e83]:
+                - /url: /app/accounts/10/settings/agents/list
+                - generic [ref=e86]: Agentes
+            - listitem [ref=e87]:
+              - link "Times" [ref=e88]:
+                - /url: /app/accounts/10/settings/teams/list
+                - generic [ref=e91]: Times
+            - listitem [ref=e92]:
+              - link "Caixas de Entrada" [ref=e93]:
+                - /url: /app/accounts/10/settings/inboxes/list
+                - generic [ref=e96]: Caixas de Entrada
+            - listitem [ref=e97]:
+              - link "Conexões WhatsApp" [ref=e98]:
+                - /url: /app/accounts/10/settings/whatsapp-connections
+                - generic [ref=e101]: Conexões WhatsApp
+            - listitem [ref=e102]:
+              - link "Etiquetas" [ref=e103]:
+                - /url: /app/accounts/10/settings/labels/list
+                - generic [ref=e106]: Etiquetas
+            - listitem [ref=e107]:
+              - link "Atributos Personalizados" [ref=e108]:
+                - /url: /app/accounts/10/settings/custom-attributes/list
+                - generic [ref=e111]: Atributos Personalizados
+            - listitem [ref=e112]:
+              - link "Automação" [ref=e113]:
+                - /url: /app/accounts/10/settings/automation/list
+                - generic [ref=e116]: Automação
+            - listitem [ref=e117]:
+              - link "Robôs" [ref=e118]:
+                - /url: /app/accounts/10/settings/agent-bots
+                - generic [ref=e121]: Robôs
+            - listitem [ref=e122]:
+              - link "Macros" [ref=e123]:
+                - /url: /app/accounts/10/settings/macros
+                - generic [ref=e126]: Macros
+            - listitem [ref=e127]:
+              - link "Respostas Prontas" [ref=e128]:
+                - /url: /app/accounts/10/settings/canned-response/list
+                - generic [ref=e131]: Respostas Prontas
+            - listitem [ref=e132]:
+              - link "Integrações" [ref=e133]:
+                - /url: /app/accounts/10/settings/integrations
+                - generic [ref=e136]: Integrações
+            - listitem [ref=e137]:
+              - link "Fluxo de Conversas" [ref=e138]:
+                - /url: /app/accounts/10/settings/conversation-workflow
+                - generic [ref=e141]: Fluxo de Conversas
+    - button "GUSTAVO HENRIQUE DE OLIVEIRA gustavooliveiranetwork@gmail.com" [ref=e145] [cursor=pointer]:
+      - img [ref=e148]:
+        - generic [ref=e149]: GH
+      - generic [ref=e150]:
+        - generic [ref=e151]: GUSTAVO HENRIQUE DE OLIVEIRA
+        - generic [ref=e152]: gustavooliveiranetwork@gmail.com
+  - main [ref=e155]:
+    - generic [ref=e158]:
+      - generic [ref=e159]:
+        - heading "Etiquetas" [level=1] [ref=e161]
+        - paragraph [ref=e163]: As etiquetas ajudam você a categorizar e priorizar conversas e leads. Você pode atribuir uma etiqueta a uma conversa ou contato usando o painel lateral.
+      - generic [ref=e164]:
+        - searchbox "Search labels..." [ref=e168]
+        - generic [ref=e169]:
+          - generic [ref=e170]: 19 labels
+          - button "Adicionar etiqueta" [ref=e172] [cursor=pointer]:
+            - generic [ref=e173]: Adicionar etiqueta
+      - main [ref=e174]:
+        - table [ref=e176]:
+          - rowgroup [ref=e177]:
+            - row "Nome Descrição Cor Actions" [ref=e178]:
+              - columnheader "Nome" [ref=e179]
+              - columnheader "Descrição" [ref=e180]
+              - columnheader "Cor" [ref=e181]
+              - columnheader "Actions" [ref=e182]
+          - rowgroup [ref=e183]:
+            - 'row "cancelado PERMANENTE - Contrato cancelado #1F2937" [ref=e184]':
+              - cell "cancelado" [ref=e185]
+              - cell "PERMANENTE - Contrato cancelado" [ref=e186]
+              - cell "#1F2937" [ref=e187]:
+                - generic [ref=e190]: "#1F2937"
+              - cell [ref=e191]:
+                - generic [ref=e192]:
+                  - button [ref=e193] [cursor=pointer]
+                  - button [ref=e195] [cursor=pointer]
+            - 'row "cancelamento-pendente Cliente quer cancelar (inadimplente) #FCD34D" [ref=e197]':
+              - cell "cancelamento-pendente" [ref=e198]
+              - cell "Cliente quer cancelar (inadimplente)" [ref=e199]
+              - cell "#FCD34D" [ref=e200]:
+                - generic [ref=e203]: "#FCD34D"
+              - cell [ref=e204]:
+                - generic [ref=e205]:
+                  - button [ref=e206] [cursor=pointer]
+                  - button [ref=e208] [cursor=pointer]
+            - 'row "cobranca_1d D+1 dias de atraso #DDD6FE" [ref=e210]':
+              - cell "cobranca_1d" [ref=e211]
+              - cell "D+1 dias de atraso" [ref=e212]
+              - cell "#DDD6FE" [ref=e213]:
+                - generic [ref=e216]: "#DDD6FE"
+              - cell [ref=e217]:
+                - generic [ref=e218]:
+                  - button [ref=e219] [cursor=pointer]
+                  - button [ref=e221] [cursor=pointer]
+            - 'row "cobranca-0d Dia do vencimento (D0) #BFDBFE" [ref=e223]':
+              - cell "cobranca-0d" [ref=e224]
+              - cell "Dia do vencimento (D0)" [ref=e225]
+              - cell "#BFDBFE" [ref=e226]:
+                - generic [ref=e229]: "#BFDBFE"
+              - cell [ref=e230]:
+                - generic [ref=e231]:
+                  - button [ref=e232] [cursor=pointer]
+                  - button [ref=e234] [cursor=pointer]
+            - 'row "cobranca-15d D+15 dias de atraso #FDBA74" [ref=e236]':
+              - cell "cobranca-15d" [ref=e237]
+              - cell "D+15 dias de atraso" [ref=e238]
+              - cell "#FDBA74" [ref=e239]:
+                - generic [ref=e242]: "#FDBA74"
+              - cell [ref=e243]:
+                - generic [ref=e244]:
+                  - button [ref=e245] [cursor=pointer]
+                  - button [ref=e247] [cursor=pointer]
+            - 'row "cobranca-7d D+7 dias de atraso #FBCFE8" [ref=e249]':
+              - cell "cobranca-7d" [ref=e250]
+              - cell "D+7 dias de atraso" [ref=e251]
+              - cell "#FBCFE8" [ref=e252]:
+                - generic [ref=e255]: "#FBCFE8"
+              - cell [ref=e256]:
+                - generic [ref=e257]:
+                  - button [ref=e258] [cursor=pointer]
+                  - button [ref=e260] [cursor=pointer]
+            - 'row "cobranca-boleto-pendente Aguardando boleto (transferido para Marta) #FCD34D" [ref=e262]':
+              - cell "cobranca-boleto-pendente" [ref=e263]
+              - cell "Aguardando boleto (transferido para Marta)" [ref=e264]
+              - cell "#FCD34D" [ref=e265]:
+                - generic [ref=e268]: "#FCD34D"
+              - cell [ref=e269]:
+                - generic [ref=e270]:
+                  - button [ref=e271] [cursor=pointer]
+                  - button [ref=e273] [cursor=pointer]
+            - 'row "cobranca-cartao-pendente Aguardando novo cartão #FCD34D" [ref=e275]':
+              - cell "cobranca-cartao-pendente" [ref=e276]
+              - cell "Aguardando novo cartão" [ref=e277]
+              - cell "#FCD34D" [ref=e278]:
+                - generic [ref=e281]: "#FCD34D"
+              - cell [ref=e282]:
+                - generic [ref=e283]:
+                  - button [ref=e284] [cursor=pointer]
+                  - button [ref=e286] [cursor=pointer]
+            - 'row "cobranca-cartao-recusado Cartão recusado #FCA5A5" [ref=e288]':
+              - cell "cobranca-cartao-recusado" [ref=e289]
+              - cell "Cartão recusado" [ref=e290]
+              - cell "#FCA5A5" [ref=e291]:
+                - generic [ref=e294]: "#FCA5A5"
+              - cell [ref=e295]:
+                - generic [ref=e296]:
+                  - button [ref=e297] [cursor=pointer]
+                  - button [ref=e299] [cursor=pointer]
+            - 'row "cobranca-d21 D+21 #3B82F6" [ref=e301]':
+              - cell "cobranca-d21" [ref=e302]
+              - cell "D+21" [ref=e303]
+              - cell "#3B82F6" [ref=e304]:
+                - generic [ref=e307]: "#3B82F6"
+              - cell [ref=e308]:
+                - generic [ref=e309]:
+                  - button [ref=e310] [cursor=pointer]
+                  - button [ref=e312] [cursor=pointer]
+            - 'row "cobranca-negociacao Cliente negocia prazo #FCD34D" [ref=e314]':
+              - cell "cobranca-negociacao" [ref=e315]
+              - cell "Cliente negocia prazo" [ref=e316]
+              - cell "#FCD34D" [ref=e317]:
+                - generic [ref=e320]: "#FCD34D"
+              - cell [ref=e321]:
+                - generic [ref=e322]:
+                  - button [ref=e323] [cursor=pointer]
+                  - button [ref=e325] [cursor=pointer]
+            - 'row "cobranca-promessa Cliente promete pagar em data X #FCD34D" [ref=e327]':
+              - cell "cobranca-promessa" [ref=e328]
+              - cell "Cliente promete pagar em data X" [ref=e329]
+              - cell "#FCD34D" [ref=e330]:
+                - generic [ref=e333]: "#FCD34D"
+              - cell [ref=e334]:
+                - generic [ref=e335]:
+                  - button [ref=e336] [cursor=pointer]
+                  - button [ref=e338] [cursor=pointer]
+            - 'row "cobranca-promessa-hoje Cliente vai pagar hoje #FCD34D" [ref=e340]':
+              - cell "cobranca-promessa-hoje" [ref=e341]
+              - cell "Cliente vai pagar hoje" [ref=e342]
+              - cell "#FCD34D" [ref=e343]:
+                - generic [ref=e346]: "#FCD34D"
+              - cell [ref=e347]:
+                - generic [ref=e348]:
+                  - button [ref=e349] [cursor=pointer]
+                  - button [ref=e351] [cursor=pointer]
+            - 'row "cobranca-segunda-via Cliente solicita segunda via #FCD34D" [ref=e353]':
+              - cell "cobranca-segunda-via" [ref=e354]
+              - cell "Cliente solicita segunda via" [ref=e355]
+              - cell "#FCD34D" [ref=e356]:
+                - generic [ref=e359]: "#FCD34D"
+              - cell [ref=e360]:
+                - generic [ref=e361]:
+                  - button [ref=e362] [cursor=pointer]
+                  - button [ref=e364] [cursor=pointer]
+            - 'row "enviado-ao-spc PERMANENTE - Enviado ao SPC/Serasa #F97316" [ref=e366]':
+              - cell "enviado-ao-spc" [ref=e367]
+              - cell "PERMANENTE - Enviado ao SPC/Serasa" [ref=e368]
+              - cell "#F97316" [ref=e369]:
+                - generic [ref=e372]: "#F97316"
+              - cell [ref=e373]:
+                - generic [ref=e374]:
+                  - button [ref=e375] [cursor=pointer]
+                  - button [ref=e377] [cursor=pointer]
+            - 'row "mais-saude PERMANENTE - Cliente do Mais Saúde 24h #22C55E" [ref=e379]':
+              - cell "mais-saude" [ref=e380]
+              - cell "PERMANENTE - Cliente do Mais Saúde 24h" [ref=e381]
+              - cell "#22C55E" [ref=e382]:
+                - generic [ref=e385]: "#22C55E"
+              - cell [ref=e386]:
+                - generic [ref=e387]:
+                  - button [ref=e388] [cursor=pointer]
+                  - button [ref=e390] [cursor=pointer]
+            - 'row "pagamento-realizado Pagamento confirmado #BBF7D0" [ref=e392]':
+              - cell "pagamento-realizado" [ref=e393]
+              - cell "Pagamento confirmado" [ref=e394]
+              - cell "#BBF7D0" [ref=e395]:
+                - generic [ref=e398]: "#BBF7D0"
+              - cell [ref=e399]:
+                - generic [ref=e400]:
+                  - button [ref=e401] [cursor=pointer]
+                  - button [ref=e403] [cursor=pointer]
+            - 'row "pendente Boleto gerado ou pendência ativa #FEF08A" [ref=e405]':
+              - cell "pendente" [ref=e406]
+              - cell "Boleto gerado ou pendência ativa" [ref=e407]
+              - cell "#FEF08A" [ref=e408]:
+                - generic [ref=e411]: "#FEF08A"
+              - cell [ref=e412]:
+                - generic [ref=e413]:
+                  - button [ref=e414] [cursor=pointer]
+                  - button [ref=e416] [cursor=pointer]
+            - 'row "quer-cancelar PERMANENTE - Cliente quer cancelar #EAB308" [ref=e418]':
+              - cell "quer-cancelar" [ref=e419]
+              - cell "PERMANENTE - Cliente quer cancelar" [ref=e420]
+              - cell "#EAB308" [ref=e421]:
+                - generic [ref=e424]: "#EAB308"
+              - cell [ref=e425]:
+                - generic [ref=e426]:
+                  - button [ref=e427] [cursor=pointer]
+                  - button [ref=e429] [cursor=pointer]

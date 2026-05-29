@@ -1,0 +1,176 @@
+- generic [ref=e6]:
+  - generic [ref=e7]:
+    - img [ref=e9]
+    - generic [ref=e11]:
+      - generic "Painel e Indicadores" [ref=e387]:
+        - generic "Painel e Indicadores" [ref=e388] [cursor=pointer]:
+          - generic [ref=e16]:
+            - img [ref=e19]
+            - generic [ref=e21]: Atendimentos
+      - generic "Painel de agentes" [ref=e389]:
+        - generic "Painel de agentes" [ref=e390] [cursor=pointer]:
+          - img [ref=e29]
+      - generic "CRM" [ref=e391]:
+        - generic "CRM" [ref=e392] [cursor=pointer]:
+          - img [ref=e38]
+      - generic "Chat Interno" [ref=e393]:
+        - generic "Chat Interno" [ref=e394] [cursor=pointer]:
+          - img [ref=e47]
+      - generic "Tarefas" [ref=e395]:
+        - generic "Tarefas" [ref=e396] [cursor=pointer]:
+          - img [ref=e56]
+      - generic "Contatos" [ref=e397]:
+        - generic "Contatos" [ref=e398] [cursor=pointer]:
+          - img [ref=e65]
+      - generic "Relatórios" [ref=e399]:
+        - generic "Relatórios" [ref=e400] [cursor=pointer]:
+          - img [ref=e74]
+      - generic "Notificações" [ref=e401]:
+        - generic "Notificações" [ref=e402] [cursor=pointer]:
+          - img [ref=e84]
+      - generic "Configurações" [ref=e403]:
+        - generic "Configurações" [ref=e404] [cursor=pointer]:
+          - img [ref=e93]
+      - generic "Sair" [ref=e405]:
+        - generic "Sair" [ref=e406] [cursor=pointer]:
+          - img [ref=e102]
+      - img [ref=e107]
+    - generic [ref=e114]:
+      - generic [ref=e116] [cursor=pointer]:
+        - button "Choose File" [ref=e407]
+        - generic [ref=e123]: AD
+        - img [ref=e126]
+      - generic [ref=e128] [cursor=pointer]:
+        - generic [ref=e129]:
+          - generic [ref=e130]: Administrador GUSTAVO
+          - generic [ref=e131]: Gustavo
+        - img [ref=e134]
+  - generic [ref=e139]:
+    - generic [ref=e140]:
+      - generic [ref=e144] [cursor=pointer]:
+        - generic [ref=e146]: Atendimentos
+        - generic [ref=e147]: Integrações
+      - generic [ref=e151] [cursor=pointer]:
+        - generic [ref=e152]: Fila
+        - combobox "Fila Todas" [ref=e408]:
+          - generic [ref=e154]:
+            - generic [ref=e156]: Todas
+            - img [ref=e159]
+      - generic [ref=e165] [cursor=pointer]:
+        - generic [ref=e166]: Período
+        - combobox "Período Hoje" [ref=e409]:
+          - generic [ref=e168]:
+            - generic [ref=e170]: Hoje
+            - img [ref=e173]
+      - button "Atualizar" [ref=e410] [cursor=pointer]:
+        - img [ref=e179]
+        - text: Atualizar
+    - generic [ref=e182]:
+      - generic [ref=e183]:
+        - generic "Atendimentos" [ref=e411]:
+          - generic [ref=e186]:
+            - generic [ref=e187]: Atendimentos
+            - generic [ref=e188]:
+              - generic [ref=e189]: "0"
+              - generic [ref=e190]:
+                - img [ref=e192]
+                - generic [ref=e196]: 100%
+        - generic [ref=e198]:
+          - generic "Clientes únicos" [ref=e412]:
+            - generic [ref=e200]:
+              - generic [ref=e201]: Clientes únicos
+              - generic [ref=e202]:
+                - generic [ref=e203]: "0"
+                - generic [ref=e204]:
+                  - img [ref=e206]
+                  - generic [ref=e210]: 100%
+          - slider [ref=e212]:
+            - generic [ref=e213]:
+              - text: "0"
+              - generic [ref=e215]: "%"
+        - generic [ref=e218]:
+          - generic "Mensagens enviadas" [ref=e413]:
+            - generic [ref=e221]:
+              - generic [ref=e222]: Mensagens enviadas
+              - generic [ref=e223]:
+                - generic [ref=e224]: "0"
+                - generic [ref=e225]:
+                  - img [ref=e227]
+                  - generic [ref=e231]: 100%
+          - generic "Mensagens recebidas" [ref=e414]:
+            - generic [ref=e234]:
+              - generic [ref=e235]: Mensagens recebidas
+              - generic [ref=e236]:
+                - generic [ref=e237]: "0"
+                - generic [ref=e238]:
+                  - img [ref=e240]
+                  - generic [ref=e244]: 100%
+        - generic "Méd. atend. / agente" [ref=e415]:
+          - generic [ref=e248]:
+            - generic [ref=e249]: Méd. atend. / agente
+            - generic [ref=e250]:
+              - generic [ref=e251]: 0,0
+              - generic [ref=e252]:
+                - img [ref=e254]
+                - generic [ref=e258]: 100%
+        - generic "TMA" [ref=e416]:
+          - generic [ref=e262]:
+            - generic [ref=e263]: TMA
+            - generic [ref=e265]: 00:00:00
+      - generic [ref=e266]:
+        - generic [ref=e267]:
+          - generic [ref=e270] [cursor=pointer]:
+            - generic [ref=e272]: Contatos por hora
+            - generic [ref=e273]: Contatos por dia do mês
+          - generic [ref=e274]:
+            - generic [ref=e276]: Chats
+            - generic [ref=e278]: Chamadas
+            - generic [ref=e280]: Abandonadas
+        - img [ref=e283]:
+          - generic [ref=e288]:
+            - generic [ref=e290]: "0"
+            - generic [ref=e291]:
+              - generic [ref=e292]: 00h
+              - generic [ref=e293]: 01h
+              - generic [ref=e294]: 02h
+              - generic [ref=e295]: 03h
+              - generic [ref=e296]: 04h
+              - generic [ref=e297]: 05h
+              - generic [ref=e298]: 06h
+              - generic [ref=e299]: 07h
+              - generic [ref=e300]: 08h
+              - generic [ref=e301]: 09h
+              - generic [ref=e302]: 10h
+              - generic [ref=e303]: 11h
+              - generic [ref=e304]: 12h
+              - generic [ref=e305]: 13h
+              - generic [ref=e306]: 14h
+              - generic [ref=e307]: 15h
+              - generic [ref=e308]: 16h
+              - generic [ref=e309]: 17h
+              - generic [ref=e310]: 18h
+              - generic [ref=e311]: 19h
+              - generic [ref=e312]: 20h
+              - generic [ref=e313]: 21h
+              - generic [ref=e314]: 22h
+              - generic [ref=e315]: 23h
+      - generic [ref=e316]:
+        - generic [ref=e320] [cursor=pointer]:
+          - generic [ref=e322]: Atendimentos por fila
+          - generic [ref=e323]: Atendimentos por canal
+        - img [ref=e326]
+      - group "Grelha de dados" [ref=e417]:
+        - row "Coluna Agente Coluna Atendimentos Coluna Dias Coluna Méd. Atend. / Dia Coluna Msg. Enviadas Coluna Msg. Recebidas Coluna TMA" [ref=e418]:
+          - columnheader "Coluna Agente" [ref=e419] [cursor=pointer]: Agente
+          - columnheader "Coluna Atendimentos" [ref=e420] [cursor=pointer]: Atendimentos
+          - columnheader "Coluna Dias" [ref=e421] [cursor=pointer]: Dias
+          - columnheader "Coluna Méd. Atend. / Dia" [ref=e422] [cursor=pointer]: Méd. Atend. / Dia
+          - columnheader "Coluna Msg. Enviadas" [ref=e423] [cursor=pointer]: Msg. Enviadas
+          - columnheader "Coluna Msg. Recebidas" [ref=e424] [cursor=pointer]: Msg. Recebidas
+          - columnheader "Coluna TMA" [ref=e425] [cursor=pointer]: TMA
+        - generic [ref=e361]: Sem dados
+      - generic [ref=e362]:
+        - generic [ref=e366] [cursor=pointer]:
+          - generic [ref=e368]: Atend. por filtro da URA
+          - generic [ref=e369]: Atend. por fechamento
+        - img [ref=e372]

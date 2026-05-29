@@ -2183,10 +2183,64 @@ const assigneeTabItems = computed(() => {
     reason: 'sort-latest: esconde dropdown de sort no UI',
   },
 
+  // === KLaOS — O.8 Botões grandes status do agente na sidebar ===
+  // Substitui o "abrir avatar → clicar status" enterrado por 3 botões
+  // grandes Online/Pausa/Offline sempre visíveis acima do avatar.
+  {
+    id: '/components-next/sidebar/Sidebar.vue',
+    from: "import SidebarProfileMenu from './SidebarProfileMenu.vue';",
+    to: "import SidebarProfileMenu from './SidebarProfileMenu.vue';\nimport KlaosAgentStatusButtons from 'next/KlaosAgent/StatusButtons.vue';",
+    reason: 'O.8 status-buttons: import componente custom',
+  },
+  {
+    id: '/components-next/sidebar/Sidebar.vue',
+    from: `      <div
+        class="px-1 py-1.5 flex-shrink-0 flex w-full z-50 gap-2 items-center border-t border-n-weak shadow-[0px_-2px_4px_0px_rgba(27,28,29,0.02)]"
+        :class="isEffectivelyCollapsed ? 'justify-center' : 'justify-between'"
+      >
+        <SidebarProfileMenu`,
+    to: `      <KlaosAgentStatusButtons v-if="!isEffectivelyCollapsed" class="border-t border-n-weak" />
+      <div
+        class="px-1 py-1.5 flex-shrink-0 flex w-full z-50 gap-2 items-center border-t border-n-weak shadow-[0px_-2px_4px_0px_rgba(27,28,29,0.02)]"
+        :class="isEffectivelyCollapsed ? 'justify-center' : 'justify-between'"
+      >
+        <SidebarProfileMenu`,
+    reason: 'O.8 status-buttons: renderiza 3 botões acima do avatar',
+  },
+
+  // === KLaOS — O.10 Banner janela 24h WhatsApp REFORÇADO ===
+  // Upstream tem banner cinza/rosa claro discreto. Agente fica travado e
+  // não saca o motivo. Substituímos por banner âmbar gritante com ícone
+  // piscante + botão "Usar template".
+  {
+    id: '/widgets/conversation/MessagesView.vue',
+    from: `    <Banner
+      v-if="!currentChat.can_reply"
+      color-scheme="alert"
+      class="mx-2 mt-2 overflow-hidden rounded-lg"
+      :banner-message="replyWindowBannerMessage"
+      :href-link="replyWindowLink"
+      :href-link-text="replyWindowLinkText"
+    />`,
+    to: `    <KlaosWhatsApp24hBanner v-if="!currentChat.can_reply" />`,
+    reason: 'O.10 wa24h-banner: substitui banner upstream discreto pelo Klaos âmbar',
+  },
+  {
+    id: '/widgets/conversation/MessagesView.vue',
+    from: "import Banner from 'dashboard/components/ui/Banner.vue';",
+    to: "import Banner from 'dashboard/components/ui/Banner.vue';\nimport KlaosWhatsApp24hBanner from 'next/KlaosConversation/WhatsApp24hBanner.vue';",
+    reason: 'O.10 wa24h-banner: import componente custom',
+  },
+  {
+    id: '/widgets/conversation/MessagesView.vue',
+    from: '    Banner,\n    ConversationLabelSuggestion,',
+    to: '    Banner,\n    KlaosWhatsApp24hBanner,\n    ConversationLabelSuggestion,',
+    reason: 'O.10 wa24h-banner: registra componente no options API',
+  },
+
   // === KLaOS — O.9 "Tempo desde última msg" badge colorido na card ===
   // Substitui o TimeAgo padrão por um badge mais destacado com faixa de
-  // tempo colorida: verde <1h, cinza 1-6h, âmbar 6-24h, vermelho >24h.
-  // Padrão de paridade com Kualiz "Painel de Atendimentos" (Onda 2 O.9).
+  // tempo colorida. ESTE patch é INDEPENDENTE do snooze (target diferente).
   {
     id: '/widgets/conversation/ConversationCard.vue',
     from: "import TimeAgo from 'dashboard/components/ui/TimeAgo.vue';",
@@ -2208,6 +2262,17 @@ const assigneeTabItems = computed(() => {
     reason: 'O.9 last-activity-badge: substitui TimeAgo por badge colorido por SLA',
   },
 
+  // === KLaOS — i18n: tradução SNOOZE_PLACEHOLDER em pt_BR (faltava upstream) ===
+  // O ninja-keys do modal Adiar usava placeholder "Type a time e.g. tomorrow,
+  // 2 hours, next friday, jan 15..." em inglês porque a chave
+  // COMMAND_BAR.SNOOZE_PLACEHOLDER NÃO estava traduzida em pt_BR/generalSettings.json.
+  {
+    id: '/i18n/locale/pt_BR/generalSettings.json',
+    from: '    "SEARCH_PLACEHOLDER": "Pesquisar ou pular para",\n    "SECTIONS": {',
+    to: '    "SEARCH_PLACEHOLDER": "Pesquisar ou pular para",\n    "SNOOZE_PLACEHOLDER": "Digite um horário ex.: amanhã, 2 horas, próxima sexta, 15 jan...",\n    "SECTIONS": {',
+    reason: 'snooze-placeholder-i18n: traduz SNOOZE_PLACEHOLDER em pt_BR',
+  },
+
   // === KLaOS — Snooze: data-attr na ConversationCard pro pulse ===
   // Adiciona data-klaos-conversation-id no root da card pra o componente
   // SnoozeReopenAlert achar e aplicar/remover a CSS class .klaos-pulse
@@ -2217,6 +2282,23 @@ const assigneeTabItems = computed(() => {
     from: '@click="onCardClick"\n    @contextmenu="openContextMenu($event)"',
     to: ':data-klaos-conversation-id="chat.id"\n    @click="onCardClick"\n    @contextmenu="openContextMenu($event)"',
     reason: 'snooze-pulse: data-attr na card pro SnoozeReopenAlert localizar e pulsar',
+  },
+
+  // === KLaOS — O.11 Ações inline na lista de conversas ===
+  // Patch DEPOIS do snooze (que adicionou :data-klaos-conversation-id).
+  // Outro patch já adicionou KlaosLastActivityBadge no import — adiciona
+  // KlaosInlineActions em sequência usando esse import como âncora.
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: "import KlaosLastActivityBadge from 'next/KlaosConversation/LastActivityBadge.vue';",
+    to: "import KlaosLastActivityBadge from 'next/KlaosConversation/LastActivityBadge.vue';\nimport KlaosInlineActions from 'next/KlaosConversation/InlineActions.vue';",
+    reason: 'O.11 inline-actions: import (encadeado depois do O.9)',
+  },
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: '    :data-klaos-conversation-id="chat.id"\n    @click="onCardClick"\n    @contextmenu="openContextMenu($event)"\n  >',
+    to: '    :data-klaos-conversation-id="chat.id"\n    @click="onCardClick"\n    @contextmenu="openContextMenu($event)"\n  >\n    <KlaosInlineActions :chat="chat" />',
+    reason: 'O.11 inline-actions: renderiza botões hover na card',
   },
 
   // === KLaOS — Snooze: monta SnoozeReopenAlert no App.vue ===

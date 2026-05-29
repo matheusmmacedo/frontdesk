@@ -1,0 +1,76 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada 1" [ref=e29]:
+            - generic [ref=e32]:
+              - generic [ref=e33]: Caixa de Entrada
+              - generic [ref=e34]: "1"
+        - listitem [ref=e35] [cursor=pointer]:
+          - button "Conversas" [ref=e36]:
+            - generic [ref=e40]: Conversas
+        - listitem [ref=e41] [cursor=pointer]:
+          - button "Contatos" [ref=e42]:
+            - generic [ref=e46]: Contatos
+        - listitem [ref=e47] [cursor=pointer]:
+          - button "Relatórios" [ref=e48]:
+            - generic [ref=e52]: Relatórios
+        - listitem [ref=e53] [cursor=pointer]:
+          - button "Campanhas" [ref=e54]:
+            - generic [ref=e58]: Campanhas
+        - listitem [ref=e59] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e60]:
+            - generic [ref=e64]: Central de Ajuda
+        - listitem [ref=e65] [cursor=pointer]:
+          - button "Configurações" [ref=e66]:
+            - generic [ref=e70]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e74] [cursor=pointer]:
+      - img [ref=e77]:
+        - generic [ref=e78]: M
+      - generic [ref=e79]:
+        - generic [ref=e80]: Matheus
+        - generic [ref=e81]: matheus@matheus.pro.br
+  - main [ref=e84]:
+    - generic [ref=e85]:
+      - generic [ref=e86]:
+        - generic [ref=e87]:
+          - generic [ref=e88]:
+            - heading "Caixa de Entrada" [level=1] [ref=e89]
+            - button "Exibir" [ref=e91] [cursor=pointer]:
+              - generic [ref=e93]: Exibir
+          - button [ref=e95] [cursor=pointer]
+        - generic [ref=e97]:
+          - 'button "Lara | lara: Olá, tudo bem? Em que posso te ajudar? Nova Mensagem 1m" [ref=e98] [cursor=pointer]':
+            - generic [ref=e99]:
+              - img [ref=e101]:
+                - generic [ref=e102]: M
+              - paragraph [ref=e103]:
+                - generic [ref=e105]: "Lara | lara: Olá, tudo bem? Em que posso te ajudar?"
+            - generic [ref=e106]:
+              - generic [ref=e110]: Nova Mensagem
+              - generic [ref=e114]: 1m
+          - 'button "Lara | lara: Me informe, por favor, o seu CPF (somente números) para... Nova Mensagem 8d" [ref=e115] [cursor=pointer]':
+            - generic [ref=e116]:
+              - img [ref=e118]:
+                - generic [ref=e119]: D
+              - paragraph [ref=e120]:
+                - generic [ref=e121]: "Lara | lara: Me informe, por favor, o seu CPF (somente números) para..."
+            - generic [ref=e122]:
+              - generic [ref=e126]: Nova Mensagem
+              - generic [ref=e127]:
+                - img [ref=e129]
+                - generic [ref=e136]: 8d
+      - generic [ref=e138]:
+        - img [ref=e139]
+        - generic [ref=e141]: Notificações de todas as caixas inscritas

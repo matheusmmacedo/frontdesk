@@ -1,0 +1,87 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "E-Cassini" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: E-Cassini
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/9/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada 2" [ref=e29]:
+            - generic [ref=e32]:
+              - generic [ref=e33]: Caixa de Entrada
+              - generic [ref=e34]: "2"
+        - listitem [ref=e35] [cursor=pointer]:
+          - button "Conversas" [ref=e36]:
+            - generic [ref=e40]: Conversas
+          - list [ref=e42]:
+            - listitem [ref=e43]:
+              - link "Todas as conversas" [ref=e44]:
+                - /url: /app/accounts/9/dashboard
+                - generic [ref=e45]: Todas as conversas
+            - listitem [ref=e46]:
+              - link "Menções" [ref=e47]:
+                - /url: /app/accounts/9/mentions/conversations
+                - generic [ref=e48]: Menções
+            - listitem [ref=e49]:
+              - link "Não atendidas" [ref=e50]:
+                - /url: /app/accounts/9/unattended/conversations
+                - generic [ref=e51]: Não atendidas
+            - generic:
+              - generic: Canais
+            - list [ref=e52]:
+              - listitem [ref=e54]:
+                - link "SDR" [ref=e55]:
+                  - /url: /app/accounts/9/inbox/16
+                  - generic [ref=e58]: SDR
+        - listitem [ref=e59] [cursor=pointer]:
+          - button "Contatos" [ref=e60]:
+            - generic [ref=e64]: Contatos
+        - listitem [ref=e65] [cursor=pointer]:
+          - button "Relatórios" [ref=e66]:
+            - generic [ref=e70]: Relatórios
+        - listitem [ref=e71] [cursor=pointer]:
+          - button "Campanhas" [ref=e72]:
+            - generic [ref=e76]: Campanhas
+        - listitem [ref=e77] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e78]:
+            - generic [ref=e82]: Central de Ajuda
+        - listitem [ref=e83] [cursor=pointer]:
+          - button "Configurações" [ref=e84]:
+            - generic [ref=e88]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e92] [cursor=pointer]:
+      - img [ref=e95]:
+        - generic [ref=e96]: M
+      - generic [ref=e97]:
+        - generic [ref=e98]: Matheus
+        - generic [ref=e99]: matheus@matheus.pro.br
+  - main [ref=e102]:
+    - generic [ref=e104]:
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - heading "Conversas" [level=1] [ref=e107]
+          - generic [ref=e108]: Ativas
+        - generic [ref=e109]:
+          - button [ref=e111] [cursor=pointer]
+          - button [ref=e114] [cursor=pointer]
+          - button [ref=e116] [cursor=pointer]
+      - list [ref=e119]:
+        - listitem [ref=e120]:
+          - generic [ref=e121] [cursor=pointer]:
+            - text: Minhas
+            - generic [ref=e123]: "0"
+        - listitem [ref=e124]:
+          - generic [ref=e125] [cursor=pointer]:
+            - text: Não atribuídas
+            - generic [ref=e127]: "0"
+        - listitem [ref=e128]:
+          - generic [ref=e129] [cursor=pointer]:
+            - text: Todos
+            - generic [ref=e131]: "0"
+      - img [ref=e134]

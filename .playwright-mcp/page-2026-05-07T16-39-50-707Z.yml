@@ -1,0 +1,5 @@
+- main [ref=e4]:
+  - generic [ref=e5]:
+    - img "KLaOS Frontdesk"
+    - heading "Entrar no KLaOS Frontdesk" [level=2] [ref=e6]
+  - paragraph [ref=e10]: Sua organização usa SSO. Use o link enviado pela plataforma para entrar.

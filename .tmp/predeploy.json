@@ -1,0 +1,10 @@
+{
+  "query": "mutation($input:ServiceInstanceUpdateInput!,$sid:String!,$eid:String){serviceInstanceUpdate(serviceId:$sid,environmentId:$eid,input:$input)}",
+  "variables": {
+    "sid": "__SID__",
+    "eid": "__EID__",
+    "input": {
+      "preDeployCommand": ["bundle exec rake db:migrate && bundle exec rails runner 'InstallationConfig.find_or_initialize_by(name: \"DEPLOYMENT_ENV\").tap{|c| c.value=\"self-hosted\"; c.save!}; InstallationConfig.find_or_initialize_by(name: \"INSTALLATION_PRICING_PLAN\").tap{|c| c.value=\"enterprise\"; c.save!}; InstallationConfig.find_or_initialize_by(name: \"INSTALLATION_PRICING_PLAN_QUANTITY\").tap{|c| c.value=10000; c.save!}; ENV[\"CAPTAIN_OPEN_AI_API_KEY\"].to_s.empty? || InstallationConfig.find_or_initialize_by(name: \"CAPTAIN_OPEN_AI_API_KEY\").tap{|c| c.value=ENV[\"CAPTAIN_OPEN_AI_API_KEY\"]; c.save!}; GlobalConfig.clear_cache'"]
+    }
+  }
+}

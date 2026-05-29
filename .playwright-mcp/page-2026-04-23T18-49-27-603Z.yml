@@ -1,0 +1,137 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "GMB - Glocal My Business" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: GMB - Glocal My Business
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - listitem [ref=e45]:
+              - link "Menções" [ref=e46]:
+                - /url: /app/accounts/10/mentions/conversations
+                - generic [ref=e47]: Menções
+            - listitem [ref=e48]:
+              - link "Não atendidas" [ref=e49]:
+                - /url: /app/accounts/10/unattended/conversations
+                - generic [ref=e50]: Não atendidas
+            - generic:
+              - generic: Times
+            - list [ref=e51]:
+              - listitem [ref=e53]:
+                - link "sdr" [ref=e54]:
+                  - /url: /app/accounts/10/team/1
+                  - generic [ref=e55]: sdr
+            - generic:
+              - generic: Canais
+            - list [ref=e56]:
+              - generic [ref=e57]:
+                - listitem [ref=e58]:
+                  - link "Klaus - Atendimento" [ref=e59]:
+                    - /url: /app/accounts/10/inbox/17
+                    - generic [ref=e62]: Klaus - Atendimento
+                - listitem [ref=e63]:
+                  - link "Klaus - GTM 90D" [ref=e64]:
+                    - /url: /app/accounts/10/inbox/18
+                    - generic [ref=e67]: Klaus - GTM 90D
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e68]:
+              - listitem [ref=e70]:
+                - link "proposta-apresentada" [ref=e71]:
+                  - /url: /app/accounts/10/label/proposta-apresentada
+                  - generic [ref=e74]: proposta-apresentada
+        - listitem [ref=e75] [cursor=pointer]:
+          - button "Contatos" [ref=e76]:
+            - generic [ref=e80]: Contatos
+        - listitem [ref=e81] [cursor=pointer]:
+          - button "Relatórios" [ref=e82]:
+            - generic [ref=e86]: Relatórios
+        - listitem [ref=e87] [cursor=pointer]:
+          - button "Campanhas" [ref=e88]:
+            - generic [ref=e92]: Campanhas
+        - listitem [ref=e93] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e94]:
+            - generic [ref=e98]: Central de Ajuda
+        - listitem [ref=e99] [cursor=pointer]:
+          - button "Configurações" [ref=e100]:
+            - generic [ref=e104]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e108] [cursor=pointer]:
+      - img [ref=e111]:
+        - generic [ref=e112]: M
+      - generic [ref=e113]:
+        - generic [ref=e114]: Matheus
+        - generic [ref=e115]: matheus@matheus.pro.br
+  - main [ref=e118]:
+    - generic [ref=e119]:
+      - generic [ref=e120]:
+        - generic [ref=e121]:
+          - generic [ref=e122]:
+            - heading "Conversas" [level=1] [ref=e123]
+            - generic [ref=e124]: Pendentes
+          - generic [ref=e125]:
+            - generic [ref=e126]:
+              - button [ref=e127] [cursor=pointer]
+              - generic [ref=e171]:
+                - heading "Filtrar conversas" [level=3] [ref=e172]
+                - list [ref=e173]:
+                  - listitem [ref=e174]:
+                    - generic [ref=e175]:
+                      - button "Status" [ref=e177] [cursor=pointer]:
+                        - generic [ref=e179]: Status
+                      - button "Igual a" [ref=e181] [cursor=pointer]:
+                        - generic [ref=e183]: Igual a
+                      - button "Selecione uma opção..." [ref=e197] [cursor=pointer]:
+                        - generic [ref=e199]: Selecione uma opção...
+                      - button [ref=e190] [cursor=pointer]
+                - generic [ref=e192]:
+                  - button "Adicionar filtro" [ref=e193] [cursor=pointer]
+                  - generic [ref=e194]:
+                    - button "Limpar filtros" [active] [ref=e195] [cursor=pointer]
+                    - button "Aplicar filtros" [ref=e196] [cursor=pointer]
+            - button [ref=e130] [cursor=pointer]
+            - button [ref=e132] [cursor=pointer]
+        - list [ref=e135]:
+          - listitem [ref=e136]:
+            - generic [ref=e137] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e139]: "0"
+          - listitem [ref=e140]:
+            - generic [ref=e141] [cursor=pointer]:
+              - text: Não atribuídas
+              - generic [ref=e143]: "17"
+          - listitem [ref=e144]:
+            - generic [ref=e145] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e147]: "17"
+        - paragraph [ref=e148]: Não há conversas ativas neste grupo.
+      - generic [ref=e155]:
+        - img "No Chat" [ref=e156]
+        - generic [ref=e157]: Oh oh! Parece que não há mensagens de clientes na sua caixa de entrada.
+        - generic [ref=e158]:
+          - generic [ref=e159]:
+            - generic [ref=e160]:
+              - generic [ref=e161]: ⌘
+              - generic [ref=e162]: K
+            - generic [ref=e163]: para abrir o menu de comando
+          - generic [ref=e164]:
+            - generic [ref=e165]:
+              - generic [ref=e166]: ⌘
+              - generic [ref=e167]: /
+            - generic [ref=e168]: para ver os atalhos de teclado

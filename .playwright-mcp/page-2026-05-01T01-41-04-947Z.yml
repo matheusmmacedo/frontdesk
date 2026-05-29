@@ -1,0 +1,929 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e18]:
+        - link "Pesquisar..." [ref=e19] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e21]: Pesquisar...
+        - button [ref=e23] [cursor=pointer]
+    - navigation [ref=e25]:
+      - list [ref=e26]:
+        - listitem [ref=e27] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e28]:
+            - generic [ref=e32]: Caixa de Entrada
+        - listitem [ref=e33] [cursor=pointer]:
+          - button "Conversas" [ref=e34]:
+            - generic [ref=e38]: Conversas
+          - list [ref=e40]:
+            - listitem [ref=e41]:
+              - link "Todas as conversas" [ref=e42]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e43]: Todas as conversas
+            - listitem [ref=e44]:
+              - link "Menções" [ref=e45]:
+                - /url: /app/accounts/10/mentions/conversations
+                - generic [ref=e46]: Menções
+            - listitem [ref=e47]:
+              - link "Não atendidas" [ref=e48]:
+                - /url: /app/accounts/10/unattended/conversations
+                - generic [ref=e49]: Não atendidas
+            - generic:
+              - generic: Times
+            - list [ref=e135]:
+              - generic [ref=e136]:
+                - listitem [ref=e137]:
+                  - link "cobrança" [ref=e138]:
+                    - /url: /app/accounts/10/team/2
+                    - generic [ref=e139]: cobrança
+                - listitem [ref=e140]:
+                  - link "cancelamento" [ref=e141]:
+                    - /url: /app/accounts/10/team/6
+                    - generic [ref=e142]: cancelamento
+                - listitem [ref=e143]:
+                  - link "contratos" [ref=e144]:
+                    - /url: /app/accounts/10/team/8
+                    - generic [ref=e145]: contratos
+            - generic:
+              - generic: Canais
+            - list [ref=e146]:
+              - listitem [ref=e148]:
+                - link "KLaOS Cobranca" [ref=e149]:
+                  - /url: /app/accounts/10/inbox/30
+                  - generic [ref=e152]: KLaOS Cobranca
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e153]:
+              - generic [ref=e154]:
+                - listitem [ref=e155]:
+                  - link "cancelado" [ref=e156]:
+                    - /url: /app/accounts/10/label/cancelado
+                    - generic [ref=e159]: cancelado
+                - listitem [ref=e160]:
+                  - link "cancelamento-pendente" [ref=e161]:
+                    - /url: /app/accounts/10/label/cancelamento-pendente
+                    - generic [ref=e164]: cancelamento-pendente
+                - listitem [ref=e165]:
+                  - link "cobranca_1d" [ref=e166]:
+                    - /url: /app/accounts/10/label/cobranca_1d
+                    - generic [ref=e169]: cobranca_1d
+                - listitem [ref=e170]:
+                  - link "cobranca-0d" [ref=e171]:
+                    - /url: /app/accounts/10/label/cobranca-0d
+                    - generic [ref=e174]: cobranca-0d
+                - listitem [ref=e175]:
+                  - link "cobranca-15d" [ref=e176]:
+                    - /url: /app/accounts/10/label/cobranca-15d
+                    - generic [ref=e179]: cobranca-15d
+                - listitem [ref=e180]:
+                  - link "cobranca-7d" [ref=e181]:
+                    - /url: /app/accounts/10/label/cobranca-7d
+                    - generic [ref=e184]: cobranca-7d
+                - listitem [ref=e185]:
+                  - link "cobranca-boleto-pendente" [ref=e186]:
+                    - /url: /app/accounts/10/label/cobranca-boleto-pendente
+                    - generic [ref=e189]: cobranca-boleto-pendente
+                - listitem [ref=e190]:
+                  - link "cobranca-cartao-pendente" [ref=e191]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-pendente
+                    - generic [ref=e194]: cobranca-cartao-pendente
+                - listitem [ref=e195]:
+                  - link "cobranca-cartao-recusado" [ref=e196]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-recusado
+                    - generic [ref=e199]: cobranca-cartao-recusado
+                - listitem [ref=e200]:
+                  - link "cobranca-d21" [ref=e201]:
+                    - /url: /app/accounts/10/label/cobranca-d21
+                    - generic [ref=e204]: cobranca-d21
+                - listitem [ref=e205]:
+                  - link "cobranca-negociacao" [ref=e206]:
+                    - /url: /app/accounts/10/label/cobranca-negociacao
+                    - generic [ref=e209]: cobranca-negociacao
+                - listitem [ref=e210]:
+                  - link "cobranca-promessa" [ref=e211]:
+                    - /url: /app/accounts/10/label/cobranca-promessa
+                    - generic [ref=e214]: cobranca-promessa
+                - listitem [ref=e215]:
+                  - link "cobranca-promessa-hoje" [ref=e216]:
+                    - /url: /app/accounts/10/label/cobranca-promessa-hoje
+                    - generic [ref=e219]: cobranca-promessa-hoje
+                - listitem [ref=e220]:
+                  - link "cobranca-segunda-via" [ref=e221]:
+                    - /url: /app/accounts/10/label/cobranca-segunda-via
+                    - generic [ref=e224]: cobranca-segunda-via
+                - listitem [ref=e225]:
+                  - link "enviado-ao-spc" [ref=e226]:
+                    - /url: /app/accounts/10/label/enviado-ao-spc
+                    - generic [ref=e229]: enviado-ao-spc
+                - listitem [ref=e230]:
+                  - link "mais-saude" [ref=e231]:
+                    - /url: /app/accounts/10/label/mais-saude
+                    - generic [ref=e234]: mais-saude
+                - listitem [ref=e235]:
+                  - link "pagamento-realizado" [ref=e236]:
+                    - /url: /app/accounts/10/label/pagamento-realizado
+                    - generic [ref=e239]: pagamento-realizado
+                - listitem [ref=e240]:
+                  - link "pendente" [ref=e241]:
+                    - /url: /app/accounts/10/label/pendente
+                    - generic [ref=e244]: pendente
+                - listitem [ref=e245]:
+                  - link "quer-cancelar" [ref=e246]:
+                    - /url: /app/accounts/10/label/quer-cancelar
+                    - generic [ref=e249]: quer-cancelar
+              - generic:
+                - img
+        - listitem [ref=e50] [cursor=pointer]:
+          - button "Contatos" [ref=e51]:
+            - generic [ref=e55]: Contatos
+        - listitem [ref=e56] [cursor=pointer]:
+          - button "Relatórios" [ref=e57]:
+            - generic [ref=e61]: Relatórios
+        - listitem [ref=e62] [cursor=pointer]:
+          - button "Campanhas" [ref=e63]:
+            - generic [ref=e67]: Campanhas
+        - listitem [ref=e68] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e69]:
+            - generic [ref=e73]: Central de Ajuda
+        - listitem [ref=e74] [cursor=pointer]:
+          - button "Configurações" [ref=e75]:
+            - generic [ref=e79]: Configurações
+    - button "GUSTAVO HENRIQUE DE OLIVEIRA gustavooliveiranetwork@gmail.com" [ref=e83] [cursor=pointer]:
+      - img [ref=e86]:
+        - generic [ref=e87]: GH
+      - generic [ref=e88]:
+        - generic [ref=e89]: GUSTAVO HENRIQUE DE OLIVEIRA
+        - generic [ref=e90]: gustavooliveiranetwork@gmail.com
+  - main [ref=e93]:
+    - generic [ref=e94]:
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - heading "Conversas" [level=1] [ref=e98]
+            - generic [ref=e99]: Ativas
+          - generic [ref=e100]:
+            - button [ref=e102] [cursor=pointer]
+            - button [ref=e105] [cursor=pointer]
+            - button [ref=e107] [cursor=pointer]
+        - list [ref=e110]:
+          - listitem [ref=e111]:
+            - generic [ref=e112] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e114]: "2"
+          - listitem [ref=e115]:
+            - generic [ref=e116] [cursor=pointer]:
+              - text: Não atribuídas
+              - generic [ref=e118]: "3"
+          - listitem [ref=e119]:
+            - generic [ref=e120] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e122]: "6"
+        - generic [ref=e123]:
+          - generic [ref=e250]:
+            - generic [ref=e252] [cursor=pointer]:
+              - img [ref=e255]:
+                - generic [ref=e256]: GH
+              - generic [ref=e257]:
+                - heading "GUSTAVO HENRIQUE DE OLIVEIRA" [level=4] [ref=e258]
+                - generic [ref=e259]: até mais
+                - generic [ref=e262]: 6h • 6h
+            - generic [ref=e264] [cursor=pointer]:
+              - img [ref=e267]:
+                - generic [ref=e268]: D
+              - generic [ref=e269]:
+                - heading "Davi" [level=4] [ref=e270]
+                - generic [ref=e271]:
+                  - img [ref=e272]
+                  - text: "Histórico da conversa (IA): [IA]: Atendente LARA: Olá, tudo bem? Em que posso te ajudar? Usuário: Gostaria de saber algumas informações [IA]: Atendente LARA: Claro, Davi. Você quer informações sobre benefícios do plano, valores (a partir de R$ 29,90/mês) ou sobre pagamento/boletos? Me diga qual dessas opções você precisa. Usuário: poderia me dizer os beneficios? [IA]: Atendente LARA: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐 LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS ✅📄 https://maissaude24horas.com.br/ 💙 Qualquer dúvida, estou à disposição! ☺️ Usuário: Estou com duvidas sobre o pagamento, como funciona? [IA]: Atendente LARA: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar 2ª via/PIX se precisar), me informe seu CPF (somente números), por gentileza. Usuário: Entendi, mt obrigado Lara [IA]: Atendente LARA: Eu que agradeço, Davi. Se precisar de 2ª via/PIX ou confirmar alguma pendência, é só me enviar seu CPF (somente números). Usuário: Boa noite [IA]: Atendente LARA: Boa noite, Davi! Você quer seguir com a dúvida sobre pagamento — posso te enviar 2ª via/PIX — ou precisa de outra informação? Usuário: Eu gostaria de saber o valor da minha negociação [IA]: Atendente LARA: Para eu verificar o valor da sua negociação no nosso registro, me informe seu CPF (somente números), por gentileza. [IA]: Atendente LARA: Não localizei esse CPF 18296794730 no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente? Usuário: Poderia falar com atendente humano? [IA]: Atendente LARA: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar. [IA]: Atendente LARA: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui."
+                - generic [ref=e276]: 5d • 1d
+          - paragraph [ref=e277]: Todas as conversas carregadas 🎉
+      - generic [ref=e127]:
+        - generic [ref=e293]:
+          - generic [ref=e294]:
+            - img [ref=e296]:
+              - generic [ref=e297]: D
+            - generic [ref=e300]: Davi
+          - generic [ref=e302]:
+            - generic [ref=e303]:
+              - button "Devolver ao bot" [ref=e304] [cursor=pointer]:
+                - generic [ref=e306]: Devolver ao bot
+              - generic [ref=e307]:
+                - button "Resolver" [ref=e308] [cursor=pointer]:
+                  - generic [ref=e309]: Resolver
+                - button [ref=e310] [cursor=pointer]
+            - button [ref=e313] [cursor=pointer]
+        - generic [ref=e128]:
+          - generic [ref=e315]:
+            - generic [ref=e317]:
+              - text: Você só pode responder a esta conversa usando um modelo de mensagem devido a
+              - link "Restrições de janela de mensagem de 24 horas" [ref=e318] [cursor=pointer]:
+                - /url: https://business.whatsapp.com/policy#:~:text=You%20may%20reply%20to%20a,messages%20via%20approved%20Message%20Templates.
+            - list [ref=e319]:
+              - listitem [ref=e320]
+              - generic "Conversa foi marcada como resolvida por Davi" [ref=e324]
+              - generic [ref=e326]:
+                - img [ref=e329]:
+                  - generic [ref=e330]: D
+                - generic [ref=e332]:
+                  - generic [ref=e334]:
+                    - paragraph [ref=e335]:
+                      - strong [ref=e336]: "Histórico da conversa (IA):"
+                    - paragraph [ref=e337]:
+                      - text: "[IA]:"
+                      - strong [ref=e338]: "Atendente LARA:"
+                      - text: Olá, tudo bem? Em que posso te ajudar?
+                    - paragraph [ref=e339]:
+                      - link "Usuário" [ref=e340] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Gostaria de saber algumas informações"
+                    - paragraph [ref=e341]:
+                      - text: "[IA]:"
+                      - strong [ref=e342]: "Atendente LARA:"
+                      - text: Claro, Davi. Você quer informações sobre
+                      - strong [ref=e343]: benefícios do plano
+                      - text: ","
+                      - strong [ref=e344]: valores
+                      - text: (a partir de
+                      - strong [ref=e345]: R$ 29,90/mês
+                      - text: ) ou sobre
+                      - strong [ref=e346]: pagamento/boletos
+                      - text: "?"
+                    - paragraph [ref=e347]: Me diga qual dessas opções você precisa.
+                    - paragraph [ref=e348]:
+                      - link "Usuário" [ref=e349] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": poderia me dizer os beneficios?"
+                    - paragraph [ref=e350]:
+                      - text: "[IA]:"
+                      - strong [ref=e351]: "Atendente LARA:"
+                      - text: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐
+                    - paragraph [ref=e352]:
+                      - strong [ref=e353]: LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS
+                      - text: ✅📄
+                    - paragraph [ref=e354]:
+                      - link "https://maissaude24horas.com.br/" [ref=e355] [cursor=pointer]:
+                        - /url: https://maissaude24horas.com.br/
+                      - text: 💙
+                    - paragraph [ref=e356]: Qualquer dúvida, estou à disposição! ☺️
+                    - paragraph [ref=e357]:
+                      - link "Usuário" [ref=e358] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Estou com duvidas sobre o pagamento, como funciona?"
+                    - paragraph [ref=e359]:
+                      - text: "[IA]:"
+                      - strong [ref=e360]: "Atendente LARA:"
+                      - text: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar
+                      - strong [ref=e361]: 2ª via/PIX
+                      - text: se precisar), me informe seu
+                      - strong [ref=e362]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e363]:
+                      - link "Usuário" [ref=e364] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Entendi, mt obrigado Lara"
+                    - paragraph [ref=e365]:
+                      - text: "[IA]:"
+                      - strong [ref=e366]: "Atendente LARA:"
+                      - text: Eu que agradeço, Davi. Se precisar de
+                      - strong [ref=e367]: 2ª via/PIX
+                      - text: ou confirmar alguma pendência, é só me enviar seu
+                      - strong [ref=e368]: CPF
+                      - text: (somente números).
+                    - paragraph [ref=e369]:
+                      - link "Usuário" [ref=e370] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Boa noite"
+                    - paragraph [ref=e371]:
+                      - text: "[IA]:"
+                      - strong [ref=e372]: "Atendente LARA:"
+                      - text: Boa noite, Davi! Você quer seguir com a dúvida sobre
+                      - strong [ref=e373]: pagamento
+                      - text: — posso te enviar
+                      - strong [ref=e374]: 2ª via/PIX
+                      - text: — ou precisa de outra informação?
+                    - paragraph [ref=e375]:
+                      - link "Usuário" [ref=e376] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Eu gostaria de saber o valor da minha negociação"
+                    - paragraph [ref=e377]:
+                      - text: "[IA]:"
+                      - strong [ref=e378]: "Atendente LARA:"
+                      - text: Para eu verificar o
+                      - strong [ref=e379]: valor da sua negociação
+                      - text: no nosso registro, me informe seu
+                      - strong [ref=e380]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e381]:
+                      - text: "[IA]:"
+                      - strong [ref=e382]: "Atendente LARA:"
+                      - text: Não localizei esse
+                      - strong [ref=e383]: CPF 18296794730
+                      - text: no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente?
+                    - paragraph [ref=e384]:
+                      - link "Usuário" [ref=e385] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Poderia falar com atendente humano?"
+                    - paragraph [ref=e386]:
+                      - text: "[IA]:"
+                      - strong [ref=e387]: "Atendente LARA:"
+                      - text: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar.
+                    - paragraph [ref=e388]:
+                      - text: "[IA]:"
+                      - strong [ref=e389]: "Atendente LARA:"
+                      - text: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui.
+                  - time [ref=e392]: Apr 27, 8:56 PM
+              - 'generic "[TRANSFERIDO] Conversa transferida para atendimento humano. Motivo: User explicitly requested human agent" [ref=e397]'
+              - generic "Atribuído a GUSTAVO HENRIQUE DE OLIVEIRA por Daniel" [ref=e401]
+              - generic "Desatribuído de cobrança por Davi" [ref=e405]
+              - generic "Atribuído a cobrança por Davi" [ref=e409]
+              - generic [ref=e411]:
+                - img [ref=e414]:
+                  - generic [ref=e415]: D
+                - generic [ref=e417]:
+                  - generic [ref=e419]:
+                    - paragraph [ref=e420]:
+                      - strong [ref=e421]: "Histórico da conversa (IA):"
+                    - paragraph [ref=e422]:
+                      - text: "[IA]:"
+                      - strong [ref=e423]: "Atendente LARA:"
+                      - text: Olá, tudo bem? Em que posso te ajudar?
+                    - paragraph [ref=e424]:
+                      - link "Usuário" [ref=e425] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Gostaria de saber algumas informações"
+                    - paragraph [ref=e426]:
+                      - text: "[IA]:"
+                      - strong [ref=e427]: "Atendente LARA:"
+                      - text: Claro, Davi. Você quer informações sobre
+                      - strong [ref=e428]: benefícios do plano
+                      - text: ","
+                      - strong [ref=e429]: valores
+                      - text: (a partir de
+                      - strong [ref=e430]: R$ 29,90/mês
+                      - text: ) ou sobre
+                      - strong [ref=e431]: pagamento/boletos
+                      - text: "?"
+                    - paragraph [ref=e432]: Me diga qual dessas opções você precisa.
+                    - paragraph [ref=e433]:
+                      - link "Usuário" [ref=e434] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": poderia me dizer os beneficios?"
+                    - paragraph [ref=e435]:
+                      - text: "[IA]:"
+                      - strong [ref=e436]: "Atendente LARA:"
+                      - text: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐
+                    - paragraph [ref=e437]:
+                      - strong [ref=e438]: LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS
+                      - text: ✅📄
+                    - paragraph [ref=e439]:
+                      - link "https://maissaude24horas.com.br/" [ref=e440] [cursor=pointer]:
+                        - /url: https://maissaude24horas.com.br/
+                      - text: 💙
+                    - paragraph [ref=e441]: Qualquer dúvida, estou à disposição! ☺️
+                    - paragraph [ref=e442]:
+                      - link "Usuário" [ref=e443] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Estou com duvidas sobre o pagamento, como funciona?"
+                    - paragraph [ref=e444]:
+                      - text: "[IA]:"
+                      - strong [ref=e445]: "Atendente LARA:"
+                      - text: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar
+                      - strong [ref=e446]: 2ª via/PIX
+                      - text: se precisar), me informe seu
+                      - strong [ref=e447]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e448]:
+                      - link "Usuário" [ref=e449] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Entendi, mt obrigado Lara"
+                    - paragraph [ref=e450]:
+                      - text: "[IA]:"
+                      - strong [ref=e451]: "Atendente LARA:"
+                      - text: Eu que agradeço, Davi. Se precisar de
+                      - strong [ref=e452]: 2ª via/PIX
+                      - text: ou confirmar alguma pendência, é só me enviar seu
+                      - strong [ref=e453]: CPF
+                      - text: (somente números).
+                    - paragraph [ref=e454]:
+                      - link "Usuário" [ref=e455] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Boa noite"
+                    - paragraph [ref=e456]:
+                      - text: "[IA]:"
+                      - strong [ref=e457]: "Atendente LARA:"
+                      - text: Boa noite, Davi! Você quer seguir com a dúvida sobre
+                      - strong [ref=e458]: pagamento
+                      - text: — posso te enviar
+                      - strong [ref=e459]: 2ª via/PIX
+                      - text: — ou precisa de outra informação?
+                    - paragraph [ref=e460]:
+                      - link "Usuário" [ref=e461] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Eu gostaria de saber o valor da minha negociação"
+                    - paragraph [ref=e462]:
+                      - text: "[IA]:"
+                      - strong [ref=e463]: "Atendente LARA:"
+                      - text: Para eu verificar o
+                      - strong [ref=e464]: valor da sua negociação
+                      - text: no nosso registro, me informe seu
+                      - strong [ref=e465]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e466]:
+                      - text: "[IA]:"
+                      - strong [ref=e467]: "Atendente LARA:"
+                      - text: Não localizei esse
+                      - strong [ref=e468]: CPF 18296794730
+                      - text: no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente?
+                    - paragraph [ref=e469]:
+                      - link "Usuário" [ref=e470] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Poderia falar com atendente humano?"
+                    - paragraph [ref=e471]:
+                      - text: "[IA]:"
+                      - strong [ref=e472]: "Atendente LARA:"
+                      - text: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar.
+                    - paragraph [ref=e473]:
+                      - text: "[IA]:"
+                      - strong [ref=e474]: "Atendente LARA:"
+                      - text: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui.
+                  - time [ref=e477]: Apr 29, 4:26 PM
+              - 'generic "[TRANSFERIDO] Conversa transferida para atendimento humano. Motivo: transferir_para_time_executed" [ref=e482]'
+              - generic [ref=e484]:
+                - img [ref=e487]:
+                  - generic [ref=e488]: D
+                - generic [ref=e490]:
+                  - generic [ref=e492]:
+                    - paragraph [ref=e493]:
+                      - strong [ref=e494]: "Histórico da conversa (IA):"
+                    - paragraph [ref=e495]:
+                      - text: "[IA]:"
+                      - strong [ref=e496]: "Atendente LARA:"
+                      - text: Olá, tudo bem? Em que posso te ajudar?
+                    - paragraph [ref=e497]:
+                      - link "Usuário" [ref=e498] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Gostaria de saber algumas informações"
+                    - paragraph [ref=e499]:
+                      - text: "[IA]:"
+                      - strong [ref=e500]: "Atendente LARA:"
+                      - text: Claro, Davi. Você quer informações sobre
+                      - strong [ref=e501]: benefícios do plano
+                      - text: ","
+                      - strong [ref=e502]: valores
+                      - text: (a partir de
+                      - strong [ref=e503]: R$ 29,90/mês
+                      - text: ) ou sobre
+                      - strong [ref=e504]: pagamento/boletos
+                      - text: "?"
+                    - paragraph [ref=e505]: Me diga qual dessas opções você precisa.
+                    - paragraph [ref=e506]:
+                      - link "Usuário" [ref=e507] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": poderia me dizer os beneficios?"
+                    - paragraph [ref=e508]:
+                      - text: "[IA]:"
+                      - strong [ref=e509]: "Atendente LARA:"
+                      - text: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐
+                    - paragraph [ref=e510]:
+                      - strong [ref=e511]: LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS
+                      - text: ✅📄
+                    - paragraph [ref=e512]:
+                      - link "https://maissaude24horas.com.br/" [ref=e513] [cursor=pointer]:
+                        - /url: https://maissaude24horas.com.br/
+                      - text: 💙
+                    - paragraph [ref=e514]: Qualquer dúvida, estou à disposição! ☺️
+                    - paragraph [ref=e515]:
+                      - link "Usuário" [ref=e516] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Estou com duvidas sobre o pagamento, como funciona?"
+                    - paragraph [ref=e517]:
+                      - text: "[IA]:"
+                      - strong [ref=e518]: "Atendente LARA:"
+                      - text: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar
+                      - strong [ref=e519]: 2ª via/PIX
+                      - text: se precisar), me informe seu
+                      - strong [ref=e520]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e521]:
+                      - link "Usuário" [ref=e522] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Entendi, mt obrigado Lara"
+                    - paragraph [ref=e523]:
+                      - text: "[IA]:"
+                      - strong [ref=e524]: "Atendente LARA:"
+                      - text: Eu que agradeço, Davi. Se precisar de
+                      - strong [ref=e525]: 2ª via/PIX
+                      - text: ou confirmar alguma pendência, é só me enviar seu
+                      - strong [ref=e526]: CPF
+                      - text: (somente números).
+                    - paragraph [ref=e527]:
+                      - link "Usuário" [ref=e528] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Boa noite"
+                    - paragraph [ref=e529]:
+                      - text: "[IA]:"
+                      - strong [ref=e530]: "Atendente LARA:"
+                      - text: Boa noite, Davi! Você quer seguir com a dúvida sobre
+                      - strong [ref=e531]: pagamento
+                      - text: — posso te enviar
+                      - strong [ref=e532]: 2ª via/PIX
+                      - text: — ou precisa de outra informação?
+                    - paragraph [ref=e533]:
+                      - link "Usuário" [ref=e534] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Eu gostaria de saber o valor da minha negociação"
+                    - paragraph [ref=e535]:
+                      - text: "[IA]:"
+                      - strong [ref=e536]: "Atendente LARA:"
+                      - text: Para eu verificar o
+                      - strong [ref=e537]: valor da sua negociação
+                      - text: no nosso registro, me informe seu
+                      - strong [ref=e538]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e539]:
+                      - text: "[IA]:"
+                      - strong [ref=e540]: "Atendente LARA:"
+                      - text: Não localizei esse
+                      - strong [ref=e541]: CPF 18296794730
+                      - text: no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente?
+                    - paragraph [ref=e542]:
+                      - link "Usuário" [ref=e543] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Poderia falar com atendente humano?"
+                    - paragraph [ref=e544]:
+                      - text: "[IA]:"
+                      - strong [ref=e545]: "Atendente LARA:"
+                      - text: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar.
+                    - paragraph [ref=e546]:
+                      - text: "[IA]:"
+                      - strong [ref=e547]: "Atendente LARA:"
+                      - text: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui.
+                  - time [ref=e550]: Apr 29, 4:34 PM
+              - 'generic "[TRANSFERIDO] Conversa transferida para atendimento humano. Motivo: transferir_para_time_executed" [ref=e555]'
+              - generic "Conversa devolvida ao bot por Davi" [ref=e559]
+              - generic "Conversa foi marcada como pendente por Davi" [ref=e563]
+              - generic "Desatribuído de cobrança por Davi" [ref=e567]
+              - generic [ref=e569]:
+                - img [ref=e572]:
+                  - generic [ref=e573]: D
+                - generic [ref=e575]:
+                  - generic [ref=e577]:
+                    - paragraph [ref=e578]:
+                      - strong [ref=e579]: "Histórico da conversa (IA):"
+                    - paragraph [ref=e580]:
+                      - text: "[IA]:"
+                      - strong [ref=e581]: "Atendente LARA:"
+                      - text: Olá, tudo bem? Em que posso te ajudar?
+                    - paragraph [ref=e582]:
+                      - link "Usuário" [ref=e583] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Gostaria de saber algumas informações"
+                    - paragraph [ref=e584]:
+                      - text: "[IA]:"
+                      - strong [ref=e585]: "Atendente LARA:"
+                      - text: Claro, Davi. Você quer informações sobre
+                      - strong [ref=e586]: benefícios do plano
+                      - text: ","
+                      - strong [ref=e587]: valores
+                      - text: (a partir de
+                      - strong [ref=e588]: R$ 29,90/mês
+                      - text: ) ou sobre
+                      - strong [ref=e589]: pagamento/boletos
+                      - text: "?"
+                    - paragraph [ref=e590]: Me diga qual dessas opções você precisa.
+                    - paragraph [ref=e591]:
+                      - link "Usuário" [ref=e592] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": poderia me dizer os beneficios?"
+                    - paragraph [ref=e593]:
+                      - text: "[IA]:"
+                      - strong [ref=e594]: "Atendente LARA:"
+                      - text: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐
+                    - paragraph [ref=e595]:
+                      - strong [ref=e596]: LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS
+                      - text: ✅📄
+                    - paragraph [ref=e597]:
+                      - link "https://maissaude24horas.com.br/" [ref=e598] [cursor=pointer]:
+                        - /url: https://maissaude24horas.com.br/
+                      - text: 💙
+                    - paragraph [ref=e599]: Qualquer dúvida, estou à disposição! ☺️
+                    - paragraph [ref=e600]:
+                      - link "Usuário" [ref=e601] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Estou com duvidas sobre o pagamento, como funciona?"
+                    - paragraph [ref=e602]:
+                      - text: "[IA]:"
+                      - strong [ref=e603]: "Atendente LARA:"
+                      - text: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar
+                      - strong [ref=e604]: 2ª via/PIX
+                      - text: se precisar), me informe seu
+                      - strong [ref=e605]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e606]:
+                      - link "Usuário" [ref=e607] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Entendi, mt obrigado Lara"
+                    - paragraph [ref=e608]:
+                      - text: "[IA]:"
+                      - strong [ref=e609]: "Atendente LARA:"
+                      - text: Eu que agradeço, Davi. Se precisar de
+                      - strong [ref=e610]: 2ª via/PIX
+                      - text: ou confirmar alguma pendência, é só me enviar seu
+                      - strong [ref=e611]: CPF
+                      - text: (somente números).
+                    - paragraph [ref=e612]:
+                      - link "Usuário" [ref=e613] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Boa noite"
+                    - paragraph [ref=e614]:
+                      - text: "[IA]:"
+                      - strong [ref=e615]: "Atendente LARA:"
+                      - text: Boa noite, Davi! Você quer seguir com a dúvida sobre
+                      - strong [ref=e616]: pagamento
+                      - text: — posso te enviar
+                      - strong [ref=e617]: 2ª via/PIX
+                      - text: — ou precisa de outra informação?
+                    - paragraph [ref=e618]:
+                      - link "Usuário" [ref=e619] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Eu gostaria de saber o valor da minha negociação"
+                    - paragraph [ref=e620]:
+                      - text: "[IA]:"
+                      - strong [ref=e621]: "Atendente LARA:"
+                      - text: Para eu verificar o
+                      - strong [ref=e622]: valor da sua negociação
+                      - text: no nosso registro, me informe seu
+                      - strong [ref=e623]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e624]:
+                      - text: "[IA]:"
+                      - strong [ref=e625]: "Atendente LARA:"
+                      - text: Não localizei esse
+                      - strong [ref=e626]: CPF 18296794730
+                      - text: no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente?
+                    - paragraph [ref=e627]:
+                      - link "Usuário" [ref=e628] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Poderia falar com atendente humano?"
+                    - paragraph [ref=e629]:
+                      - text: "[IA]:"
+                      - strong [ref=e630]: "Atendente LARA:"
+                      - text: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar.
+                    - paragraph [ref=e631]:
+                      - text: "[IA]:"
+                      - strong [ref=e632]: "Atendente LARA:"
+                      - text: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui.
+                  - time [ref=e635]: Apr 29, 6:20 PM
+              - 'generic "[TRANSFERIDO] Conversa transferida para atendimento humano. Motivo: transferir_para_time_executed" [ref=e640]'
+              - generic "Atribuído a GUSTAVO HENRIQUE DE OLIVEIRA por Daniel" [ref=e644]
+              - generic "Atribuído a cobrança por Daniel" [ref=e648]
+              - generic [ref=e650]:
+                - img [ref=e653]:
+                  - generic [ref=e654]: D
+                - generic [ref=e656]:
+                  - generic [ref=e658]:
+                    - paragraph [ref=e659]:
+                      - strong [ref=e660]: "Histórico da conversa (IA):"
+                    - paragraph [ref=e661]:
+                      - text: "[IA]:"
+                      - strong [ref=e662]: "Atendente LARA:"
+                      - text: Olá, tudo bem? Em que posso te ajudar?
+                    - paragraph [ref=e663]:
+                      - link "Usuário" [ref=e664] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Gostaria de saber algumas informações"
+                    - paragraph [ref=e665]:
+                      - text: "[IA]:"
+                      - strong [ref=e666]: "Atendente LARA:"
+                      - text: Claro, Davi. Você quer informações sobre
+                      - strong [ref=e667]: benefícios do plano
+                      - text: ","
+                      - strong [ref=e668]: valores
+                      - text: (a partir de
+                      - strong [ref=e669]: R$ 29,90/mês
+                      - text: ) ou sobre
+                      - strong [ref=e670]: pagamento/boletos
+                      - text: "?"
+                    - paragraph [ref=e671]: Me diga qual dessas opções você precisa.
+                    - paragraph [ref=e672]:
+                      - link "Usuário" [ref=e673] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": poderia me dizer os beneficios?"
+                    - paragraph [ref=e674]:
+                      - text: "[IA]:"
+                      - strong [ref=e675]: "Atendente LARA:"
+                      - text: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐
+                    - paragraph [ref=e676]:
+                      - strong [ref=e677]: LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS
+                      - text: ✅📄
+                    - paragraph [ref=e678]:
+                      - link "https://maissaude24horas.com.br/" [ref=e679] [cursor=pointer]:
+                        - /url: https://maissaude24horas.com.br/
+                      - text: 💙
+                    - paragraph [ref=e680]: Qualquer dúvida, estou à disposição! ☺️
+                    - paragraph [ref=e681]:
+                      - link "Usuário" [ref=e682] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Estou com duvidas sobre o pagamento, como funciona?"
+                    - paragraph [ref=e683]:
+                      - text: "[IA]:"
+                      - strong [ref=e684]: "Atendente LARA:"
+                      - text: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar
+                      - strong [ref=e685]: 2ª via/PIX
+                      - text: se precisar), me informe seu
+                      - strong [ref=e686]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e687]:
+                      - link "Usuário" [ref=e688] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Entendi, mt obrigado Lara"
+                    - paragraph [ref=e689]:
+                      - text: "[IA]:"
+                      - strong [ref=e690]: "Atendente LARA:"
+                      - text: Eu que agradeço, Davi. Se precisar de
+                      - strong [ref=e691]: 2ª via/PIX
+                      - text: ou confirmar alguma pendência, é só me enviar seu
+                      - strong [ref=e692]: CPF
+                      - text: (somente números).
+                    - paragraph [ref=e693]:
+                      - link "Usuário" [ref=e694] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Boa noite"
+                    - paragraph [ref=e695]:
+                      - text: "[IA]:"
+                      - strong [ref=e696]: "Atendente LARA:"
+                      - text: Boa noite, Davi! Você quer seguir com a dúvida sobre
+                      - strong [ref=e697]: pagamento
+                      - text: — posso te enviar
+                      - strong [ref=e698]: 2ª via/PIX
+                      - text: — ou precisa de outra informação?
+                    - paragraph [ref=e699]:
+                      - link "Usuário" [ref=e700] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Eu gostaria de saber o valor da minha negociação"
+                    - paragraph [ref=e701]:
+                      - text: "[IA]:"
+                      - strong [ref=e702]: "Atendente LARA:"
+                      - text: Para eu verificar o
+                      - strong [ref=e703]: valor da sua negociação
+                      - text: no nosso registro, me informe seu
+                      - strong [ref=e704]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e705]:
+                      - text: "[IA]:"
+                      - strong [ref=e706]: "Atendente LARA:"
+                      - text: Não localizei esse
+                      - strong [ref=e707]: CPF 18296794730
+                      - text: no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente?
+                    - paragraph [ref=e708]:
+                      - link "Usuário" [ref=e709] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Poderia falar com atendente humano?"
+                    - paragraph [ref=e710]:
+                      - text: "[IA]:"
+                      - strong [ref=e711]: "Atendente LARA:"
+                      - text: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar.
+                    - paragraph [ref=e712]:
+                      - text: "[IA]:"
+                      - strong [ref=e713]: "Atendente LARA:"
+                      - text: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui.
+                  - time [ref=e716]: Apr 29, 6:22 PM
+              - 'generic "[TRANSFERIDO] Conversa transferida para atendimento humano. Motivo: transferir_para_time_executed" [ref=e721]'
+              - generic [ref=e723]:
+                - img [ref=e726]:
+                  - generic [ref=e727]: D
+                - generic [ref=e729]:
+                  - generic [ref=e731]:
+                    - paragraph [ref=e732]:
+                      - strong [ref=e733]: "Histórico da conversa (IA):"
+                    - paragraph [ref=e734]:
+                      - text: "[IA]:"
+                      - strong [ref=e735]: "Atendente LARA:"
+                      - text: Olá, tudo bem? Em que posso te ajudar?
+                    - paragraph [ref=e736]:
+                      - link "Usuário" [ref=e737] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Gostaria de saber algumas informações"
+                    - paragraph [ref=e738]:
+                      - text: "[IA]:"
+                      - strong [ref=e739]: "Atendente LARA:"
+                      - text: Claro, Davi. Você quer informações sobre
+                      - strong [ref=e740]: benefícios do plano
+                      - text: ","
+                      - strong [ref=e741]: valores
+                      - text: (a partir de
+                      - strong [ref=e742]: R$ 29,90/mês
+                      - text: ) ou sobre
+                      - strong [ref=e743]: pagamento/boletos
+                      - text: "?"
+                    - paragraph [ref=e744]: Me diga qual dessas opções você precisa.
+                    - paragraph [ref=e745]:
+                      - link "Usuário" [ref=e746] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": poderia me dizer os beneficios?"
+                    - paragraph [ref=e747]:
+                      - text: "[IA]:"
+                      - strong [ref=e748]: "Atendente LARA:"
+                      - text: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐
+                    - paragraph [ref=e749]:
+                      - strong [ref=e750]: LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS
+                      - text: ✅📄
+                    - paragraph [ref=e751]:
+                      - link "https://maissaude24horas.com.br/" [ref=e752] [cursor=pointer]:
+                        - /url: https://maissaude24horas.com.br/
+                      - text: 💙
+                    - paragraph [ref=e753]: Qualquer dúvida, estou à disposição! ☺️
+                    - paragraph [ref=e754]:
+                      - link "Usuário" [ref=e755] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Estou com duvidas sobre o pagamento, como funciona?"
+                    - paragraph [ref=e756]:
+                      - text: "[IA]:"
+                      - strong [ref=e757]: "Atendente LARA:"
+                      - text: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar
+                      - strong [ref=e758]: 2ª via/PIX
+                      - text: se precisar), me informe seu
+                      - strong [ref=e759]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e760]:
+                      - link "Usuário" [ref=e761] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Entendi, mt obrigado Lara"
+                    - paragraph [ref=e762]:
+                      - text: "[IA]:"
+                      - strong [ref=e763]: "Atendente LARA:"
+                      - text: Eu que agradeço, Davi. Se precisar de
+                      - strong [ref=e764]: 2ª via/PIX
+                      - text: ou confirmar alguma pendência, é só me enviar seu
+                      - strong [ref=e765]: CPF
+                      - text: (somente números).
+                    - paragraph [ref=e766]:
+                      - link "Usuário" [ref=e767] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Boa noite"
+                    - paragraph [ref=e768]:
+                      - text: "[IA]:"
+                      - strong [ref=e769]: "Atendente LARA:"
+                      - text: Boa noite, Davi! Você quer seguir com a dúvida sobre
+                      - strong [ref=e770]: pagamento
+                      - text: — posso te enviar
+                      - strong [ref=e771]: 2ª via/PIX
+                      - text: — ou precisa de outra informação?
+                    - paragraph [ref=e772]:
+                      - link "Usuário" [ref=e773] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Eu gostaria de saber o valor da minha negociação"
+                    - paragraph [ref=e774]:
+                      - text: "[IA]:"
+                      - strong [ref=e775]: "Atendente LARA:"
+                      - text: Para eu verificar o
+                      - strong [ref=e776]: valor da sua negociação
+                      - text: no nosso registro, me informe seu
+                      - strong [ref=e777]: CPF
+                      - text: (somente números), por gentileza.
+                    - paragraph [ref=e778]:
+                      - text: "[IA]:"
+                      - strong [ref=e779]: "Atendente LARA:"
+                      - text: Não localizei esse
+                      - strong [ref=e780]: CPF 18296794730
+                      - text: no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente?
+                    - paragraph [ref=e781]:
+                      - link "Usuário" [ref=e782] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Poderia falar com atendente humano?"
+                    - paragraph [ref=e783]:
+                      - text: "[IA]:"
+                      - strong [ref=e784]: "Atendente LARA:"
+                      - text: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar.
+                    - paragraph [ref=e785]:
+                      - text: "[IA]:"
+                      - strong [ref=e786]: "Atendente LARA:"
+                      - text: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui.
+                  - time [ref=e789]: Apr 29, 7:04 PM
+              - 'generic "[TRANSFERIDO] Conversa transferida para atendimento humano. Motivo: transferir_para_time_executed" [ref=e794]'
+            - generic [ref=e796]:
+              - generic [ref=e797]:
+                - button "Responder Mensagem Privada" [ref=e798] [cursor=pointer]:
+                  - generic [ref=e799]: Responder
+                  - generic [ref=e800]: Mensagem Privada
+                - generic [ref=e802]:
+                  - button [disabled] [ref=e804]
+                  - button [ref=e806] [cursor=pointer]
+              - generic [ref=e808]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - paragraph: You can only reply using a template message due to 24-hour message window restriction
+                - paragraph [ref=e810]:
+                  - text: A assinatura da mensagem não está configurada. Por favor, configure-a nas configurações do perfil.
+                  - button "Clique aqui para atualizar" [ref=e811] [cursor=pointer]:
+                    - generic [ref=e812]: Clique aqui para atualizar
+              - generic [ref=e813]:
+                - button [ref=e815] [cursor=pointer]
+                - button "Enviar (CTRL + ↵)" [disabled] [ref=e818]:
+                  - generic [ref=e819]: Enviar (CTRL + ↵)
+          - button [ref=e821] [cursor=pointer]

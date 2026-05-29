@@ -1,0 +1,747 @@
+- generic [ref=e12]:
+  - generic [ref=e27]:
+    - generic [ref=e29]:
+      - heading "Configurações" [level=1] [ref=e30]
+      - toolbar [ref=e32]:
+        - generic [ref=e35]:
+          - heading "Atend Med BH" [level=4] [ref=e36]
+          - generic [ref=e37]: Portfólio empresarial
+        - button "Tarefas" [ref=e39] [cursor=pointer]:
+          - generic [ref=e42]:
+            - img [ref=e43]
+            - generic [ref=e47]: Tarefas
+        - button "Facebook" [ref=e48] [cursor=pointer]:
+          - generic [ref=e54]:
+            - generic:
+              - img
+            - img "Facebook" [ref=e56]
+    - generic [ref=e57]:
+      - generic [ref=e64]:
+        - generic [ref=e67]:
+          - navigation [ref=e68]:
+            - list [ref=e69]:
+              - listitem [ref=e72]:
+                - link "Informações da empresa" [ref=e74] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/business_info?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Informações da empresa
+          - navigation "Usuários" [ref=e80]:
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - generic [ref=e83]:
+                  - button "Usuários" [expanded] [ref=e85] [cursor=pointer]
+                  - generic:
+                    - listitem:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: Usuários
+                        - button "Alternar grupo" [ref=e91] [cursor=pointer]:
+                          - generic [ref=e93]:
+                            - generic [ref=e94]: Alternar grupo
+                            - img [ref=e96]
+                - list [ref=e100]:
+                  - generic [ref=e103]:
+                    - link "Pessoas" [ref=e105] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/business_users?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Pessoas
+                  - generic [ref=e112]:
+                    - link "Parceiros" [ref=e114] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/partners?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Parceiros
+                  - generic [ref=e121]:
+                    - link "Usuários do sistema" [ref=e123] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/system_users?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Usuários do sistema
+          - navigation "Contas" [ref=e128]:
+            - list [ref=e129]:
+              - listitem [ref=e130]:
+                - generic [ref=e131]:
+                  - button "Contas" [expanded] [ref=e133] [cursor=pointer]
+                  - generic:
+                    - listitem:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: Contas
+                        - button "Alternar grupo" [ref=e139] [cursor=pointer]:
+                          - generic [ref=e141]:
+                            - generic [ref=e142]: Alternar grupo
+                            - img [ref=e144]
+                - list [ref=e148]:
+                  - generic [ref=e151]:
+                    - link "Páginas" [ref=e153] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/pages?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Páginas
+                  - generic [ref=e160]:
+                    - link "Contas de anúncios" [ref=e162] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/ad_accounts?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Contas de anúncios
+                  - generic [ref=e169]:
+                    - link "Grupos de ativos de negócios" [ref=e171] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/business_asset_groups?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Grupos de ativos de negócios
+                  - generic [ref=e178]:
+                    - link "Apps" [ref=e180] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/apps?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Apps
+                  - generic [ref=e187]:
+                    - link "Contas do Instagram" [ref=e189] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/instagram_account?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Contas do Instagram
+                  - generic [ref=e196]:
+                    - link "Contas do WhatsApp" [ref=e198] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/whatsapp_account?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Contas do WhatsApp
+                  - generic [ref=e205]:
+                    - link "Contas do Threads" [ref=e207] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/threads_account?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Contas do Threads
+          - navigation "Fontes de dados" [ref=e212]:
+            - list [ref=e213]:
+              - listitem [ref=e214]:
+                - generic [ref=e215]:
+                  - button "Fontes de dados" [ref=e217] [cursor=pointer]
+                  - generic:
+                    - listitem:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: Fontes de dados
+                        - button "Alternar grupo" [ref=e223] [cursor=pointer]:
+                          - generic [ref=e225]:
+                            - generic [ref=e226]: Alternar grupo
+                            - img [ref=e228]
+                - list [ref=e231]:
+                  - generic [ref=e234]:
+                    - link "Catálogos" [ref=e236] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/product_catalogs?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Catálogos
+                  - generic [ref=e243]:
+                    - link "Conjuntos de dados e pixels" [ref=e245] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/events_dataset_and_pixel?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Conjuntos de dados e pixels
+                  - generic [ref=e252]:
+                    - link "Conjuntos de eventos offline" [ref=e254] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/offline_event_sets?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Conjuntos de eventos offline
+                  - generic [ref=e261]:
+                    - link "Conversões personalizadas" [ref=e263] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/custom_conversions?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Conversões personalizadas
+                  - generic [ref=e270]:
+                    - link "Públicos compartilhados" [ref=e272] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/shared_audiences?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Públicos compartilhados
+                  - generic [ref=e279]:
+                    - link "Pastas de criativos da empresa" [ref=e281] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/business_creative_folders?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Pastas de criativos da empresa
+          - navigation [ref=e286]:
+            - list [ref=e287]:
+              - listitem [ref=e290]:
+                - link "Pedidos" [ref=e292] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/requests?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Pedidos
+          - navigation "Adequação e segurança para marcas" [ref=e298]:
+            - list [ref=e299]:
+              - listitem [ref=e300]:
+                - generic [ref=e301]:
+                  - button "Adequação e segurança para marcas" [ref=e303] [cursor=pointer]
+                  - generic:
+                    - listitem:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: Adequação e segurança para marcas
+                        - button "Alternar grupo" [ref=e309] [cursor=pointer]:
+                          - generic [ref=e311]:
+                            - generic [ref=e312]: Alternar grupo
+                            - img [ref=e314]
+                - list [ref=e317]:
+                  - generic [ref=e320]:
+                    - link "Domínios" [ref=e322] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/domains?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Domínios
+                  - generic [ref=e329]:
+                    - link "Listas de bloqueio de publishers" [ref=e331] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/block_lists?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Listas de bloqueio de publishers
+          - navigation "Integrações" [ref=e336]:
+            - list [ref=e337]:
+              - listitem [ref=e338]:
+                - generic [ref=e339]:
+                  - button "Integrações" [ref=e341] [cursor=pointer]
+                  - generic:
+                    - listitem:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: Integrações
+                        - button "Alternar grupo" [ref=e347] [cursor=pointer]:
+                          - generic [ref=e349]:
+                            - generic [ref=e350]: Alternar grupo
+                            - img [ref=e352]
+                - list [ref=e355]:
+                  - generic [ref=e358]:
+                    - link "Apps conectados" [ref=e360] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/connected_apps?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Apps conectados
+                  - generic [ref=e367]:
+                    - link "Acesso a leads" [ref=e369] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/leads_access?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Acesso a leads
+                  - generic [ref=e376]:
+                    - link "Encaminhamento da conversa" [ref=e378] [cursor=pointer]:
+                      - /url: https://business.facebook.com/latest/settings/conversation_routing?business_id=1670699556853947
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Encaminhamento da conversa
+          - navigation [ref=e383]:
+            - list [ref=e384]:
+              - listitem [ref=e387]:
+                - link "Cobrança e pagamentos" [ref=e389] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/billing_hub?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Cobrança e pagamentos
+          - navigation [ref=e395]:
+            - list [ref=e396]:
+              - listitem [ref=e399]:
+                - link "Meta Verified" [ref=e401] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/mv4b?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Meta Verified
+              - listitem [ref=e409]:
+                - link "Páginas de notícias" [ref=e411] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/news_pages?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Páginas de notícias
+              - listitem [ref=e419]:
+                - link "Central de Anúncios em Parceria" [ref=e421] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/business_ad_partnerships?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Central de Anúncios em Parceria
+              - listitem [ref=e429]:
+                - link "Central de Segurança" [ref=e431] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/security_center?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Central de Segurança
+              - listitem [ref=e439]:
+                - link "Notificações" [ref=e441] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/notifications?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Notificações
+              - listitem [ref=e449]:
+                - link "Guia de configuração" [ref=e451] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/setup_guide?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Guia de configuração
+              - listitem [ref=e459]:
+                - link "Ativos de negócios" [ref=e461] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/business_assets?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Ativos de negócios
+              - listitem [ref=e469]:
+                - link "Autorizações e verificações" [ref=e471] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/authorizations_verifications?business_id=1670699556853947
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Autorizações e verificações
+              - listitem [ref=e479]:
+                - button "Gerenciador de Negócios" [ref=e481] [cursor=pointer]
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Gerenciador de Negócios
+                      - generic:
+                        - img
+              - listitem [ref=e489]:
+                - link "Configurações da conta de anúncios" [ref=e491] [cursor=pointer]:
+                  - /url: https://business.facebook.com/ads/manager/account_settings/?business_id=1670699556853947&nav_source=business_manager
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Configurações da conta de anúncios
+                      - generic:
+                        - img
+              - listitem [ref=e499]:
+                - link "Configurações de idioma" [ref=e501] [cursor=pointer]:
+                  - /url: https://www.facebook.com/settings/?tab=language
+                - generic:
+                  - listitem:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Configurações de idioma
+                      - generic:
+                        - img
+        - button "Recolher" [ref=e511] [cursor=pointer]:
+          - generic [ref=e513]:
+            - generic [ref=e514]: Recolher
+            - img [ref=e516]
+      - generic [ref=e526]:
+        - generic [ref=e529]:
+          - progressbar
+          - progressbar [ref=e531]:
+            - img [ref=e532]
+        - grid "Ativos de negócios" [ref=e545]:
+          - rowgroup [ref=e546]:
+            - row "Nome Pessoas com controle total Pessoas com acesso parcial" [ref=e547]:
+              - columnheader "Nome" [ref=e548] [cursor=pointer]:
+                - generic [ref=e550]:
+                  - heading "Nome" [level=4] [ref=e554]
+                  - img [ref=e557]
+              - columnheader "Pessoas com controle total" [ref=e560]:
+                - generic [ref=e563]:
+                  - heading "Pessoas com controle total" [level=4] [ref=e566]
+                  - img [ref=e571]
+              - columnheader "Pessoas com acesso parcial" [ref=e574]:
+                - generic [ref=e577]:
+                  - heading "Pessoas com acesso parcial" [level=4] [ref=e580]
+                  - img [ref=e585]
+              - columnheader [ref=e588]
+          - rowgroup [ref=e589]:
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e590]:
+              - gridcell "Carregando..." [ref=e591]:
+                - progressbar [ref=e593]
+              - gridcell "Carregando..." [ref=e594]:
+                - progressbar [ref=e596]
+              - gridcell "Carregando..." [ref=e597]:
+                - progressbar [ref=e599]
+              - gridcell "Carregando..." [ref=e600]:
+                - progressbar [ref=e602]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e603]:
+              - gridcell "Carregando..." [ref=e604]:
+                - progressbar [ref=e606]
+              - gridcell "Carregando..." [ref=e607]:
+                - progressbar [ref=e609]
+              - gridcell "Carregando..." [ref=e610]:
+                - progressbar [ref=e612]
+              - gridcell "Carregando..." [ref=e613]:
+                - progressbar [ref=e615]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e616]:
+              - gridcell "Carregando..." [ref=e617]:
+                - progressbar [ref=e619]
+              - gridcell "Carregando..." [ref=e620]:
+                - progressbar [ref=e622]
+              - gridcell "Carregando..." [ref=e623]:
+                - progressbar [ref=e625]
+              - gridcell "Carregando..." [ref=e626]:
+                - progressbar [ref=e628]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e629]:
+              - gridcell "Carregando..." [ref=e630]:
+                - progressbar [ref=e632]
+              - gridcell "Carregando..." [ref=e633]:
+                - progressbar [ref=e635]
+              - gridcell "Carregando..." [ref=e636]:
+                - progressbar [ref=e638]
+              - gridcell "Carregando..." [ref=e639]:
+                - progressbar [ref=e641]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e642]:
+              - gridcell "Carregando..." [ref=e643]:
+                - progressbar [ref=e645]
+              - gridcell "Carregando..." [ref=e646]:
+                - progressbar [ref=e648]
+              - gridcell "Carregando..." [ref=e649]:
+                - progressbar [ref=e651]
+              - gridcell "Carregando..." [ref=e652]:
+                - progressbar [ref=e654]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e655]:
+              - gridcell "Carregando..." [ref=e656]:
+                - progressbar [ref=e658]
+              - gridcell "Carregando..." [ref=e659]:
+                - progressbar [ref=e661]
+              - gridcell "Carregando..." [ref=e662]:
+                - progressbar [ref=e664]
+              - gridcell "Carregando..." [ref=e665]:
+                - progressbar [ref=e667]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e668]:
+              - gridcell "Carregando..." [ref=e669]:
+                - progressbar [ref=e671]
+              - gridcell "Carregando..." [ref=e672]:
+                - progressbar [ref=e674]
+              - gridcell "Carregando..." [ref=e675]:
+                - progressbar [ref=e677]
+              - gridcell "Carregando..." [ref=e678]:
+                - progressbar [ref=e680]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e681]:
+              - gridcell "Carregando..." [ref=e682]:
+                - progressbar [ref=e684]
+              - gridcell "Carregando..." [ref=e685]:
+                - progressbar [ref=e687]
+              - gridcell "Carregando..." [ref=e688]:
+                - progressbar [ref=e690]
+              - gridcell "Carregando..." [ref=e691]:
+                - progressbar [ref=e693]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e694]:
+              - gridcell "Carregando..." [ref=e695]:
+                - progressbar [ref=e697]
+              - gridcell "Carregando..." [ref=e698]:
+                - progressbar [ref=e700]
+              - gridcell "Carregando..." [ref=e701]:
+                - progressbar [ref=e703]
+              - gridcell "Carregando..." [ref=e704]:
+                - progressbar [ref=e706]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e707]:
+              - gridcell "Carregando..." [ref=e708]:
+                - progressbar [ref=e710]
+              - gridcell "Carregando..." [ref=e711]:
+                - progressbar [ref=e713]
+              - gridcell "Carregando..." [ref=e714]:
+                - progressbar [ref=e716]
+              - gridcell "Carregando..." [ref=e717]:
+                - progressbar [ref=e719]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e720]:
+              - gridcell "Carregando..." [ref=e721]:
+                - progressbar [ref=e723]
+              - gridcell "Carregando..." [ref=e724]:
+                - progressbar [ref=e726]
+              - gridcell "Carregando..." [ref=e727]:
+                - progressbar [ref=e729]
+              - gridcell "Carregando..." [ref=e730]:
+                - progressbar [ref=e732]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e733]:
+              - gridcell "Carregando..." [ref=e734]:
+                - progressbar [ref=e736]
+              - gridcell "Carregando..." [ref=e737]:
+                - progressbar [ref=e739]
+              - gridcell "Carregando..." [ref=e740]:
+                - progressbar [ref=e742]
+              - gridcell "Carregando..." [ref=e743]:
+                - progressbar [ref=e745]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e746]:
+              - gridcell "Carregando..." [ref=e747]:
+                - progressbar [ref=e749]
+              - gridcell "Carregando..." [ref=e750]:
+                - progressbar [ref=e752]
+              - gridcell "Carregando..." [ref=e753]:
+                - progressbar [ref=e755]
+              - gridcell "Carregando..." [ref=e756]:
+                - progressbar [ref=e758]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e759]:
+              - gridcell "Carregando..." [ref=e760]:
+                - progressbar [ref=e762]
+              - gridcell "Carregando..." [ref=e763]:
+                - progressbar [ref=e765]
+              - gridcell "Carregando..." [ref=e766]:
+                - progressbar [ref=e768]
+              - gridcell "Carregando..." [ref=e769]:
+                - progressbar [ref=e771]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e772]:
+              - gridcell "Carregando..." [ref=e773]:
+                - progressbar [ref=e775]
+              - gridcell "Carregando..." [ref=e776]:
+                - progressbar [ref=e778]
+              - gridcell "Carregando..." [ref=e779]:
+                - progressbar [ref=e781]
+              - gridcell "Carregando..." [ref=e782]:
+                - progressbar [ref=e784]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e785]:
+              - gridcell "Carregando..." [ref=e786]:
+                - progressbar [ref=e788]
+              - gridcell "Carregando..." [ref=e789]:
+                - progressbar [ref=e791]
+              - gridcell "Carregando..." [ref=e792]:
+                - progressbar [ref=e794]
+              - gridcell "Carregando..." [ref=e795]:
+                - progressbar [ref=e797]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e798]:
+              - gridcell "Carregando..." [ref=e799]:
+                - progressbar [ref=e801]
+              - gridcell "Carregando..." [ref=e802]:
+                - progressbar [ref=e804]
+              - gridcell "Carregando..." [ref=e805]:
+                - progressbar [ref=e807]
+              - gridcell "Carregando..." [ref=e808]:
+                - progressbar [ref=e810]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e811]:
+              - gridcell "Carregando..." [ref=e812]:
+                - progressbar [ref=e814]
+              - gridcell "Carregando..." [ref=e815]:
+                - progressbar [ref=e817]
+              - gridcell "Carregando..." [ref=e818]:
+                - progressbar [ref=e820]
+              - gridcell "Carregando..." [ref=e821]:
+                - progressbar [ref=e823]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e824]:
+              - gridcell "Carregando..." [ref=e825]:
+                - progressbar [ref=e827]
+              - gridcell "Carregando..." [ref=e828]:
+                - progressbar [ref=e830]
+              - gridcell "Carregando..." [ref=e831]:
+                - progressbar [ref=e833]
+              - gridcell "Carregando..." [ref=e834]:
+                - progressbar [ref=e836]
+            - row "Carregando... Carregando... Carregando... Carregando..." [ref=e837]:
+              - gridcell "Carregando..." [ref=e838]:
+                - progressbar [ref=e840]
+              - gridcell "Carregando..." [ref=e841]:
+                - progressbar [ref=e843]
+              - gridcell "Carregando..." [ref=e844]:
+                - progressbar [ref=e846]
+              - gridcell "Carregando..." [ref=e847]:
+                - progressbar [ref=e849]
+          - rowgroup
+  - generic [ref=e855]:
+    - generic [ref=e857]:
+      - button "Meta Business Suite" [ref=e858] [cursor=pointer]:
+        - generic [ref=e860]: Meta Business Suite
+      - button "Pressable" [ref=e868] [cursor=pointer]
+    - generic [ref=e875]:
+      - navigation "Links" [ref=e876]:
+        - generic [ref=e877]: Links
+        - list [ref=e878]:
+          - generic [ref=e879]:
+            - listitem [ref=e883]:
+              - generic [ref=e885]:
+                - link "Notificações" [ref=e886] [cursor=pointer]:
+                  - generic [ref=e887]: Notificações
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Notificações
+            - listitem [ref=e891]:
+              - generic [ref=e893]:
+                - link "Caixa de Entrada" [ref=e894] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/inbox?business_id=1670699556853947
+                  - generic [ref=e895]: Caixa de Entrada
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Caixa de Entrada
+          - navigation "Links" [ref=e896]:
+            - generic [ref=e897]: Links
+            - list [ref=e898]:
+              - generic [ref=e900]:
+                - separator [ref=e902]
+                - navigation "Shortcuts" [ref=e903]:
+                  - generic [ref=e904]: Shortcuts
+                  - list [ref=e905]:
+                    - listitem [ref=e906]:
+                      - listitem [ref=e912]:
+                        - generic [ref=e914]:
+                          - link "Marketplace de criadores" [ref=e915] [cursor=pointer]:
+                            - /url: https://business.facebook.com/latest/creator_marketplace?business_id=1670699556853947&cm_entrypoint=biz_kit_nav_route_item
+                            - generic [ref=e916]: Marketplace de criadores
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Marketplace de criadores
+                    - listitem [ref=e918]
+                    - listitem [ref=e922]:
+                      - listitem [ref=e928]:
+                        - generic [ref=e930]:
+                          - link "Anúncios" [ref=e931] [cursor=pointer]:
+                            - /url: https://business.facebook.com/latest/ad_center/ads_summary?business_id=1670699556853947
+                            - generic [ref=e932]: Anúncios
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Anúncios
+                    - listitem [ref=e934]:
+                      - listitem [ref=e940]:
+                        - generic [ref=e942]:
+                          - link "Insights" [ref=e943] [cursor=pointer]:
+                            - /url: https://business.facebook.com/latest/insights?business_id=1670699556853947
+                            - generic [ref=e944]: Insights
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Insights
+      - navigation "Links" [ref=e947]:
+        - generic [ref=e948]: Links
+        - list [ref=e949]:
+          - listitem [ref=e954]:
+            - generic [ref=e956]:
+              - link "Todas as ferramentas" [ref=e957] [cursor=pointer]:
+                - generic [ref=e958]: Todas as ferramentas
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: Todas as ferramentas
+    - generic [ref=e961]:
+      - listitem [ref=e964]:
+        - generic [ref=e966]:
+          - link "Pesquisar" [ref=e967] [cursor=pointer]:
+            - generic [ref=e968]: Pesquisar
+          - generic:
+            - generic:
+              - generic:
+                - generic: Pesquisar
+          - generic:
+            - generic:
+              - img
+      - navigation "Links" [ref=e969]:
+        - generic [ref=e970]: Links
+        - list [ref=e971]:
+          - listitem [ref=e975]:
+            - generic [ref=e977]:
+              - link "Configurações" [ref=e978] [cursor=pointer]:
+                - /url: https://business.facebook.com/latest/settings/business_users?business_id=1670699556853947
+                - generic [ref=e979]: Configurações
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: Configurações
+      - listitem [ref=e986]:
+        - generic [ref=e988]:
+          - link "Ajuda" [ref=e989] [cursor=pointer]:
+            - generic [ref=e990]: Ajuda
+          - generic:
+            - generic:
+              - generic:
+                - generic: Ajuda
+          - generic:
+            - generic:
+              - img

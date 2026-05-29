@@ -1,0 +1,293 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e18]:
+        - link "Pesquisar..." [ref=e19] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e21]: Pesquisar...
+        - button [ref=e23] [cursor=pointer]
+    - navigation [ref=e25]:
+      - list [ref=e26]:
+        - listitem [ref=e27] [cursor=pointer]:
+          - button "Caixa de Entrada 4" [ref=e28]:
+            - generic [ref=e31]:
+              - generic [ref=e32]: Caixa de Entrada
+              - generic [ref=e33]: "4"
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - list
+            - list
+        - listitem [ref=e155] [cursor=pointer]:
+          - button "Contatos" [ref=e156]:
+            - generic [ref=e160]: Contatos
+        - listitem [ref=e161] [cursor=pointer]:
+          - button "Relatórios" [ref=e162]:
+            - generic [ref=e166]: Relatórios
+        - listitem [ref=e167] [cursor=pointer]:
+          - button "Campanhas" [ref=e168]:
+            - generic [ref=e172]: Campanhas
+        - listitem [ref=e173] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e174]:
+            - generic [ref=e178]: Central de Ajuda
+        - listitem [ref=e179] [cursor=pointer]:
+          - button "Configurações" [ref=e180]:
+            - generic [ref=e184]: Configurações
+    - button "GUSTAVO HENRIQUE DE OLIVEIRA gustavooliveiranetwork@gmail.com" [ref=e188] [cursor=pointer]:
+      - img [ref=e191]:
+        - generic [ref=e192]: GH
+      - generic [ref=e193]:
+        - generic [ref=e194]: GUSTAVO HENRIQUE DE OLIVEIRA
+        - generic [ref=e195]: gustavooliveiranetwork@gmail.com
+  - main [ref=e198]:
+    - generic [ref=e199]:
+      - generic [ref=e200]:
+        - generic [ref=e201]:
+          - generic [ref=e202]:
+            - heading "Conversas" [level=1] [ref=e203]
+            - generic [ref=e204]: Ativas
+          - generic [ref=e205]:
+            - button [ref=e207] [cursor=pointer]
+            - button [ref=e210] [cursor=pointer]
+            - button [ref=e212] [cursor=pointer]
+        - list [ref=e215]:
+          - listitem [ref=e216]:
+            - generic [ref=e217] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e219]: "3"
+          - listitem [ref=e220]:
+            - generic [ref=e221] [cursor=pointer]:
+              - text: Não atribuídas
+              - generic [ref=e223]: "2"
+          - listitem [ref=e224]:
+            - generic [ref=e225] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e227]: "6"
+        - generic [ref=e228]:
+          - generic [ref=e229]:
+            - generic [ref=e231] [cursor=pointer]:
+              - img [ref=e234]:
+                - generic [ref=e235]: BN
+              - generic [ref=e236]:
+                - heading "BEATRIZ NASCIMENTO DA SILVA" [level=4] [ref=e237]
+                - generic [ref=e238]:
+                  - img [ref=e239]
+                  - text: "📋 Resumo SDR Agent Resumo SDR — Beatriz Nascimento da Silva ──────────────────────────────── Empresa: não mencionado · sem site Contato: não mencionado · não mencionado Decisores: Beatriz Nascimento da Silva (não mencionado) Mercado: não mencionado Dor: Quer checar boleto em aberto no CPF e ser direcionada ao setor de contratos. Intenção: Média — solicitou transferência ao setor de contratos após ver 1 boleto a vencer. Score: 45 · warm Fit: Não — caso é suporte/financeiro (boleto/contratos), não conversa comercial. Objeção: nenhuma identificada Pedido: Verificar boleto em aberto no CPF e transferir ao setor de contratos/regularização. Próximos passos: → Confirmar com Beatriz o melhor canal/contato (tel/email) para retorno do setor correto. → Encaminhar internamente para Contratos/Regularização com CPF e detalhes do boleto (R$64,90). → Retornar informando protocolo/horário de atendimento (seg-sex 9h–17h) e link de pagamento."
+                - generic [ref=e243]: 2h • 41m
+            - generic [ref=e245] [cursor=pointer]:
+              - img [ref=e248]:
+                - generic [ref=e249]: D
+              - generic [ref=e250]:
+                - heading "Davi" [level=4] [ref=e251]
+                - generic [ref=e252]:
+                  - img [ref=e253]
+                  - text: "📋 Resumo SDR Agent Resumo SDR — Davi ──────────────────────────────── Empresa: Mais Saúde 24 Horas · https://maissaude24horas.com.br/ Contato: não mencionado · não mencionado Decisores: Davi (não mencionado) Mercado: não mencionado Dor: Quer entender valores/benefícios e contratar plano família p/ 5 pessoas. Também quer ver “valor da negociação” e tirar dúvidas de pagamento. Intenção: Alta — pediu link de contratação do Família Diamante p/ 5 pessoas. Score: 82 · hot Fit: Sim — dor clara e avançou para compra (solicitou contratação); decisor é o lead. Objeção: Quer atendimento humano e resposta por áudio; canal só texto. CPF não localizado 1x. Pedido: Link de contratação do Família Diamante (R$ 104,90/mês p/ 5 pessoas). Próximos passos: → Assumir atendimento humano e confirmar se ele ainda quer fechar o Família Diamante (5 ppl). → Validar CPF correto e dados cadastrais p/ liberar link/checkout (houve CPF não localizado). → Enviar resumo curto por texto (valores + principais benefícios) e link de contratação no chat."
+                - generic [ref=e257]: 14h • 3h
+            - generic [ref=e259] [cursor=pointer]:
+              - img [ref=e262]:
+                - generic [ref=e263]: D
+              - generic [ref=e264]:
+                - heading "Davi" [level=4] [ref=e265]
+                - generic [ref=e266]:
+                  - img [ref=e267]
+                  - text: "Histórico da conversa (IA): [IA]: Atendente LARA: Olá, tudo bem? Em que posso te ajudar? Usuário: Gostaria de saber algumas informações [IA]: Atendente LARA: Claro, Davi. Você quer informações sobre benefícios do plano, valores (a partir de R$ 29,90/mês) ou sobre pagamento/boletos? Me diga qual dessas opções você precisa. Usuário: poderia me dizer os beneficios? [IA]: Atendente LARA: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐 LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS ✅📄 https://maissaude24horas.com.br/ 💙 Qualquer dúvida, estou à disposição! ☺️ Usuário: Estou com duvidas sobre o pagamento, como funciona? [IA]: Atendente LARA: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar 2ª via/PIX se precisar), me informe seu CPF (somente números), por gentileza. Usuário: Entendi, mt obrigado Lara [IA]: Atendente LARA: Eu que agradeço, Davi. Se precisar de 2ª via/PIX ou confirmar alguma pendência, é só me enviar seu CPF (somente números). Usuário: Boa noite [IA]: Atendente LARA: Boa noite, Davi! Você quer seguir com a dúvida sobre pagamento — posso te enviar 2ª via/PIX — ou precisa de outra informação? Usuário: Eu gostaria de saber o valor da minha negociação [IA]: Atendente LARA: Para eu verificar o valor da sua negociação no nosso registro, me informe seu CPF (somente números), por gentileza. [IA]: Atendente LARA: Não localizei esse CPF 18296794730 no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente? Usuário: Poderia falar com atendente humano? [IA]: Atendente LARA: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar. [IA]: Atendente LARA: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui."
+                - generic [ref=e271]: 3d • 14h
+          - paragraph [ref=e272]: Todas as conversas carregadas 🎉
+      - generic [ref=e273]:
+        - generic [ref=e291]:
+          - generic [ref=e292]:
+            - img [ref=e294]:
+              - generic [ref=e295]: BN
+            - generic [ref=e298]: BEATRIZ NASCIMENTO DA SILVA
+          - generic [ref=e300]:
+            - generic [ref=e301]:
+              - button "Devolver ao bot" [ref=e302] [cursor=pointer]:
+                - generic [ref=e304]: Devolver ao bot
+              - generic [ref=e305]:
+                - button "Resolver" [ref=e306] [cursor=pointer]:
+                  - generic [ref=e307]: Resolver
+                - button [ref=e308] [cursor=pointer]
+            - button [ref=e311] [cursor=pointer]
+        - generic [ref=e274]:
+          - generic [ref=e313]:
+            - list [ref=e314]:
+              - listitem [ref=e315]
+              - generic [ref=e319]:
+                - paragraph [ref=e322]: Bom dia, tudo bem?
+                - time [ref=e325]: Apr 28, 9:37 AM
+              - generic [ref=e327]:
+                - img [ref=e330]:
+                  - generic [ref=e331]: D
+                - generic [ref=e333]:
+                  - paragraph [ref=e336]: Esta mensagem foi excluída
+                  - time [ref=e339]: Apr 28, 9:45 AM
+              - generic [ref=e343]:
+                - generic [ref=e345]:
+                  - button [ref=e346] [cursor=pointer]
+                  - generic [ref=e348]: 00:00 / 00:00
+                  - slider [ref=e350] [cursor=pointer]: "0"
+                  - button "1x" [ref=e351] [cursor=pointer]:
+                    - generic [ref=e352]: 1x
+                  - button [ref=e353] [cursor=pointer]
+                  - button [ref=e355] [cursor=pointer]
+                - time [ref=e359]: Apr 28, 9:46 AM
+              - generic [ref=e361]:
+                - img [ref=e364]:
+                  - generic [ref=e365]: L|
+                - generic [ref=e367]:
+                  - generic [ref=e369]:
+                    - paragraph [ref=e370]: Oi, Gustavo! É a Lara aqui de novo. 😊
+                    - paragraph [ref=e371]: Sim, agora minha conversa está reconectada — a Daniel já me devolveu o controle. Tava com um problema técnico que prendia a primeira mensagem em conversas novas; o time corrigiu agora há pouco.
+                    - paragraph [ref=e372]: Pode mandar bala com os testes que você queria fazer ontem. Se preferir voz, pode mandar áudio que eu escuto e respondo na boa.
+                    - paragraph [ref=e373]: Como posso te ajudar hoje?
+                  - time [ref=e376]: Apr 28, 10:11 AM
+              - generic [ref=e381]:
+                - generic [ref=e383]:
+                  - paragraph [ref=e384]: Bom dia você pode verificar se existe algum boleto em aberto no meu CPF
+                  - paragraph [ref=e385]: 123.897.326-40
+                - time [ref=e388]: Apr 28, 10:27 AM
+              - generic [ref=e390]:
+                - img [ref=e393]:
+                  - generic [ref=e394]: L|
+                - generic [ref=e396]:
+                  - paragraph [ref=e399]:
+                    - strong [ref=e400]: "Atendente LARA:"
+                    - text: Bom dia! Consta
+                    - strong [ref=e401]: 1 boleto a vencer
+                    - text: no seu CPF, no valor de
+                    - strong [ref=e402]: R$ 64,90
+                    - text: ", com vencimento em"
+                    - strong [ref=e403]: 30/05/2026
+                    - text: (vencerá em
+                    - strong [ref=e404]: 32 dias
+                    - text: ).
+                    - text: "Para pagar e ver as opções (boleto/PIX), acesse:"
+                    - link "https://app-dev.klaos.ai/pay/voljq3sccov2" [ref=e405] [cursor=pointer]:
+                      - /url: https://app-dev.klaos.ai/pay/voljq3sccov2
+                  - time [ref=e408]: Apr 28, 10:27 AM
+              - generic [ref=e413]:
+                - paragraph [ref=e416]: Você pode por gentileza me transferir ao setor de contratos
+                - time [ref=e419]: Apr 28, 10:39 AM
+              - generic "Atribuído a GUSTAVO HENRIQUE DE OLIVEIRA via contratos por Daniel" [ref=e423]
+              - generic "Conversa foi reaberta por Daniel" [ref=e427]
+              - paragraph [ref=e434]:
+                - strong [ref=e435]: "Atendente LARA:"
+                - text: Vou te transferir para o
+                - strong [ref=e436]: setor de regularização
+                - text: e lá eles vão atender você.
+              - paragraph [ref=e443]:
+                - text: O horário de funcionamento deste setor é de
+                - strong [ref=e444]: segunda a sexta-feira, das 9h às 17h
+                - text: .
+              - generic [ref=e446]:
+                - img [ref=e449]:
+                  - generic [ref=e450]: L|
+                - generic [ref=e452]:
+                  - paragraph [ref=e455]: Por gentileza, aguardar.
+                  - time [ref=e458]: Apr 28, 10:39 AM
+              - generic [ref=e461]:
+                - img [ref=e464]:
+                  - generic [ref=e465]: D
+                - generic [ref=e467]:
+                  - generic [ref=e469]:
+                    - paragraph [ref=e470]:
+                      - strong [ref=e471]: "Histórico da conversa (IA):"
+                    - paragraph [ref=e472]: "[Usuário]: Bom dia, tudo bem?"
+                    - paragraph [ref=e473]:
+                      - text: "[IA]:"
+                      - emphasis [ref=e474]: "Atendente DANIEL:"
+                      - text: Olá, tudo bem? Em que posso te ajudar?
+                    - paragraph [ref=e475]: "[Usuário]:"
+                    - paragraph [ref=e476]: "[Usuário]: Bom dia você pode verificar se existe algum boleto em aberto no meu CPF"
+                    - paragraph [ref=e477]: 123.897.326-40
+                    - paragraph [ref=e478]:
+                      - text: "[IA]:"
+                      - strong [ref=e479]: "Atendente LARA:"
+                      - text: Bom dia! Consta
+                      - strong [ref=e480]: 1 boleto a vencer
+                      - text: no seu CPF, no valor de
+                      - strong [ref=e481]: R$ 64,90
+                      - text: ", com vencimento em"
+                      - strong [ref=e482]: 30/05/2026
+                      - text: (vencerá em
+                      - strong [ref=e483]: 32 dias
+                      - text: ).
+                      - text: "Para pagar e ver as opções (boleto/PIX), acesse:"
+                      - link "https://app-dev.klaos.ai/pay/voljq3sccov2" [ref=e484] [cursor=pointer]:
+                        - /url: https://app-dev.klaos.ai/pay/voljq3sccov2
+                    - paragraph [ref=e485]: "[Usuário]: Você pode por gentileza me transferir ao setor de contratos"
+                    - paragraph [ref=e486]:
+                      - text: "[IA]:"
+                      - strong [ref=e487]: "Atendente LARA:"
+                      - text: Vou te transferir para o
+                      - strong [ref=e488]: setor de regularização
+                      - text: e lá eles vão atender você.
+                      - text: O horário de funcionamento deste setor é de
+                      - strong [ref=e489]: segunda a sexta-feira, das 9h às 17h
+                      - text: .
+                      - text: Por gentileza, aguardar.
+                  - time [ref=e492]: Apr 28, 10:39 AM
+              - 'generic "[TRANSFERIDO] Conversa transferida para atendimento humano. Motivo: transferir_para_time_executed" [ref=e497]'
+              - generic "Atribuído a cobrança por Daniel" [ref=e501]
+              - generic [ref=e503]:
+                - img [ref=e506]:
+                  - generic [ref=e507]: D
+                - generic [ref=e509]:
+                  - generic [ref=e511]:
+                    - paragraph [ref=e512]:
+                      - strong [ref=e513]: 📋 Resumo SDR Agent
+                    - paragraph [ref=e514]:
+                      - text: Resumo SDR — Beatriz Nascimento da Silva
+                      - text: ────────────────────────────────
+                      - text: "Empresa: não mencionado · sem site"
+                      - text: "Contato: não mencionado · não mencionado"
+                      - text: "Decisores: Beatriz Nascimento da Silva (não mencionado)"
+                      - text: "Mercado: não mencionado"
+                    - paragraph [ref=e515]: "Dor: Quer checar boleto em aberto no CPF e ser direcionada ao setor de contratos."
+                    - paragraph [ref=e516]: "Intenção: Média — solicitou transferência ao setor de contratos após ver 1 boleto a vencer."
+                    - paragraph [ref=e517]:
+                      - text: "Score: 45 · warm"
+                      - text: "Fit: Não — caso é suporte/financeiro (boleto/contratos), não conversa comercial."
+                    - paragraph [ref=e518]: "Objeção: nenhuma identificada"
+                    - paragraph [ref=e519]: "Pedido: Verificar boleto em aberto no CPF e transferir ao setor de contratos/regularização."
+                    - paragraph [ref=e520]:
+                      - text: "Próximos passos:"
+                      - text: → Confirmar com Beatriz o melhor canal/contato (tel/email) para retorno do setor correto.
+                      - text: → Encaminhar internamente para Contratos/Regularização com CPF e detalhes do boleto (R$64,90).
+                      - text: → Retornar informando protocolo/horário de atendimento (seg-sex 9h–17h) e link de pagamento.
+                  - time [ref=e523]: Apr 28, 10:39 AM
+            - generic [ref=e526]:
+              - generic [ref=e527]:
+                - button "Responder Mensagem Privada" [ref=e528] [cursor=pointer]:
+                  - generic [ref=e529]: Responder
+                  - generic [ref=e530]: Mensagem Privada
+                - generic [ref=e532]:
+                  - button [ref=e534] [cursor=pointer]
+                  - button [ref=e536] [cursor=pointer]
+              - generic [ref=e538]:
+                - paragraph [ref=e543]: Shift + enter para nova linha. Digite '/' para selecionar uma Resposta Pronta.
+                - paragraph [ref=e545]:
+                  - text: A assinatura da mensagem não está configurada. Por favor, configure-a nas configurações do perfil.
+                  - button "Clique aqui para atualizar" [ref=e546] [cursor=pointer]:
+                    - generic [ref=e547]: Clique aqui para atualizar
+              - generic [ref=e548]:
+                - generic [ref=e549]:
+                  - button [ref=e550] [cursor=pointer]
+                  - generic [ref=e552]:
+                    - button [ref=e553] [cursor=pointer]
+                    - button [ref=e556]
+                  - button [ref=e557] [cursor=pointer]
+                  - button [ref=e559] [cursor=pointer]
+                  - button [ref=e561] [cursor=pointer]
+                - button "Enviar (CTRL + ↵)" [disabled] [ref=e564]:
+                  - generic [ref=e565]: Enviar (CTRL + ↵)
+          - button [ref=e567] [cursor=pointer]

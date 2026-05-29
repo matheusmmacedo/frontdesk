@@ -1,0 +1,364 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/9/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/9/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - listitem [ref=e45]:
+              - link "Menções" [ref=e46]:
+                - /url: /app/accounts/9/mentions/conversations
+                - generic [ref=e47]: Menções
+            - listitem [ref=e48]:
+              - link "Não atendidas" [ref=e49]:
+                - /url: /app/accounts/9/unattended/conversations
+                - generic [ref=e50]: Não atendidas
+            - generic:
+              - generic: Canais
+            - list [ref=e51]:
+              - generic [ref=e52]:
+                - listitem [ref=e53]:
+                  - link "KLaOS Cobranca" [ref=e54]:
+                    - /url: /app/accounts/9/inbox/19
+                    - generic [ref=e57]: KLaOS Cobranca
+                - listitem [ref=e58]:
+                  - link "SAC" [ref=e59]:
+                    - /url: /app/accounts/9/inbox/16
+                    - generic [ref=e62]: SAC
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e63]:
+              - generic [ref=e64]:
+                - listitem [ref=e65]:
+                  - link "advogada" [ref=e66]:
+                    - /url: /app/accounts/9/label/advogada
+                    - generic [ref=e69]: advogada
+                - listitem [ref=e70]:
+                  - link "app" [ref=e71]:
+                    - /url: /app/accounts/9/label/app
+                    - generic [ref=e74]: app
+                - listitem [ref=e75]:
+                  - link "audio" [ref=e76]:
+                    - /url: /app/accounts/9/label/audio
+                    - generic [ref=e79]: audio
+                - listitem [ref=e80]:
+                  - link "blue_care" [ref=e81]:
+                    - /url: /app/accounts/9/label/blue_care
+                    - generic [ref=e84]: blue_care
+                - listitem [ref=e85]:
+                  - link "bomba" [ref=e86]:
+                    - /url: /app/accounts/9/label/bomba
+                    - generic [ref=e89]: bomba
+                - listitem [ref=e90]:
+                  - link "cadastro" [ref=e91]:
+                    - /url: /app/accounts/9/label/cadastro
+                    - generic [ref=e94]: cadastro
+                - listitem [ref=e95]:
+                  - link "cancelado" [ref=e96]:
+                    - /url: /app/accounts/9/label/cancelado
+                    - generic [ref=e99]: cancelado
+                - listitem [ref=e100]:
+                  - link "cancelamento-pendente" [ref=e101]:
+                    - /url: /app/accounts/9/label/cancelamento-pendente
+                    - generic [ref=e104]: cancelamento-pendente
+                - listitem [ref=e105]:
+                  - link "carne" [ref=e106]:
+                    - /url: /app/accounts/9/label/carne
+                    - generic [ref=e109]: carne
+                - listitem [ref=e110]:
+                  - link "cliente_dificil" [ref=e111]:
+                    - /url: /app/accounts/9/label/cliente_dificil
+                    - generic [ref=e114]: cliente_dificil
+                - listitem [ref=e115]:
+                  - link "cobranca-0d" [ref=e116]:
+                    - /url: /app/accounts/9/label/cobranca-0d
+                    - generic [ref=e119]: cobranca-0d
+                - listitem [ref=e120]:
+                  - link "cobranca-15d" [ref=e121]:
+                    - /url: /app/accounts/9/label/cobranca-15d
+                    - generic [ref=e124]: cobranca-15d
+                - listitem [ref=e125]:
+                  - link "cobranca-1d" [ref=e126]:
+                    - /url: /app/accounts/9/label/cobranca-1d
+                    - generic [ref=e129]: cobranca-1d
+                - listitem [ref=e130]:
+                  - link "cobranca-7d" [ref=e131]:
+                    - /url: /app/accounts/9/label/cobranca-7d
+                    - generic [ref=e134]: cobranca-7d
+                - listitem [ref=e135]:
+                  - link "cobranca-boleto-pendente" [ref=e136]:
+                    - /url: /app/accounts/9/label/cobranca-boleto-pendente
+                    - generic [ref=e139]: cobranca-boleto-pendente
+                - listitem [ref=e140]:
+                  - link "cobranca-cartao-pendente" [ref=e141]:
+                    - /url: /app/accounts/9/label/cobranca-cartao-pendente
+                    - generic [ref=e144]: cobranca-cartao-pendente
+                - listitem [ref=e145]:
+                  - link "cobranca-cartao-recusado" [ref=e146]:
+                    - /url: /app/accounts/9/label/cobranca-cartao-recusado
+                    - generic [ref=e149]: cobranca-cartao-recusado
+                - listitem [ref=e150]:
+                  - link "cobranca-d21" [ref=e151]:
+                    - /url: /app/accounts/9/label/cobranca-d21
+                    - generic [ref=e154]: cobranca-d21
+                - listitem [ref=e155]:
+                  - link "cobranca-negociacao" [ref=e156]:
+                    - /url: /app/accounts/9/label/cobranca-negociacao
+                    - generic [ref=e159]: cobranca-negociacao
+                - listitem [ref=e160]:
+                  - link "cobranca-promessa" [ref=e161]:
+                    - /url: /app/accounts/9/label/cobranca-promessa
+                    - generic [ref=e164]: cobranca-promessa
+                - listitem [ref=e165]:
+                  - link "cobranca-promessa-hoje" [ref=e166]:
+                    - /url: /app/accounts/9/label/cobranca-promessa-hoje
+                    - generic [ref=e169]: cobranca-promessa-hoje
+                - listitem [ref=e170]:
+                  - link "cobranca-segunda-via" [ref=e171]:
+                    - /url: /app/accounts/9/label/cobranca-segunda-via
+                    - generic [ref=e174]: cobranca-segunda-via
+                - listitem [ref=e175]:
+                  - link "coleta_domicilair" [ref=e176]:
+                    - /url: /app/accounts/9/label/coleta_domicilair
+                    - generic [ref=e179]: coleta_domicilair
+                - listitem [ref=e180]:
+                  - link "concurso" [ref=e181]:
+                    - /url: /app/accounts/9/label/concurso
+                    - generic [ref=e184]: concurso
+                - listitem [ref=e185]:
+                  - link "convenio_cancelado" [ref=e186]:
+                    - /url: /app/accounts/9/label/convenio_cancelado
+                    - generic [ref=e189]: convenio_cancelado
+                - listitem [ref=e190]:
+                  - link "diamante" [ref=e191]:
+                    - /url: /app/accounts/9/label/diamante
+                    - generic [ref=e194]: diamante
+                - listitem [ref=e195]:
+                  - link "empresa" [ref=e196]:
+                    - /url: /app/accounts/9/label/empresa
+                    - generic [ref=e199]: empresa
+                - listitem [ref=e200]:
+                  - link "enviado_convênio" [ref=e201]:
+                    - /url: /app/accounts/9/label/enviado_conv%C3%AAnio
+                    - generic [ref=e204]: enviado_convênio
+                - listitem [ref=e205]:
+                  - link "enviado-ao-spc" [ref=e206]:
+                    - /url: /app/accounts/9/label/enviado-ao-spc
+                    - generic [ref=e209]: enviado-ao-spc
+                - listitem [ref=e210]:
+                  - link "feito_orcamento" [ref=e211]:
+                    - /url: /app/accounts/9/label/feito_orcamento
+                    - generic [ref=e214]: feito_orcamento
+                - listitem [ref=e215]:
+                  - link "fornecedor" [ref=e216]:
+                    - /url: /app/accounts/9/label/fornecedor
+                    - generic [ref=e219]: fornecedor
+                - listitem [ref=e220]:
+                  - link "funeral_zelo" [ref=e221]:
+                    - /url: /app/accounts/9/label/funeral_zelo
+                    - generic [ref=e224]: funeral_zelo
+                - listitem [ref=e225]:
+                  - link "google" [ref=e226]:
+                    - /url: /app/accounts/9/label/google
+                    - generic [ref=e229]: google
+                - listitem [ref=e230]:
+                  - link "hemato_online" [ref=e231]:
+                    - /url: /app/accounts/9/label/hemato_online
+                    - generic [ref=e234]: hemato_online
+                - listitem [ref=e235]:
+                  - link "incluir_dependentes" [ref=e236]:
+                    - /url: /app/accounts/9/label/incluir_dependentes
+                    - generic [ref=e239]: incluir_dependentes
+                - listitem [ref=e240]:
+                  - link "indicou_ganhou" [ref=e241]:
+                    - /url: /app/accounts/9/label/indicou_ganhou
+                    - generic [ref=e244]: indicou_ganhou
+                - listitem [ref=e245]:
+                  - link "lembrete-5d" [ref=e246]:
+                    - /url: /app/accounts/9/label/lembrete-5d
+                    - generic [ref=e249]: lembrete-5d
+                - listitem [ref=e250]:
+                  - link "mais-saude" [ref=e251]:
+                    - /url: /app/accounts/9/label/mais-saude
+                    - generic [ref=e254]: mais-saude
+                - listitem [ref=e255]:
+                  - link "meta" [ref=e256]:
+                    - /url: /app/accounts/9/label/meta
+                    - generic [ref=e259]: meta
+                - listitem [ref=e260]:
+                  - link "nao_agendar" [ref=e261]:
+                    - /url: /app/accounts/9/label/nao_agendar
+                    - generic [ref=e264]: nao_agendar
+                - listitem [ref=e265]:
+                  - link "nao_enviar_boleto" [ref=e266]:
+                    - /url: /app/accounts/9/label/nao_enviar_boleto
+                    - generic [ref=e269]: nao_enviar_boleto
+                - listitem [ref=e270]:
+                  - link "nao_lida" [ref=e271]:
+                    - /url: /app/accounts/9/label/nao_lida
+                    - generic [ref=e274]: nao_lida
+                - listitem [ref=e275]:
+                  - link "orcamento_caro" [ref=e276]:
+                    - /url: /app/accounts/9/label/orcamento_caro
+                    - generic [ref=e279]: orcamento_caro
+                - listitem [ref=e280]:
+                  - link "ouro" [ref=e281]:
+                    - /url: /app/accounts/9/label/ouro
+                    - generic [ref=e284]: ouro
+                - listitem [ref=e285]:
+                  - link "ouro_enviado" [ref=e286]:
+                    - /url: /app/accounts/9/label/ouro_enviado
+                    - generic [ref=e289]: ouro_enviado
+                - listitem [ref=e290]:
+                  - link "pagamento-realizado" [ref=e291]:
+                    - /url: /app/accounts/9/label/pagamento-realizado
+                    - generic [ref=e294]: pagamento-realizado
+                - listitem [ref=e295]:
+                  - link "parceria_desconto" [ref=e296]:
+                    - /url: /app/accounts/9/label/parceria_desconto
+                    - generic [ref=e299]: parceria_desconto
+                - listitem [ref=e300]:
+                  - link "pendente" [ref=e301]:
+                    - /url: /app/accounts/9/label/pendente
+                    - generic [ref=e304]: pendente
+                - listitem [ref=e305]:
+                  - link "portal" [ref=e306]:
+                    - /url: /app/accounts/9/label/portal
+                    - generic [ref=e309]: portal
+                - listitem [ref=e310]:
+                  - link "prata" [ref=e311]:
+                    - /url: /app/accounts/9/label/prata
+                    - generic [ref=e314]: prata
+                - listitem [ref=e315]:
+                  - link "psquiatra_on-line" [ref=e316]:
+                    - /url: /app/accounts/9/label/psquiatra_on-line
+                    - generic [ref=e319]: psquiatra_on-line
+                - listitem [ref=e320]:
+                  - link "quer_mais_saúde" [ref=e321]:
+                    - /url: /app/accounts/9/label/quer_mais_sa%C3%BAde
+                    - generic [ref=e324]: quer_mais_saúde
+                - listitem [ref=e325]:
+                  - link "quer-cancelar" [ref=e326]:
+                    - /url: /app/accounts/9/label/quer-cancelar
+                    - generic [ref=e329]: quer-cancelar
+                - listitem [ref=e330]:
+                  - link "receber_pagamento" [ref=e331]:
+                    - /url: /app/accounts/9/label/receber_pagamento
+                    - generic [ref=e334]: receber_pagamento
+                - listitem [ref=e335]:
+                  - link "saaemg" [ref=e336]:
+                    - /url: /app/accounts/9/label/saaemg
+                    - generic [ref=e339]: saaemg
+                - listitem [ref=e340]:
+                  - link "sao_lucas" [ref=e341]:
+                    - /url: /app/accounts/9/label/sao_lucas
+                    - generic [ref=e344]: sao_lucas
+                - listitem [ref=e345]:
+                  - link "saude_24" [ref=e346]:
+                    - /url: /app/accounts/9/label/saude_24
+                    - generic [ref=e349]: saude_24
+                - listitem [ref=e350]:
+                  - link "sem_contrato" [ref=e351]:
+                    - /url: /app/accounts/9/label/sem_contrato
+                    - generic [ref=e354]: sem_contrato
+                - listitem [ref=e355]:
+                  - link "sem_renovação_de_contrato" [ref=e356]:
+                    - /url: /app/accounts/9/label/sem_renova%C3%A7%C3%A3o_de_contrato
+                    - generic [ref=e359]: sem_renovação_de_contrato
+                - listitem [ref=e360]:
+                  - link "sem_whatsapp" [ref=e361]:
+                    - /url: /app/accounts/9/label/sem_whatsapp
+                    - generic [ref=e364]: sem_whatsapp
+                - listitem [ref=e365]:
+                  - link "spc" [ref=e366]:
+                    - /url: /app/accounts/9/label/spc
+                    - generic [ref=e369]: spc
+                - listitem [ref=e370]:
+                  - link "transbordo-humano" [ref=e371]:
+                    - /url: /app/accounts/9/label/transbordo-humano
+                    - generic [ref=e374]: transbordo-humano
+                - listitem [ref=e375]:
+                  - link "vencido_contarto" [ref=e376]:
+                    - /url: /app/accounts/9/label/vencido_contarto
+                    - generic [ref=e379]: vencido_contarto
+              - generic:
+                - img
+        - listitem [ref=e380] [cursor=pointer]:
+          - button "Contatos" [ref=e381]:
+            - generic [ref=e385]: Contatos
+        - listitem [ref=e386] [cursor=pointer]:
+          - button "Relatórios" [ref=e387]:
+            - generic [ref=e391]: Relatórios
+        - listitem [ref=e392] [cursor=pointer]:
+          - button "Campanhas" [ref=e393]:
+            - generic [ref=e397]: Campanhas
+        - listitem [ref=e398] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e399]:
+            - generic [ref=e403]: Central de Ajuda
+        - listitem [ref=e404] [cursor=pointer]:
+          - button "Configurações" [ref=e405]:
+            - generic [ref=e409]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e413] [cursor=pointer]:
+      - img [ref=e416]:
+        - generic [ref=e417]: M
+      - generic [ref=e418]:
+        - generic [ref=e419]: Matheus
+        - generic [ref=e420]: matheus@matheus.pro.br
+  - main [ref=e423]:
+    - generic [ref=e424]:
+      - generic [ref=e425]:
+        - generic [ref=e426]:
+          - generic [ref=e427]:
+            - heading "Conversas" [level=1] [ref=e428]
+            - generic [ref=e429]: Ativas
+          - generic [ref=e430]:
+            - button [ref=e432] [cursor=pointer]
+            - button [ref=e435] [cursor=pointer]
+            - button [ref=e437] [cursor=pointer]
+        - 'searchbox "Buscar por nome, telefone ou #ID" [ref=e442]'
+        - list [ref=e444]:
+          - listitem [ref=e445]:
+            - generic [ref=e446] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e448]: "0"
+          - listitem [ref=e449]:
+            - generic [ref=e450] [cursor=pointer]:
+              - text: I.A.
+              - generic [ref=e452]: "63"
+          - listitem [ref=e453]:
+            - generic [ref=e454] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e456]: "100"
+        - paragraph [ref=e457]: Não há conversas ativas neste grupo.
+      - generic [ref=e464]:
+        - img "No Chat" [ref=e465]
+        - generic [ref=e466]: Oh oh! Parece que não há mensagens de clientes na sua caixa de entrada.
+        - generic [ref=e467]:
+          - generic [ref=e468]:
+            - generic [ref=e469]:
+              - generic [ref=e470]: ⌘
+              - generic [ref=e471]: K
+            - generic [ref=e472]: para abrir o menu de comando
+          - generic [ref=e473]:
+            - generic [ref=e474]:
+              - generic [ref=e475]: ⌘
+              - generic [ref=e476]: /
+            - generic [ref=e477]: para ver os atalhos de teclado

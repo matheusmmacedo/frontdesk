@@ -1,0 +1,118 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e18]:
+        - link "Pesquisar..." [ref=e19] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e21]: Pesquisar...
+        - button [ref=e23] [cursor=pointer]
+    - navigation [ref=e25]:
+      - list [ref=e26]:
+        - listitem [ref=e27] [cursor=pointer]:
+          - button "Caixa de Entrada 4" [ref=e28]:
+            - generic [ref=e31]:
+              - generic [ref=e32]: Caixa de Entrada
+              - generic [ref=e33]: "4"
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - list
+            - list
+        - listitem [ref=e155] [cursor=pointer]:
+          - button "Contatos" [ref=e156]:
+            - generic [ref=e160]: Contatos
+        - listitem [ref=e161] [cursor=pointer]:
+          - button "Relatórios" [ref=e162]:
+            - generic [ref=e166]: Relatórios
+        - listitem [ref=e167] [cursor=pointer]:
+          - button "Campanhas" [ref=e168]:
+            - generic [ref=e172]: Campanhas
+        - listitem [ref=e173] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e174]:
+            - generic [ref=e178]: Central de Ajuda
+        - listitem [ref=e179] [cursor=pointer]:
+          - button "Configurações" [ref=e180]:
+            - generic [ref=e184]: Configurações
+    - button "GUSTAVO HENRIQUE DE OLIVEIRA gustavooliveiranetwork@gmail.com" [ref=e188] [cursor=pointer]:
+      - img [ref=e191]:
+        - generic [ref=e192]: GH
+      - generic [ref=e193]:
+        - generic [ref=e194]: GUSTAVO HENRIQUE DE OLIVEIRA
+        - generic [ref=e195]: gustavooliveiranetwork@gmail.com
+  - main [ref=e198]:
+    - generic [ref=e199]:
+      - generic [ref=e200]:
+        - generic [ref=e201]:
+          - generic [ref=e202]:
+            - heading "Conversas" [level=1] [ref=e203]
+            - generic [ref=e204]: Ativas
+          - generic [ref=e205]:
+            - button [ref=e207] [cursor=pointer]
+            - button [ref=e210] [cursor=pointer]
+            - button [ref=e212] [cursor=pointer]
+        - list [ref=e215]:
+          - listitem [ref=e216]:
+            - generic [ref=e217] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e219]: "3"
+          - listitem [ref=e220]:
+            - generic [ref=e221] [cursor=pointer]:
+              - text: Não atribuídas
+              - generic [ref=e223]: "2"
+          - listitem [ref=e224]:
+            - generic [ref=e225] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e227]: "6"
+        - generic [ref=e228]:
+          - generic [ref=e229]:
+            - generic [ref=e231] [cursor=pointer]:
+              - img [ref=e234]:
+                - generic [ref=e235]: BN
+              - generic [ref=e236]:
+                - heading "BEATRIZ NASCIMENTO DA SILVA" [level=4] [ref=e237]
+                - generic [ref=e238]:
+                  - img [ref=e239]
+                  - text: "📋 Resumo SDR Agent Resumo SDR — Beatriz Nascimento da Silva ──────────────────────────────── Empresa: não mencionado · sem site Contato: não mencionado · não mencionado Decisores: Beatriz Nascimento da Silva (não mencionado) Mercado: não mencionado Dor: Quer checar boleto em aberto no CPF e ser direcionada ao setor de contratos. Intenção: Média — solicitou transferência ao setor de contratos após ver 1 boleto a vencer. Score: 45 · warm Fit: Não — caso é suporte/financeiro (boleto/contratos), não conversa comercial. Objeção: nenhuma identificada Pedido: Verificar boleto em aberto no CPF e transferir ao setor de contratos/regularização. Próximos passos: → Confirmar com Beatriz o melhor canal/contato (tel/email) para retorno do setor correto. → Encaminhar internamente para Contratos/Regularização com CPF e detalhes do boleto (R$64,90). → Retornar informando protocolo/horário de atendimento (seg-sex 9h–17h) e link de pagamento."
+                - generic [ref=e243]: 2h • 41m
+            - generic [ref=e245] [cursor=pointer]:
+              - img [ref=e248]:
+                - generic [ref=e249]: D
+              - generic [ref=e250]:
+                - heading "Davi" [level=4] [ref=e251]
+                - generic [ref=e252]:
+                  - img [ref=e253]
+                  - text: "📋 Resumo SDR Agent Resumo SDR — Davi ──────────────────────────────── Empresa: Mais Saúde 24 Horas · https://maissaude24horas.com.br/ Contato: não mencionado · não mencionado Decisores: Davi (não mencionado) Mercado: não mencionado Dor: Quer entender valores/benefícios e contratar plano família p/ 5 pessoas. Também quer ver “valor da negociação” e tirar dúvidas de pagamento. Intenção: Alta — pediu link de contratação do Família Diamante p/ 5 pessoas. Score: 82 · hot Fit: Sim — dor clara e avançou para compra (solicitou contratação); decisor é o lead. Objeção: Quer atendimento humano e resposta por áudio; canal só texto. CPF não localizado 1x. Pedido: Link de contratação do Família Diamante (R$ 104,90/mês p/ 5 pessoas). Próximos passos: → Assumir atendimento humano e confirmar se ele ainda quer fechar o Família Diamante (5 ppl). → Validar CPF correto e dados cadastrais p/ liberar link/checkout (houve CPF não localizado). → Enviar resumo curto por texto (valores + principais benefícios) e link de contratação no chat."
+                - generic [ref=e257]: 14h • 3h
+            - generic [ref=e259] [cursor=pointer]:
+              - img [ref=e262]:
+                - generic [ref=e263]: D
+              - generic [ref=e264]:
+                - heading "Davi" [level=4] [ref=e265]
+                - generic [ref=e266]:
+                  - img [ref=e267]
+                  - text: "Histórico da conversa (IA): [IA]: Atendente LARA: Olá, tudo bem? Em que posso te ajudar? Usuário: Gostaria de saber algumas informações [IA]: Atendente LARA: Claro, Davi. Você quer informações sobre benefícios do plano, valores (a partir de R$ 29,90/mês) ou sobre pagamento/boletos? Me diga qual dessas opções você precisa. Usuário: poderia me dizer os beneficios? [IA]: Atendente LARA: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐 LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS ✅📄 https://maissaude24horas.com.br/ 💙 Qualquer dúvida, estou à disposição! ☺️ Usuário: Estou com duvidas sobre o pagamento, como funciona? [IA]: Atendente LARA: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar 2ª via/PIX se precisar), me informe seu CPF (somente números), por gentileza. Usuário: Entendi, mt obrigado Lara [IA]: Atendente LARA: Eu que agradeço, Davi. Se precisar de 2ª via/PIX ou confirmar alguma pendência, é só me enviar seu CPF (somente números). Usuário: Boa noite [IA]: Atendente LARA: Boa noite, Davi! Você quer seguir com a dúvida sobre pagamento — posso te enviar 2ª via/PIX — ou precisa de outra informação? Usuário: Eu gostaria de saber o valor da minha negociação [IA]: Atendente LARA: Para eu verificar o valor da sua negociação no nosso registro, me informe seu CPF (somente números), por gentileza. [IA]: Atendente LARA: Não localizei esse CPF 18296794730 no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente? Usuário: Poderia falar com atendente humano? [IA]: Atendente LARA: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar. [IA]: Atendente LARA: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui."
+                - generic [ref=e271]: 3d • 14h
+          - paragraph [ref=e272]: Todas as conversas carregadas 🎉
+      - generic [ref=e277]:
+        - img "No Chat" [ref=e278]
+        - generic [ref=e279]: Por favor, selecione uma conversa no painel da esquerda
+        - generic [ref=e280]:
+          - generic [ref=e281]:
+            - generic [ref=e282]:
+              - generic [ref=e283]: ⌘
+              - generic [ref=e284]: K
+            - generic [ref=e285]: para abrir o menu de comando
+          - generic [ref=e286]:
+            - generic [ref=e287]:
+              - generic [ref=e288]: ⌘
+              - generic [ref=e289]: /
+            - generic [ref=e290]: para ver os atalhos de teclado

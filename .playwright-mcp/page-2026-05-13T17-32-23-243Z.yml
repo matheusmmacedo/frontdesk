@@ -1,0 +1,149 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/9/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+        - listitem [ref=e40] [cursor=pointer]:
+          - button "Contatos" [ref=e41]:
+            - generic [ref=e45]: Contatos
+        - listitem [ref=e46] [cursor=pointer]:
+          - button "Relatórios" [ref=e47]:
+            - generic [ref=e51]: Relatórios
+        - listitem [ref=e52] [cursor=pointer]:
+          - button "Campanhas" [ref=e53]:
+            - generic [ref=e57]: Campanhas
+        - listitem [ref=e58] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e59]:
+            - generic [ref=e63]: Central de Ajuda
+        - listitem [ref=e64] [cursor=pointer]:
+          - button "Configurações" [ref=e65]:
+            - generic [ref=e69]: Configurações
+          - list [ref=e71]:
+            - listitem [ref=e72]:
+              - link "Conta" [ref=e73]:
+                - /url: /app/accounts/9/settings/general
+                - generic [ref=e76]: Conta
+            - listitem [ref=e77]:
+              - link "Formato do Nome" [ref=e78]:
+                - /url: /app/accounts/9/settings/klaos-message-prefix
+                - generic [ref=e81]: Formato do Nome
+            - listitem [ref=e82]:
+              - link "Agentes" [ref=e83]:
+                - /url: /app/accounts/9/settings/agents/list
+                - generic [ref=e86]: Agentes
+            - listitem [ref=e87]:
+              - link "Times" [ref=e88]:
+                - /url: /app/accounts/9/settings/teams/list
+                - generic [ref=e91]: Times
+            - listitem [ref=e92]:
+              - link "Caixas de Entrada" [ref=e93]:
+                - /url: /app/accounts/9/settings/inboxes/list
+                - generic [ref=e96]: Caixas de Entrada
+            - listitem [ref=e97]:
+              - link "Conexões WhatsApp" [ref=e98]:
+                - /url: /app/accounts/9/settings/whatsapp-connections
+                - generic [ref=e101]: Conexões WhatsApp
+            - listitem [ref=e102]:
+              - link "Etiquetas" [ref=e103]:
+                - /url: /app/accounts/9/settings/labels/list
+                - generic [ref=e106]: Etiquetas
+            - listitem [ref=e107]:
+              - link "Atributos Personalizados" [ref=e108]:
+                - /url: /app/accounts/9/settings/custom-attributes/list
+                - generic [ref=e111]: Atributos Personalizados
+            - listitem [ref=e112]:
+              - link "Automação" [ref=e113]:
+                - /url: /app/accounts/9/settings/automation/list
+                - generic [ref=e116]: Automação
+            - listitem [ref=e117]:
+              - link "Robôs" [ref=e118]:
+                - /url: /app/accounts/9/settings/agent-bots
+                - generic [ref=e121]: Robôs
+            - listitem [ref=e122]:
+              - link "Macros" [ref=e123]:
+                - /url: /app/accounts/9/settings/macros
+                - generic [ref=e126]: Macros
+            - listitem [ref=e127]:
+              - link "Respostas Prontas" [ref=e128]:
+                - /url: /app/accounts/9/settings/canned-response/list
+                - generic [ref=e131]: Respostas Prontas
+            - listitem [ref=e132]:
+              - link "Integrações" [ref=e133]:
+                - /url: /app/accounts/9/settings/integrations
+                - generic [ref=e136]: Integrações
+            - listitem [ref=e137]:
+              - link "Fluxo de Conversas" [ref=e138]:
+                - /url: /app/accounts/9/settings/conversation-workflow
+                - generic [ref=e141]: Fluxo de Conversas
+    - button "Matheus matheus@matheus.pro.br" [ref=e145] [cursor=pointer]:
+      - img [ref=e148]:
+        - generic [ref=e149]: M
+      - generic [ref=e150]:
+        - generic [ref=e151]: Matheus
+        - generic [ref=e152]: matheus@matheus.pro.br
+  - main [ref=e155]:
+    - generic [ref=e158]:
+      - generic [ref=e159]:
+        - heading "Respostas Prontas" [level=1] [ref=e161]
+        - paragraph [ref=e163]: Respostas prontas são modelos de resposta pré-escritas que te ajudam a responder rapidamente a uma conversa. Os agentes podem digitar o caractere ' /' seguido pelo atalho para inserir uma resposta pronta durante uma conversa.
+      - generic [ref=e164]:
+        - searchbox "Search canned responses..." [ref=e168]
+        - generic [ref=e169]:
+          - generic [ref=e170]: 1 canned response
+          - button "Adicionar resposta pronta" [ref=e172] [cursor=pointer]:
+            - generic [ref=e173]: Adicionar resposta pronta
+      - main [ref=e174]:
+        - table [ref=e176]:
+          - rowgroup [ref=e177]:
+            - row "Atalho Ações" [ref=e178]:
+              - columnheader "Atalho" [ref=e179]:
+                - button "Atalho" [ref=e180] [cursor=pointer]:
+                  - generic [ref=e181]: Atalho
+              - columnheader "Ações" [ref=e183]
+          - rowgroup [ref=e184]:
+            - row "confirmacao_pagamento Obrigado pelo pagamento! Se você realizou o pagamento no último dia útil, então até o próximo dia útil estará compensado. Mantenha sempre seus benefícios em dia 🙏" [ref=e185]:
+              - cell "confirmacao_pagamento Obrigado pelo pagamento! Se você realizou o pagamento no último dia útil, então até o próximo dia útil estará compensado. Mantenha sempre seus benefícios em dia 🙏" [ref=e186]:
+                - generic [ref=e187]:
+                  - generic [ref=e188]: confirmacao_pagamento
+                  - paragraph [ref=e189]: Obrigado pelo pagamento! Se você realizou o pagamento no último dia útil, então até o próximo dia útil estará compensado. Mantenha sempre seus benefícios em dia 🙏
+              - cell [ref=e190]:
+                - generic [ref=e191]:
+                  - button [ref=e192] [cursor=pointer]
+                  - button [ref=e194] [cursor=pointer]
+        - generic [ref=e196]:
+          - generic:
+            - button [ref=e197] [cursor=pointer]
+            - generic [ref=e200]:
+              - button [ref=e201] [cursor=pointer]
+              - generic [ref=e203]:
+                - generic [ref=e204]:
+                  - heading "Adicionar resposta pronta" [level=2] [ref=e205]
+                  - paragraph [ref=e206]: Respostas Prontas são modelos de resposta predefinidas que podem ser usados para enviar respostas rapidamente durante conversas.
+                - generic [ref=e207]:
+                  - generic [ref=e209]:
+                    - text: Atalho
+                    - textbox "Atalho" [ref=e210]:
+                      - /placeholder: Por favor, insira um atalho.
+                  - generic [ref=e211]:
+                    - generic [ref=e212]: Mensagem
+                    - paragraph [ref=e218]: Por favor, escreva a mensagem que deseja salvar como um modelo para usar posteriormente.
+                  - generic [ref=e219]:
+                    - button "Cancelar" [ref=e220] [cursor=pointer]:
+                      - generic [ref=e221]: Cancelar
+                    - button "Enviar" [disabled] [ref=e222]:
+                      - generic [ref=e223]: Enviar

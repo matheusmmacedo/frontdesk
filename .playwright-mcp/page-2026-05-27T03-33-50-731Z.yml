@@ -1,0 +1,75 @@
+- generic [ref=e46]:
+  - generic [ref=e47]:
+    - img [ref=e49]
+    - generic [ref=e51]:
+      - generic "Painel e Indicadores" [ref=e53]:
+        - generic "Painel e Indicadores" [ref=e54] [cursor=pointer]:
+          - img [ref=e57]
+          - generic [ref=e60]:
+            - img [ref=e63]
+            - generic [ref=e65]: Painel de filas
+      - generic "Chat" [ref=e67]:
+        - generic "Chat" [ref=e68] [cursor=pointer]:
+          - img [ref=e74]
+      - generic "CRM" [ref=e77]:
+        - generic "CRM" [ref=e78] [cursor=pointer]:
+          - img [ref=e83]
+      - generic "Chat Interno" [ref=e86]:
+        - generic "Chat Interno" [ref=e87] [cursor=pointer]:
+          - img [ref=e92]
+      - generic "Base de Conhecimento" [ref=e95]:
+        - generic "Base de Conhecimento" [ref=e96] [cursor=pointer]:
+          - img [ref=e101]
+      - generic "Histórico de chats" [ref=e104]:
+        - generic "Histórico de chats" [ref=e105] [cursor=pointer]:
+          - img [ref=e110]
+      - generic "Contatos" [ref=e113]:
+        - generic "Contatos" [ref=e114] [cursor=pointer]:
+          - img [ref=e119]
+      - generic "Notificações" [ref=e122]:
+        - generic "Notificações" [ref=e123] [cursor=pointer]:
+          - img [ref=e128]
+      - generic "Sair" [ref=e131]:
+        - generic "Sair" [ref=e132] [cursor=pointer]:
+          - img [ref=e137]
+    - generic [ref=e142]:
+      - generic [ref=e144] [cursor=pointer]:
+        - button "Choose File" [ref=e145]
+        - generic [ref=e151]: AT
+        - img [ref=e154]
+      - generic [ref=e156] [cursor=pointer]:
+        - generic [ref=e157]:
+          - generic [ref=e158]: Atendente GUSTAVO
+          - generic [ref=e159]: Gustavo Agente
+        - img [ref=e162]
+  - generic [ref=e167]:
+    - generic [ref=e168]:
+      - generic [ref=e169]:
+        - generic [ref=e170]:
+          - generic [ref=e171]: Gerenciar filas
+          - generic [ref=e172]:
+            - img [ref=e175] [cursor=pointer]
+            - img [ref=e179] [cursor=pointer]
+            - img [ref=e183] [cursor=pointer]
+        - generic [ref=e186]:
+          - img [ref=e189]
+          - generic [ref=e192]: "Administrativa - Máximo: Ilimitada"
+      - generic [ref=e193]:
+        - generic [ref=e194] [cursor=pointer]:
+          - img [ref=e200]
+          - generic [ref=e202]:
+            - generic [ref=e203]: API OFICIAL - ATEND MED BH
+            - generic [ref=e204]: Logado - Em pausa
+        - generic [ref=e205] [cursor=pointer]:
+          - img [ref=e211]
+          - generic [ref=e213]:
+            - generic [ref=e214]: Reserva Boletos
+            - generic [ref=e215]: Logado - Em pausa
+    - generic [ref=e216]:
+      - generic [ref=e217]:
+        - generic [ref=e218]: Bom dia Atendente!
+        - generic [ref=e219]: 00:33
+        - generic [ref=e220]: "\"A persistência é o caminho do êxito.\""
+        - generic [ref=e221]: Charles Chaplin
+      - generic [ref=e222]: Novidades
+      - generic [ref=e223]: Nenhuma novidade para exibir.

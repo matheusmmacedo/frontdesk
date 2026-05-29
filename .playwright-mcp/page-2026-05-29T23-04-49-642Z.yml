@@ -1,0 +1,94 @@
+- generic [ref=e4]:
+  - complementary [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - img [ref=e9]
+        - button "Mais Saúde 24h" [ref=e12] [cursor=pointer]:
+          - generic [ref=e13]: Mais Saúde 24h
+      - generic [ref=e15]:
+        - link "Pesquisar..." [ref=e16] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e18]: Pesquisar...
+        - button [ref=e20] [cursor=pointer]
+    - navigation [ref=e22]:
+      - list [ref=e23]:
+        - listitem [ref=e24] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e25]:
+            - generic [ref=e29]: Caixa de Entrada
+        - listitem [ref=e30] [cursor=pointer]:
+          - button "Conversas" [ref=e31]:
+            - generic [ref=e35]: Conversas
+          - list [ref=e37]:
+            - listitem [ref=e38]:
+              - link "Todas as conversas" [ref=e39]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e40]: Todas as conversas
+            - listitem [ref=e41]:
+              - link "Menções" [ref=e42]:
+                - /url: /app/accounts/10/mentions/conversations
+                - generic [ref=e43]: Menções
+            - listitem [ref=e44]:
+              - link "Não atendidas" [ref=e45]:
+                - /url: /app/accounts/10/unattended/conversations
+                - generic [ref=e46]: Não atendidas
+        - listitem [ref=e47] [cursor=pointer]:
+          - button "Contatos" [ref=e48]:
+            - generic [ref=e52]: Contatos
+        - listitem [ref=e53] [cursor=pointer]:
+          - button "Relatórios" [ref=e54]:
+            - generic [ref=e58]: Relatórios
+        - listitem [ref=e59] [cursor=pointer]:
+          - button "Campanhas" [ref=e60]:
+            - generic [ref=e64]: Campanhas
+        - listitem [ref=e65] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e66]:
+            - generic [ref=e70]: Central de Ajuda
+        - listitem [ref=e71] [cursor=pointer]:
+          - button "Configurações" [ref=e72]:
+            - generic [ref=e76]: Configurações
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - button "🟢 Online" [ref=e79] [cursor=pointer]:
+          - generic [ref=e80]: 🟢
+          - generic [ref=e81]: Online
+        - button "🟡 Pausa" [ref=e82] [cursor=pointer]:
+          - generic [ref=e83]: 🟡
+          - generic [ref=e84]: Pausa
+        - button "⚪ Offline" [ref=e85] [cursor=pointer]:
+          - generic [ref=e86]: ⚪
+          - generic [ref=e87]: Offline
+      - button "Matheus matheus@matheus.pro.br" [ref=e90] [cursor=pointer]:
+        - img [ref=e93]:
+          - generic [ref=e94]: M
+        - generic [ref=e95]:
+          - generic [ref=e96]: Matheus
+          - generic [ref=e97]: matheus@matheus.pro.br
+  - main [ref=e100]:
+    - generic [ref=e101]:
+      - generic [ref=e102]:
+        - generic [ref=e103]:
+          - generic [ref=e104]:
+            - heading "Conversas" [level=1] [ref=e105]
+            - generic [ref=e106]: Ativas
+          - generic [ref=e107]:
+            - button [ref=e109] [cursor=pointer]
+            - button [ref=e112] [cursor=pointer]
+            - button [ref=e114] [cursor=pointer]
+        - 'searchbox "Buscar por nome, telefone ou #ID" [ref=e119]'
+        - list [ref=e121]:
+          - listitem [ref=e122]:
+            - generic [ref=e123] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e125]: "0"
+          - listitem [ref=e126]:
+            - generic [ref=e127] [cursor=pointer]:
+              - text: I.A.
+              - generic [ref=e129]: "1"
+          - listitem [ref=e130]:
+            - generic [ref=e131] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e133]: "4"
+        - paragraph [ref=e134]: Não há conversas ativas neste grupo.
+      - heading "Carregando caixas de entrada" [level=6] [ref=e141]:
+        - generic [ref=e142]: Carregando caixas de entrada
+        - img [ref=e143]
