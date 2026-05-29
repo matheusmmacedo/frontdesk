@@ -2238,6 +2238,22 @@ const assigneeTabItems = computed(() => {
     reason: 'O.10 wa24h-banner: registra componente no options API',
   },
 
+  // === KLaOS — O.11 Ações inline na lista de conversas ===
+  // Botões hover na card pra resolver/transferir sem abrir a conv. Reusa
+  // actions Vuex nativas (toggleStatus + OPEN_ASSIGNEE_DROPDOWN).
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: "import TimeAgo from 'dashboard/components/ui/TimeAgo.vue';",
+    to: "import TimeAgo from 'dashboard/components/ui/TimeAgo.vue';\nimport KlaosInlineActions from 'next/KlaosConversation/InlineActions.vue';",
+    reason: 'O.11 inline-actions: import componente custom',
+  },
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: '    :data-klaos-conversation-id="chat.id"\n    @click="onCardClick"\n    @contextmenu="openContextMenu($event)"\n  >',
+    to: '    :data-klaos-conversation-id="chat.id"\n    @click="onCardClick"\n    @contextmenu="openContextMenu($event)"\n  >\n    <KlaosInlineActions :chat="chat" />',
+    reason: 'O.11 inline-actions: renderiza botões hover na card',
+  },
+
   // === KLaOS — O.9 "Tempo desde última msg" badge colorido na card ===
   // Substitui o TimeAgo padrão por um badge mais destacado com faixa de
   // tempo colorida: verde <1h, cinza 1-6h, âmbar 6-24h, vermelho >24h.
