@@ -2153,26 +2153,6 @@ const assigneeTabItems = computed(() => {
     to: '    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <div class="mt-6">\n      <SnoozeReopenAlertToggle />\n    </div>\n    <AccountId />',
     reason: 'snooze-alert-toggle: renderiza abaixo do label IA',
   },
-
-  // === KLaOS — Wire do AutoAssignOnTemplateToggle em Conf > Geral (Item 2) ===
-  {
-    id: '/settings/account/Index.vue',
-    from: "import SnoozeReopenAlertToggle from 'next/KlaosAccountSettings/SnoozeReopenAlertToggle.vue';",
-    to: "import SnoozeReopenAlertToggle from 'next/KlaosAccountSettings/SnoozeReopenAlertToggle.vue';\nimport AutoAssignOnTemplateToggle from 'next/KlaosAccountSettings/AutoAssignOnTemplateToggle.vue';",
-    reason: 'auto-assign-template: import componente custom',
-  },
-  {
-    id: '/settings/account/Index.vue',
-    from: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SnoozeReopenAlertToggle,\n    SectionLayout,',
-    to: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SnoozeReopenAlertToggle,\n    AutoAssignOnTemplateToggle,\n    SectionLayout,',
-    reason: 'auto-assign-template: registra componente no options API',
-  },
-  {
-    id: '/settings/account/Index.vue',
-    from: '    <div class="mt-6">\n      <SnoozeReopenAlertToggle />\n    </div>\n    <AccountId />',
-    to: '    <div class="mt-6">\n      <SnoozeReopenAlertToggle />\n    </div>\n    <div class="mt-6">\n      <AutoAssignOnTemplateToggle />\n    </div>\n    <AccountId />',
-    reason: 'auto-assign-template: renderiza abaixo do snooze alert',
-  },
 ];
 
 export default function klaosPatches() {

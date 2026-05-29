@@ -7,10 +7,11 @@
 # "Minhas" do remetente automaticamente. Hoje o template sai mas a
 # conversa fica sem assignee_id, então o agente perde de vista a conv.
 #
-# Multi-tenant via toggle em `account.settings.auto_assign_on_template_send`
-# (default `nil` = comportamento Chatwoot nativo preservado). Quando o
-# admin liga, qualquer template enviado por um agente atribui a conv ao
-# agente se ainda não tiver assignee.
+# Comportamento universal (decidido em 29/05/2026): SEMPRE ativo pra
+# todos os clientes Frontdesk, sem toggle. Justificativa: quem dispara
+# template ativo está iniciando comunicação intencional — natural que
+# vire dono da conversa. Se um dia algum cliente reclamar, podemos
+# voltar a colocar toggle, mas começamos com default sensato.
 #
 # Detecção de template: message_type == :template OU additional_attributes
 # tem `template_params` (Chatwoot marca de jeitos diferentes dependendo do
@@ -42,14 +43,9 @@ module KlaosAutoAssignOnTemplate
     return false if conversation.blank? || sender_id.blank?
     return false if conversation.assignee_id.present?
     return false unless sender_type == 'User'
-    return false unless klaos_account_toggle_on?
     return false unless klaos_is_template_message?
 
     true
-  end
-
-  def klaos_account_toggle_on?
-    account&.settings&.dig('auto_assign_on_template_send') == true
   end
 
   def klaos_is_template_message?
