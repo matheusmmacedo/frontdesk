@@ -2148,6 +2148,31 @@ const assigneeTabItems = computed(() => {
     reason: 'empty-msg-fix: isReplyButtonDisabled exige file real do áudio',
   },
 
+  // === KLaOS — O.9 "Tempo desde última msg" badge colorido na card ===
+  // Substitui o TimeAgo padrão por um badge mais destacado com faixa de
+  // tempo colorida: verde <1h, cinza 1-6h, âmbar 6-24h, vermelho >24h.
+  // Padrão de paridade com Kualiz "Painel de Atendimentos" (Onda 2 O.9).
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: "import TimeAgo from 'dashboard/components/ui/TimeAgo.vue';",
+    to: "import TimeAgo from 'dashboard/components/ui/TimeAgo.vue';\nimport KlaosLastActivityBadge from 'next/KlaosConversation/LastActivityBadge.vue';",
+    reason: 'O.9 last-activity-badge: import componente custom',
+  },
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: `        <span class="ml-auto font-normal leading-4 text-xxs">
+          <TimeAgo
+            :last-activity-timestamp="chat.timestamp"
+            :created-at-timestamp="chat.created_at"
+            :conversation-id="chat.id"
+          />
+        </span>`,
+    to: `        <span class="ml-auto leading-4">
+          <KlaosLastActivityBadge :timestamp="chat.timestamp" />
+        </span>`,
+    reason: 'O.9 last-activity-badge: substitui TimeAgo por badge colorido por SLA',
+  },
+
   // === KLaOS — Snooze: data-attr na ConversationCard pro pulse ===
   // Adiciona data-klaos-conversation-id no root da card pra o componente
   // SnoozeReopenAlert achar e aplicar/remover a CSS class .klaos-pulse
