@@ -15,7 +15,8 @@
 module KlaosAccountSettingsParams
   KLAOS_SETTINGS_KEYS = [
     :auto_offline_default,
-    :unassigned_label
+    :unassigned_label,
+    :snooze_reopen_alert
   ].freeze
 
   private

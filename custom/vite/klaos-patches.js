@@ -100,14 +100,14 @@ const PATCHES = [
   {
     id: '/settings/settings.routes.js',
     from: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';",
-    to: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';\nimport klaosMessagePrefix from './klaosMessagePrefix/klaosMessagePrefix.routes';",
-    reason: 'register KLaOS message prefix settings route import',
+    to: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';\nimport klaosMessagePrefix from './klaosMessagePrefix/klaosMessagePrefix.routes';\nimport klaosMetaHealth from './klaosMetaHealth/klaosMetaHealth.routes';",
+    reason: 'register KLaOS message prefix + meta health settings route imports',
   },
   {
     id: '/settings/settings.routes.js',
     from: '...whatsappConnections.routes,\n  ],\n};',
-    to: '...whatsappConnections.routes,\n    ...klaosMessagePrefix.routes,\n  ],\n};',
-    reason: 'register KLaOS message prefix routes in settings route array',
+    to: '...whatsappConnections.routes,\n    ...klaosMessagePrefix.routes,\n    ...klaosMetaHealth.routes,\n  ],\n};',
+    reason: 'register KLaOS message prefix + meta health routes in settings route array',
   },
   {
     id: '/sidebar/Sidebar.vue',
@@ -128,8 +128,14 @@ const PATCHES = [
           label: 'Formato do Nome',
           icon: 'i-lucide-id-card',
           to: accountScopedRoute('klaos_message_prefix_index'),
+        },
+        {
+          name: 'Settings KLaOS Meta Health',
+          label: 'Saúde do WhatsApp',
+          icon: 'i-lucide-activity',
+          to: accountScopedRoute('klaos_meta_health_index'),
         },`,
-    reason: 'add Formato do Nome (KLaOS message prefix) entry in settings sidebar',
+    reason: 'add Formato do Nome + Saúde do WhatsApp (Fase 2 fix áudio) entries in settings sidebar',
   },
 
   // === KLaOS — "Devolver ao bot" como botão visível + visibilidade correta ===
@@ -2013,38 +2019,48 @@ const assigneeTabItems = computed(() => {
     reason: 'keep-agents-online: renderiza toggle entre AudioTranscription e AccountId',
   },
 
-  // === KLaOS — Wire do UnassignedLabelInput em Conf > Geral (Item 10) ===
-  // Patches em Index.vue DEPOIS dos patches do Item 9 — usam o resultado
-  // (KeepAgentsOnlineToggle import + render) como âncora.
+  // === KLaOS — ActionCable: registra evento custom klaos.snooze_reopened ===
+  // O backend (custom/config/initializers/klaos_snooze_no_limit.rb) broadcasta
+  // este evento quando reabre uma conv adiada. Frontend SnoozeReopenAlert.vue
+  // ouve via emitter pra disparar tab piscando + push + som.
   {
-    id: '/settings/account/Index.vue',
-    from: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';",
-    to: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';\nimport UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';",
-    reason: 'rotulo-unassigned: import componente custom',
+    id: '/dashboard/helper/actionCable.js',
+    from: "'copilot.message.created': this.onCopilotMessageCreated,\n    };",
+    to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n    };",
+    reason: 'klaos-snooze-reopened: registra event handler',
   },
   {
-    id: '/settings/account/Index.vue',
-    from: '    KeepAgentsOnlineToggle,\n    SectionLayout,',
-    to: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SectionLayout,',
-    reason: 'rotulo-unassigned: registra componente no options API',
-  },
-  {
-    id: '/settings/account/Index.vue',
-    from: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
-    to: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
-    reason: 'rotulo-unassigned: renderiza input abaixo do toggle online',
+    id: '/dashboard/helper/actionCable.js',
+    from: "  // eslint-disable-next-line class-methods-use-this\n  onReconnect = () => {",
+    to: `  onKlaosSnoozeReopened = data => {
+    try {
+      emitter.emit('klaos.snooze_reopened', data);
+    } catch (e) { /* noop */ }
+  };
+
+  // eslint-disable-next-line class-methods-use-this
+  onReconnect = () => {`,
+    reason: 'klaos-snooze-reopened: handler que emite via mitt emitter',
   },
 
   // === KLaOS — Fix bug "mensagem vazia enviada" do composer (ReplyBox.vue) ===
   // Bug nativo Chatwoot (confirmado via git blame + diff vs upstream/develop):
-  // onFinishRecorder seta `hasRecordedAudio=true` INCONDICIONALMENTE, mesmo
-  // quando file vem null (gravação falhou). isReplyButtonDisabled libera o
-  // botão Send → POST com content='' → Meta rejeita "text.body required".
+  //   onFinishRecorder seta `hasRecordedAudio=true` INCONDICIONALMENTE,
+  //   mesmo quando o file vem null (gravação falhou). Daí isReplyButtonDisabled
+  //   libera o botão Send mesmo com composer vazio + sem arquivos →
+  //   POST com content='' chega no backend → Meta rejeita ("text.body required"
+  //   ou "Template not found").
   //
-  // Reproduzimos em DEV (msg 13804/13805) com POST direto. Histórico Mais
-  // Saúde prod mostra ~3 ocorrências/dia (msg 24060/22156/22158/18549).
+  // Reproduzimos em DEV (msg 13804) com POST direto. Histórico Mais Saúde prod
+  // mostra 3 ocorrências em 7 dias (msgs 24060/22156/22158/18549).
   //
-  // Fix em 2 patches + initializer backend (KlaosEmptyMessageGuard).
+  // Fix em 2 patches:
+  //   1. onFinishRecorder: guard `if (!file) return;` ANTES de setar a flag
+  //   2. isReplyButtonDisabled: só libera quando hasRecordedAudio + arquivo
+  //      de áudio realmente presente em attachedFiles
+  //
+  // Defesa em profundidade: backend também adicionou KlaosEmptyMessageGuard
+  // pra rejeitar no save mesmo se o front escapar.
   {
     id: '/widgets/conversation/ReplyBox.vue',
     from: `    onFinishRecorder(file) {
@@ -2072,6 +2088,94 @@ const assigneeTabItems = computed(() => {
         this.hasRecordedAudio = false;
       }`,
     reason: 'empty-msg-fix: isReplyButtonDisabled exige file real do áudio',
+  },
+
+  // === KLaOS — Snooze: data-attr na ConversationCard pro pulse ===
+  // Adiciona data-klaos-conversation-id no root da card pra o componente
+  // SnoozeReopenAlert achar e aplicar/remover a CSS class .klaos-pulse
+  // durante 60s após reabertura.
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: '@click="onCardClick"\n    @contextmenu="openContextMenu($event)"',
+    to: ':data-klaos-conversation-id="chat.id"\n    @click="onCardClick"\n    @contextmenu="openContextMenu($event)"',
+    reason: 'snooze-pulse: data-attr na card pro SnoozeReopenAlert localizar e pulsar',
+  },
+
+  // === KLaOS — Snooze: monta SnoozeReopenAlert no App.vue ===
+  {
+    id: '/dashboard/App.vue',
+    from: "import WootSnackbarBox from './components/SnackbarContainer.vue';",
+    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';",
+    reason: 'snooze-reopen-alert: import componente do alerta',
+  },
+  {
+    id: '/dashboard/App.vue',
+    from: '    WootSnackbarBox,\n    PendingEmailVerificationBanner,',
+    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    PendingEmailVerificationBanner,',
+    reason: 'snooze-reopen-alert: registra componente',
+  },
+  {
+    id: '/dashboard/App.vue',
+    from: '    <WootSnackbarBox />\n    <NetworkNotification />',
+    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <NetworkNotification />',
+    reason: 'snooze-reopen-alert: monta no App pra escutar transições snoozed→open globalmente',
+  },
+
+  // === KLaOS — Snooze: troca CustomSnoozeModal por KlaosCustomSnoozeModal (Item snooze) ===
+  // Corrige 3 bugs reportados pelo Gustavo:
+  //   B1 calendário em inglês (lang hardcoded antigo)
+  //   B2 calendário colapsado (prop `inline` não existe na lib v1.x)
+  //   B3 só data sem hora (type=datetime quebrado)
+  // A troca preserva o contrato de eventos (close, chooseTime) do upstream
+  // pra CmdBarConversationSnooze não precisar mudar.
+  {
+    id: '/commands/CmdBarConversationSnooze.vue',
+    from: "import CustomSnoozeModal from 'dashboard/components/CustomSnoozeModal.vue';",
+    to: "import CustomSnoozeModal from 'next/KlaosSnooze/KlaosCustomSnoozeModal.vue';",
+    reason: 'snooze: usa modal custom KLaOS (PT-BR + inline + hora) no lugar do upstream',
+  },
+
+  // === KLaOS — Wire do UnassignedLabelInput em Conf > Geral (Item 10) ===
+  // Patches em Index.vue DEPOIS dos patches do Item 9 — usam o resultado
+  // (KeepAgentsOnlineToggle import + render) como âncora.
+  {
+    id: '/settings/account/Index.vue',
+    from: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';",
+    to: "import KeepAgentsOnlineToggle from 'next/KlaosAccountSettings/KeepAgentsOnlineToggle.vue';\nimport UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';",
+    reason: 'rotulo-unassigned: import componente custom',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    KeepAgentsOnlineToggle,\n    SectionLayout,',
+    to: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SectionLayout,',
+    reason: 'rotulo-unassigned: registra componente no options API',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <AccountId />',
+    to: '    <div class="mt-6">\n      <KeepAgentsOnlineToggle />\n    </div>\n    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
+    reason: 'rotulo-unassigned: renderiza input abaixo do toggle online',
+  },
+
+  // === KLaOS — Wire do SnoozeReopenAlertToggle em Conf > Geral (Item snooze B5) ===
+  // Patches APÓS Item 10 — usa UnassignedLabelInput como âncora.
+  {
+    id: '/settings/account/Index.vue',
+    from: "import UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';",
+    to: "import UnassignedLabelInput from 'next/KlaosAccountSettings/UnassignedLabelInput.vue';\nimport SnoozeReopenAlertToggle from 'next/KlaosAccountSettings/SnoozeReopenAlertToggle.vue';",
+    reason: 'snooze-alert-toggle: import componente custom',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SectionLayout,',
+    to: '    KeepAgentsOnlineToggle,\n    UnassignedLabelInput,\n    SnoozeReopenAlertToggle,\n    SectionLayout,',
+    reason: 'snooze-alert-toggle: registra componente no options API',
+  },
+  {
+    id: '/settings/account/Index.vue',
+    from: '    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <AccountId />',
+    to: '    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <div class="mt-6">\n      <SnoozeReopenAlertToggle />\n    </div>\n    <AccountId />',
+    reason: 'snooze-alert-toggle: renderiza abaixo do label IA',
   },
 ];
 
