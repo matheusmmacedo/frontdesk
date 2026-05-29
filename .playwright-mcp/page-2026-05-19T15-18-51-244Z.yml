@@ -1,0 +1,182 @@
+- generic [ref=e2]:
+  - generic [ref=e9]:
+    - complementary [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - img "KlaOS" [ref=e15]
+            - generic [ref=e16]: KlaOS
+          - button [ref=e17] [cursor=pointer]:
+            - img
+        - button "GMB - Glocal My Business" [ref=e20] [cursor=pointer]:
+          - generic [ref=e21]: GMB - Glocal My Business
+          - img
+        - navigation [ref=e22]:
+          - link "Início" [ref=e23] [cursor=pointer]:
+            - /url: /
+            - img [ref=e24]
+            - generic [ref=e27]: Início
+          - link "KlaOS GPT" [ref=e28] [cursor=pointer]:
+            - /url: /copilot
+            - img [ref=e29]
+            - generic [ref=e31]: KlaOS GPT
+          - button "Inteligência" [ref=e33] [cursor=pointer]:
+            - img [ref=e34]
+            - generic [ref=e44]: Inteligência
+            - img [ref=e45]
+          - link "CRM" [ref=e47] [cursor=pointer]:
+            - /url: /crm/deals/kanban
+            - img [ref=e48]
+            - generic [ref=e52]: CRM
+          - button "Funil" [ref=e54] [cursor=pointer]:
+            - img [ref=e55]
+            - generic [ref=e57]: Funil
+            - img [ref=e58]
+          - generic [ref=e60]:
+            - button "Atendimento" [ref=e61] [cursor=pointer]:
+              - img [ref=e63]
+              - generic [ref=e66]: Atendimento
+              - img [ref=e67]
+            - generic [ref=e69]:
+              - link "Frontdesk" [ref=e70] [cursor=pointer]:
+                - /url: /frontdesk
+                - img [ref=e71]
+                - generic [ref=e73]: Frontdesk
+              - link "Agentes IA" [ref=e74] [cursor=pointer]:
+                - /url: /agents
+                - img [ref=e75]
+                - generic [ref=e78]: Agentes IA
+          - link "Engines" [ref=e79] [cursor=pointer]:
+            - /url: /engines
+            - img [ref=e80]
+            - generic [ref=e90]: Engines
+          - link "Configurações" [ref=e91] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e92]
+            - generic [ref=e95]: Configurações
+        - generic [ref=e97]: v1.0 · KlaOS
+    - main [ref=e98]:
+      - generic [ref=e99]:
+        - generic [ref=e100]:
+          - generic [ref=e101]: KlaOS
+          - img [ref=e102]
+          - generic [ref=e104]: Frontdesk
+        - generic [ref=e105]:
+          - button "Toggle CMO Chat" [ref=e106] [cursor=pointer]:
+            - img
+          - button "Change language" [ref=e108] [cursor=pointer]:
+            - img
+          - button "Notifications" [ref=e111] [cursor=pointer]:
+            - img
+            - generic [ref=e112]: "9"
+          - button "Matheus" [ref=e114] [cursor=pointer]:
+            - img "Matheus" [ref=e115]
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - generic [ref=e119]:
+            - img [ref=e121]
+            - generic [ref=e123]:
+              - heading "Frontdesk" [level=1] [ref=e124]
+              - paragraph [ref=e125]: Plataforma centralizada de atendimento ao cliente
+          - generic [ref=e126]:
+            - button "Atualizar" [ref=e127] [cursor=pointer]:
+              - img
+              - text: Atualizar
+            - button "Abrir Frontdesk" [ref=e128] [cursor=pointer]:
+              - img
+              - text: Abrir Frontdesk
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e132]:
+              - generic [ref=e133]: Status da Conexão
+              - generic [ref=e134]: Ativo
+            - generic [ref=e137]:
+              - generic [ref=e138]:
+                - generic [ref=e139]:
+                  - generic [ref=e140]: Nome da Conta
+                  - generic [ref=e141]: GMB - Glocal My Business
+                - generic [ref=e142]:
+                  - generic [ref=e143]: ID da Conta
+                  - generic [ref=e144]: "#11"
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - img [ref=e149]
+                  - generic [ref=e153]:
+                    - generic [ref=e154]: Abrir Painel de Atendimento
+                    - generic [ref=e155]: Acesse a interface completa do Frontdesk
+                - button "Abrir" [ref=e156] [cursor=pointer]:
+                  - text: Abrir
+                  - img
+          - generic [ref=e157]:
+            - generic [ref=e159]: Estatísticas
+            - generic [ref=e160]:
+              - generic [ref=e162]:
+                - img [ref=e164]
+                - generic [ref=e169]:
+                  - generic [ref=e170]: Usuários Ativos
+                  - generic [ref=e171]: "6"
+              - generic [ref=e173]:
+                - img [ref=e175]
+                - generic [ref=e178]:
+                  - generic [ref=e179]: Caixas de Entrada
+                  - generic [ref=e180]: "0"
+              - generic [ref=e181]:
+                - img [ref=e182]
+                - text: "Última sincronização: 20/04/2026, 23:20:33"
+        - generic [ref=e186]:
+          - button "Painel" [ref=e187] [cursor=pointer]:
+            - img [ref=e188]
+            - text: Painel
+          - button "Conversas" [ref=e190] [cursor=pointer]:
+            - img [ref=e191]
+            - text: Conversas
+          - button "Canais" [ref=e193] [cursor=pointer]:
+            - img [ref=e194]
+            - text: Canais
+          - button "Bridge IA" [ref=e197] [cursor=pointer]:
+            - img [ref=e198]
+            - text: Bridge IA
+          - button "Configurações" [ref=e201] [cursor=pointer]:
+            - img [ref=e202]
+            - text: Configurações
+        - generic [ref=e206]:
+          - generic [ref=e207]:
+            - generic [ref=e210]:
+              - img [ref=e212]
+              - generic [ref=e214]:
+                - paragraph [ref=e215]: "-"
+                - paragraph [ref=e216]: Conversas Ativas
+            - generic [ref=e219]:
+              - img [ref=e221]
+              - generic [ref=e226]:
+                - paragraph [ref=e227]: "-"
+                - paragraph [ref=e228]: Handoffs (24h)
+            - generic [ref=e231]:
+              - img [ref=e233]
+              - generic [ref=e236]:
+                - paragraph [ref=e237]: "-"
+                - paragraph [ref=e238]: Resolvidas Hoje
+            - generic [ref=e241]:
+              - img [ref=e243]
+              - generic [ref=e248]:
+                - paragraph [ref=e249]: "-"
+                - paragraph [ref=e250]: Sessões Humanas
+          - generic [ref=e251]:
+            - generic [ref=e252]:
+              - generic [ref=e253]: Canais Integrados
+              - generic [ref=e254]:
+                - button [ref=e255] [cursor=pointer]:
+                  - img
+                - button "Adicionar Canal" [ref=e256] [cursor=pointer]:
+                  - img
+                  - text: Adicionar Canal
+            - generic [ref=e258]:
+              - generic [ref=e259]:
+                - img [ref=e260]
+                - generic [ref=e262]:
+                  - paragraph [ref=e263]: WhatsApp — WhatsApp Não Oficial
+                  - paragraph [ref=e264]: 1 número(s) • Evolution
+              - generic [ref=e266]: active
+    - button "Abrir Klaus" [ref=e267] [cursor=pointer]:
+      - img "Klaus" [ref=e268]
+  - region "Notifications alt+T"

@@ -1,0 +1,679 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - listitem [ref=e45]:
+              - link "Menções" [ref=e46]:
+                - /url: /app/accounts/10/mentions/conversations
+                - generic [ref=e47]: Menções
+            - listitem [ref=e48]:
+              - link "Não atendidas" [ref=e49]:
+                - /url: /app/accounts/10/unattended/conversations
+                - generic [ref=e50]: Não atendidas
+            - generic:
+              - generic: Canais
+            - list [ref=e51]:
+              - generic [ref=e52]:
+                - listitem [ref=e53]:
+                  - link "KLaOS Cobranca" [ref=e54]:
+                    - /url: /app/accounts/10/inbox/30
+                    - generic [ref=e57]: KLaOS Cobranca
+                - listitem [ref=e58]:
+                  - link "TESTE QA" [ref=e59]:
+                    - /url: /app/accounts/10/inbox/37
+                    - generic [ref=e62]: TESTE QA
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e63]:
+              - generic [ref=e64]:
+                - listitem [ref=e65]:
+                  - link "cancelado" [ref=e66]:
+                    - /url: /app/accounts/10/label/cancelado
+                    - generic [ref=e69]: cancelado
+                - listitem [ref=e70]:
+                  - link "cancelamento-pendente" [ref=e71]:
+                    - /url: /app/accounts/10/label/cancelamento-pendente
+                    - generic [ref=e74]: cancelamento-pendente
+                - listitem [ref=e75]:
+                  - link "cobranca_1d" [ref=e76]:
+                    - /url: /app/accounts/10/label/cobranca_1d
+                    - generic [ref=e79]: cobranca_1d
+                - listitem [ref=e80]:
+                  - link "cobranca-0d" [ref=e81]:
+                    - /url: /app/accounts/10/label/cobranca-0d
+                    - generic [ref=e84]: cobranca-0d
+                - listitem [ref=e85]:
+                  - link "cobranca-15d" [ref=e86]:
+                    - /url: /app/accounts/10/label/cobranca-15d
+                    - generic [ref=e89]: cobranca-15d
+                - listitem [ref=e90]:
+                  - link "cobranca-7d" [ref=e91]:
+                    - /url: /app/accounts/10/label/cobranca-7d
+                    - generic [ref=e94]: cobranca-7d
+                - listitem [ref=e95]:
+                  - link "cobranca-boleto-pendente" [ref=e96]:
+                    - /url: /app/accounts/10/label/cobranca-boleto-pendente
+                    - generic [ref=e99]: cobranca-boleto-pendente
+                - listitem [ref=e100]:
+                  - link "cobranca-cartao-pendente" [ref=e101]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-pendente
+                    - generic [ref=e104]: cobranca-cartao-pendente
+                - listitem [ref=e105]:
+                  - link "cobranca-cartao-recusado" [ref=e106]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-recusado
+                    - generic [ref=e109]: cobranca-cartao-recusado
+                - listitem [ref=e110]:
+                  - link "cobranca-d21" [ref=e111]:
+                    - /url: /app/accounts/10/label/cobranca-d21
+                    - generic [ref=e114]: cobranca-d21
+                - listitem [ref=e115]:
+                  - link "cobranca-negociacao" [ref=e116]:
+                    - /url: /app/accounts/10/label/cobranca-negociacao
+                    - generic [ref=e119]: cobranca-negociacao
+                - listitem [ref=e120]:
+                  - link "cobranca-promessa" [ref=e121]:
+                    - /url: /app/accounts/10/label/cobranca-promessa
+                    - generic [ref=e124]: cobranca-promessa
+                - listitem [ref=e125]:
+                  - link "cobranca-promessa-hoje" [ref=e126]:
+                    - /url: /app/accounts/10/label/cobranca-promessa-hoje
+                    - generic [ref=e129]: cobranca-promessa-hoje
+                - listitem [ref=e130]:
+                  - link "cobranca-segunda-via" [ref=e131]:
+                    - /url: /app/accounts/10/label/cobranca-segunda-via
+                    - generic [ref=e134]: cobranca-segunda-via
+                - listitem [ref=e135]:
+                  - link "enviado-ao-spc" [ref=e136]:
+                    - /url: /app/accounts/10/label/enviado-ao-spc
+                    - generic [ref=e139]: enviado-ao-spc
+                - listitem [ref=e140]:
+                  - link "mais-saude" [ref=e141]:
+                    - /url: /app/accounts/10/label/mais-saude
+                    - generic [ref=e144]: mais-saude
+                - listitem [ref=e145]:
+                  - link "pagamento-realizado" [ref=e146]:
+                    - /url: /app/accounts/10/label/pagamento-realizado
+                    - generic [ref=e149]: pagamento-realizado
+                - listitem [ref=e150]:
+                  - link "pendente" [ref=e151]:
+                    - /url: /app/accounts/10/label/pendente
+                    - generic [ref=e154]: pendente
+                - listitem [ref=e155]:
+                  - link "qa-test2" [ref=e156]:
+                    - /url: /app/accounts/10/label/qa-test2
+                    - generic [ref=e159]: qa-test2
+                - listitem [ref=e160]:
+                  - link "qa-test3" [ref=e161]:
+                    - /url: /app/accounts/10/label/qa-test3
+                    - generic [ref=e164]: qa-test3
+                - listitem [ref=e165]:
+                  - link "qa-test4" [ref=e166]:
+                    - /url: /app/accounts/10/label/qa-test4
+                    - generic [ref=e169]: qa-test4
+                - listitem [ref=e170]:
+                  - link "quer-cancelar" [ref=e171]:
+                    - /url: /app/accounts/10/label/quer-cancelar
+                    - generic [ref=e174]: quer-cancelar
+              - generic:
+                - img
+        - listitem [ref=e175] [cursor=pointer]:
+          - button "Contatos" [ref=e176]:
+            - generic [ref=e180]: Contatos
+        - listitem [ref=e181] [cursor=pointer]:
+          - button "Relatórios" [ref=e182]:
+            - generic [ref=e186]: Relatórios
+        - listitem [ref=e187] [cursor=pointer]:
+          - button "Campanhas" [ref=e188]:
+            - generic [ref=e192]: Campanhas
+        - listitem [ref=e193] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e194]:
+            - generic [ref=e198]: Central de Ajuda
+        - listitem [ref=e199] [cursor=pointer]:
+          - button "Configurações" [ref=e200]:
+            - generic [ref=e204]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e208] [cursor=pointer]:
+      - img [ref=e211]:
+        - generic [ref=e212]: M
+      - generic [ref=e213]:
+        - generic [ref=e214]: Matheus
+        - generic [ref=e215]: matheus@matheus.pro.br
+  - main [ref=e218]:
+    - generic [ref=e219]:
+      - generic [ref=e220]:
+        - generic [ref=e221]:
+          - generic [ref=e222]:
+            - heading "Conversas" [level=1] [ref=e223]
+            - generic [ref=e224]: Ativas
+          - generic [ref=e225]:
+            - button [ref=e227] [cursor=pointer]
+            - button [ref=e230] [cursor=pointer]
+            - button [ref=e232] [cursor=pointer]
+        - 'searchbox "Buscar por nome, telefone ou #ID" [ref=e237]'
+        - list [ref=e239]:
+          - listitem [ref=e240]:
+            - generic [ref=e241] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e243]: "0"
+          - listitem [ref=e244]:
+            - generic [ref=e245] [cursor=pointer]:
+              - text: Não atribuídas
+              - generic [ref=e247]: "0"
+          - listitem [ref=e248]:
+            - generic [ref=e249] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e251]: "3"
+        - paragraph [ref=e252]: Não há conversas ativas neste grupo.
+      - generic [ref=e255]:
+        - generic [ref=e256]:
+          - generic [ref=e257]:
+            - img [ref=e259]:
+              - generic [ref=e260]: D
+            - generic [ref=e261]:
+              - link "Daniel" [ref=e263] [cursor=pointer]:
+                - /url: /app/accounts/10/contacts/308
+              - generic "KLaOS Cobranca" [ref=e265]:
+                - generic [ref=e267]: KLaOS Cobranca
+              - generic [ref=e268]:
+                - generic "Adicionar etiquetas" [ref=e269] [cursor=pointer]: "Etiquetas:"
+                - generic "Adicionar etiquetas" [ref=e270] [cursor=pointer]: adicionar
+          - generic [ref=e272]:
+            - generic [ref=e273]:
+              - button "Devolver ao bot" [ref=e274] [cursor=pointer]:
+                - generic [ref=e276]: Devolver ao bot
+              - generic [ref=e277]:
+                - button "Resolver" [ref=e278] [cursor=pointer]:
+                  - generic [ref=e279]: Resolver
+                - button [ref=e280] [cursor=pointer]
+            - button [ref=e283] [cursor=pointer]
+        - button "Voltar à conversa atual" [active] [ref=e323] [cursor=pointer]: Voltar à conversa atual
+        - generic [ref=e288]:
+          - generic [ref=e324]:
+            - generic [ref=e325]: Linha do tempo unificada — todas as conversas com este contato (7 conversas)
+            - generic [ref=e327]:
+              - button "Carregar mensagens mais antigas" [ref=e329] [cursor=pointer]
+              - generic [ref=e332]: "Conversa #undefined · · iniciada —"
+              - generic [ref=e335]:
+                - generic [ref=e336]:
+                  - generic [ref=e337]: Sistema
+                  - generic [ref=e338]: ·
+                - generic [ref=e340]: (mensagem sem conteúdo)
+              - generic [ref=e343]: "Conversa #12 · KLaOS Cobranca · resolved · iniciada 25/03/2026"
+              - generic [ref=e346]: quarta-feira, 25/03/2026
+              - generic [ref=e347]: Daniel Limeira adicionou collection, campaign:teste_e2e_—_régua_completa
+              - generic [ref=e349]:
+                - generic [ref=e350]:
+                  - generic [ref=e351]: 🤖 Lara | lara
+                  - generic [ref=e352]: template · cobranca_venc_hoje
+                  - generic [ref=e353]: renomeado/excluído
+                  - generic [ref=e354]: · 25/03/2026, 19:49
+                - generic [ref=e356]:
+                  - generic [ref=e357]:
+                    - text: Template
+                    - strong [ref=e358]: cobranca_venc_hoje
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e359]:
+                    - generic [ref=e360]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e361]: "{{2}}:R$ 89,90"
+              - generic [ref=e363]:
+                - generic [ref=e364]:
+                  - generic [ref=e365]: Daniel
+                  - generic [ref=e366]: · 25/03/2026, 20:11
+                - paragraph [ref=e369]: Pode me falar mais do que se trata?
+              - generic [ref=e371]:
+                - generic [ref=e372]:
+                  - generic [ref=e373]: 🤖 Lara | lara
+                  - generic [ref=e374]: · 25/03/2026, 20:11
+                - paragraph [ref=e377]:
+                  - emphasis [ref=e378]: Lara
+                  - text: ":"
+                  - text: Daniel, claro. Consta no nosso registro financeiro uma
+                  - strong [ref=e379]: mensalidade em aberto da Mais Saúde 24 Horas
+                  - text: (seu convênio/cartão de benefícios em saúde) no valor de
+                  - strong [ref=e380]: R$ 0,90
+                  - text: ", com vencimento em"
+                  - strong [ref=e381]: 22/03/2026
+                  - text: (está
+                  - strong [ref=e382]: 3 dias em atraso
+                  - text: ).
+              - generic [ref=e384]:
+                - generic [ref=e385]:
+                  - generic [ref=e386]: 🤖 Lara | lara
+                  - generic [ref=e387]: · 25/03/2026, 20:11
+                - paragraph [ref=e390]:
+                  - text: Para eu te enviar a
+                  - strong [ref=e391]: 2ª via atualizada
+                  - text: e você conseguir pagar, você prefere
+                  - strong [ref=e392]: Pix
+                  - text: ou
+                  - strong [ref=e393]: boleto
+                  - text: "?"
+              - generic [ref=e395]:
+                - generic [ref=e396]:
+                  - generic [ref=e397]: Daniel
+                  - generic [ref=e398]: · 25/03/2026, 20:12
+                - paragraph [ref=e401]: Boleto
+              - generic [ref=e403]:
+                - generic [ref=e404]:
+                  - generic [ref=e405]: 🤖 Lara | lara
+                  - generic [ref=e406]: · 25/03/2026, 20:12
+                - paragraph [ref=e409]:
+                  - emphasis [ref=e410]: Lara
+                  - text: ":"
+                  - text: Daniel, perfeito — te envio por boleto sim. No momento, porém,
+                  - strong [ref=e411]: não consegui localizar seu cadastro no nosso sistema
+                  - text: só com o nome para gerar a 2ª via dessa pendência de
+                  - strong [ref=e412]: R$ 0,90
+                  - text: .
+              - generic [ref=e414]:
+                - generic [ref=e415]:
+                  - generic [ref=e416]: 🤖 Lara | lara
+                  - generic [ref=e417]: · 25/03/2026, 20:12
+                - paragraph [ref=e420]:
+                  - text: Você pode me confirmar
+                  - strong [ref=e421]: seu CPF (apenas os 3 primeiros e os 2 últimos dígitos)
+                  - text: ou o
+                  - strong [ref=e422]: telefone/e-mail cadastrado
+                  - text: "? Com isso eu gero o boleto e te mando aqui."
+              - generic [ref=e424]:
+                - generic [ref=e425]:
+                  - generic [ref=e426]: Daniel
+                  - generic [ref=e427]: · 25/03/2026, 20:13
+                - paragraph [ref=e430]: "014"
+              - generic [ref=e432]:
+                - generic [ref=e433]:
+                  - generic [ref=e434]: 🤖 Lara | lara
+                  - generic [ref=e435]: · 25/03/2026, 20:13
+                - paragraph [ref=e438]:
+                  - emphasis [ref=e439]: Lara
+                  - text: ":"
+                  - text: "Daniel, obrigado. Localizei aqui sua mensalidade em aberto:"
+                  - strong [ref=e440]: R$ 89,90
+                  - text: ", vencida em"
+                  - strong [ref=e441]: 22/03/2026
+                  - text: (3 dias em atraso).
+              - generic [ref=e443]:
+                - generic [ref=e444]:
+                  - generic [ref=e445]: 🤖 Lara | lara
+                  - generic [ref=e446]: · 25/03/2026, 20:13
+                - paragraph [ref=e449]:
+                  - text: Para eu gerar e te enviar a
+                  - strong [ref=e450]: 2ª via do boleto
+                  - text: ", me confirme por favor"
+                  - strong [ref=e451]: os 2 últimos dígitos do seu CPF
+                  - text: (ou o
+                  - strong [ref=e452]: telefone/e-mail cadastrado
+                  - text: ).
+              - generic [ref=e454]:
+                - generic [ref=e455]:
+                  - generic [ref=e456]: Daniel
+                  - generic [ref=e457]: · 25/03/2026, 20:15
+                - paragraph [ref=e460]: "07"
+              - generic [ref=e462]:
+                - generic [ref=e463]:
+                  - generic [ref=e464]: 🤖 Lara | lara
+                  - generic [ref=e465]: · 25/03/2026, 20:15
+                - paragraph [ref=e468]:
+                  - emphasis [ref=e469]: Lara
+                  - text: ":"
+                  - text: "Daniel, obrigado! Confirmei aqui: é a mensalidade da Mais Saúde 24 Horas no valor de"
+                  - strong [ref=e470]: R$ 89,90
+                  - text: ", vencida em"
+                  - strong [ref=e471]: 22/03/2026
+                  - text: (3 dias em atraso).
+              - generic [ref=e473]:
+                - generic [ref=e474]:
+                  - generic [ref=e475]: 🤖 Lara | lara
+                  - generic [ref=e476]: · 25/03/2026, 20:15
+                - paragraph [ref=e479]:
+                  - text: Vou gerar agora a
+                  - strong [ref=e480]: 2ª via do boleto
+                  - text: para você; prefere receber por aqui mesmo no WhatsApp ou no seu
+                  - strong [ref=e481]: e-mail cadastrado
+                  - text: "?"
+              - generic [ref=e483]:
+                - generic [ref=e484]:
+                  - generic [ref=e485]: 🤖 Lara | lara
+                  - generic [ref=e486]: template · cobranca_venc_hoje
+                  - generic [ref=e487]: renomeado/excluído
+                  - generic [ref=e488]: · 25/03/2026, 20:19
+                - generic [ref=e490]:
+                  - generic [ref=e491]:
+                    - text: Template
+                    - strong [ref=e492]: cobranca_venc_hoje
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e493]:
+                    - generic [ref=e494]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e495]: "{{2}}:R$ 89,90"
+              - generic [ref=e497]:
+                - generic [ref=e498]:
+                  - generic [ref=e499]: Daniel
+                  - generic [ref=e500]: · 25/03/2026, 20:23
+                - paragraph [ref=e503]: manda o boleto
+              - generic [ref=e505]:
+                - generic [ref=e506]:
+                  - generic [ref=e507]: 🤖 Lara | lara
+                  - generic [ref=e508]: · 25/03/2026, 20:23
+                - paragraph [ref=e511]:
+                  - emphasis [ref=e512]: Lara
+                  - text: ":"
+                  - text: Daniel, vou te mandar sim — só que aqui não apareceu seu cadastro automaticamente para eu gerar o boleto agora.
+              - generic [ref=e514]:
+                - generic [ref=e515]:
+                  - generic [ref=e516]: 🤖 Lara | lara
+                  - generic [ref=e517]: · 25/03/2026, 20:23
+                - paragraph [ref=e520]:
+                  - text: Me confirma, por favor,
+                  - strong [ref=e521]: seu CPF completo
+                  - text: ou o
+                  - strong [ref=e522]: telefone/e-mail cadastrado
+                  - text: "? Com essa informação eu localizo certinho e já te envio a 2ª via do boleto."
+              - generic [ref=e524]:
+                - generic [ref=e525]:
+                  - generic [ref=e526]: Daniel
+                  - generic [ref=e527]: · 25/03/2026, 20:23
+                - paragraph [ref=e530]: "21983410604"
+              - generic [ref=e532]:
+                - generic [ref=e533]:
+                  - generic [ref=e534]: 🤖 Lara | lara
+                  - generic [ref=e535]: · 25/03/2026, 20:23
+                - paragraph [ref=e538]:
+                  - emphasis [ref=e539]: Lara
+                  - text: ":"
+                  - text: Daniel, obrigado. Confirmei no nosso registro financeiro a mensalidade em aberto de
+                  - strong [ref=e540]: R$ 89,90
+                  - text: ", com vencimento em"
+                  - strong [ref=e541]: 22/03/2026
+                  - text: (3 dias em atraso).
+              - generic [ref=e543]:
+                - generic [ref=e544]:
+                  - generic [ref=e545]: 🤖 Lara | lara
+                  - generic [ref=e546]: · 25/03/2026, 20:24
+                - paragraph [ref=e549]:
+                  - text: Para eu te enviar o
+                  - strong [ref=e550]: boleto atualizado
+                  - text: ", você prefere receber"
+                  - strong [ref=e551]: aqui no WhatsApp
+                  - text: ou no
+                  - strong [ref=e552]: e-mail cadastrado
+                  - text: "?"
+              - generic [ref=e554]:
+                - generic [ref=e555]:
+                  - generic [ref=e556]: Daniel
+                  - generic [ref=e557]: · 25/03/2026, 20:24
+                - paragraph [ref=e560]: aqui
+              - generic [ref=e562]:
+                - generic [ref=e563]:
+                  - generic [ref=e564]: 🤖 Lara | lara
+                  - generic [ref=e565]: · 25/03/2026, 20:24
+                - paragraph [ref=e568]:
+                  - emphasis [ref=e569]: Lara
+                  - text: ":"
+                  - text: Daniel, tentei gerar a 2ª via agora, mas o sistema não localizou seu cadastro automaticamente.
+              - generic [ref=e571]:
+                - generic [ref=e572]:
+                  - generic [ref=e573]: 🤖 Lara | lara
+                  - generic [ref=e574]: · 25/03/2026, 20:24
+                - paragraph [ref=e577]:
+                  - text: Você pode me confirmar
+                  - strong [ref=e578]: o telefone
+                  - text: que está cadastrado na Mais Saúde 24 Horas (com DDD) ou
+                  - strong [ref=e579]: seu e-mail
+                  - text: "? Com isso eu localizo o contrato e te envio o boleto aqui mesmo."
+              - generic [ref=e581]: quinta-feira, 26/03/2026
+              - generic [ref=e583]:
+                - generic [ref=e584]:
+                  - generic [ref=e585]: Daniel
+                  - generic [ref=e586]: · 26/03/2026, 07:34
+                - paragraph [ref=e589]: manda o boleto
+              - generic [ref=e591]:
+                - generic [ref=e592]:
+                  - generic [ref=e593]: 🤖 Lara | lara
+                  - generic [ref=e594]: · 26/03/2026, 07:34
+                - paragraph [ref=e597]:
+                  - emphasis [ref=e598]: Lara
+                  - text: ":"
+                  - text: Daniel, eu entendo e quero te enviar agora, mas para emitir a 2ª via eu preciso localizar o seu cadastro corretamente.
+              - generic [ref=e600]:
+                - generic [ref=e601]:
+                  - generic [ref=e602]: 🤖 Lara | lara
+                  - generic [ref=e603]: · 26/03/2026, 07:34
+                - paragraph [ref=e606]:
+                  - text: Me diga, por favor,
+                  - strong [ref=e607]: o seu telefone com DDD
+                  - text: OU
+                  - strong [ref=e608]: o e-mail cadastrado
+                  - text: (apenas um dos dois). Com essa informação eu gero e te mando o boleto aqui na sequência.
+              - generic [ref=e610]:
+                - generic [ref=e611]:
+                  - generic [ref=e612]: Daniel
+                  - generic [ref=e613]: · 26/03/2026, 07:35
+                - paragraph [ref=e616]: "21983410604"
+              - generic [ref=e618]:
+                - generic [ref=e619]:
+                  - generic [ref=e620]: 🤖 Lara | lara
+                  - generic [ref=e621]: · 26/03/2026, 07:35
+                - paragraph [ref=e624]:
+                  - emphasis [ref=e625]: Lara
+                  - text: ":"
+                  - text: Daniel, obrigado. Por segurança, não preciso (nem vou pedir) seu CPF completo por aqui — já consigo seguir com
+                  - strong [ref=e626]: telefone com DDD
+                  - text: ou
+                  - strong [ref=e627]: e-mail cadastrado
+                  - text: para localizar e emitir a 2ª via.
+              - generic [ref=e629]:
+                - generic [ref=e630]:
+                  - generic [ref=e631]: 🤖 Lara | lara
+                  - generic [ref=e632]: · 26/03/2026, 07:35
+                - paragraph [ref=e635]:
+                  - text: Me informe, por favor,
+                  - strong [ref=e636]: seu telefone com DDD
+                  - text: ou o
+                  - strong [ref=e637]: e-mail
+                  - text: que está no cadastro, que eu te envio o boleto aqui.
+              - generic [ref=e640]: "Conversa #14 · KLaOS Cobranca · resolved · iniciada 26/03/2026"
+              - generic [ref=e643]: quinta-feira, 26/03/2026
+              - generic [ref=e644]: Daniel Limeira adicionou collection, campaign:teste_controlado_—_régua_waba
+              - generic [ref=e647]: "Conversa #15 · KLaOS Cobranca · resolved · iniciada 26/03/2026"
+              - generic [ref=e650]: quinta-feira, 26/03/2026
+              - generic [ref=e651]: Daniel Limeira adicionou collection, campaign:teste_controlado_—_régua_waba
+              - generic [ref=e653]:
+                - generic [ref=e654]:
+                  - generic [ref=e655]: 🤖 Lara | lara
+                  - generic [ref=e656]: template · fatura_emissao
+                  - generic [ref=e657]: renomeado/excluído
+                  - generic [ref=e658]: · 26/03/2026, 16:45
+                - generic [ref=e660]:
+                  - generic [ref=e661]:
+                    - text: Template
+                    - strong [ref=e662]: fatura_emissao
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e663]:
+                    - generic [ref=e664]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e665]: "{{2}}:R$ 89,90"
+                    - generic [ref=e666]: "{{3}}:22/03/2026"
+                    - generic [ref=e667]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e668]: Daniel Limeira adicionou cobrança-ativa, inadimplente
+              - generic [ref=e671]: "Conversa #18 · KLaOS Cobranca · resolved · iniciada 26/03/2026"
+              - generic [ref=e674]: quinta-feira, 26/03/2026
+              - generic [ref=e675]: Daniel Limeira adicionou collection, campaign:teste_controlado_—_régua_waba
+              - generic [ref=e677]:
+                - generic [ref=e678]:
+                  - generic [ref=e679]: 🤖 Lara | lara
+                  - generic [ref=e680]: template · fatura_emissao
+                  - generic [ref=e681]: renomeado/excluído
+                  - generic [ref=e682]: · 26/03/2026, 16:49
+                - generic [ref=e684]:
+                  - generic [ref=e685]:
+                    - text: Template
+                    - strong [ref=e686]: fatura_emissao
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e687]:
+                    - generic [ref=e688]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e689]: "{{2}}:R$ 89,90"
+                    - generic [ref=e690]: "{{3}}:22/03/2026"
+                    - generic [ref=e691]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e692]: Daniel Limeira adicionou cobrança-ativa, inadimplente
+              - generic [ref=e694]:
+                - generic [ref=e695]:
+                  - generic [ref=e696]: 🤖 Lara | lara
+                  - generic [ref=e697]: template · cobranca_vencimento_hoje
+                  - generic [ref=e698]: renomeado/excluído
+                  - generic [ref=e699]: · 26/03/2026, 16:49
+                - generic [ref=e701]:
+                  - generic [ref=e702]:
+                    - text: Template
+                    - strong [ref=e703]: cobranca_vencimento_hoje
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e704]:
+                    - generic [ref=e705]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e706]: "{{2}}:R$ 89,90"
+                    - generic [ref=e707]: "{{3}}:22/03/2026"
+                    - generic [ref=e708]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e709]: Daniel Limeira adicionou cobrança-d0
+              - generic [ref=e710]: Daniel Limeira removeu cobrança-ativa
+              - generic [ref=e711]: Daniel Limeira removeu cobrança-d0, inadimplente
+              - generic [ref=e713]:
+                - generic [ref=e714]:
+                  - generic [ref=e715]: 🤖 Lara | lara
+                  - generic [ref=e716]: template · fatura_emissao
+                  - generic [ref=e717]: renomeado/excluído
+                  - generic [ref=e718]: · 26/03/2026, 17:07
+                - generic [ref=e720]:
+                  - generic [ref=e721]:
+                    - text: Template
+                    - strong [ref=e722]: fatura_emissao
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e723]:
+                    - generic [ref=e724]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e725]: "{{2}}:R$ 89,90"
+                    - generic [ref=e726]: "{{3}}:22/03/2026"
+                    - generic [ref=e727]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e728]: Daniel Limeira adicionou cobrança-ativa, inadimplente
+              - generic [ref=e729]: Daniel Limeira removeu cobrança-ativa, inadimplente
+              - generic [ref=e731]:
+                - generic [ref=e732]:
+                  - generic [ref=e733]: 🤖 Lara | lara
+                  - generic [ref=e734]: template · fatura_emissao
+                  - generic [ref=e735]: renomeado/excluído
+                  - generic [ref=e736]: · 26/03/2026, 17:19
+                - generic [ref=e738]:
+                  - generic [ref=e739]:
+                    - text: Template
+                    - strong [ref=e740]: fatura_emissao
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e741]:
+                    - generic [ref=e742]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e743]: "{{2}}:R$ 89,90"
+                    - generic [ref=e744]: "{{3}}:22/03/2026"
+                    - generic [ref=e745]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e746]: Daniel Limeira adicionou cobrança-ativa, inadimplente
+              - generic [ref=e748]:
+                - generic [ref=e749]:
+                  - generic [ref=e750]: 🤖 Lara | lara
+                  - generic [ref=e751]: template · cobranca_vencimento_hoje
+                  - generic [ref=e752]: renomeado/excluído
+                  - generic [ref=e753]: · 26/03/2026, 17:26
+                - generic [ref=e755]:
+                  - generic [ref=e756]:
+                    - text: Template
+                    - strong [ref=e757]: cobranca_vencimento_hoje
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e758]:
+                    - generic [ref=e759]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e760]: "{{2}}:R$ 89,90"
+                    - generic [ref=e761]: "{{3}}:22/03/2026"
+                    - generic [ref=e762]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e763]: Daniel Limeira adicionou cobrança-d0
+              - generic [ref=e764]: Daniel Limeira removeu cobrança-ativa
+              - generic [ref=e766]:
+                - generic [ref=e767]:
+                  - generic [ref=e768]: 🤖 Lara | lara
+                  - generic [ref=e769]: template · cobranca_vencimento_hoje
+                  - generic [ref=e770]: renomeado/excluído
+                  - generic [ref=e771]: · 26/03/2026, 23:20
+                - generic [ref=e773]:
+                  - generic [ref=e774]:
+                    - text: Template
+                    - strong [ref=e775]: cobranca_vencimento_hoje
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e776]:
+                    - generic [ref=e777]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e778]: "{{2}}:R$ 89,90"
+                    - generic [ref=e779]: "{{3}}:22/03/2026"
+                    - generic [ref=e780]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e782]:
+                - generic [ref=e783]:
+                  - generic [ref=e784]: 🤖 Lara | lara
+                  - generic [ref=e785]: template · cobranca_atraso_5dias
+                  - generic [ref=e786]: renomeado/excluído
+                  - generic [ref=e787]: · 26/03/2026, 23:22
+                - generic [ref=e789]:
+                  - generic [ref=e790]:
+                    - text: Template
+                    - strong [ref=e791]: cobranca_atraso_5dias
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e792]:
+                    - generic [ref=e793]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e794]: "{{2}}:R$ 89,90"
+                    - generic [ref=e795]: "{{3}}:22/03/2026"
+                    - generic [ref=e796]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e797]: Daniel Limeira removeu cobrança-d0
+              - generic [ref=e798]: Daniel Limeira adicionou cobrança-5d
+              - generic [ref=e800]:
+                - generic [ref=e801]:
+                  - generic [ref=e802]: Daniel
+                  - generic [ref=e803]: · 26/03/2026, 23:22
+                - paragraph [ref=e806]: Quero pagar com pix
+              - generic [ref=e808]:
+                - generic [ref=e809]:
+                  - generic [ref=e810]: 🤖 Lara | lara
+                  - generic [ref=e811]: template · fatura_atraso_15dias
+                  - generic [ref=e812]: renomeado/excluído
+                  - generic [ref=e813]: · 26/03/2026, 23:23
+                - generic [ref=e815]:
+                  - generic [ref=e816]:
+                    - text: Template
+                    - strong [ref=e817]: fatura_atraso_15dias
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e818]:
+                    - generic [ref=e819]: "{{1}}:Daniel Limeira"
+                    - generic [ref=e820]: "{{2}}:R$ 89,90"
+                    - generic [ref=e821]: "{{3}}:22/03/2026"
+                    - generic [ref=e822]: "{{4}}:https://maisaudebh.tenex.com.br/fatura/boleto-pdf?codigo=KFK2oOKVq8WqN9rLxXGdw&parcela=1"
+              - generic [ref=e823]: Daniel Limeira adicionou cobrança-15d
+              - generic [ref=e824]: Daniel Limeira removeu cobrança-5d
+              - generic [ref=e826]:
+                - generic [ref=e827]:
+                  - generic [ref=e828]: 🤖 Lara | lara
+                  - generic [ref=e829]: template · fatura_atraso_21dias
+                  - generic [ref=e830]: renomeado/excluído
+                  - generic [ref=e831]: · 26/03/2026, 23:27
+                - generic [ref=e833]:
+                  - generic [ref=e834]:
+                    - text: Template
+                    - strong [ref=e835]: fatura_atraso_21dias
+                    - text: "foi renomeado ou excluído. Variáveis enviadas:"
+                  - generic [ref=e837]: "{{1}}:Daniel Limeira"
+              - generic [ref=e838]: Atribuído a cobrança por Daniel Limeira
+          - button [ref=e321] [cursor=pointer]

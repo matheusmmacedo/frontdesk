@@ -1,0 +1,413 @@
+- generic [ref=e1]:
+  - generic [ref=e12]:
+    - generic [ref=e104]:
+      - generic [ref=e106]:
+        - navigation "Trilha de navegação" [ref=e108]:
+          - generic [ref=e109]:
+            - heading "Gerenciador do WhatsApp" [level=1] [ref=e110]
+            - img [ref=e111]
+            - heading "Telefones" [level=1] [ref=e114]
+        - toolbar [ref=e116]:
+          - generic [ref=e117]:
+            - generic [ref=e123]: Selecione uma conta do WhatsApp Business
+            - button "KLaOS" [ref=e127] [cursor=pointer]:
+              - generic [ref=e130]:
+                - img [ref=e132]
+                - generic [ref=e134]: KLaOS
+                - img [ref=e135]
+      - generic [ref=e137]:
+        - generic [ref=e144]:
+          - generic [ref=e147]:
+            - navigation [ref=e148]:
+              - list [ref=e149]:
+                - listitem [ref=e152]:
+                  - link "Visão geral" [ref=e154] [cursor=pointer]:
+                    - /url: https://business.facebook.com/latest/whatsapp_manager/overview?business_id=1670699556853947&asset_id=735467396201142
+                  - generic:
+                    - listitem:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: Visão geral
+            - navigation "Modelos de mensagens" [ref=e160]:
+              - list [ref=e161]:
+                - listitem [ref=e162]:
+                  - generic [ref=e163]:
+                    - button "Modelos de mensagens" [expanded] [ref=e165] [cursor=pointer]
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Modelos de mensagens
+                          - button "Alternar grupo" [ref=e171] [cursor=pointer]:
+                            - generic [ref=e173]:
+                              - generic [ref=e174]: Alternar grupo
+                              - img [ref=e176]
+                  - list [ref=e180]:
+                    - generic [ref=e183]:
+                      - link "Gerenciar modelos" [ref=e185] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/message_templates?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Gerenciar modelos
+                    - generic [ref=e192]:
+                      - link "Biblioteca de modelos" [ref=e194] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/template_library?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Biblioteca de modelos
+            - navigation "Ferramentas da conta" [ref=e199]:
+              - list [ref=e200]:
+                - listitem [ref=e201]:
+                  - generic [ref=e202]:
+                    - button "Ferramentas da conta" [expanded] [ref=e204] [cursor=pointer]
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Ferramentas da conta
+                          - button "Alternar grupo" [ref=e210] [cursor=pointer]:
+                            - generic [ref=e212]:
+                              - generic [ref=e213]: Alternar grupo
+                              - img [ref=e215]
+                  - list [ref=e219]:
+                    - generic [ref=e222]:
+                      - link "Insights" [ref=e224] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/insights?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Insights
+                    - generic [ref=e231]:
+                      - link "Limites de mensagens" [ref=e233] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/messaging_limits?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Limites de mensagens
+                    - generic [ref=e240]:
+                      - link "Flows" [ref=e242] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/flows?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Flows
+                    - generic [ref=e249]:
+                      - link "Números de telefone" [ref=e251] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/phone_numbers?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Números de telefone
+                    - generic [ref=e258]:
+                      - link "Catálogo" [ref=e260] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/catalog?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Catálogo
+                    - generic [ref=e267]:
+                      - link "Registro de atividades" [ref=e269] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/activity_log?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Registro de atividades
+            - navigation "Configurações de pagamento" [ref=e274]:
+              - list [ref=e275]:
+                - listitem [ref=e276]:
+                  - generic [ref=e277]:
+                    - button "Configurações de pagamento" [expanded] [ref=e279] [cursor=pointer]
+                    - generic:
+                      - listitem:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: Configurações de pagamento
+                          - button "Alternar grupo" [ref=e285] [cursor=pointer]:
+                            - generic [ref=e287]:
+                              - generic [ref=e288]: Alternar grupo
+                              - img [ref=e290]
+                  - list [ref=e294]:
+                    - generic [ref=e297]:
+                      - link "Índia" [ref=e299] [cursor=pointer]:
+                        - /url: https://business.facebook.com/latest/whatsapp_manager/india?business_id=1670699556853947&asset_id=735467396201142
+                      - generic:
+                        - listitem:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic: Índia
+          - button "Recolher" [ref=e308] [cursor=pointer]:
+            - generic [ref=e310]:
+              - generic [ref=e311]: Recolher
+              - img [ref=e313]
+        - generic [ref=e321]:
+          - generic [ref=e326]:
+            - generic [ref=e328]:
+              - generic [ref=e334]: Pesquisar por número de telefone ou nome
+              - generic [ref=e342]:
+                - img [ref=e345]
+                - searchbox "Pesquisar por número de telefone ou nome" [ref=e347]
+            - generic [ref=e348]:
+              - generic [ref=e354]: País
+              - combobox "País Filtrar por país" [ref=e359] [cursor=pointer]:
+                - generic [ref=e362]:
+                  - generic [ref=e366]: Filtrar por país
+                  - img [ref=e368]
+            - generic [ref=e370]:
+              - generic [ref=e376]: Filtrar por status do smartphone
+              - combobox "Filtrar por status do smartphone Filtrar por status" [ref=e381] [cursor=pointer]:
+                - generic [ref=e384]:
+                  - generic [ref=e390]: Filtrar por status
+                  - img [ref=e392]
+            - button "Adicionar telefone" [ref=e394] [cursor=pointer]:
+              - generic [ref=e398]: Adicionar telefone
+          - grid "Números de telefone da conta do WhatsApp Business" [ref=e408]:
+            - rowgroup [ref=e409]:
+              - row "Número de telefone Nome Status Classificação de qualidade" [ref=e410]:
+                - columnheader "Número de telefone" [ref=e411]:
+                  - heading "Número de telefone" [level=4] [ref=e415]
+                - columnheader "Nome" [ref=e416]:
+                  - heading "Nome" [level=4] [ref=e420]
+                - columnheader "Status" [ref=e421]:
+                  - heading "Status" [level=4] [ref=e425]
+                - columnheader "Classificação de qualidade" [ref=e426]:
+                  - heading "Classificação de qualidade" [level=4] [ref=e430]
+                - columnheader [ref=e431]:
+                  - generic [ref=e433]:
+                    - generic:
+                      - heading [level=4]
+            - rowgroup [ref=e434]:
+              - row "WhatsApp ‎+55 31 9728-6773 🇧🇷 Brasil Atend Med BH Nome visível para os clientes Conectado Alta" [ref=e435] [cursor=pointer]:
+                - gridcell "WhatsApp ‎+55 31 9728-6773 🇧🇷 Brasil" [ref=e436]:
+                  - button "WhatsApp ‎+55 31 9728-6773 🇧🇷 Brasil" [ref=e438]:
+                    - generic [ref=e440]:
+                      - img "WhatsApp" [ref=e444]
+                      - generic [ref=e445]:
+                        - generic [ref=e446]: ‎+55 31 9728-6773
+                        - generic [ref=e447]: 🇧🇷 Brasil
+                - gridcell "Atend Med BH Nome visível para os clientes" [ref=e448]:
+                  - generic [ref=e452]:
+                    - generic [ref=e455]: Atend Med BH
+                    - generic [ref=e456]: Nome visível para os clientes
+                - gridcell "Conectado" [ref=e457]:
+                  - generic [ref=e461]:
+                    - generic [ref=e463]: Conectado
+                    - status [ref=e464]: Conectado
+                - gridcell "Alta" [ref=e465]:
+                  - generic [ref=e471]: Alta
+                - gridcell [ref=e472]:
+                  - group [ref=e476]:
+                    - button "Excluir" [ref=e477]:
+                      - generic [ref=e479]:
+                        - generic [ref=e480]: Excluir
+                        - img [ref=e483]
+                    - button "Configurações" [ref=e485]:
+                      - generic [ref=e487]:
+                        - generic [ref=e488]: Configurações
+                        - img [ref=e491]
+    - generic [ref=e29]:
+      - generic [ref=e31]:
+        - button "Meta Business Suite" [ref=e32] [cursor=pointer]:
+          - generic [ref=e34]: Meta Business Suite
+        - button "Pressable" [ref=e42] [cursor=pointer]
+      - generic [ref=e49]:
+        - navigation "Links" [ref=e50]:
+          - generic [ref=e51]: Links
+          - list [ref=e52]:
+            - navigation "Links":
+              - generic [ref=e53]: Links
+              - list
+        - navigation "Links" [ref=e55]:
+          - generic [ref=e56]: Links
+          - list [ref=e57]:
+            - listitem [ref=e62]:
+              - generic [ref=e64]:
+                - link "Todas as ferramentas" [ref=e65] [cursor=pointer]:
+                  - generic [ref=e66]: Todas as ferramentas
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Todas as ferramentas
+      - generic [ref=e69]:
+        - listitem [ref=e72]:
+          - generic [ref=e74]:
+            - link "Pesquisar" [ref=e75] [cursor=pointer]:
+              - generic [ref=e76]: Pesquisar
+            - generic:
+              - generic:
+                - generic:
+                  - generic: Pesquisar
+            - generic:
+              - generic:
+                - img
+        - navigation "Links" [ref=e77]:
+          - generic [ref=e78]: Links
+          - list [ref=e79]:
+            - listitem [ref=e83]:
+              - generic [ref=e85]:
+                - link "Configurações" [ref=e86] [cursor=pointer]:
+                  - /url: https://business.facebook.com/latest/settings/business_users?business_id=1670699556853947&asset_id=735467396201142
+                  - generic [ref=e87]: Configurações
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Configurações
+        - listitem [ref=e94]:
+          - generic [ref=e96]:
+            - link "Ajuda" [ref=e97] [cursor=pointer]:
+              - generic [ref=e98]: Ajuda
+            - generic:
+              - generic:
+                - generic:
+                  - generic: Ajuda
+            - generic:
+              - generic:
+                - img
+  - generic [ref=e493]:
+    - dialog "Adicione seu número de telefone do WhatsApp" [ref=e786]:
+      - generic [ref=e500]:
+        - generic [ref=e501]:
+          - heading "Adicionar telefone" [level=3] [ref=e504]
+          - list [ref=e506]:
+            - listitem [ref=e507]:
+              - button "Perfil empresarial status completo" [ref=e787] [cursor=pointer]:
+                - generic [ref=e510]:
+                  - img [ref=e788]
+                  - generic [ref=e516]: Perfil empresarial
+            - listitem [ref=e517]:
+              - button "Adicionar número status pendente" [ref=e518] [cursor=pointer]:
+                - generic [ref=e520]:
+                  - img [ref=e522]
+                  - generic [ref=e526]: Adicionar número
+        - generic "Adicione seu número de telefone do WhatsApp" [ref=e792]:
+          - generic [ref=e793]:
+            - generic [ref=e794]:
+              - generic [ref=e796]:
+                - heading "Adicione seu número de telefone do WhatsApp" [level=3] [ref=e797]
+                - generic [ref=e798]:
+                  - text: Escolha a identificação que você deseja usar para enviar mensagens.
+                  - link "Sobre os números existentes" [ref=e799] [cursor=pointer]:
+                    - /url: https://developers.facebook.com/documentation/business-messaging/whatsapp/solution-providers/support/migrating-phone-numbers-among-solution-partners-via-embedded-signup
+              - button "Fechar" [ref=e802] [cursor=pointer]:
+                - generic [ref=e804]:
+                  - generic [ref=e805]: Fechar
+                  - img [ref=e807]
+            - generic [ref=e815]:
+              - generic [ref=e818]: Telefone
+              - generic [ref=e819]:
+                - generic [ref=e825]: Telefone
+                - generic [ref=e829]:
+                  - generic [ref=e830]:
+                    - generic [ref=e836]: País
+                    - combobox "Telefone País US +1" [expanded] [ref=e841] [cursor=pointer]:
+                      - generic [ref=e844]:
+                        - generic [ref=e848]: US +1
+                        - img [ref=e850]
+                      - listbox "Telefone País" [ref=e880]:
+                        - generic [ref=e881]:
+                          - option "TV +688" [ref=e882]:
+                            - generic [ref=e888]:
+                              - generic [ref=e890]: TV +688
+                              - generic [ref=e891]: Tuvalu
+                          - option "UG +256" [ref=e892]:
+                            - generic [ref=e898]:
+                              - generic [ref=e900]: UG +256
+                              - generic [ref=e901]: Uganda
+                          - option "UA +380" [ref=e902]:
+                            - generic [ref=e908]:
+                              - generic [ref=e910]: UA +380
+                              - generic [ref=e911]: Ucrânia
+                          - option "AE +971" [ref=e912]:
+                            - generic [ref=e918]:
+                              - generic [ref=e920]: AE +971
+                              - generic [ref=e921]: Emirados Árabes Unidos
+                          - option "GB +44" [ref=e922]:
+                            - generic [ref=e928]:
+                              - generic [ref=e930]: GB +44
+                              - generic [ref=e931]: Reino Unido
+                          - option "US +1" [selected] [ref=e932]:
+                            - generic [ref=e940]:
+                              - generic [ref=e942]: US +1
+                              - generic [ref=e943]: Estados Unidos
+                          - option "UY +598" [ref=e944]:
+                            - generic [ref=e950]:
+                              - generic [ref=e952]: UY +598
+                              - generic [ref=e953]: Uruguai
+                          - option "VI +1" [ref=e954]:
+                            - generic [ref=e960]:
+                              - generic [ref=e962]: VI +1
+                              - generic [ref=e963]: Ilhas Virgens Americanas
+                          - option "UZ +998" [ref=e964]:
+                            - generic [ref=e970]:
+                              - generic [ref=e972]: UZ +998
+                              - generic [ref=e973]: Uzbequistão
+                          - option "VU +678" [ref=e974]:
+                            - generic [ref=e980]:
+                              - generic [ref=e982]: VU +678
+                              - generic [ref=e983]: Vanuatu
+                          - option "VA +39" [ref=e984]:
+                            - generic [ref=e990]:
+                              - generic [ref=e992]: VA +39
+                              - generic [ref=e993]: Cidade do Vaticano
+                          - option "VE +58" [ref=e994]:
+                            - generic [ref=e1000]:
+                              - generic [ref=e1002]: VE +58
+                              - generic [ref=e1003]: Venezuela
+                          - option "VN +84" [ref=e1004]:
+                            - generic [ref=e1010]:
+                              - generic [ref=e1012]: VN +84
+                              - generic [ref=e1013]: Vietnã
+                          - option "WF +681" [ref=e1014]:
+                            - generic [ref=e1020]:
+                              - generic [ref=e1022]: WF +681
+                              - generic [ref=e1023]: Ilhas Wallis e Futuna
+                          - option "EH +212" [ref=e1024]:
+                            - generic [ref=e1030]:
+                              - generic [ref=e1032]: EH +212
+                              - generic [ref=e1033]: Saara Ocidental
+                          - option "YE +967" [ref=e1034]:
+                            - generic [ref=e1040]:
+                              - generic [ref=e1042]: YE +967
+                              - generic [ref=e1043]: Iêmen
+                          - option "ZM +260" [ref=e1044]:
+                            - generic [ref=e1050]:
+                              - generic [ref=e1052]: ZM +260
+                              - generic [ref=e1053]: Zâmbia
+                          - option "ZW +263" [ref=e1054]:
+                            - generic [ref=e1060]:
+                              - generic [ref=e1062]: ZW +263
+                              - generic [ref=e1063]: Zimbábue
+                  - generic [ref=e852]:
+                    - generic [ref=e858]: Telefone
+                    - textbox "Telefone Telefone" [ref=e867]
+            - generic [ref=e869]:
+              - button "Voltar" [ref=e870] [cursor=pointer]:
+                - generic [ref=e874]: Voltar
+              - button "Avançar" [disabled] [ref=e875]:
+                - generic [ref=e879]: Avançar
+    - generic "Adicione seu número de telefone do WhatsApp" [ref=e1065]:
+      - generic [ref=e1071]:
+        - img [ref=e1073]
+        - combobox "Telefone País" [expanded] [active] [ref=e1076]

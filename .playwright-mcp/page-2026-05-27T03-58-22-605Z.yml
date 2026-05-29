@@ -1,0 +1,5 @@
+- generic [ref=e7]:
+  - heading "Erro 404" [level=2] [ref=e8]
+  - heading "Página não encontrada" [level=3] [ref=e9]
+  - paragraph [ref=e10]: A página que você está buscando foi movida ou não existe.
+  - button "Retornar à aplicação" [ref=e12] [cursor=pointer]

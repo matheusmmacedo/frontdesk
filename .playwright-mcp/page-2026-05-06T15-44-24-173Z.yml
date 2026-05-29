@@ -1,0 +1,143 @@
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - link "Meta Business Suite" [ref=e7] [cursor=pointer]:
+      - /url: /?nav_ref=bm_home_redirect_disabled_business_account
+      - text: Meta Business Suite
+    - tablist [ref=e11]:
+      - tab "Entrar" [ref=e12] [cursor=pointer]:
+        - button "Entrar" [ref=e15]
+      - tab "Criar conta" [ref=e16] [cursor=pointer]:
+        - button "Criar conta" [ref=e19]
+  - generic [ref=e20]:
+    - main [ref=e21]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e27]: Notice
+          - generic [ref=e28]: Você deve se conectar para continuar.
+        - generic [ref=e29]:
+          - generic [ref=e30]: Entrar no Facebook
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - textbox "Email ou telefone" [active] [ref=e36]
+              - generic [ref=e39]:
+                - generic [ref=e40]: Senha
+                - textbox "Senha" [ref=e41]:
+                  - /placeholder: ""
+            - button "Entrar" [ref=e43] [cursor=pointer]
+            - link "Esqueceu a conta?" [ref=e45] [cursor=pointer]:
+              - /url: https://www.facebook.com/recover/initiate?lwv=110&ars=royal_blue_bar
+          - button "Criar nova conta" [ref=e46] [cursor=pointer]
+    - generic [ref=e48]:
+      - list [ref=e49]:
+        - listitem [ref=e50]: Português (Brasil)
+        - listitem [ref=e51]:
+          - link "English (US)" [ref=e52] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e53]:
+          - link "Español" [ref=e54] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e55]:
+          - link "Français (France)" [ref=e56] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e57]:
+          - link "Italiano" [ref=e58] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e59]:
+          - link "Deutsch" [ref=e60] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e61]:
+          - link "العربية" [ref=e62] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e63]:
+          - link "हिन्दी" [ref=e64] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e65]:
+          - link "中文(简体)" [ref=e66] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e67]:
+          - link "日本語" [ref=e68] [cursor=pointer]:
+            - /url: https://business.facebook.com/wa/manage/phone-numbers/
+        - listitem [ref=e69]:
+          - button "Mostrar mais idiomas" [ref=e70] [cursor=pointer]
+      - contentinfo "Links de site do Facebook" [ref=e73]:
+        - list [ref=e74]:
+          - listitem [ref=e75]:
+            - link "Cadastre-se" [ref=e76] [cursor=pointer]:
+              - /url: /reg/
+          - listitem [ref=e77]:
+            - link "Entrar" [ref=e78] [cursor=pointer]:
+              - /url: /login/
+          - listitem [ref=e79]:
+            - link "Messenger" [ref=e80] [cursor=pointer]:
+              - /url: https://messenger.com/
+          - listitem [ref=e81]:
+            - link "Facebook Lite" [ref=e82] [cursor=pointer]:
+              - /url: /lite/
+          - listitem [ref=e83]:
+            - link "Vídeo" [ref=e84] [cursor=pointer]:
+              - /url: https://business.facebook.com/watch/
+          - listitem [ref=e85]:
+            - link "Meta Pay" [ref=e86] [cursor=pointer]:
+              - /url: https://about.meta.com/technologies/meta-pay
+          - listitem [ref=e87]:
+            - link "Meta Store" [ref=e88] [cursor=pointer]:
+              - /url: https://www.meta.com/
+          - listitem [ref=e89]:
+            - link "Meta Quest" [ref=e90] [cursor=pointer]:
+              - /url: https://www.meta.com/quest/
+          - listitem [ref=e91]:
+            - link "Ray-Ban Meta" [ref=e92] [cursor=pointer]:
+              - /url: https://www.meta.com/smart-glasses/
+          - listitem [ref=e93]:
+            - link "Meta AI" [ref=e94] [cursor=pointer]:
+              - /url: https://www.meta.ai/
+          - listitem [ref=e95]:
+            - link "Instagram" [ref=e96] [cursor=pointer]:
+              - /url: https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2F&h=AUBlfqkEXJpive8n3DxOBYZsUuotJ6PPkNou6VMkl9YVslRMQXYgfYuIY047Fe_zD87Y5Grjpr2dk5fZJGhe9ZPjz9Ka38SDPHm4xGQZs-RqVToPpkmy-WsNFC-jvf6xYJghubs-r7CJoM_SEuqIPA
+          - listitem [ref=e97]:
+            - link "Threads" [ref=e98] [cursor=pointer]:
+              - /url: https://www.threads.com/
+          - listitem [ref=e99]:
+            - link "Política de Privacidade" [ref=e100] [cursor=pointer]:
+              - /url: /privacy/policy/?entry_point=facebook_page_footer
+          - listitem [ref=e101]:
+            - link "Central de Privacidade" [ref=e102] [cursor=pointer]:
+              - /url: /privacy/center/?entry_point=facebook_page_footer
+          - listitem [ref=e103]:
+            - link "Sobre" [ref=e104] [cursor=pointer]:
+              - /url: https://about.meta.com/
+          - listitem [ref=e105]:
+            - link "Criar anúncio" [ref=e106] [cursor=pointer]:
+              - /url: /ad_campaign/landing.php?placement=pflo&campaign_id=402047449186&nav_source=unknown&extra_1=auto
+          - listitem [ref=e107]:
+            - link "Criar Página" [ref=e108] [cursor=pointer]:
+              - /url: /pages/create/?ref_type=site_footer
+          - listitem [ref=e109]:
+            - link "Desenvolvedores" [ref=e110] [cursor=pointer]:
+              - /url: https://developers.facebook.com/?ref=pf
+          - listitem [ref=e111]:
+            - link "Carreiras" [ref=e112] [cursor=pointer]:
+              - /url: /careers/?ref=pf
+          - listitem [ref=e113]:
+            - link "Cookies" [ref=e114] [cursor=pointer]:
+              - /url: /policies/cookies/
+          - listitem [ref=e115]:
+            - link "Escolhas para anúncios" [ref=e116] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/568137493302217
+              - text: Escolhas para anúncios
+          - listitem [ref=e118]:
+            - link "Termos" [ref=e119] [cursor=pointer]:
+              - /url: /policies?ref=pf
+          - listitem [ref=e120]:
+            - link "Ajuda" [ref=e121] [cursor=pointer]:
+              - /url: /help/?ref=pf
+          - listitem [ref=e122]:
+            - link "Upload de contatos e não usuários" [ref=e123] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/637205020878504
+          - listitem:
+            - link "Configurações" [ref=e124] [cursor=pointer]:
+              - /url: /settings
+          - listitem:
+            - link "Registro de atividades" [ref=e125] [cursor=pointer]:
+              - /url: https://business.facebook.com/allactivity?privacy_source=activity_log_top_menu
+      - generic [ref=e127]: Meta © 2026

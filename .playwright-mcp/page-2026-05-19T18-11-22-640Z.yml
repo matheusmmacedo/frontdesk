@@ -1,0 +1,112 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/9/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+        - listitem [ref=e40] [cursor=pointer]:
+          - button "Contatos" [ref=e41]:
+            - generic [ref=e45]: Contatos
+        - listitem [ref=e46] [cursor=pointer]:
+          - button "Relatórios" [ref=e47]:
+            - generic [ref=e51]: Relatórios
+        - listitem [ref=e52] [cursor=pointer]:
+          - button "Campanhas" [ref=e53]:
+            - generic [ref=e57]: Campanhas
+        - listitem [ref=e58] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e59]:
+            - generic [ref=e63]: Central de Ajuda
+        - listitem [ref=e64] [cursor=pointer]:
+          - button "Configurações" [ref=e65]:
+            - generic [ref=e69]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e73] [cursor=pointer]:
+      - img [ref=e76]:
+        - generic [ref=e77]: M
+      - generic [ref=e78]:
+        - generic [ref=e79]: Matheus
+        - generic [ref=e80]: matheus@matheus.pro.br
+  - main [ref=e83]:
+    - generic [ref=e86]:
+      - generic [ref=e90]:
+        - generic [ref=e92]:
+          - generic [ref=e93]: Criar Assistente
+          - button [ref=e96] [cursor=pointer]
+        - generic [ref=e100]: Assistentes
+      - main [ref=e101]:
+        - generic [ref=e103]:
+          - generic [ref=e105]:
+            - img "Assistente Captain" [ref=e107]
+            - paragraph [ref=e109]: O Assistente Captain interage diretamente com os clientes, aprende com seus artigos de ajuda e conversas passadas, e entrega respostas instantâneas e precisas. Ele cuida das consultas iniciais, oferecendo resoluções rápidas antes de transferir para um agente quando necessário.
+          - generic [ref=e111]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - heading "Support Genie" [level=6]
+                      - generic:
+                        - generic:
+                          - button
+                    - generic:
+                      - generic: An advanced AI assistant designed to enhance customer support solutions by automating workflows and providing instant responses.
+                      - generic: over 1 year ago
+                - generic:
+                  - generic:
+                    - generic:
+                      - heading "CRM Assistant" [level=6]
+                      - generic:
+                        - generic:
+                          - button
+                    - generic:
+                      - generic: Helps streamline customer relationship management by organizing contacts, automating follow-ups, and providing insights.
+                      - generic: over 1 year ago
+                - generic:
+                  - generic:
+                    - generic:
+                      - heading "SalesBot" [level=6]
+                      - generic:
+                        - generic:
+                          - button
+                    - generic:
+                      - generic: Optimizes your sales pipeline by tracking prospects, forecasting sales, and automating administrative tasks.
+                      - generic: over 1 year ago
+                - generic:
+                  - generic:
+                    - generic:
+                      - heading "TicketBot" [level=6]
+                      - generic:
+                        - generic:
+                          - button
+                    - generic:
+                      - generic: Automates ticket assignment, categorization, and customer query responses to enhance support efficiency.
+                      - generic: over 1 year ago
+                - generic:
+                  - generic:
+                    - generic:
+                      - heading "Finance Wizard" [level=6]
+                      - generic:
+                        - generic:
+                          - button
+                    - generic:
+                      - generic: Provides financial analytics, reporting, and insights, helping teams make data-driven financial decisions.
+                      - generic: over 1 year ago
+            - generic [ref=e113]:
+              - generic [ref=e114]:
+                - heading "Não há assistentes disponíveis" [level=2] [ref=e115]
+                - paragraph [ref=e116]: Crie um assistente para fornecer respostas rápidas e precisas aos seus usuários. Ele pode aprender com seus artigos de ajuda e conversas passadas.
+              - button "Criar um novo assistente" [ref=e118] [cursor=pointer]:
+                - generic [ref=e120]: Criar um novo assistente

@@ -1,0 +1,348 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/9/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/9/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - listitem [ref=e45]:
+              - link "Menções" [ref=e46]:
+                - /url: /app/accounts/9/mentions/conversations
+                - generic [ref=e47]: Menções
+            - listitem [ref=e48]:
+              - link "Não atendidas" [ref=e49]:
+                - /url: /app/accounts/9/unattended/conversations
+                - generic [ref=e50]: Não atendidas
+            - generic:
+              - generic: Times
+            - list [ref=e51]:
+              - listitem [ref=e53]:
+                - link "sdr" [ref=e54]:
+                  - /url: /app/accounts/9/team/1
+                  - generic [ref=e55]: sdr
+            - generic:
+              - generic: Canais
+            - list [ref=e56]:
+              - generic [ref=e57]:
+                - listitem [ref=e58]:
+                  - link "KLaOS Cobranca" [ref=e59]:
+                    - /url: /app/accounts/9/inbox/19
+                    - generic [ref=e62]: KLaOS Cobranca
+                - listitem [ref=e63]:
+                  - link "SAC" [ref=e64]:
+                    - /url: /app/accounts/9/inbox/16
+                    - generic [ref=e67]: SAC
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e68]:
+              - listitem [ref=e70]:
+                - link "proposta-apresentada" [ref=e71]:
+                  - /url: /app/accounts/9/label/proposta-apresentada
+                  - generic [ref=e74]: proposta-apresentada
+        - listitem [ref=e75] [cursor=pointer]:
+          - button "Contatos" [ref=e76]:
+            - generic [ref=e80]: Contatos
+        - listitem [ref=e81] [cursor=pointer]:
+          - button "Relatórios" [ref=e82]:
+            - generic [ref=e86]: Relatórios
+        - listitem [ref=e87] [cursor=pointer]:
+          - button "Campanhas" [ref=e88]:
+            - generic [ref=e92]: Campanhas
+        - listitem [ref=e93] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e94]:
+            - generic [ref=e98]: Central de Ajuda
+        - listitem [ref=e99] [cursor=pointer]:
+          - button "Configurações" [ref=e100]:
+            - generic [ref=e104]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e108] [cursor=pointer]:
+      - img [ref=e111]:
+        - generic [ref=e112]: M
+      - generic [ref=e113]:
+        - generic [ref=e114]: Matheus
+        - generic [ref=e115]: matheus@matheus.pro.br
+  - main [ref=e118]:
+    - generic [ref=e119]:
+      - generic [ref=e120]:
+        - generic [ref=e121]:
+          - generic [ref=e122]:
+            - heading "Conversas" [level=1] [ref=e123]
+            - generic [ref=e124]: Ativas
+          - generic [ref=e125]:
+            - button [ref=e127] [cursor=pointer]
+            - button [ref=e130] [cursor=pointer]
+            - button [ref=e132] [cursor=pointer]
+        - 'searchbox "Buscar por nome, telefone ou #ID" [ref=e137]'
+        - list [ref=e139]:
+          - listitem [ref=e140]:
+            - generic [ref=e141] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e143]: "0"
+          - listitem [ref=e144]:
+            - generic [ref=e145] [cursor=pointer]:
+              - text: Não atribuídas
+              - generic [ref=e147]: "416"
+          - listitem [ref=e148]:
+            - generic [ref=e149] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e151]: "437"
+        - paragraph [ref=e152]: Não há conversas ativas neste grupo.
+      - generic [ref=e155]:
+        - generic [ref=e156]:
+          - generic [ref=e157]:
+            - img [ref=e159]:
+              - generic [ref=e160]: ES
+            - generic [ref=e161]:
+              - link "ELIZABETH SILVA COSTA REIS" [ref=e163] [cursor=pointer]:
+                - /url: /app/accounts/9/contacts/69072
+              - generic "KLaOS Cobranca" [ref=e165]:
+                - generic [ref=e167]: KLaOS Cobranca
+              - generic [ref=e168]:
+                - generic "Adicionar ou remover etiquetas" [ref=e169] [cursor=pointer]: "Etiquetas:"
+                - generic "mais-saude" [ref=e170]
+          - generic [ref=e172]:
+            - generic [ref=e173]:
+              - button "Devolver ao bot" [ref=e174] [cursor=pointer]:
+                - generic [ref=e176]: Devolver ao bot
+              - generic [ref=e177]:
+                - button "Resolver" [ref=e178] [cursor=pointer]:
+                  - generic [ref=e179]: Resolver
+                - button [ref=e180] [cursor=pointer]
+            - button [ref=e183] [cursor=pointer]
+        - button "Histórico do contato" [ref=e186] [cursor=pointer]: Histórico do contato
+        - generic [ref=e188]:
+          - generic [ref=e189]:
+            - list [ref=e190]:
+              - listitem [ref=e191]
+              - generic [ref=e195]:
+                - img [ref=e197]
+                - time [ref=e200]: May 18, 6:29 PM
+              - generic "Gustavo Oliveira adicionou mais-saude" [ref=e204]
+              - generic [ref=e206]:
+                - img [ref=e209]:
+                  - generic [ref=e210]: GO
+                - generic [ref=e212]:
+                  - generic [ref=e214]: Nenhum conteúdo a ser exibido
+                  - time [ref=e217]: May 18, 6:42 PM
+                - generic [ref=e218]:
+                  - generic [ref=e219]: Falha ao enviar
+                  - button [ref=e223] [cursor=pointer]
+              - generic [ref=e226]:
+                - img [ref=e229]:
+                  - generic [ref=e230]: GO
+                - generic [ref=e232]:
+                  - generic [ref=e233]:
+                    - generic [ref=e234]:
+                      - paragraph [ref=e235]: .
+                      - paragraph [ref=e236]:
+                        - text: 🏥
+                        - emphasis [ref=e237]: VALORES EXCLUSIVOS PARA QUEM TEM O CONVÊNIO MAIS SAÚDE 24 HORAS
+                        - text: 🏥
+                      - paragraph [ref=e238]: 🧪 TODOS OS SEUS EXAMES LABORATORIAIS COM DESCONTO 🧪
+                      - paragraph [ref=e239]: "💳 Pagando no CARTÃO ou PIX: 220,00"
+                      - paragraph [ref=e240]:
+                        - text: "💵 Pagando na PROMOÇÃO em DINHEIRO:"
+                        - emphasis [ref=e241]: R$ 200,00
+                      - paragraph [ref=e242]: ✅ NÃO PRECISA AGENDAR – É POR ORDEM DE CHEGADA
+                      - paragraph [ref=e243]: 📅 Coleta de Segunda a Sexta
+                      - paragraph [ref=e244]: "⏰ HORÁRIO PARA EXAMES DE SANGUE:"
+                      - paragraph [ref=e245]: 🕖 Das 07:20 às 12:00
+                      - paragraph [ref=e246]: 🕐 Das 13:10 às 15:00
+                      - paragraph [ref=e247]: ⚠️ ORIENTAÇÕES IMPORTANTES ⚠️
+                      - paragraph [ref=e248]: 🍬 Se houver GLICOSE ou INSULINA ➡️ Jejum de 8 a 12 horas (apenas de alimentos, pode beber água).
+                      - paragraph [ref=e249]: 💧 Se houver EXAME DE URINA ➡️ Coletar a primeira urina do dia, desprezar o primeiro jato e coletar o segundo jato em frasco estéril próprio para urina.
+                      - paragraph [ref=e250]: 💩 Se houver EXAME DE FEZES ➡️ Coletar no mesmo dia ou no dia anterior, guardar na geladeira e trazer no dia da entrega.
+                      - paragraph [ref=e251]: "📍 ENDEREÇO: Avenida Amazonas, nº 3060 – Prado"
+                      - paragraph [ref=e252]: 📌 (Quase esquina com Francisco Sá, em frente ao Barroca Motos – a 2 quarteirões da Contorno) 😊
+                    - generic [ref=e256]:
+                      - button [ref=e257] [cursor=pointer]
+                      - generic [ref=e259]: 00:00 / 00:35
+                      - slider [ref=e261] [cursor=pointer]: "0"
+                      - button "1x" [ref=e262] [cursor=pointer]:
+                        - generic [ref=e263]: 1x
+                      - button [ref=e264] [cursor=pointer]
+                      - button [ref=e266] [cursor=pointer]
+                  - time [ref=e270]: May 18, 6:46 PM
+              - generic [ref=e273]:
+                - img [ref=e276]:
+                  - generic [ref=e277]: GO
+                - generic [ref=e279]:
+                  - paragraph [ref=e282]: o máudio chegou para vc?
+                  - time [ref=e285]: May 18, 6:47 PM
+              - generic [ref=e290]:
+                - paragraph [ref=e293]: Não chegou nada
+                - time [ref=e296]: May 18, 6:48 PM
+              - generic [ref=e298]:
+                - img [ref=e301]:
+                  - generic [ref=e302]: GO
+                - generic [ref=e304]:
+                  - generic [ref=e306]:
+                    - paragraph [ref=e307]:
+                      - strong [ref=e308]: Eu te mandei um áudio que acima explicando sobre o exame de raio x
+                    - paragraph [ref=e309]:
+                      - strong [ref=e310]: o áudio chegou certinho para você?
+                    - paragraph [ref=e311]:
+                      - strong [ref=e312]: E também o texto do valor dos exames de sangue com desconto do convênio mais saúde 24 horas
+                  - time [ref=e315]: May 18, 6:48 PM
+              - generic [ref=e320]:
+                - paragraph [ref=e323]: Ué onde não vi nenhum áudio foi hj
+                - time [ref=e326]: May 18, 6:49 PM
+              - paragraph [ref=e333]: Vou procurar aq pq achei que conseguiria saber aq com vc e já agendar pra sexta feira
+              - generic [ref=e337]:
+                - paragraph [ref=e340]: Mais vou vê se acho aq
+                - time [ref=e343]: May 18, 6:50 PM
+              - generic [ref=e349]:
+                - paragraph [ref=e350]:
+                  - strong [ref=e351]: Com relação ao pedido de raio-x vou te mandar aqui abaixo o aplicativo você tem que baixar o aplicativo e simplesmente clicar na lupa do aplicativo e escrever lá
+                - paragraph [ref=e352]:
+                  - emphasis [ref=e353]:
+                    - strong [ref=e354]: RAIO X
+                - paragraph [ref=e355]:
+                  - strong [ref=e356]: o aplicativo vai te mostrar as empresas parceiras e uma Das empresas parceiras que tem o melhor preço para Raio X é a Centro Diagnóstico
+                - paragraph [ref=e357]:
+                  - strong [ref=e358]: lá você consegue agendar com facilidade e basta depois apresentar sua carteirinha para ter os descontos
+                - paragraph [ref=e359]:
+                  - strong [ref=e360]: Aqui abaixo está o aplicativo para você baixar
+              - generic [ref=e362]:
+                - img [ref=e365]:
+                  - generic [ref=e366]: GO
+                - generic [ref=e368]:
+                  - generic [ref=e370]:
+                    - paragraph [ref=e371]:
+                      - text: "**⚠️ IMPORTANTE⚠️"
+                      - text: "**"
+                    - paragraph [ref=e372]:
+                      - emphasis [ref=e373]:
+                        - strong [ref=e374]: Vimos que você ainda não baixou o seu aplicativo Então você não vai conseguir usar todos os benefícios que você contratou
+                    - paragraph [ref=e375]:
+                      - strong [ref=e376]:
+                        - text: é muito importante você baixar agora
+                        - emphasis [ref=e377]: leia abaixo
+                        - text: "com atenção:"
+                    - paragraph [ref=e378]:
+                      - strong [ref=e379]: Agora você já pode baixar o aplicativo mais completo do Brasil
+                    - paragraph [ref=e380]:
+                      - strong [ref=e381]:
+                        - text: O APP
+                        - emphasis [ref=e382]: MAIS SAÚDE 24 HORAS
+                    - paragraph [ref=e383]:
+                      - strong [ref=e384]: dentro do aplicativo você vai conhecer todos os novos parceiros que atendem em toda a grande Belo Horizonte, como por exemplo Hermes Pardini, novos hospitais novas Clínicas e muitas novidades/
+                    - paragraph [ref=e385]:
+                      - strong [ref=e386]:
+                        - text: e a partir de agora você consegue fazer
+                        - emphasis [ref=e387]: TUDO POR LÁ
+                        - text: com apenas um clique e na palma da sua mão
+                    - paragraph [ref=e388]:
+                      - strong [ref=e389]: "📲 FAÇA O DOWNLOAD AGORA MESMO:"
+                    - paragraph [ref=e390]:
+                      - strong [ref=e391]: "📱 CELULARES ANDROID:"
+                    - paragraph [ref=e392]:
+                      - strong [ref=e393]:
+                        - text: 👉
+                        - link "https://play.google.com/store/apps/details?id=com.mycompany.maissaude24h&pcampaignid=web_share" [ref=e394] [cursor=pointer]:
+                          - /url: https://play.google.com/store/apps/details?id=com.mycompany.maissaude24h&pcampaignid=web_share
+                    - paragraph [ref=e395]: "🍎 CELULARES IPHONE:"
+                    - paragraph [ref=e396]:
+                      - text: 👉
+                      - link "https://apps.apple.com/br/app/mais-saude-24-horas/id6753083425" [ref=e397] [cursor=pointer]:
+                        - /url: https://apps.apple.com/br/app/mais-saude-24-horas/id6753083425
+                    - paragraph [ref=e398]:
+                      - emphasis [ref=e399]:
+                        - strong [ref=e400]: LEIA COM ATENÇÃO
+                  - time [ref=e403]: May 18, 6:53 PM
+              - generic [ref=e408]:
+                - paragraph [ref=e411]: A blz vou olhar aq
+                - time [ref=e414]: May 18, 6:54 PM
+              - generic [ref=e418]:
+                - paragraph [ref=e421]: Eles estão pedindo senha e login qual seria
+                - time [ref=e424]: May 18, 6:55 PM
+              - generic [ref=e426]:
+                - img [ref=e429]:
+                  - generic [ref=e430]: GO
+                - generic [ref=e432]:
+                  - generic [ref=e434]:
+                    - paragraph [ref=e435]:
+                      - strong [ref=e436]: Clica no botão já sou cadastrado
+                    - paragraph [ref=e437]:
+                      - strong [ref=e438]: utilize o seu CPF para fazer o cadastro
+                    - paragraph [ref=e439]:
+                      - strong [ref=e440]: Depois é só criar uma senha usando o seu e-mail pode ser senha bem simples pois não é a senha financeira
+                  - time [ref=e443]: May 18, 6:57 PM
+              - generic [ref=e448]:
+                - paragraph [ref=e451]: Ok
+                - time [ref=e454]: May 18, 6:57 PM
+              - generic [ref=e458]:
+                - generic [ref=e459]:
+                  - paragraph [ref=e461]: Não tem essa opção de já sou cadastrado
+                  - img [ref=e464] [cursor=pointer]
+                - time [ref=e467]: May 18, 6:59 PM
+              - generic [ref=e469]:
+                - img [ref=e472]:
+                  - generic [ref=e473]: GO
+                - generic [ref=e475]:
+                  - paragraph [ref=e478]:
+                    - strong [ref=e479]: Então tem a opção de já para o sul cadastro ou já sou cadastrado quando você baixa o aplicativo você vai simplesmente avançar e colocar o seu CPF
+                  - time [ref=e482]: May 18, 7:23 PM
+              - generic [ref=e487]:
+                - paragraph [ref=e490]: Ok
+                - time [ref=e493]: May 18, 7:23 PM
+              - generic [ref=e497]:
+                - generic [ref=e499]:
+                  - button [ref=e500] [cursor=pointer]
+                  - generic [ref=e502]: 00:00 / 01:08
+                  - slider [ref=e504] [cursor=pointer]: "0"
+                  - button "1x" [ref=e505] [cursor=pointer]:
+                    - generic [ref=e506]: 1x
+                  - button [ref=e507] [cursor=pointer]
+                  - button [ref=e509] [cursor=pointer]
+                - time [ref=e513]: May 18, 7:33 PM
+              - generic [ref=e517]:
+                - generic [ref=e519]:
+                  - button [ref=e520] [cursor=pointer]
+                  - generic [ref=e522]: 00:00 / 00:37
+                  - slider [ref=e524] [cursor=pointer]: "0"
+                  - button "1x" [ref=e525] [cursor=pointer]:
+                    - generic [ref=e526]: 1x
+                  - button [ref=e527] [cursor=pointer]
+                  - button [ref=e529] [cursor=pointer]
+                - time [ref=e533]: May 18, 7:50 PM
+            - generic [ref=e535]:
+              - generic [ref=e536]:
+                - button "Responder Mensagem Privada" [ref=e537] [cursor=pointer]:
+                  - generic [ref=e538]: Responder
+                  - generic [ref=e539]: Mensagem Privada
+                - generic [ref=e541]:
+                  - button [ref=e543] [cursor=pointer]
+                  - button [ref=e545] [cursor=pointer]
+              - paragraph [ref=e552]: Shift + enter para nova linha. Digite '/' para selecionar uma Resposta Pronta.
+              - generic [ref=e553]:
+                - generic [ref=e554]:
+                  - button [ref=e555] [cursor=pointer]
+                  - generic [ref=e557]:
+                    - button [ref=e558] [cursor=pointer]
+                    - button [ref=e561]
+                  - button [ref=e562] [cursor=pointer]
+                  - button [ref=e564] [cursor=pointer]
+                  - button [pressed] [ref=e566] [cursor=pointer]
+                  - button [ref=e569] [cursor=pointer]
+                  - button [ref=e571] [cursor=pointer]
+                - button "Enviar (CTRL + ↵)" [disabled] [ref=e574]:
+                  - generic [ref=e575]: Enviar (CTRL + ↵)
+          - button [ref=e577] [cursor=pointer]

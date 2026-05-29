@@ -1,0 +1,216 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e18]:
+        - link "Pesquisar..." [ref=e19] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e21]: Pesquisar...
+        - button [ref=e23] [cursor=pointer]
+    - navigation [ref=e25]:
+      - list [ref=e26]:
+        - listitem [ref=e27] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e28]:
+            - generic [ref=e32]: Caixa de Entrada
+        - listitem [ref=e33] [cursor=pointer]:
+          - button "Conversas" [ref=e34]:
+            - generic [ref=e38]: Conversas
+          - list [ref=e40]:
+            - listitem [ref=e41]:
+              - link "Todas as conversas" [ref=e42]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e43]: Todas as conversas
+            - listitem [ref=e44]:
+              - link "Menções" [ref=e45]:
+                - /url: /app/accounts/10/mentions/conversations
+                - generic [ref=e46]: Menções
+            - listitem [ref=e47]:
+              - link "Não atendidas" [ref=e48]:
+                - /url: /app/accounts/10/unattended/conversations
+                - generic [ref=e49]: Não atendidas
+            - generic:
+              - generic: Times
+            - list [ref=e135]:
+              - generic [ref=e136]:
+                - listitem [ref=e137]:
+                  - link "cobrança" [ref=e138]:
+                    - /url: /app/accounts/10/team/2
+                    - generic [ref=e139]: cobrança
+                - listitem [ref=e140]:
+                  - link "cancelamento" [ref=e141]:
+                    - /url: /app/accounts/10/team/6
+                    - generic [ref=e142]: cancelamento
+                - listitem [ref=e143]:
+                  - link "contratos" [ref=e144]:
+                    - /url: /app/accounts/10/team/8
+                    - generic [ref=e145]: contratos
+            - generic:
+              - generic: Canais
+            - list [ref=e146]:
+              - listitem [ref=e148]:
+                - link "KLaOS Cobranca" [ref=e149]:
+                  - /url: /app/accounts/10/inbox/30
+                  - generic [ref=e152]: KLaOS Cobranca
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e153]:
+              - generic [ref=e154]:
+                - listitem [ref=e155]:
+                  - link "cancelado" [ref=e156]:
+                    - /url: /app/accounts/10/label/cancelado
+                    - generic [ref=e159]: cancelado
+                - listitem [ref=e160]:
+                  - link "cancelamento-pendente" [ref=e161]:
+                    - /url: /app/accounts/10/label/cancelamento-pendente
+                    - generic [ref=e164]: cancelamento-pendente
+                - listitem [ref=e165]:
+                  - link "cobranca_1d" [ref=e166]:
+                    - /url: /app/accounts/10/label/cobranca_1d
+                    - generic [ref=e169]: cobranca_1d
+                - listitem [ref=e170]:
+                  - link "cobranca-0d" [ref=e171]:
+                    - /url: /app/accounts/10/label/cobranca-0d
+                    - generic [ref=e174]: cobranca-0d
+                - listitem [ref=e175]:
+                  - link "cobranca-15d" [ref=e176]:
+                    - /url: /app/accounts/10/label/cobranca-15d
+                    - generic [ref=e179]: cobranca-15d
+                - listitem [ref=e180]:
+                  - link "cobranca-7d" [ref=e181]:
+                    - /url: /app/accounts/10/label/cobranca-7d
+                    - generic [ref=e184]: cobranca-7d
+                - listitem [ref=e185]:
+                  - link "cobranca-boleto-pendente" [ref=e186]:
+                    - /url: /app/accounts/10/label/cobranca-boleto-pendente
+                    - generic [ref=e189]: cobranca-boleto-pendente
+                - listitem [ref=e190]:
+                  - link "cobranca-cartao-pendente" [ref=e191]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-pendente
+                    - generic [ref=e194]: cobranca-cartao-pendente
+                - listitem [ref=e195]:
+                  - link "cobranca-cartao-recusado" [ref=e196]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-recusado
+                    - generic [ref=e199]: cobranca-cartao-recusado
+                - listitem [ref=e200]:
+                  - link "cobranca-d21" [ref=e201]:
+                    - /url: /app/accounts/10/label/cobranca-d21
+                    - generic [ref=e204]: cobranca-d21
+                - listitem [ref=e205]:
+                  - link "cobranca-negociacao" [ref=e206]:
+                    - /url: /app/accounts/10/label/cobranca-negociacao
+                    - generic [ref=e209]: cobranca-negociacao
+                - listitem [ref=e210]:
+                  - link "cobranca-promessa" [ref=e211]:
+                    - /url: /app/accounts/10/label/cobranca-promessa
+                    - generic [ref=e214]: cobranca-promessa
+                - listitem [ref=e215]:
+                  - link "cobranca-promessa-hoje" [ref=e216]:
+                    - /url: /app/accounts/10/label/cobranca-promessa-hoje
+                    - generic [ref=e219]: cobranca-promessa-hoje
+                - listitem [ref=e220]:
+                  - link "cobranca-segunda-via" [ref=e221]:
+                    - /url: /app/accounts/10/label/cobranca-segunda-via
+                    - generic [ref=e224]: cobranca-segunda-via
+                - listitem [ref=e225]:
+                  - link "enviado-ao-spc" [ref=e226]:
+                    - /url: /app/accounts/10/label/enviado-ao-spc
+                    - generic [ref=e229]: enviado-ao-spc
+                - listitem [ref=e230]:
+                  - link "mais-saude" [ref=e231]:
+                    - /url: /app/accounts/10/label/mais-saude
+                    - generic [ref=e234]: mais-saude
+                - listitem [ref=e235]:
+                  - link "pagamento-realizado" [ref=e236]:
+                    - /url: /app/accounts/10/label/pagamento-realizado
+                    - generic [ref=e239]: pagamento-realizado
+                - listitem [ref=e240]:
+                  - link "pendente" [ref=e241]:
+                    - /url: /app/accounts/10/label/pendente
+                    - generic [ref=e244]: pendente
+                - listitem [ref=e245]:
+                  - link "quer-cancelar" [ref=e246]:
+                    - /url: /app/accounts/10/label/quer-cancelar
+                    - generic [ref=e249]: quer-cancelar
+              - generic:
+                - img
+        - listitem [ref=e50] [cursor=pointer]:
+          - button "Contatos" [ref=e51]:
+            - generic [ref=e55]: Contatos
+        - listitem [ref=e56] [cursor=pointer]:
+          - button "Relatórios" [ref=e57]:
+            - generic [ref=e61]: Relatórios
+        - listitem [ref=e62] [cursor=pointer]:
+          - button "Campanhas" [ref=e63]:
+            - generic [ref=e67]: Campanhas
+        - listitem [ref=e68] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e69]:
+            - generic [ref=e73]: Central de Ajuda
+        - listitem [ref=e74] [cursor=pointer]:
+          - button "Configurações" [ref=e75]:
+            - generic [ref=e79]: Configurações
+    - button "GUSTAVO HENRIQUE DE OLIVEIRA gustavooliveiranetwork@gmail.com" [ref=e83] [cursor=pointer]:
+      - img [ref=e86]:
+        - generic [ref=e87]: GH
+      - generic [ref=e88]:
+        - generic [ref=e89]: GUSTAVO HENRIQUE DE OLIVEIRA
+        - generic [ref=e90]: gustavooliveiranetwork@gmail.com
+  - main [ref=e93]:
+    - generic [ref=e94]:
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - heading "Conversas" [level=1] [ref=e98]
+            - generic [ref=e99]: Ativas
+          - generic [ref=e100]:
+            - button [ref=e102] [cursor=pointer]
+            - button [ref=e105] [cursor=pointer]
+            - button [ref=e107] [cursor=pointer]
+        - list [ref=e110]:
+          - listitem [ref=e111]:
+            - generic [ref=e112] [cursor=pointer]:
+              - text: Minhas
+              - generic [ref=e114]: "2"
+          - listitem [ref=e115]:
+            - generic [ref=e116] [cursor=pointer]:
+              - text: Não atribuídas
+              - generic [ref=e118]: "3"
+          - listitem [ref=e119]:
+            - generic [ref=e120] [cursor=pointer]:
+              - text: Todos
+              - generic [ref=e122]: "6"
+        - generic [ref=e123]:
+          - generic [ref=e250]:
+            - generic [ref=e252] [cursor=pointer]:
+              - img [ref=e255]:
+                - generic [ref=e256]: GH
+              - generic [ref=e257]:
+                - heading "GUSTAVO HENRIQUE DE OLIVEIRA" [level=4] [ref=e258]
+                - generic [ref=e259]: até mais
+                - generic [ref=e262]: 6h • 6h
+            - generic [ref=e264] [cursor=pointer]:
+              - img [ref=e267]:
+                - generic [ref=e268]: D
+              - generic [ref=e269]:
+                - heading "Davi" [level=4] [ref=e270]
+                - generic [ref=e271]:
+                  - img [ref=e272]
+                  - text: "Histórico da conversa (IA): [IA]: Atendente LARA: Olá, tudo bem? Em que posso te ajudar? Usuário: Gostaria de saber algumas informações [IA]: Atendente LARA: Claro, Davi. Você quer informações sobre benefícios do plano, valores (a partir de R$ 29,90/mês) ou sobre pagamento/boletos? Me diga qual dessas opções você precisa. Usuário: poderia me dizer os beneficios? [IA]: Atendente LARA: Para você conferir TODOS os benefícios do seu plano, acesse o site oficial abaixo 👇🌐 LÁ VOCÊ ENCONTRA TODAS AS INFORMAÇÕES EXPLICADAS DO PLANO CONTRATADO E SABER MELHOR SOBRE OS SEUS BENEFÍCIOS ✅📄 https://maissaude24horas.com.br/ 💙 Qualquer dúvida, estou à disposição! ☺️ Usuário: Estou com duvidas sobre o pagamento, como funciona? [IA]: Atendente LARA: Davi, o pagamento é feito por mensalidade e, para eu te orientar certinho (e enviar 2ª via/PIX se precisar), me informe seu CPF (somente números), por gentileza. Usuário: Entendi, mt obrigado Lara [IA]: Atendente LARA: Eu que agradeço, Davi. Se precisar de 2ª via/PIX ou confirmar alguma pendência, é só me enviar seu CPF (somente números). Usuário: Boa noite [IA]: Atendente LARA: Boa noite, Davi! Você quer seguir com a dúvida sobre pagamento — posso te enviar 2ª via/PIX — ou precisa de outra informação? Usuário: Eu gostaria de saber o valor da minha negociação [IA]: Atendente LARA: Para eu verificar o valor da sua negociação no nosso registro, me informe seu CPF (somente números), por gentileza. [IA]: Atendente LARA: Não localizei esse CPF 18296794730 no sistema. Você consegue confirmar se o CPF está correto (somente números) e me enviar novamente? Usuário: Poderia falar com atendente humano? [IA]: Atendente LARA: Entendo, Davi. Vou te transferir para um atendente humano, por gentileza aguardar. [IA]: Atendente LARA: Perfeito, Davi. Por gentileza, aguarde que o atendente humano já vai te responder por aqui."
+                - generic [ref=e276]: 5d • 1d
+          - paragraph [ref=e277]: Todas as conversas carregadas 🎉
+      - generic [ref=e279]:
+        - img "No Chat" [ref=e280]
+        - generic [ref=e281]: Por favor, selecione uma conversa no painel da esquerda
+        - generic [ref=e282]:
+          - generic [ref=e283]:
+            - generic [ref=e284]:
+              - generic [ref=e285]: ⌘
+              - generic [ref=e286]: K
+            - generic [ref=e287]: para abrir o menu de comando
+          - generic [ref=e288]:
+            - generic [ref=e289]:
+              - generic [ref=e290]: ⌘
+              - generic [ref=e291]: /
+            - generic [ref=e292]: para ver os atalhos de teclado

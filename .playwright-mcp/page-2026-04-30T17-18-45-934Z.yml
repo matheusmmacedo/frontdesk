@@ -1,0 +1,149 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e18]:
+        - link "Pesquisar..." [ref=e19] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e21]: Pesquisar...
+        - button [ref=e23] [cursor=pointer]
+    - navigation [ref=e25]:
+      - list [ref=e26]:
+        - listitem [ref=e27] [cursor=pointer]:
+          - button "Caixa de Entrada 2" [ref=e28]:
+            - generic [ref=e31]:
+              - generic [ref=e32]: Caixa de Entrada
+              - generic [ref=e33]: "2"
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+        - listitem [ref=e40] [cursor=pointer]:
+          - button "Contatos" [ref=e41]:
+            - generic [ref=e45]: Contatos
+        - listitem [ref=e46] [cursor=pointer]:
+          - button "Relatórios" [ref=e47]:
+            - generic [ref=e51]: Relatórios
+        - listitem [ref=e52] [cursor=pointer]:
+          - button "Campanhas" [ref=e53]:
+            - generic [ref=e57]: Campanhas
+          - list [ref=e59]:
+            - listitem [ref=e60]:
+              - link "Chat ao vivo" [ref=e61]:
+                - /url: /app/accounts/10/campaigns/live_chat
+                - generic [ref=e62]: Chat ao vivo
+            - listitem [ref=e63]:
+              - link "SMS" [ref=e64]:
+                - /url: /app/accounts/10/campaigns/sms
+                - generic [ref=e65]: SMS
+        - listitem [ref=e66] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e67]:
+            - generic [ref=e71]: Central de Ajuda
+        - listitem [ref=e72] [cursor=pointer]:
+          - button "Configurações" [ref=e73]:
+            - generic [ref=e77]: Configurações
+    - button "GUSTAVO HENRIQUE DE OLIVEIRA gustavooliveiranetwork@gmail.com" [ref=e81] [cursor=pointer]:
+      - img [ref=e84]:
+        - generic [ref=e85]: GH
+      - generic [ref=e86]:
+        - generic [ref=e87]: GUSTAVO HENRIQUE DE OLIVEIRA
+        - generic [ref=e88]: gustavooliveiranetwork@gmail.com
+  - main [ref=e91]:
+    - generic [ref=e93]:
+      - generic [ref=e96]:
+        - generic [ref=e97]: Campanhas de chat ao vivo
+        - button "Criar campanha" [ref=e99] [cursor=pointer]:
+          - generic [ref=e101]: Criar campanha
+      - main [ref=e102]:
+        - generic [ref=e105]:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Chatbot Assistance
+                      - generic: Ativado
+                    - generic:
+                      - paragraph: Hello! 👋 Need help with our chatbot features? Feel free to ask!
+                    - generic:
+                      - generic: Enviado por
+                      - generic:
+                        - generic:
+                          - img:
+                            - generic: AR
+                        - generic: Alexa Rivera
+                      - generic: De
+                      - generic:
+                        - generic: PaperLayer Website
+                  - generic:
+                    - button
+                    - button
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Pricing Information Support
+                      - generic: Desativado
+                    - generic:
+                      - paragraph: Hello! 👋 Any questions on pricing? I’m here to help!
+                    - generic:
+                      - generic: Enviado por
+                      - generic:
+                        - generic:
+                          - img:
+                            - generic: JL
+                        - generic: Jamie Lee
+                      - generic: De
+                      - generic:
+                        - generic: PaperLayer Website
+                  - generic:
+                    - button
+                    - button
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Product Setup Assistance
+                      - generic: Desativado
+                    - generic:
+                      - paragraph: Hi! Chatwoot here. Need help setting up? Let me know!
+                    - generic:
+                      - generic: Enviado por
+                      - generic:
+                        - generic:
+                          - img:
+                            - generic: C
+                        - generic: Chatwoot
+                      - generic: De
+                      - generic:
+                        - generic: PaperLayer Website
+                  - generic:
+                    - button
+                    - button
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: General Assistance Campaign
+                      - generic: Ativado
+                    - generic:
+                      - paragraph: Hi there! 👋 I’m here for any questions you may have. Let’s chat!
+                    - generic:
+                      - generic: Enviado por
+                      - generic:
+                        - generic:
+                          - img:
+                            - generic: CB
+                        - generic: Chris Barlow
+                      - generic: De
+                      - generic:
+                        - generic: PaperLayer Website
+                  - generic:
+                    - button
+                    - button
+          - generic [ref=e108]:
+            - heading "Não há campanhas de chat ao vivo disponíveis" [level=2] [ref=e109]
+            - paragraph [ref=e110]: Conecte-se com seus clientes usando mensagens proativas. Clique em 'Criar campanha' para começar.

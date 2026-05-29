@@ -1,0 +1,97 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "GMB - Glocal My Business" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: GMB - Glocal My Business
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/11/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/11/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - listitem [ref=e45]:
+              - link "Menções" [ref=e46]:
+                - /url: /app/accounts/11/mentions/conversations
+                - generic [ref=e47]: Menções
+            - listitem [ref=e48]:
+              - link "Não atendidas" [ref=e49]:
+                - /url: /app/accounts/11/unattended/conversations
+                - generic [ref=e50]: Não atendidas
+            - generic:
+              - generic: Canais
+            - list [ref=e51]:
+              - generic [ref=e52]:
+                - listitem [ref=e53]:
+                  - link "GTM 90D" [ref=e54]:
+                    - /url: /app/accounts/11/inbox/31
+                    - generic [ref=e57]: GTM 90D
+                - listitem [ref=e58]:
+                  - link "klaos.ai" [ref=e59]:
+                    - /url: /app/accounts/11/inbox/32
+                    - generic [ref=e62]: klaos.ai
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e63]:
+              - listitem [ref=e65]:
+                - link "gtm90d" [ref=e66]:
+                  - /url: /app/accounts/11/label/gtm90d
+                  - generic [ref=e69]: gtm90d
+        - listitem [ref=e70] [cursor=pointer]:
+          - button "Contatos" [ref=e71]:
+            - generic [ref=e75]: Contatos
+        - listitem [ref=e76] [cursor=pointer]:
+          - button "Relatórios" [ref=e77]:
+            - generic [ref=e81]: Relatórios
+        - listitem [ref=e82] [cursor=pointer]:
+          - button "Campanhas" [ref=e83]:
+            - generic [ref=e87]: Campanhas
+        - listitem [ref=e88] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e89]:
+            - generic [ref=e93]: Central de Ajuda
+        - listitem [ref=e94] [cursor=pointer]:
+          - button "Configurações" [ref=e95]:
+            - generic [ref=e99]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e103] [cursor=pointer]:
+      - img [ref=e106]:
+        - generic [ref=e107]: M
+      - generic [ref=e108]:
+        - generic [ref=e109]: Matheus
+        - generic [ref=e110]: matheus@matheus.pro.br
+  - main [ref=e113]:
+    - generic [ref=e115]:
+      - generic [ref=e116]:
+        - generic [ref=e117]:
+          - heading "GTM 90D" [level=1] [ref=e118]
+          - generic [ref=e119]: Ativas
+        - generic [ref=e120]:
+          - button [ref=e122] [cursor=pointer]
+          - button [ref=e125] [cursor=pointer]
+          - button [ref=e127] [cursor=pointer]
+      - list [ref=e130]:
+        - listitem [ref=e131]:
+          - generic [ref=e132] [cursor=pointer]:
+            - text: Minhas
+            - generic [ref=e134]: "0"
+        - listitem [ref=e135]:
+          - generic [ref=e136] [cursor=pointer]:
+            - text: Não atribuídas
+            - generic [ref=e138]: "0"
+        - listitem [ref=e139]:
+          - generic [ref=e140] [cursor=pointer]:
+            - text: Todos
+            - generic [ref=e142]: "0"
+      - img [ref=e145]

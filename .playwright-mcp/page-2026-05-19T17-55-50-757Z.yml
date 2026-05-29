@@ -1,0 +1,13 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - img "Chatwoot" [ref=e5]
+    - heading "Howdy, admin 👋" [level=2] [ref=e6]
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]: Email Address
+      - 'textbox "Email eg: someone@example.com" [active] [ref=e13]'
+    - generic [ref=e14]:
+      - generic [ref=e15]: Password
+      - textbox "Password" [ref=e17]
+    - button "Login" [ref=e18] [cursor=pointer]:
+      - generic [ref=e19]: Login

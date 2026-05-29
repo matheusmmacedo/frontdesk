@@ -1,0 +1,61 @@
+- generic [ref=e12]:
+  - progressbar [ref=e20]:
+    - img [ref=e21]
+  - generic [ref=e29]:
+    - generic [ref=e31]:
+      - button "Meta Business Suite" [ref=e32] [cursor=pointer]:
+        - generic [ref=e34]: Meta Business Suite
+      - button "Pressable" [ref=e42] [cursor=pointer]
+    - generic [ref=e49]:
+      - navigation "Links" [ref=e50]:
+        - generic [ref=e51]: Links
+        - list [ref=e52]:
+          - navigation "Links":
+            - generic [ref=e53]: Links
+            - list
+      - navigation "Links" [ref=e55]:
+        - generic [ref=e56]: Links
+        - list [ref=e57]:
+          - listitem [ref=e62]:
+            - generic [ref=e64]:
+              - link "Todas as ferramentas" [ref=e65] [cursor=pointer]:
+                - generic [ref=e66]: Todas as ferramentas
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: Todas as ferramentas
+    - generic [ref=e69]:
+      - listitem [ref=e72]:
+        - generic [ref=e74]:
+          - link "Pesquisar" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]: Pesquisar
+          - generic:
+            - generic:
+              - generic:
+                - generic: Pesquisar
+          - generic:
+            - generic:
+              - img
+      - navigation "Links" [ref=e77]:
+        - generic [ref=e78]: Links
+        - list [ref=e79]:
+          - listitem [ref=e83]:
+            - generic [ref=e85]:
+              - link "Configurações" [ref=e86] [cursor=pointer]:
+                - /url: https://business.facebook.com/latest/settings/business_users?business_id=1670699556853947&asset_id=735467396201142
+                - generic [ref=e87]: Configurações
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: Configurações
+      - listitem [ref=e94]:
+        - generic [ref=e96]:
+          - link "Ajuda" [ref=e97] [cursor=pointer]:
+            - generic [ref=e98]: Ajuda
+          - generic:
+            - generic:
+              - generic:
+                - generic: Ajuda
+          - generic:
+            - generic:
+              - img

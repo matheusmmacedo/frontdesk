@@ -1,0 +1,167 @@
+- generic [ref=e7]:
+  - generic [ref=e8]:
+    - complementary [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+            - generic [ref=e17]: Mais Saúde 24h
+        - generic [ref=e19]:
+          - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+            - /url: /app/accounts/9/search
+            - generic [ref=e22]: Pesquisar...
+          - button [ref=e24] [cursor=pointer]
+      - navigation [ref=e26]:
+        - list [ref=e27]:
+          - listitem [ref=e28] [cursor=pointer]:
+            - button "Caixa de Entrada" [ref=e29]:
+              - generic [ref=e33]: Caixa de Entrada
+          - listitem [ref=e34] [cursor=pointer]:
+            - button "Conversas" [ref=e35]:
+              - generic [ref=e39]: Conversas
+          - listitem [ref=e40] [cursor=pointer]:
+            - button "Contatos" [ref=e41]:
+              - generic [ref=e45]: Contatos
+          - listitem [ref=e46] [cursor=pointer]:
+            - button "Relatórios" [ref=e47]:
+              - generic [ref=e51]: Relatórios
+          - listitem [ref=e52] [cursor=pointer]:
+            - button "Campanhas" [ref=e53]:
+              - generic [ref=e57]: Campanhas
+          - listitem [ref=e58] [cursor=pointer]:
+            - button "Central de Ajuda" [ref=e59]:
+              - generic [ref=e63]: Central de Ajuda
+          - listitem [ref=e64] [cursor=pointer]:
+            - button "Configurações" [ref=e65]:
+              - generic [ref=e69]: Configurações
+            - list [ref=e71]:
+              - listitem [ref=e72]:
+                - link "Conta" [ref=e73]:
+                  - /url: /app/accounts/9/settings/general
+                  - generic [ref=e76]: Conta
+              - listitem [ref=e77]:
+                - link "Formato do Nome" [ref=e78]:
+                  - /url: /app/accounts/9/settings/klaos-message-prefix
+                  - generic [ref=e81]: Formato do Nome
+              - listitem [ref=e82]:
+                - link "Agentes" [ref=e83]:
+                  - /url: /app/accounts/9/settings/agents/list
+                  - generic [ref=e86]: Agentes
+              - listitem [ref=e87]:
+                - link "Times" [ref=e88]:
+                  - /url: /app/accounts/9/settings/teams/list
+                  - generic [ref=e91]: Times
+              - listitem [ref=e92]:
+                - link "Caixas de Entrada" [ref=e93]:
+                  - /url: /app/accounts/9/settings/inboxes/list
+                  - generic [ref=e96]: Caixas de Entrada
+              - listitem [ref=e97]:
+                - link "Conexões WhatsApp" [ref=e98]:
+                  - /url: /app/accounts/9/settings/whatsapp-connections
+                  - generic [ref=e101]: Conexões WhatsApp
+              - listitem [ref=e102]:
+                - link "Etiquetas" [ref=e103]:
+                  - /url: /app/accounts/9/settings/labels/list
+                  - generic [ref=e106]: Etiquetas
+              - listitem [ref=e107]:
+                - link "Atributos Personalizados" [ref=e108]:
+                  - /url: /app/accounts/9/settings/custom-attributes/list
+                  - generic [ref=e111]: Atributos Personalizados
+              - listitem [ref=e112]:
+                - link "Automação" [ref=e113]:
+                  - /url: /app/accounts/9/settings/automation/list
+                  - generic [ref=e116]: Automação
+              - listitem [ref=e117]:
+                - link "Robôs" [ref=e118]:
+                  - /url: /app/accounts/9/settings/agent-bots
+                  - generic [ref=e121]: Robôs
+              - listitem [ref=e122]:
+                - link "Macros" [ref=e123]:
+                  - /url: /app/accounts/9/settings/macros
+                  - generic [ref=e126]: Macros
+              - listitem [ref=e127]:
+                - link "Respostas Prontas" [ref=e128]:
+                  - /url: /app/accounts/9/settings/canned-response/list
+                  - generic [ref=e131]: Respostas Prontas
+              - listitem [ref=e132]:
+                - link "Integrações" [ref=e133]:
+                  - /url: /app/accounts/9/settings/integrations
+                  - generic [ref=e136]: Integrações
+              - listitem [ref=e137]:
+                - link "Fluxo de Conversas" [ref=e138]:
+                  - /url: /app/accounts/9/settings/conversation-workflow
+                  - generic [ref=e141]: Fluxo de Conversas
+      - button "Matheus matheus@matheus.pro.br" [ref=e145] [cursor=pointer]:
+        - img [ref=e148]:
+          - generic [ref=e149]: M
+        - generic [ref=e150]:
+          - generic [ref=e151]: Matheus
+          - generic [ref=e152]: matheus@matheus.pro.br
+    - main [ref=e155]:
+      - generic [ref=e158]:
+        - heading "Conta" [level=1] [ref=e161]
+        - generic [ref=e163]:
+          - heading "Configurações gerais" [level=4] [ref=e166]
+          - generic [ref=e169]:
+            - generic [ref=e170]:
+              - generic [ref=e171]: Nome da Conta
+              - textbox "Nome da sua conta" [ref=e175]: Mais Saúde 24h
+            - generic [ref=e176]:
+              - generic [ref=e177]: Idioma do site
+              - combobox [ref=e180]:
+                - option "العربية (ar)"
+                - option "български (bg)"
+                - option "Català (ca)"
+                - option "čeština (cs)"
+                - option "dansk (da)"
+                - option "Deutsch (de)"
+                - option "ελληνικά (el)"
+                - option "English (en)"
+                - option "Español (es)"
+                - option "فارسی (fa)"
+                - option "suomi, suomen kieli (fi)"
+                - option "Français (fr)"
+                - option "עִברִית (he)"
+                - option "magyar nyelv (hu)"
+                - option "Bahasa Indonesia (id)"
+                - option "íslenska (is)"
+                - option "Italiano (it)"
+                - option "日本語 (ja)"
+                - option "한국어 (ko)"
+                - option "lietuvių (lt)"
+                - option "latviešu valoda (lv)"
+                - option "മലയാളം (ml)"
+                - option "Nederlands (nl)"
+                - option "norsk (no)"
+                - option "język polski (pl)"
+                - option "Português (pt)"
+                - option "Português Brasileiro (pt-BR)" [selected]
+                - option "Română (ro)"
+                - option "русский (ru)"
+                - option "slovenčina (sk)"
+                - option "Српски (sr)"
+                - option "Svenska (sv)"
+                - option "தமிழ் (ta)"
+                - option "ภาษาไทย (th)"
+                - option "Türkçe (tr)"
+                - option "украї́нська мо́ва (uk)"
+                - option "Tiếng Việt (vi)"
+                - option "中文 (zh-CN)"
+                - option "中文 (台湾) (zh-TW)"
+            - button "Atualizar configurações" [ref=e182] [cursor=pointer]
+        - generic [ref=e185]:
+          - generic [ref=e186]:
+            - heading "Manter agentes online até logout manual" [level=3] [ref=e187]
+            - switch "Alternar botão" [checked] [ref=e189] [cursor=pointer]:
+              - generic [ref=e190]: Alternar botão
+          - paragraph [ref=e193]: Quando ligado, agentes desta conta não saem para offline automaticamente por inatividade — permanecem online até clicarem em Sair. Útil para operações onde o atendente fica logado o turno todo. O comportamento individual de cada agente em "Perfil" volta a valer se este toggle for desligado.
+        - generic [ref=e194]:
+          - generic [ref=e196]:
+            - heading "ID da Conta" [level=4] [ref=e197]
+            - paragraph [ref=e198]: Este ID é necessário se você está construindo uma integração baseada em API
+          - generic [ref=e201]:
+            - button "Copiar" [ref=e203] [cursor=pointer]:
+              - generic [ref=e204]: Copiar
+            - code [ref=e206]: "9"
+        - generic [ref=e208]: v4.11.2Build unknown
+  - generic [ref=e213]: Agentes desta conta ficarão online até clicarem para sair.

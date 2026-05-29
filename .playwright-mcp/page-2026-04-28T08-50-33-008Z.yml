@@ -1,0 +1,510 @@
+- generic [ref=e8]:
+  - complementary [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - img [ref=e13]
+        - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: Mais Saúde 24h
+      - generic [ref=e19]:
+        - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e22]: Pesquisar...
+        - button [ref=e24] [cursor=pointer]
+    - navigation [ref=e26]:
+      - list [ref=e27]:
+        - listitem [ref=e28] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e29]:
+            - generic [ref=e33]: Caixa de Entrada
+        - listitem [ref=e34] [cursor=pointer]:
+          - button "Conversas" [ref=e35]:
+            - generic [ref=e39]: Conversas
+          - list [ref=e41]:
+            - listitem [ref=e42]:
+              - link "Todas as conversas" [ref=e43]:
+                - /url: /app/accounts/10/dashboard
+                - generic [ref=e44]: Todas as conversas
+            - listitem [ref=e45]:
+              - link "Menções" [ref=e46]:
+                - /url: /app/accounts/10/mentions/conversations
+                - generic [ref=e47]: Menções
+            - listitem [ref=e48]:
+              - link "Não atendidas" [ref=e49]:
+                - /url: /app/accounts/10/unattended/conversations
+                - generic [ref=e50]: Não atendidas
+            - generic:
+              - generic: Canais
+            - list [ref=e51]:
+              - listitem [ref=e53]:
+                - link "KLaOS Cobranca" [ref=e54]:
+                  - /url: /app/accounts/10/inbox/30
+                  - generic [ref=e57]: KLaOS Cobranca
+            - generic:
+              - generic: Etiquetas
+            - list [ref=e58]:
+              - generic [ref=e59]:
+                - listitem [ref=e60]:
+                  - link "cancelado" [ref=e61]:
+                    - /url: /app/accounts/10/label/cancelado
+                    - generic [ref=e64]: cancelado
+                - listitem [ref=e65]:
+                  - link "cancelamento-pendente" [ref=e66]:
+                    - /url: /app/accounts/10/label/cancelamento-pendente
+                    - generic [ref=e69]: cancelamento-pendente
+                - listitem [ref=e70]:
+                  - link "cobranca_1d" [ref=e71]:
+                    - /url: /app/accounts/10/label/cobranca_1d
+                    - generic [ref=e74]: cobranca_1d
+                - listitem [ref=e75]:
+                  - link "cobranca-0d" [ref=e76]:
+                    - /url: /app/accounts/10/label/cobranca-0d
+                    - generic [ref=e79]: cobranca-0d
+                - listitem [ref=e80]:
+                  - link "cobranca-15d" [ref=e81]:
+                    - /url: /app/accounts/10/label/cobranca-15d
+                    - generic [ref=e84]: cobranca-15d
+                - listitem [ref=e85]:
+                  - link "cobranca-7d" [ref=e86]:
+                    - /url: /app/accounts/10/label/cobranca-7d
+                    - generic [ref=e89]: cobranca-7d
+                - listitem [ref=e90]:
+                  - link "cobranca-boleto-pendente" [ref=e91]:
+                    - /url: /app/accounts/10/label/cobranca-boleto-pendente
+                    - generic [ref=e94]: cobranca-boleto-pendente
+                - listitem [ref=e95]:
+                  - link "cobranca-cartao-pendente" [ref=e96]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-pendente
+                    - generic [ref=e99]: cobranca-cartao-pendente
+                - listitem [ref=e100]:
+                  - link "cobranca-cartao-recusado" [ref=e101]:
+                    - /url: /app/accounts/10/label/cobranca-cartao-recusado
+                    - generic [ref=e104]: cobranca-cartao-recusado
+                - listitem [ref=e105]:
+                  - link "cobranca-d21" [ref=e106]:
+                    - /url: /app/accounts/10/label/cobranca-d21
+                    - generic [ref=e109]: cobranca-d21
+                - listitem [ref=e110]:
+                  - link "cobranca-negociacao" [ref=e111]:
+                    - /url: /app/accounts/10/label/cobranca-negociacao
+                    - generic [ref=e114]: cobranca-negociacao
+                - listitem [ref=e115]:
+                  - link "cobranca-promessa" [ref=e116]:
+                    - /url: /app/accounts/10/label/cobranca-promessa
+                    - generic [ref=e119]: cobranca-promessa
+                - listitem [ref=e120]:
+                  - link "cobranca-promessa-hoje" [ref=e121]:
+                    - /url: /app/accounts/10/label/cobranca-promessa-hoje
+                    - generic [ref=e124]: cobranca-promessa-hoje
+                - listitem [ref=e125]:
+                  - link "cobranca-segunda-via" [ref=e126]:
+                    - /url: /app/accounts/10/label/cobranca-segunda-via
+                    - generic [ref=e129]: cobranca-segunda-via
+                - listitem [ref=e130]:
+                  - link "enviado-ao-spc" [ref=e131]:
+                    - /url: /app/accounts/10/label/enviado-ao-spc
+                    - generic [ref=e134]: enviado-ao-spc
+                - listitem [ref=e135]:
+                  - link "mais-saude" [ref=e136]:
+                    - /url: /app/accounts/10/label/mais-saude
+                    - generic [ref=e139]: mais-saude
+                - listitem [ref=e140]:
+                  - link "pagamento-realizado" [ref=e141]:
+                    - /url: /app/accounts/10/label/pagamento-realizado
+                    - generic [ref=e144]: pagamento-realizado
+                - listitem [ref=e145]:
+                  - link "pendente" [ref=e146]:
+                    - /url: /app/accounts/10/label/pendente
+                    - generic [ref=e149]: pendente
+                - listitem [ref=e150]:
+                  - link "quer-cancelar" [ref=e151]:
+                    - /url: /app/accounts/10/label/quer-cancelar
+                    - generic [ref=e154]: quer-cancelar
+              - generic:
+                - img
+        - listitem [ref=e155] [cursor=pointer]:
+          - button "Contatos" [ref=e156]:
+            - generic [ref=e160]: Contatos
+        - listitem [ref=e161] [cursor=pointer]:
+          - button "Relatórios" [ref=e162]:
+            - generic [ref=e166]: Relatórios
+        - listitem [ref=e167] [cursor=pointer]:
+          - button "Campanhas" [ref=e168]:
+            - generic [ref=e172]: Campanhas
+        - listitem [ref=e173] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e174]:
+            - generic [ref=e178]: Central de Ajuda
+        - listitem [ref=e179] [cursor=pointer]:
+          - button "Configurações" [ref=e180]:
+            - generic [ref=e184]: Configurações
+    - button "Matheus matheus@matheus.pro.br" [ref=e188] [cursor=pointer]:
+      - img [ref=e191]:
+        - generic [ref=e192]: M
+      - generic [ref=e193]:
+        - generic [ref=e194]: Matheus
+        - generic [ref=e195]: matheus@matheus.pro.br
+  - main [ref=e198]:
+    - generic [ref=e199]:
+      - generic [ref=e200]:
+        - generic [ref=e201]:
+          - generic [ref=e202]:
+            - button "Anterior" [ref=e203] [cursor=pointer]: Anterior
+            - img [ref=e206]:
+              - generic [ref=e207]: M
+            - generic [ref=e210]: Matheus
+          - generic [ref=e212]:
+            - button "Abrir" [ref=e215] [cursor=pointer]:
+              - generic [ref=e216]: Abrir
+            - generic [ref=e217]:
+              - button [active] [ref=e218] [cursor=pointer]
+              - generic [ref=e752]:
+                - button "Bloquear Contato" [ref=e753] [cursor=pointer]:
+                  - generic [ref=e755]: Bloquear Contato
+                - button "Enviar Transcrição" [ref=e756] [cursor=pointer]:
+                  - generic [ref=e758]: Enviar Transcrição
+        - generic [ref=e220]:
+          - generic [ref=e221]:
+            - list [ref=e222]:
+              - listitem [ref=e223]
+              - generic [ref=e225]:
+                - img [ref=e228]:
+                  - generic [ref=e229]: D
+                - generic [ref=e231]:
+                  - generic [ref=e233]:
+                    - paragraph [ref=e234]:
+                      - strong [ref=e235]: 📋 Resumo SDR Agent
+                    - paragraph [ref=e236]:
+                      - text: Resumo SDR — Matheus
+                      - text: ────────────────────────────────
+                      - text: "Empresa: não mencionado · sem site"
+                      - text: "Contato: não mencionado · não mencionado"
+                      - text: "Decisores: Matheus (não mencionado)"
+                      - text: "Mercado: não mencionado"
+                    - paragraph [ref=e237]: "Dor: Quer cancelar o contrato nº 13825251764; contrato consta como inativo."
+                    - paragraph [ref=e238]: "Intenção: Média — entrou em contato para cancelamento; sem sinais de compra/expansão."
+                    - paragraph [ref=e239]:
+                      - text: "Score: 18 · cold"
+                      - text: "Fit: Não — é caso de suporte/regularização (cancelamento), sem contexto comercial."
+                    - paragraph [ref=e240]: "Objeção: Contrato está inativo; precisa passar pelo setor de regularização (horário 9–17)."
+                    - paragraph [ref=e241]: "Pedido: Cancelar 13825251764."
+                    - paragraph [ref=e242]:
+                      - text: "Próximos passos:"
+                      - text: → Confirmar com Matheus os dados do titular e motivo do cancelamento para triagem correta
+                      - text: → Direcionar/encaminhar ao setor de regularização e informar janela de atendimento (seg-sex 9–17)
+                      - text: → Solicitar canal de retorno (telefone/email) para protocolo e atualização do status do cancelamento
+                  - time [ref=e245]: Apr 28, 4:45 AM
+              - generic [ref=e248]:
+                - img [ref=e251]:
+                  - generic [ref=e252]: M
+                - generic [ref=e254]:
+                  - paragraph [ref=e257]:
+                    - strong [ref=e258]: "Atendente MATHEUS:"
+                    - text: Boa noite
+                  - time [ref=e261]: Apr 28, 4:45 AM
+              - generic "Conversa devolvida ao bot por Matheus" [ref=e266]
+              - generic [ref=e268]:
+                - img [ref=e271]:
+                  - generic [ref=e272]: D
+                - generic [ref=e274]:
+                  - paragraph [ref=e277]: "[reopen-policy] devolvida ao bot — initiator:10:Matheus"
+                  - time [ref=e280]: Apr 28, 4:45 AM
+              - generic [ref=e285]:
+                - paragraph [ref=e288]: Olá
+                - time [ref=e291]: Apr 28, 4:46 AM
+              - generic "Atribuído a GUSTAVO HENRIQUE DE OLIVEIRA via contratos por Daniel" [ref=e295]
+              - generic "Conversa foi reaberta por Daniel" [ref=e299]
+              - paragraph [ref=e306]:
+                - strong [ref=e307]: "Atendente LARA:"
+                - text: Percebi que o seu contrato encontra-se
+                - strong [ref=e308]: inativo
+                - text: neste momento.
+              - paragraph [ref=e315]: Vou te transferir para o setor de regularização e lá eles vão atender você.
+              - paragraph [ref=e322]:
+                - text: O horário de funcionamento deste setor é de
+                - strong [ref=e323]: segunda a sexta-feira, das 9h às 17h
+                - text: .
+              - generic [ref=e325]:
+                - img [ref=e328]:
+                  - generic [ref=e329]: L|
+                - generic [ref=e331]:
+                  - paragraph [ref=e334]: Por gentileza, aguardar.
+                  - time [ref=e337]: Apr 28, 4:46 AM
+              - generic [ref=e340]:
+                - img [ref=e343]:
+                  - generic [ref=e344]: D
+                - generic [ref=e346]:
+                  - generic [ref=e348]:
+                    - paragraph [ref=e349]:
+                      - strong [ref=e350]: "Histórico da conversa (IA):"
+                    - paragraph [ref=e351]:
+                      - text: "[IA]:"
+                      - strong [ref=e352]: "Atendente LARA:"
+                      - text: Olá, tudo bem? Em que posso te ajudar?
+                    - paragraph [ref=e353]:
+                      - link "Usuário" [ref=e354] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": quero cancelar 13825251764"
+                    - paragraph [ref=e355]:
+                      - text: "[IA]:"
+                      - strong [ref=e356]: "Atendente LARA:"
+                      - text: Percebi que o seu contrato encontra-se
+                      - strong [ref=e357]: inativo
+                      - text: neste momento.
+                      - text: Vou te transferir para o setor de regularização e lá eles vão atender você.
+                      - text: O horário de funcionamento deste setor é de
+                      - strong [ref=e358]: segunda a sexta-feira, das 9h às 17h
+                      - text: .
+                      - text: Por gentileza, aguardar.
+                    - paragraph [ref=e359]:
+                      - text: "[IA]:"
+                      - emphasis [ref=e360]: "Atendente MATHEUS:"
+                      - text: Ola
+                    - paragraph [ref=e361]:
+                      - link "Usuário" [ref=e362] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Boa noite"
+                    - paragraph [ref=e363]:
+                      - text: "[IA]:"
+                      - strong [ref=e364]: "Atendente LARA:"
+                      - text: Percebi que o seu contrato encontra-se
+                      - strong [ref=e365]: inativo
+                      - text: neste momento.
+                      - text: Vou te transferir para o setor de regularização e lá eles vão atender você.
+                      - text: O horário de funcionamento deste setor é de
+                      - strong [ref=e366]: segunda a sexta-feira, das 9h às 17h
+                      - text: .
+                      - text: Por gentileza, aguardar.
+                    - paragraph [ref=e367]:
+                      - link "Usuário" [ref=e368] [cursor=pointer]:
+                        - /url: Ol%C3%A1
+                      - text: ": Olá Lara"
+                    - paragraph [ref=e369]:
+                      - text: "[IA]:"
+                      - strong [ref=e370]: "Atendente LARA:"
+                      - text: Percebi que o seu contrato encontra-se
+                      - strong [ref=e371]: inativo
+                      - text: neste momento.
+                      - text: Vou te transferir para o setor de regularização e lá eles vão atender você.
+                      - text: O horário de funcionamento deste setor é de
+                      - strong [ref=e372]: segunda a sexta-feira, das 9h às 17h
+                      - text: .
+                      - text: Por gentileza, aguardar.
+                    - paragraph [ref=e373]:
+                      - text: "[IA]:"
+                      - emphasis [ref=e374]: "Atendente MATHEUS:"
+                      - text: tudo bem?
+                    - paragraph [ref=e375]:
+                      - text: "[IA]:"
+                      - strong [ref=e376]: "Atendente LARA:"
+                      - text: Percebi que o seu contrato encontra-se
+                      - strong [ref=e377]: inativo
+                      - text: neste momento.
+                      - text: Vou te transferir para o setor de regularização e lá eles vão atender você.
+                      - text: O horário de funcionamento deste setor é de
+                      - strong [ref=e378]: segunda a sexta-feira, das 9h às 17h
+                      - text: .
+                      - text: Por gentileza, aguardar.
+                    - paragraph [ref=e379]:
+                      - text: "[IA]:"
+                      - strong [ref=e380]: "Atendente LARA:"
+                      - text: Percebi que o seu contrato encontra-se
+                      - strong [ref=e381]: inativo
+                      - text: neste momento.
+                      - text: Vou te transferir para o setor de regularização e lá eles vão atender você.
+                      - text: O horário de funcionamento deste setor é de
+                      - strong [ref=e382]: segunda a sexta-feira, das 9h às 17h
+                      - text: .
+                      - text: Por gentileza, aguardar.
+                    - paragraph [ref=e383]:
+                      - text: "[IA]:"
+                      - emphasis [ref=e384]: "Atendente MATHEUS:"
+                      - text: Boa noite
+                    - paragraph [ref=e385]:
+                      - text: "[IA]:"
+                      - strong [ref=e386]: "Atendente LARA:"
+                      - text: Percebi que o seu contrato encontra-se
+                      - strong [ref=e387]: inativo
+                      - text: neste momento.
+                      - text: Vou te transferir para o setor de regularização e lá eles vão atender você.
+                      - text: O horário de funcionamento deste setor é de
+                      - strong [ref=e388]: segunda a sexta-feira, das 9h às 17h
+                      - text: .
+                      - text: Por gentileza, aguardar.
+                  - time [ref=e391]: Apr 28, 4:46 AM
+              - 'generic "[TRANSFERIDO] Conversa transferida para atendimento humano. Motivo: transferir_para_time_executed" [ref=e396]'
+              - generic "Atribuído a cobrança por Daniel" [ref=e400]
+              - generic "Conversa devolvida ao bot por Matheus" [ref=e404]
+              - generic [ref=e406]:
+                - img [ref=e409]:
+                  - generic [ref=e410]: D
+                - generic [ref=e412]:
+                  - paragraph [ref=e415]: "[reopen-policy] devolvida ao bot — initiator:10:Matheus"
+                  - time [ref=e418]: Apr 28, 5:24 AM
+              - generic "Atribuído a GUSTAVO HENRIQUE DE OLIVEIRA por Matheus" [ref=e423]
+              - generic "Atribuído a cancelamento por Matheus" [ref=e427]
+              - generic [ref=e429]:
+                - img [ref=e432]:
+                  - generic [ref=e433]: M
+                - generic [ref=e435]:
+                  - paragraph [ref=e438]:
+                    - strong [ref=e439]: "Atendente MATHEUS:"
+                    - text: ola
+                  - time [ref=e442]: Apr 28, 5:24 AM
+              - generic [ref=e447]:
+                - paragraph [ref=e450]: Olá
+                - time [ref=e453]: Apr 28, 5:26 AM
+              - generic [ref=e455]:
+                - img [ref=e458]:
+                  - generic [ref=e459]: L|
+                - generic [ref=e461]:
+                  - paragraph [ref=e464]:
+                    - strong [ref=e465]: "Atendente LARA:"
+                    - text: Olá, tudo bem? Em que posso te ajudar?
+                  - time [ref=e468]: Apr 28, 5:27 AM
+            - generic [ref=e471]:
+              - generic [ref=e472]:
+                - button "Responder Mensagem Privada" [ref=e473] [cursor=pointer]:
+                  - generic [ref=e474]: Responder
+                  - generic [ref=e475]: Mensagem Privada
+                - generic [ref=e477]:
+                  - button [ref=e479] [cursor=pointer]
+                  - button [ref=e481] [cursor=pointer]
+              - paragraph [ref=e488]: Shift + enter para nova linha. Digite '/' para selecionar uma Resposta Pronta.
+              - generic [ref=e489]:
+                - generic [ref=e490]:
+                  - button [ref=e491] [cursor=pointer]
+                  - generic [ref=e493]:
+                    - button [ref=e494] [cursor=pointer]
+                    - button [ref=e497]
+                  - button [ref=e498] [cursor=pointer]
+                  - button [ref=e500] [cursor=pointer]
+                  - button [ref=e502] [cursor=pointer]
+                - button "Enviar (CTRL + ↵)" [disabled] [ref=e505]:
+                  - generic [ref=e506]: Enviar (CTRL + ↵)
+          - button [ref=e508] [cursor=pointer]
+      - generic [ref=e512]:
+        - generic [ref=e514]:
+          - generic [ref=e515]: Contatos
+          - button [ref=e517] [cursor=pointer]
+        - generic [ref=e520]:
+          - img [ref=e523]:
+            - generic [ref=e524]: M
+          - generic [ref=e525]:
+            - generic [ref=e526]:
+              - heading "Matheus" [level=3] [ref=e527]
+              - link [ref=e530] [cursor=pointer]:
+                - /url: /app/accounts/10/contacts/309
+            - generic [ref=e532]:
+              - generic "Endereço de e-mail" [ref=e533]:
+                - generic [ref=e534]:
+                  - img [ref=e535]
+                  - generic [ref=e537]: Indisponível
+              - generic "Número de telefone" [ref=e538]:
+                - link "+5521964798660" [ref=e539] [cursor=pointer]:
+                  - /url: tel:+5521964798660
+                  - img [ref=e540]
+                  - generic "+5521964798660" [ref=e542]
+                  - button [ref=e543]
+              - generic "Identificador" [ref=e545]:
+                - generic [ref=e546]:
+                  - img [ref=e547]
+                  - generic [ref=e549]: TEST-001
+              - generic "Empresa" [ref=e550]:
+                - generic [ref=e551]:
+                  - img [ref=e552]
+                  - generic [ref=e554]: Indisponível
+          - generic [ref=e555]:
+            - button [ref=e557] [cursor=pointer]
+            - button [ref=e559] [cursor=pointer]
+            - button [ref=e561] [cursor=pointer]
+            - button [ref=e563] [cursor=pointer]
+        - generic [ref=e566]:
+          - generic [ref=e568]:
+            - button "Ações da conversa" [ref=e569]:
+              - heading "Ações da conversa" [level=5] [ref=e571]
+              - img [ref=e574] [cursor=pointer]
+            - generic [ref=e577]:
+              - generic [ref=e578]:
+                - generic [ref=e580]:
+                  - generic [ref=e581]: Agente atribuído
+                  - button "Atribuir a mim" [ref=e582] [cursor=pointer]:
+                    - generic [ref=e584]: Atribuir a mim
+                - button "GUSTAVO HENRIQUE DE OLIVEIRA" [ref=e587] [cursor=pointer]:
+                  - heading "GUSTAVO HENRIQUE DE OLIVEIRA" [level=4] [ref=e590]
+                  - img [ref=e592]:
+                    - generic [ref=e593]: GH
+              - generic [ref=e594]:
+                - generic [ref=e597]: Time atribuído
+                - button "cancelamento" [ref=e600] [cursor=pointer]:
+                  - heading "cancelamento" [level=4] [ref=e603]
+                  - img [ref=e605]:
+                    - generic [ref=e606]: C
+              - generic [ref=e607]:
+                - generic [ref=e610]: Prioridade
+                - button "Nenhuma" [ref=e613] [cursor=pointer]:
+                  - heading "Nenhuma" [level=4] [ref=e616]
+              - generic [ref=e619]: Etiquetas da conversa
+              - button "Adicionar etiquetas" [ref=e623] [cursor=pointer]:
+                - generic [ref=e625]: Adicionar etiquetas
+          - generic [ref=e627]:
+            - button "Macros" [ref=e628]:
+              - heading "Macros" [level=5] [ref=e630]
+              - img [ref=e633] [cursor=pointer]
+            - generic [ref=e637]:
+              - paragraph [ref=e638]: Nenhuma macro encontrada
+              - link "Adicionar uma nova macro" [ref=e639] [cursor=pointer]:
+                - /url: /app/accounts/10/settings/macros
+                - button "Adicionar uma nova macro" [ref=e640]:
+                  - generic [ref=e642]: Adicionar uma nova macro
+          - button "Informação da conversa" [ref=e645]:
+            - heading "Informação da conversa" [level=5] [ref=e647]
+            - img [ref=e650] [cursor=pointer]
+          - button "Atributos do contato" [ref=e654]:
+            - heading "Atributos do contato" [level=5] [ref=e656]
+            - img [ref=e659] [cursor=pointer]
+          - button "Notas do contato" [ref=e663]:
+            - heading "Notas do contato" [level=5] [ref=e665]
+            - img [ref=e668] [cursor=pointer]
+          - generic [ref=e671]:
+            - button "Conversas anteriores" [ref=e672]:
+              - heading "Conversas anteriores" [level=5] [ref=e674]
+              - img [ref=e677] [cursor=pointer]
+            - generic [ref=e681]:
+              - generic [ref=e683] [cursor=pointer]:
+                - heading "Matheus" [level=4] [ref=e684]
+                - generic [ref=e685]:
+                  - img [ref=e686]
+                  - text: fatura_emissao
+                - generic [ref=e690]: 22d • 21d
+                - generic "PERMANENTE - Cliente do Mais Saúde 24h" [ref=e693]:
+                  - generic [ref=e695]: mais-saude
+              - generic [ref=e697] [cursor=pointer]:
+                - heading "Matheus" [level=4] [ref=e698]
+                - generic [ref=e699]:
+                  - img [ref=e700]
+                  - text: fatura_atraso_21dias
+                - generic [ref=e704]: 26d • 26d
+                - generic [ref=e706]:
+                  - generic "PERMANENTE - Cliente do Mais Saúde 24h" [ref=e707]:
+                    - generic [ref=e709]: mais-saude
+                  - generic "Boleto gerado ou pendência ativa" [ref=e710]:
+                    - generic [ref=e712]: pendente
+              - generic [ref=e714] [cursor=pointer]:
+                - heading "Matheus" [level=4] [ref=e715]
+                - generic [ref=e716]:
+                  - img [ref=e717]
+                  - text: Para eu confirmar com 100% pelo seu cadastro, me informe por favor o CPF do titular (ou o telefone cadastrado).
+                - generic [ref=e721]: 1mo • 26d
+                - generic "PERMANENTE - Cliente do Mais Saúde 24h" [ref=e724]:
+                  - generic [ref=e726]: mais-saude
+          - generic [ref=e728]:
+            - button "Participantes da conversa" [ref=e729]:
+              - heading "Participantes da conversa" [level=5] [ref=e731]
+              - img [ref=e734] [cursor=pointer]
+            - generic [ref=e737]:
+              - generic [ref=e739]:
+                - paragraph [ref=e741]: 1 pessoa está participando.
+                - button [ref=e742] [cursor=pointer]
+              - generic [ref=e744]:
+                - img [ref=e747]:
+                  - generic [ref=e748]: GH
+                - button "Participar da conversa" [ref=e749] [cursor=pointer]:
+                  - generic [ref=e751]: Participar da conversa

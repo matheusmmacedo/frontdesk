@@ -1,0 +1,310 @@
+- generic [ref=e7]:
+  - generic [ref=e8]:
+    - complementary [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - button "Mais Saúde 24h" [ref=e16]:
+            - generic [ref=e17]: Mais Saúde 24h
+        - generic [ref=e18]:
+          - link "Pesquisar..." [ref=e19] [cursor=pointer]:
+            - /url: /app/accounts/10/search
+            - generic [ref=e21]: Pesquisar...
+          - button [ref=e23] [cursor=pointer]
+      - navigation [ref=e25]:
+        - list [ref=e26]:
+          - listitem [ref=e27] [cursor=pointer]:
+            - button "Caixa de Entrada 2" [ref=e28]:
+              - generic [ref=e31]:
+                - generic [ref=e32]: Caixa de Entrada
+                - generic [ref=e33]: "2"
+          - listitem [ref=e34] [cursor=pointer]:
+            - button "Conversas" [ref=e35]:
+              - generic [ref=e39]: Conversas
+          - listitem [ref=e40] [cursor=pointer]:
+            - button "Contatos" [ref=e41]:
+              - generic [ref=e45]: Contatos
+          - listitem [ref=e46] [cursor=pointer]:
+            - button "Relatórios" [ref=e47]:
+              - generic [ref=e51]: Relatórios
+          - listitem [ref=e52] [cursor=pointer]:
+            - button "Campanhas" [ref=e53]:
+              - generic [ref=e57]: Campanhas
+          - listitem [ref=e58] [cursor=pointer]:
+            - button "Central de Ajuda" [ref=e59]:
+              - generic [ref=e63]: Central de Ajuda
+          - listitem [ref=e64] [cursor=pointer]:
+            - button "Configurações" [ref=e65]:
+              - generic [ref=e69]: Configurações
+            - list [ref=e71]:
+              - listitem [ref=e72]:
+                - link "Conta" [ref=e73]:
+                  - /url: /app/accounts/10/settings/general
+                  - generic [ref=e76]: Conta
+              - listitem [ref=e77]:
+                - link "Formato do Nome" [ref=e78]:
+                  - /url: /app/accounts/10/settings/klaos-message-prefix
+                  - generic [ref=e81]: Formato do Nome
+              - listitem [ref=e82]:
+                - link "Agentes" [ref=e83]:
+                  - /url: /app/accounts/10/settings/agents/list
+                  - generic [ref=e86]: Agentes
+              - listitem [ref=e87]:
+                - link "Times" [ref=e88]:
+                  - /url: /app/accounts/10/settings/teams/list
+                  - generic [ref=e91]: Times
+              - listitem [ref=e92]:
+                - link "Caixas de Entrada" [ref=e93]:
+                  - /url: /app/accounts/10/settings/inboxes/list
+                  - generic [ref=e96]: Caixas de Entrada
+              - listitem [ref=e97]:
+                - link "Conexões WhatsApp" [ref=e98]:
+                  - /url: /app/accounts/10/settings/whatsapp-connections
+                  - generic [ref=e101]: Conexões WhatsApp
+              - listitem [ref=e102]:
+                - link "Etiquetas" [ref=e103]:
+                  - /url: /app/accounts/10/settings/labels/list
+                  - generic [ref=e106]: Etiquetas
+              - listitem [ref=e107]:
+                - link "Atributos Personalizados" [ref=e108]:
+                  - /url: /app/accounts/10/settings/custom-attributes/list
+                  - generic [ref=e111]: Atributos Personalizados
+              - listitem [ref=e112]:
+                - link "Automação" [ref=e113]:
+                  - /url: /app/accounts/10/settings/automation/list
+                  - generic [ref=e116]: Automação
+              - listitem [ref=e117]:
+                - link "Robôs" [ref=e118]:
+                  - /url: /app/accounts/10/settings/agent-bots
+                  - generic [ref=e121]: Robôs
+              - listitem [ref=e122]:
+                - link "Macros" [ref=e123]:
+                  - /url: /app/accounts/10/settings/macros
+                  - generic [ref=e126]: Macros
+              - listitem [ref=e127]:
+                - link "Respostas Prontas" [ref=e128]:
+                  - /url: /app/accounts/10/settings/canned-response/list
+                  - generic [ref=e131]: Respostas Prontas
+              - listitem [ref=e132]:
+                - link "Integrações" [ref=e133]:
+                  - /url: /app/accounts/10/settings/integrations
+                  - generic [ref=e136]: Integrações
+              - listitem [ref=e137]:
+                - link "Fluxo de Conversas" [ref=e138]:
+                  - /url: /app/accounts/10/settings/conversation-workflow
+                  - generic [ref=e141]: Fluxo de Conversas
+      - button "GUSTAVO HENRIQUE DE OLIVEIRA gustavooliveiranetwork@gmail.com" [ref=e145] [cursor=pointer]:
+        - img [ref=e148]:
+          - generic [ref=e149]: GH
+        - generic [ref=e150]:
+          - generic [ref=e151]: GUSTAVO HENRIQUE DE OLIVEIRA
+          - generic [ref=e152]: gustavooliveiranetwork@gmail.com
+    - main [ref=e155]:
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - link "← Voltar" [ref=e177] [cursor=pointer]:
+            - /url: /app/accounts/10/settings/whatsapp-connections
+          - heading "KLaOS - WhatsApp Oficial" [level=1] [ref=e178]
+          - generic [ref=e179]: ativo
+        - generic [ref=e180]:
+          - button "Números de Telefone (1)" [ref=e181] [cursor=pointer]
+          - button "Templates de Mensagem (15)" [ref=e182] [cursor=pointer]
+        - generic [ref=e203]:
+          - generic [ref=e204]:
+            - heading "Templates de Mensagem" [level=3] [ref=e205]
+            - generic [ref=e206]:
+              - button "Sincronizar Templates" [ref=e207] [cursor=pointer]
+              - button "+ Criar Template" [ref=e208] [cursor=pointer]
+          - textbox "Buscar templates..." [ref=e209]
+          - generic [ref=e210]:
+            - generic [ref=e434] [cursor=pointer]:
+              - generic [ref=e435]:
+                - generic [ref=e436]:
+                  - generic [ref=e437]: ms24h_boleto_vencido_v2
+                  - generic [ref=e438]: PENDING
+                  - generic [ref=e439]: pt_BR
+                  - generic "UTILITY" [ref=e440]
+                  - generic [ref=e441]: Buttons
+                - paragraph [ref=e442]: "Ol? {{1}}! Identificamos que sua fatura da MAIS SA?DE 24 HORAS no valor de {{2}}, com vencimento em {{3}}, ainda n?o foi compensada. Realize o pagamento pelo c?digo de barras abaixo. Lembrando que o boleto ? registrado no banco e a falta de pagamento pode levar o t?tulo a protesto. C?digo de barras do boleto: {{4}} Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e443]:
+                - button "Visualizar" [ref=e444]
+                - button "Excluir" [ref=e445]
+            - generic [ref=e213] [cursor=pointer]:
+              - generic [ref=e214]:
+                - generic [ref=e215]:
+                  - generic [ref=e216]: ms24h_pagamento_ok
+                  - generic [ref=e217]: APPROVED
+                  - generic [ref=e218]: pt_BR
+                  - generic "UTILITY" [ref=e219]
+                - paragraph [ref=e220]: "Pagamento confirmado! Recebemos o valor de {{1}} referente à sua mensalidade do plano Mais Saúde. Obrigado por manter seus benefícios em dia."
+              - generic [ref=e221]:
+                - button "Visualizar" [ref=e222]
+                - button "Editar" [ref=e223]
+                - button "Excluir" [ref=e224]
+            - generic [ref=e227] [cursor=pointer]:
+              - generic [ref=e228]:
+                - generic [ref=e229]:
+                  - generic [ref=e230]: ms24h_transbordo_21dias
+                  - generic [ref=e231]: APPROVED
+                  - generic [ref=e232]: pt_BR
+                  - generic "UTILITY" [ref=e233]
+                - paragraph [ref=e234]: "Olá {{1}} Informamos que, devido a inadimplência, seu título foi encaminhado ao cartório de protesto e aos órgãos de proteção ao crédito (SPC e Serasa). Para regularizar sua situação e evitar restrições no CPF, entre em contato com urgência pelo WhatsApp ou telefone abaixo. Telefone: (31) 98248-8131"
+              - generic [ref=e235]:
+                - button "Visualizar" [ref=e236]
+                - button "Editar" [ref=e237]
+                - button "Excluir" [ref=e238]
+            - generic [ref=e241] [cursor=pointer]:
+              - generic [ref=e242]:
+                - generic [ref=e243]:
+                  - generic [ref=e244]: ms24h_atraso_15dias
+                  - generic [ref=e245]: APPROVED
+                  - generic [ref=e246]: pt_BR
+                  - generic "UTILITY" [ref=e247]
+                  - generic [ref=e248]: Buttons
+                - paragraph [ref=e249]: "Olá, recebemos hoje um relatório do banco onde consta o seu nome na lista de inadimplentes, pois seu boleto ultrapassou o prazo permitido para pagamento. Você consegue fazer o pagamento hoje ainda e enviar o comprovante? *Caso não consiga, o banco vai executar o título além de SPC.* Para isso não acontecer gentileza encaminhar comprovante. Código de barras do boleto: {{1}} Caso tenha alguma dúvida entre em contato neste WhatsApp Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e250]:
+                - button "Visualizar" [ref=e251]
+                - button "Editar" [ref=e252]
+                - button "Excluir" [ref=e253]
+            - generic [ref=e256] [cursor=pointer]:
+              - generic [ref=e257]:
+                - generic [ref=e258]:
+                  - generic [ref=e259]: ms24h_atraso_7dias
+                  - generic [ref=e260]: APPROVED
+                  - generic [ref=e261]: pt_BR
+                  - generic "UTILITY" [ref=e262]
+                  - generic [ref=e263]: Buttons
+                - paragraph [ref=e264]: "Olá {{1}}! Queremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, *no valor de {{2}} venceu há 7 dias, no dia {{3}}.* Lembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título no SPC e em protesto. Código de barras do boleto: {{4}} Caso tenha alguma dúvida entre em contato neste WhatsApp Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e265]:
+                - button "Visualizar" [ref=e266]
+                - button "Editar" [ref=e267]
+                - button "Excluir" [ref=e268]
+            - generic [ref=e286] [cursor=pointer]:
+              - generic [ref=e287]:
+                - generic [ref=e288]:
+                  - generic [ref=e289]: ms24h_vencimento_hoje
+                  - generic [ref=e290]: APPROVED
+                  - generic [ref=e291]: pt_BR
+                  - generic "UTILITY" [ref=e292]
+                  - generic [ref=e293]: Buttons
+                - paragraph [ref=e294]: "Olá {{1}}! Sua fatura da MAIS SAÚDE 24 HORAS *vence hoje dia {{3}}. O valor de {{2}}.* Realize *o pagamento antes do vencimento* para evitar multas e juros. Código de barras do boleto: {{4}} Caso tenha alguma dúvida entre em contato neste WhatsApp Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e295]:
+                - button "Visualizar" [ref=e296]
+                - button "Editar" [ref=e297]
+                - button "Excluir" [ref=e298]
+            - generic [ref=e301] [cursor=pointer]:
+              - generic [ref=e302]:
+                - generic [ref=e303]:
+                  - generic [ref=e304]: ms24h_fatura_geracao
+                  - generic [ref=e305]: APPROVED
+                  - generic [ref=e306]: pt_BR
+                  - generic "UTILITY" [ref=e307]
+                  - generic [ref=e308]: Buttons
+                - paragraph [ref=e309]: "Olá {{1}}! Informamos que sua fatura da MAIS SAÚDE 24 HORAS, no valor de {{2}} *vence em 5 dias, no dia {{3}}.* Realize o pagamento de preferência *antes do vencimento para evitar multas e juros.* Código de barras do boleto: {{4}} Caso tenha alguma dúvida entre em contato neste WhatsApp Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e310]:
+                - button "Visualizar" [ref=e311]
+                - button "Editar" [ref=e312]
+                - button "Excluir" [ref=e313]
+            - generic [ref=e331] [cursor=pointer]:
+              - generic [ref=e332]:
+                - generic [ref=e333]:
+                  - generic [ref=e334]: fatura_atraso_15dias
+                  - generic [ref=e335]: APPROVED
+                  - generic [ref=e336]: pt_BR
+                  - generic "UTILITY" [ref=e337]
+                  - generic [ref=e338]: Buttons
+                - paragraph [ref=e339]: "Olá {{1}}! O seu boleto da MAIS SAÚDE 24 HORAS ultrapassou o prazo permitido e será executado. Realize o pagamento hoje e envie uma cópia do comprovante com urgência para evitar protesto e cobranças extrajudiciais. Valor de {{2}} venceu no dia {{3}}. Lembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto juntamente com serasa e spc. Código de barras do boleto: {{4}} Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e340]:
+                - button "Visualizar" [ref=e341]
+                - button "Editar" [ref=e342]
+                - button "Excluir" [ref=e343]
+            - generic [ref=e360] [cursor=pointer]:
+              - generic [ref=e361]:
+                - generic [ref=e362]:
+                  - generic [ref=e363]: fatura_emissao
+                  - generic [ref=e364]: APPROVED
+                  - generic [ref=e365]: pt_BR
+                  - generic "UTILITY" [ref=e366]
+                  - generic [ref=e367]: Buttons
+                - paragraph [ref=e368]: "Olá {{1}}! Sua fatura da MAIS SAÚDE 24 HORAS foi emitida. O valor de {{2}} vence no dia {{3}}. Código de barras do boleto: {{4}} Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e369]:
+                - button "Visualizar" [ref=e370]
+                - button "Editar" [ref=e371]
+                - button "Excluir" [ref=e372]
+            - generic [ref=e375] [cursor=pointer]:
+              - generic [ref=e376]:
+                - generic [ref=e377]:
+                  - generic [ref=e378]: fatura_lembrete_5dias
+                  - generic [ref=e379]: APPROVED
+                  - generic [ref=e380]: pt_BR
+                  - generic "UTILITY" [ref=e381]
+                  - generic [ref=e382]: Buttons
+                - paragraph [ref=e383]: "Olá {{1}}! Informamos que sua fatura da MAIS SAÚDE 24 HORAS, no valor de {{2}} vence em 5 dias, no dia {{3}}. Realize o pagamento antes do vencimento para evitar multas e juros. Código de barras do boleto: {{4}} Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e384]:
+                - button "Visualizar" [ref=e385]
+                - button "Editar" [ref=e386]
+                - button "Excluir" [ref=e387]
+            - generic [ref=e316] [cursor=pointer]:
+              - generic [ref=e317]:
+                - generic [ref=e318]:
+                  - generic [ref=e319]: boleto_atraso_10dias
+                  - generic [ref=e320]: APPROVED
+                  - generic [ref=e321]: pt_BR
+                  - generic "UTILITY" [ref=e322]
+                  - generic [ref=e323]: Buttons
+                - paragraph [ref=e324]: "Olá {{1}}! Seu boleto da MAIS SAÚDE 24 HORAS no valor de {{2}} venceu no dia {{3}} e ainda não identificamos o pagamento. Lembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto. Código de barras do boleto: {{4}} Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e325]:
+                - button "Visualizar" [ref=e326]
+                - button "Editar" [ref=e327]
+                - button "Excluir" [ref=e328]
+            - generic [ref=e419] [cursor=pointer]:
+              - generic [ref=e420]:
+                - generic [ref=e421]:
+                  - generic [ref=e422]: cobranca_atraso_5dias
+                  - generic [ref=e423]: APPROVED
+                  - generic [ref=e424]: pt_BR
+                  - generic "UTILITY" [ref=e425]
+                  - generic [ref=e426]: Buttons
+                - paragraph [ref=e427]: "Olá {{1}}! Queremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de {{2}} venceu no dia {{3}}. Lembrando que o boleto é registrado no banco e com a falta do pagamento o banco pode executar o título em protesto. Código de barras do boleto: {{4}} Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e428]:
+                - button "Visualizar" [ref=e429]
+                - button "Editar" [ref=e430]
+                - button "Excluir" [ref=e431]
+            - generic [ref=e404] [cursor=pointer]:
+              - generic [ref=e405]:
+                - generic [ref=e406]:
+                  - generic [ref=e407]: cobranca_vencimento_hoje
+                  - generic [ref=e408]: APPROVED
+                  - generic [ref=e409]: pt_BR
+                  - generic "UTILITY" [ref=e410]
+                  - generic [ref=e411]: Buttons
+                - paragraph [ref=e412]: "Olá {{1}}! Queremos te lembrar que a cobrança gerada pela MAIS SAÚDE 24 HORAS, no valor de {{2}} vence hoje {{3}}. Evite multas e juros, pague sua fatura em dia. Código de barras do boleto: {{4}} Telefone: (31) 98248-8131 Email: adm@atendmedbh.com.br"
+              - generic [ref=e413]:
+                - button "Visualizar" [ref=e414]
+                - button "Editar" [ref=e415]
+                - button "Excluir" [ref=e416]
+            - generic [ref=e346] [cursor=pointer]:
+              - generic [ref=e347]:
+                - generic [ref=e348]:
+                  - generic [ref=e349]: fatura_atraso_21dias
+                  - generic [ref=e350]: APPROVED
+                  - generic [ref=e351]: pt_BR
+                  - generic "UTILITY" [ref=e352]
+                - paragraph [ref=e353]: "Olá {{1}} Informamos que, devido à inadimplência, seu título foi encaminhado ao cartório de protesto e aos órgãos de proteção ao crédito (SPC e Serasa). Para regularizar sua situação e evitar restrições no CPF, entre em contato pelo WhatsApp ou telefone abaixo. Telefone: (31) 98248-8131"
+              - generic [ref=e354]:
+                - button "Visualizar" [ref=e355]
+                - button "Editar" [ref=e356]
+                - button "Excluir" [ref=e357]
+            - generic [ref=e390] [cursor=pointer]:
+              - generic [ref=e391]:
+                - generic [ref=e392]:
+                  - generic [ref=e393]: aviso_pagamento_ok
+                  - generic [ref=e394]: APPROVED
+                  - generic [ref=e395]: pt_BR
+                  - generic "UTILITY" [ref=e396]
+                - paragraph [ref=e397]: "Pagamento confirmado! Recebemos o valor de {{1}} referente à sua mensalidade do plano Mais Saúde. Obrigado por manter seus benefícios em dia."
+              - generic [ref=e398]:
+                - button "Visualizar" [ref=e399]
+                - button "Editar" [ref=e400]
+                - button "Excluir" [ref=e401]
+  - generic [ref=e450]: Templates sincronizados com sucesso!

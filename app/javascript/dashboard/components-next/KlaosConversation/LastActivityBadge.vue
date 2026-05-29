@@ -10,29 +10,64 @@
 //   - vermelho: > 24h (urgente)
 //
 // Multi-tenant nato — vale pra qualquer conta sem config.
-import { computed } from 'vue';
+//
+// Tick 1s ao vivo (paridade Kualiz "relógio"): um único setInterval global
+// (módulo-level) atualiza um ref reativo compartilhado entre TODAS as
+// instâncias do badge — N cards na lista usam 1 timer, não N timers.
+import { computed, ref, onUnmounted } from 'vue';
+
+const sharedNow = ref(Date.now());
+let tickerInterval = null;
+let tickerRefs = 0;
+const useTicker = () => {
+  tickerRefs += 1;
+  if (!tickerInterval) {
+    tickerInterval = setInterval(() => {
+      sharedNow.value = Date.now();
+    }, 1000);
+  }
+  onUnmounted(() => {
+    tickerRefs -= 1;
+    if (tickerRefs <= 0 && tickerInterval) {
+      clearInterval(tickerInterval);
+      tickerInterval = null;
+      tickerRefs = 0;
+    }
+  });
+};
 
 const props = defineProps({
   timestamp: { type: [Number, String], default: null },
 });
 
-const ageMinutes = computed(() => {
+useTicker();
+
+const ageSeconds = computed(() => {
   if (!props.timestamp) return null;
   const ts = typeof props.timestamp === 'number'
     ? props.timestamp * 1000
     : new Date(props.timestamp).getTime();
-  return Math.floor((Date.now() - ts) / 60000);
+  return Math.max(0, Math.floor((sharedNow.value - ts) / 1000));
 });
 
+const ageMinutes = computed(() =>
+  ageSeconds.value === null ? null : Math.floor(ageSeconds.value / 60)
+);
+
 const label = computed(() => {
-  const m = ageMinutes.value;
-  if (m === null) return '';
-  if (m < 1) return 'agora';
-  if (m < 60) return `há ${m}min`;
+  const s = ageSeconds.value;
+  if (s === null) return '';
+  // Tick visível por segundo nas faixas curtas (paridade Kualiz "relógio").
+  if (s < 60) return `há ${s}s`;
+  const m = Math.floor(s / 60);
+  const remS = s % 60;
+  if (m < 60) return `há ${m}min ${remS}s`;
   const h = Math.floor(m / 60);
   const remM = m % 60;
   if (h < 24) {
-    return remM > 0 ? `há ${h}h${remM}min` : `há ${h}h`;
+    return remS > 0 || remM > 0
+      ? `há ${h}h ${remM}min ${remS}s`
+      : `há ${h}h`;
   }
   const d = Math.floor(h / 24);
   const remH = h % 24;

@@ -1,0 +1,155 @@
+- generic [ref=e1]:
+  - generic [ref=e8]:
+    - complementary [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - button "Mais Saúde 24h" [ref=e16] [cursor=pointer]:
+            - generic [ref=e17]: Mais Saúde 24h
+        - generic [ref=e19]:
+          - link "Pesquisar..." [ref=e20] [cursor=pointer]:
+            - /url: /app/accounts/10/search
+            - generic [ref=e22]: Pesquisar...
+          - button [ref=e24] [cursor=pointer]
+      - navigation [ref=e26]:
+        - list [ref=e27]:
+          - listitem [ref=e28] [cursor=pointer]:
+            - button "Caixa de Entrada 2" [ref=e29]:
+              - generic [ref=e32]:
+                - generic [ref=e33]: Caixa de Entrada
+                - generic [ref=e34]: "2"
+          - listitem [ref=e35] [cursor=pointer]:
+            - button "Conversas" [ref=e36]:
+              - generic [ref=e40]: Conversas
+            - list [ref=e42]:
+              - listitem [ref=e43]:
+                - link "Todas as conversas" [ref=e44]:
+                  - /url: /app/accounts/10/dashboard
+              - listitem [ref=e46]:
+                - link "Menções" [ref=e47]:
+                  - /url: /app/accounts/10/mentions/conversations
+              - listitem [ref=e49]:
+                - link "Não atendidas" [ref=e50]:
+                  - /url: /app/accounts/10/unattended/conversations
+              - generic:
+                - generic: Times
+              - list [ref=e52]:
+                - listitem [ref=e54]
+              - generic:
+                - generic: Canais
+              - list [ref=e57]:
+                - generic [ref=e58]
+              - generic:
+                - generic: Etiquetas
+              - list [ref=e84]:
+                - generic [ref=e85]
+                - generic
+          - listitem [ref=e181] [cursor=pointer]:
+            - button "Contatos" [ref=e182]:
+              - generic [ref=e186]: Contatos
+          - listitem [ref=e187] [cursor=pointer]:
+            - button "Relatórios" [ref=e188]:
+              - generic [ref=e192]: Relatórios
+          - listitem [ref=e193] [cursor=pointer]:
+            - button "Campanhas" [ref=e194]:
+              - generic [ref=e198]: Campanhas
+          - listitem [ref=e199] [cursor=pointer]:
+            - button "Central de Ajuda" [ref=e200]:
+              - generic [ref=e204]: Central de Ajuda
+          - listitem [ref=e205] [cursor=pointer]:
+            - button "Configurações" [ref=e206]:
+              - generic [ref=e210]: Configurações
+      - button "Matheus matheus@matheus.pro.br" [ref=e214] [cursor=pointer]:
+        - img [ref=e217]:
+          - generic [ref=e218]: M
+        - generic [ref=e219]:
+          - generic [ref=e220]: Matheus
+          - generic [ref=e221]: matheus@matheus.pro.br
+    - main [ref=e224]:
+      - generic [ref=e226]:
+        - generic [ref=e227]:
+          - generic [ref=e228]:
+            - button "Anterior" [ref=e229] [cursor=pointer]: Anterior
+            - img [ref=e232]:
+              - generic [ref=e233]: G
+            - generic [ref=e234]:
+              - generic [ref=e236]: Gustavo
+              - generic "KLaOS Cobranca" [ref=e238]:
+                - generic [ref=e240]: KLaOS Cobranca
+          - generic [ref=e242]:
+            - generic [ref=e244]:
+              - button "Resolver" [ref=e245] [cursor=pointer]:
+                - generic [ref=e246]: Resolver
+              - button [ref=e247] [cursor=pointer]
+            - button [ref=e250] [cursor=pointer]
+        - generic [ref=e252]:
+          - generic [ref=e253]:
+            - list [ref=e254]:
+              - listitem [ref=e255]
+              - paragraph [ref=e262]:
+                - emphasis [ref=e263]: Lara
+                - text: ":"
+                - text: Bom dia! Consta
+                - strong [ref=e264]: 1 boleto vencido há 1 dia
+                - text: no CPF
+                - strong [ref=e265]: 710.500.866-00
+                - text: ", no valor de"
+                - strong [ref=e266]: R$ 94,90
+                - text: ", com vencimento em"
+                - strong [ref=e267]: 22/04/2026
+                - text: .
+              - generic [ref=e269]:
+                - img [ref=e272]
+                - generic [ref=e275]
+              - generic [ref=e288]:
+                - paragraph [ref=e291]
+                - time [ref=e294]: Apr 23, 10:33 AM
+              - generic "Conversa foi reaberta por Matheus" [ref=e298]
+              - generic "Matheus atribuiu a si mesmo essa conversa" [ref=e302]
+              - generic [ref=e304]:
+                - img [ref=e307]
+                - generic [ref=e310]
+              - generic "Conversa foi reaberta por Matheus" [ref=e323]
+              - generic [ref=e327]:
+                - paragraph [ref=e330]: me transfere para Humano
+                - time [ref=e333]: Apr 23, 12:27 PM
+              - paragraph [ref=e340]: /limpar
+              - generic [ref=e344]:
+                - img [ref=e346]
+                - time [ref=e349]: Apr 23, 12:29 PM
+              - generic [ref=e353]:
+                - paragraph [ref=e356]: me transfere para Humano
+                - time [ref=e359]: Apr 23, 12:30 PM
+              - generic "Conversa devolvida ao bot por Matheus" [ref=e363]
+              - generic [ref=e367]:
+                - paragraph [ref=e370]: me transfere para Humano
+                - time [ref=e373]: Apr 23, 1:19 PM
+              - paragraph [ref=e380]: Esta mensagem foi excluída
+              - generic [ref=e382]:
+                - img [ref=e385]
+                - generic [ref=e388]
+              - generic [ref=e396]:
+                - img [ref=e399]
+                - generic [ref=e402]
+              - generic [ref=e412]:
+                - paragraph [ref=e415]: Gostaria de realizar o cancelamento do meu contrato
+                - time [ref=e418]: Apr 23, 1:35 PM
+              - generic "Atribuído a Cancelamento por Daniel Limeira" [ref=e422]
+              - generic "Conversa foi reaberta por Daniel Limeira" [ref=e426]
+              - paragraph [ref=e433]:
+                - emphasis [ref=e434]: Lara
+                - text: ":"
+                - text: Vou te transferir para o setor de cancelamentos, por gentileza aguardar.
+              - generic [ref=e436]:
+                - img [ref=e439]
+                - generic [ref=e442]
+            - generic [ref=e452]:
+              - generic [ref=e453]:
+                - button "Responder Mensagem Privada" [ref=e454] [cursor=pointer]
+                - generic [ref=e458]
+              - paragraph [ref=e469]: Shift + enter para nova linha. Digite '/' para selecionar uma Resposta Pronta.
+              - generic [ref=e470]:
+                - generic [ref=e471]
+                - button "Enviar (CTRL + ↵)" [disabled] [ref=e486]
+          - button [ref=e489] [cursor=pointer]
+  - generic [ref=e495]: Apr 23, 1:35 PM

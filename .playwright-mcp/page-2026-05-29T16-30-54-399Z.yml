@@ -1,0 +1,188 @@
+- generic [ref=e12]:
+  - complementary [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - img [ref=e17]
+        - button "Mais Saúde 24h" [ref=e20] [cursor=pointer]:
+          - generic [ref=e21]: Mais Saúde 24h
+      - generic [ref=e23]:
+        - link "Pesquisar..." [ref=e24] [cursor=pointer]:
+          - /url: /app/accounts/10/search
+          - generic [ref=e26]: Pesquisar...
+        - button [ref=e28] [cursor=pointer]
+    - navigation [ref=e30]:
+      - list [ref=e31]:
+        - listitem [ref=e32] [cursor=pointer]:
+          - button "Caixa de Entrada" [ref=e33]:
+            - generic [ref=e37]: Caixa de Entrada
+        - listitem [ref=e38] [cursor=pointer]:
+          - button "Conversas" [ref=e39]:
+            - generic [ref=e43]: Conversas
+        - listitem [ref=e44] [cursor=pointer]:
+          - button "Contatos" [ref=e45]:
+            - generic [ref=e49]: Contatos
+        - listitem [ref=e50] [cursor=pointer]:
+          - button "Relatórios" [ref=e51]:
+            - generic [ref=e55]: Relatórios
+        - listitem [ref=e56] [cursor=pointer]:
+          - button "Campanhas" [ref=e57]:
+            - generic [ref=e61]: Campanhas
+        - listitem [ref=e62] [cursor=pointer]:
+          - button "Central de Ajuda" [ref=e63]:
+            - generic [ref=e67]: Central de Ajuda
+        - listitem [ref=e68] [cursor=pointer]:
+          - button "Configurações" [ref=e69]:
+            - generic [ref=e73]: Configurações
+          - list [ref=e75]:
+            - listitem [ref=e76]:
+              - link "Conta" [ref=e77]:
+                - /url: /app/accounts/10/settings/general
+                - generic [ref=e80]: Conta
+            - listitem [ref=e81]:
+              - link "Formato do Nome" [ref=e82]:
+                - /url: /app/accounts/10/settings/klaos-message-prefix
+                - generic [ref=e85]: Formato do Nome
+            - listitem [ref=e86]:
+              - link "Saúde do WhatsApp" [ref=e87]:
+                - /url: /app/accounts/10/settings/klaos-meta-health
+                - generic [ref=e90]: Saúde do WhatsApp
+            - listitem [ref=e91]:
+              - link "Agentes" [ref=e92]:
+                - /url: /app/accounts/10/settings/agents/list
+                - generic [ref=e95]: Agentes
+            - listitem [ref=e96]:
+              - link "Times" [ref=e97]:
+                - /url: /app/accounts/10/settings/teams/list
+                - generic [ref=e100]: Times
+            - listitem [ref=e101]:
+              - link "Caixas de Entrada" [ref=e102]:
+                - /url: /app/accounts/10/settings/inboxes/list
+                - generic [ref=e105]: Caixas de Entrada
+            - listitem [ref=e106]:
+              - link "Conexões WhatsApp" [ref=e107]:
+                - /url: /app/accounts/10/settings/whatsapp-connections
+                - generic [ref=e110]: Conexões WhatsApp
+            - listitem [ref=e111]:
+              - link "Etiquetas" [ref=e112]:
+                - /url: /app/accounts/10/settings/labels/list
+                - generic [ref=e115]: Etiquetas
+            - listitem [ref=e116]:
+              - link "Atributos Personalizados" [ref=e117]:
+                - /url: /app/accounts/10/settings/custom-attributes/list
+                - generic [ref=e120]: Atributos Personalizados
+            - listitem [ref=e121]:
+              - link "Automação" [ref=e122]:
+                - /url: /app/accounts/10/settings/automation/list
+                - generic [ref=e125]: Automação
+            - listitem [ref=e126]:
+              - link "Robôs" [ref=e127]:
+                - /url: /app/accounts/10/settings/agent-bots
+                - generic [ref=e130]: Robôs
+            - listitem [ref=e131]:
+              - link "Macros" [ref=e132]:
+                - /url: /app/accounts/10/settings/macros
+                - generic [ref=e135]: Macros
+            - listitem [ref=e136]:
+              - link "Respostas Prontas" [ref=e137]:
+                - /url: /app/accounts/10/settings/canned-response/list
+                - generic [ref=e140]: Respostas Prontas
+            - listitem [ref=e141]:
+              - link "Integrações" [ref=e142]:
+                - /url: /app/accounts/10/settings/integrations
+                - generic [ref=e145]: Integrações
+            - listitem [ref=e146]:
+              - link "Fluxo de Conversas" [ref=e147]:
+                - /url: /app/accounts/10/settings/conversation-workflow
+                - generic [ref=e150]: Fluxo de Conversas
+    - button "Matheus matheus@matheus.pro.br" [ref=e154] [cursor=pointer]:
+      - img [ref=e157]:
+        - generic [ref=e158]: M
+      - generic [ref=e159]:
+        - generic [ref=e160]: Matheus
+        - generic [ref=e161]: matheus@matheus.pro.br
+  - main [ref=e164]:
+    - generic [ref=e167]:
+      - heading "Conta" [level=1] [ref=e170]
+      - generic [ref=e172]:
+        - heading "Configurações gerais" [level=4] [ref=e175]
+        - generic [ref=e178]:
+          - generic [ref=e179]:
+            - generic [ref=e180]: Nome da Conta
+            - textbox "Nome da sua conta" [ref=e184]: Mais Saúde 24h
+          - generic [ref=e185]:
+            - generic [ref=e186]: Idioma do site
+            - combobox [ref=e189]:
+              - option "العربية (ar)"
+              - option "български (bg)"
+              - option "Català (ca)"
+              - option "čeština (cs)"
+              - option "dansk (da)"
+              - option "Deutsch (de)"
+              - option "ελληνικά (el)"
+              - option "English (en)"
+              - option "Español (es)"
+              - option "فارسی (fa)"
+              - option "suomi, suomen kieli (fi)"
+              - option "Français (fr)"
+              - option "עִברִית (he)"
+              - option "magyar nyelv (hu)"
+              - option "Bahasa Indonesia (id)"
+              - option "íslenska (is)"
+              - option "Italiano (it)"
+              - option "日本語 (ja)"
+              - option "한국어 (ko)"
+              - option "lietuvių (lt)"
+              - option "latviešu valoda (lv)"
+              - option "മലയാളം (ml)"
+              - option "Nederlands (nl)"
+              - option "norsk (no)"
+              - option "język polski (pl)"
+              - option "Português (pt)"
+              - option "Português Brasileiro (pt-BR)" [selected]
+              - option "Română (ro)"
+              - option "русский (ru)"
+              - option "slovenčina (sk)"
+              - option "Српски (sr)"
+              - option "Svenska (sv)"
+              - option "தமிழ் (ta)"
+              - option "ภาษาไทย (th)"
+              - option "Türkçe (tr)"
+              - option "украї́нська мо́ва (uk)"
+              - option "Tiếng Việt (vi)"
+              - option "中文 (zh-CN)"
+              - option "中文 (台湾) (zh-TW)"
+          - button "Atualizar configurações" [ref=e191] [cursor=pointer]
+      - generic [ref=e194]:
+        - generic [ref=e195]:
+          - heading "Manter agentes online até logout manual" [level=3] [ref=e196]
+          - switch "Alternar botão" [checked] [ref=e198] [cursor=pointer]:
+            - generic [ref=e199]: Alternar botão
+        - paragraph [ref=e202]: Quando ligado, agentes desta conta não saem para offline automaticamente por inatividade — permanecem online até clicarem em Sair. Útil para operações onde o atendente fica logado o turno todo. O comportamento individual de cada agente em "Perfil" volta a valer se este toggle for desligado.
+      - generic [ref=e205]:
+        - heading "Rótulo da aba \"Não atribuídas\"" [level=3] [ref=e207]
+        - paragraph [ref=e208]: "Personalize o nome da aba \"Não atribuídas\" da lista de conversas para a sua operação. Exemplos: \"Inteligência Artificial\" (se você usa bot), \"Triagem\", \"Aguardando humano\". Deixe em branco para usar o padrão."
+        - generic [ref=e209]:
+          - textbox "Não atribuídas (padrão)" [ref=e211]: I.A.
+          - button "Salvar" [ref=e212] [cursor=pointer]:
+            - generic [ref=e213]: Salvar
+      - generic [ref=e216]:
+        - generic [ref=e217]:
+          - heading "Alerta sonoro ao reabrir conversa adiada" [level=3] [ref=e218]
+          - switch "Alternar botão" [ref=e220] [cursor=pointer]:
+            - generic [ref=e221]: Alternar botão
+        - paragraph [ref=e224]: Quando ligado, ao voltar uma conversa do estado "Adiada" para "Aberta", toca um som e a card da conversa fica pulsando na lista por 1 minuto para chamar atenção do agente. Útil para operações que usam o adiamento como follow-up agendado.
+      - generic [ref=e227]:
+        - generic [ref=e228]:
+          - heading "Auto-atribuir ao enviar template" [level=3] [ref=e229]
+          - switch "Alternar botão" [ref=e231] [cursor=pointer]:
+            - generic [ref=e232]: Alternar botão
+        - paragraph [ref=e235]: Quando ligado, ao disparar um template (notificação ativa) numa conversa sem agente atribuído, a conversa é automaticamente atribuída ao agente que enviou. A conversa aparece em "Minhas" na hora — útil para operações de cobrança / disparo ativo onde quem mandou precisa acompanhar a resposta.
+      - generic [ref=e236]:
+        - generic [ref=e238]:
+          - heading "ID da Conta" [level=4] [ref=e239]
+          - paragraph [ref=e240]: Este ID é necessário se você está construindo uma integração baseada em API
+        - generic [ref=e243]:
+          - button "Copiar" [ref=e245] [cursor=pointer]:
+            - generic [ref=e246]: Copiar
+          - code [ref=e248]: "10"
+      - generic [ref=e250]: v4.11.2Build unknown
