@@ -44,7 +44,7 @@ let alertAudio = null;
 const initAudio = () => {
   try {
     // Reutiliza o arquivo de notificação que já existe no public/audio/.
-    alertAudio = new Audio('/audio/notification.mp3');
+    alertAudio = new Audio('/audio/dashboard/ding.mp3');
     alertAudio.volume = 0.6;
   } catch (e) {
     alertAudio = null;
