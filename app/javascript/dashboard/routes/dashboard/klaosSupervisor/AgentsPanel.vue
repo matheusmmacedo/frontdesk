@@ -15,10 +15,12 @@
 //     o último refresh ao online_today_s + busy_today_s do user "live")
 //
 // Multi-tenant nato.
+// Usa window.axios global que tem os auth headers Devise Token Auth
+// (access-token / client / uid / expiry / token-type). Import direto
+// de 'axios' cria instância nova sem auth e bate 401.
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
-import axios from 'axios';
 
 const accountId = useMapGetter('getCurrentAccountId');
 
@@ -31,7 +33,7 @@ let tickerInterval = null;
 
 const fetchData = async () => {
   try {
-    const { data } = await axios.get(
+    const { data } = await window.axios.get(
       `/api/custom/v1/accounts/${accountId.value}/supervisor/agents`
     );
     payload.value = data;
@@ -121,7 +123,7 @@ const forceStatus = async (row, newStatus) => {
       : 'colocar online';
   if (!window.confirm(`Tem certeza que quer ${action} ${row.name}?`)) return;
   try {
-    await axios.post(
+    await window.axios.post(
       `/api/custom/v1/accounts/${accountId.value}/supervisor/agents/${row.id}/force_status`,
       { status: newStatus }
     );
