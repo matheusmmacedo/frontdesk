@@ -2262,6 +2262,17 @@ const assigneeTabItems = computed(() => {
     reason: 'O.9 last-activity-badge: substitui TimeAgo por badge colorido por SLA',
   },
 
+  // === KLaOS — i18n: tradução SNOOZE_PLACEHOLDER em pt_BR (faltava upstream) ===
+  // O ninja-keys do modal Adiar usava placeholder "Type a time e.g. tomorrow,
+  // 2 hours, next friday, jan 15..." em inglês porque a chave
+  // COMMAND_BAR.SNOOZE_PLACEHOLDER NÃO estava traduzida em pt_BR/generalSettings.json.
+  {
+    id: '/i18n/locale/pt_BR/generalSettings.json',
+    from: '    "SEARCH_PLACEHOLDER": "Pesquisar ou pular para",\n    "SECTIONS": {',
+    to: '    "SEARCH_PLACEHOLDER": "Pesquisar ou pular para",\n    "SNOOZE_PLACEHOLDER": "Digite um horário ex.: amanhã, 2 horas, próxima sexta, 15 jan...",\n    "SECTIONS": {',
+    reason: 'snooze-placeholder-i18n: traduz SNOOZE_PLACEHOLDER em pt_BR',
+  },
+
   // === KLaOS — Snooze: data-attr na ConversationCard pro pulse ===
   // Adiciona data-klaos-conversation-id no root da card pra o componente
   // SnoozeReopenAlert achar e aplicar/remover a CSS class .klaos-pulse
