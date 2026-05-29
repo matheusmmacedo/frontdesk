@@ -53,10 +53,12 @@ const dismissAlert = id => {
   activeAlerts.value = activeAlerts.value.filter(a => a.id !== id);
 };
 
-const openConversation = convId => {
+const openConversation = displayId => {
   const accountId = currentAccountId.value;
-  if (!accountId || !convId) return;
-  window.location.href = `/app/accounts/${accountId}/conversations/${convId}`;
+  if (!accountId || !displayId) return;
+  // URL do Chatwoot usa display_id (visível, sequencial por conta), NÃO o id
+  // interno do model. Backend manda os dois no payload.
+  window.location.href = `/app/accounts/${accountId}/conversations/${displayId}`;
 };
 
 // Áudio: usa o ding do Chatwoot que já existe em public/audio/dashboard.
@@ -158,21 +160,29 @@ const pulseConversationCard = convId => {
 const handleReopen = conversation => {
   const senderName =
     conversation.meta?.sender?.name || `Conv #${conversation.id}`;
+  // display_id é o ID público (sequencial por conta) usado nas URLs. id
+  // interno é só pra match no data-attr da card. Se broadcast custom
+  // mandou ambos, usa display_id; senão fallback pro id (cenário do
+  // test hook manual).
+  const displayId = conversation.displayId || conversation.id;
+  const internalId = conversation.id;
+
   // eslint-disable-next-line no-console
   console.warn(
     '[KlaosSnoozeReopenAlert] CONVERSA VOLTOU DO ADIAMENTO',
-    conversation.id,
+    `internal=${internalId}`,
+    `display=${displayId}`,
     senderName
   );
 
   playSoundLoud();
   startTitlePulse(senderName);
-  fireBrowserNotification(senderName, conversation.id);
-  pulseConversationCard(conversation.id);
+  fireBrowserNotification(senderName, displayId);
+  pulseConversationCard(internalId);
   // Banner fixed no topo — NÃO some sozinho. Visível mesmo com aba ativa.
   activeAlerts.value.push({
-    id: `${conversation.id}-${Date.now()}`,
-    conversationId: conversation.id,
+    id: `${internalId}-${Date.now()}`,
+    displayId, // pro botão Abrir navegar correto
     senderName,
     when: new Date(),
   });
@@ -209,6 +219,7 @@ const onKlaosSnoozeReopened = data => {
   if (!isEnabled.value) return;
   handleReopen({
     id: data?.conversation_id || data?.id,
+    displayId: data?.conversation_display_id,
     meta: { sender: { name: data?.sender_name || 'Conv' } },
   });
 };
@@ -296,7 +307,7 @@ onBeforeUnmount(() => {
         <span class="klaos-snooze-banner__content">
           🔔 Conversa com <b>{{ alert.senderName }}</b> voltou do adiamento — atender agora?
         </span>
-        <button class="klaos-snooze-banner__open" @click="openConversation(alert.conversationId)">
+        <button class="klaos-snooze-banner__open" @click="openConversation(alert.displayId)">
           Abrir
         </button>
         <button class="klaos-snooze-banner__close" @click="dismissAlert(alert.id)">
