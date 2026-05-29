@@ -2,11 +2,15 @@
 // KLaOS — Alerta de retorno de conversa adiada (Item snooze, B5).
 //
 // Quando uma conversa volta do estado "Adiada" (snoozed → open), este
-// componente:
-//   1. Toca um som curto pra avisar o agente
-//   2. Mostra um toast com link pra abrir a conversa
-//   3. Adiciona CSS class `klaos-pulse` na card da lista (pulsa por 60s
-//      pra chamar atenção)
+// componente dispara um alerta ESCANDALOSO pra garantir que o agente vê:
+//   1. document.title piscando "🔔 Conversa voltou!" alternado com original
+//      (4 segundos, 8 piscadas) — chama atenção mesmo se a aba tá em
+//      background
+//   2. Notification API do browser (push nativo, aparece mesmo com aba
+//      minimizada — requer permissão prévia)
+//   3. Som tocando 3x em sequência (autoplay policy permitindo)
+//   4. Toast no canto da tela
+//   5. CSS class .klaos-pulse na card da conv na lista (pulsa por 60s)
 //
 // Multi-tenant: liga/desliga via toggle por conta
 // `account.settings.snooze_reopen_alert` (default OFF — opt-in por conta).
@@ -18,10 +22,8 @@
 import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
-import { useRouter } from 'vue-router';
 
 const store = useStore();
-const router = useRouter();
 const currentAccountId = useMapGetter('getCurrentAccountId');
 
 const account = computed(() =>
@@ -36,38 +38,86 @@ const isEnabled = computed(
 // status diferente de 'snoozed' (memória controlada).
 const prevStatus = ref(new Map());
 
-// Set de conversas pulsando (CSS klaos-pulse). Limpa após 60s.
-const pulsingIds = ref(new Set());
-
-// Áudio: usa o mesmo arquivo padrão do Chatwoot pra notificações.
+// Áudio: usa o ding do Chatwoot que já existe em public/audio/dashboard.
 let alertAudio = null;
 const initAudio = () => {
   try {
-    // Reutiliza o arquivo de notificação que já existe no public/audio/.
     alertAudio = new Audio('/audio/dashboard/ding.mp3');
-    alertAudio.volume = 0.6;
+    alertAudio.volume = 1.0;
   } catch (e) {
     alertAudio = null;
   }
 };
 
-const playSound = () => {
+const playSoundLoud = async () => {
   if (!alertAudio) return;
+  for (let i = 0; i < 3; i += 1) {
+    try {
+      alertAudio.currentTime = 0;
+      await alertAudio.play().catch(() => {});
+    } catch (e) {
+      /* noop */
+    }
+    await new Promise(r => setTimeout(r, 800));
+  }
+};
+
+// Pisca document.title. Faz 8 ciclos (4s total).
+let originalTitle = null;
+let titleInterval = null;
+const startTitlePulse = senderName => {
+  if (titleInterval) clearInterval(titleInterval);
+  if (!originalTitle) originalTitle = document.title;
+  const alertTitle = `🔔 ${senderName} voltou!`;
+  let toggled = false;
+  let count = 0;
+  titleInterval = setInterval(() => {
+    document.title = toggled ? originalTitle : alertTitle;
+    toggled = !toggled;
+    count += 1;
+    if (count >= 16) {
+      // 8 piscadas (16 trocas a 500ms cada = 8s)
+      clearInterval(titleInterval);
+      titleInterval = null;
+      document.title = originalTitle;
+    }
+  }, 500);
+};
+
+// Notification API — push nativo. Pede permissão na 1a vez.
+let notificationPermissionAsked = false;
+const ensureNotifPermission = async () => {
+  if (notificationPermissionAsked) return;
+  notificationPermissionAsked = true;
+  if ('Notification' in window && Notification.permission === 'default') {
+    try {
+      await Notification.requestPermission();
+    } catch (e) {
+      /* noop */
+    }
+  }
+};
+
+const fireBrowserNotification = (senderName, convId) => {
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
   try {
-    alertAudio.currentTime = 0;
-    alertAudio.play().catch(() => {
-      // autoplay policy do browser pode bloquear. Silencioso — agente
-      // verá o toast mesmo sem som.
+    const notif = new Notification(`🔔 ${senderName} voltou do adiamento`, {
+      body: `Clique pra abrir. Conversa #${convId}.`,
+      icon: '/favicon-32x32.png',
+      tag: `klaos-snooze-reopen-${convId}`,
+      requireInteraction: true,
     });
+    notif.onclick = () => {
+      window.focus();
+      notif.close();
+    };
   } catch (e) {
     /* noop */
   }
 };
 
 const pulseConversationCard = convId => {
-  pulsingIds.value.add(convId);
-  // Tenta achar a card no DOM e aplicar a classe. Usa attribute selector
-  // setado pelo patch em ConversationCard.vue.
   const apply = () => {
     const card = document.querySelector(
       `[data-klaos-conversation-id="${convId}"]`
@@ -75,10 +125,8 @@ const pulseConversationCard = convId => {
     if (card) card.classList.add('klaos-pulse');
   };
   apply();
-  // Re-tenta após 1s caso a card só apareça depois (filtros, infinite scroll).
   setTimeout(apply, 1000);
   setTimeout(() => {
-    pulsingIds.value.delete(convId);
     const card = document.querySelector(
       `[data-klaos-conversation-id="${convId}"]`
     );
@@ -87,11 +135,20 @@ const pulseConversationCard = convId => {
 };
 
 const handleReopen = conversation => {
-  playSound();
-  pulseConversationCard(conversation.id);
   const senderName =
-    conversation.meta?.sender?.name || `#${conversation.id}`;
-  useAlert(`Conversa com ${senderName} voltou do adiamento.`);
+    conversation.meta?.sender?.name || `Conv #${conversation.id}`;
+  // eslint-disable-next-line no-console
+  console.warn(
+    '[KlaosSnoozeReopenAlert] CONVERSA VOLTOU DO ADIAMENTO',
+    conversation.id,
+    senderName
+  );
+
+  playSoundLoud();
+  startTitlePulse(senderName);
+  fireBrowserNotification(senderName, conversation.id);
+  pulseConversationCard(conversation.id);
+  useAlert(`🔔 ${senderName} voltou do adiamento — clique pra atender.`);
 };
 
 const conversationsList = computed(
@@ -100,7 +157,7 @@ const conversationsList = computed(
 
 watch(
   conversationsList,
-  (newList, oldList) => {
+  newList => {
     if (!isEnabled.value) {
       // Atualiza prevStatus mesmo desligado pra não disparar avalanche
       // se o admin ligar o toggle.
@@ -118,8 +175,22 @@ watch(
   { deep: true }
 );
 
-onMounted(initAudio);
+onMounted(() => {
+  initAudio();
+  ensureNotifPermission();
+  // Hook global pra debug manual: window.__klaosTestSnoozeReopen('Nome')
+  window.__klaosTestSnoozeReopen = name => {
+    handleReopen({
+      id: 999999,
+      meta: { sender: { name: name || 'Teste KLaOS' } },
+    });
+  };
+});
 onBeforeUnmount(() => {
+  if (titleInterval) {
+    clearInterval(titleInterval);
+    if (originalTitle) document.title = originalTitle;
+  }
   if (alertAudio) {
     try {
       alertAudio.pause();
@@ -128,25 +199,24 @@ onBeforeUnmount(() => {
     }
     alertAudio = null;
   }
+  delete window.__klaosTestSnoozeReopen;
 });
 </script>
 
 <template>
-  <!-- Sem UI — escuta passiva. Renderiza estilo global pulso pras cards. -->
+  <!-- Sem UI — escuta passiva. Estilo global pra pulso das cards. -->
   <teleport to="head">
-    <style>
-      @keyframes klaos-pulse-anim {
-        0%,
-        100% {
-          background-color: transparent;
+    <component :is="'style'">
+      {{
+        `@keyframes klaos-pulse-anim {
+          0%, 100% { background-color: transparent; }
+          50% { background-color: rgba(251, 191, 36, 0.25); }
         }
-        50% {
-          background-color: rgba(251, 191, 36, 0.18);
-        }
-      }
-      .klaos-pulse {
-        animation: klaos-pulse-anim 1s ease-in-out infinite;
-      }
-    </style>
+        .klaos-pulse {
+          animation: klaos-pulse-anim 0.8s ease-in-out infinite;
+          box-shadow: inset 4px 0 0 #f59e0b;
+        }`
+      }}
+    </component>
   </teleport>
 </template>
