@@ -103,6 +103,51 @@ const PATCHES = [
     to: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';\nimport klaosMessagePrefix from './klaosMessagePrefix/klaosMessagePrefix.routes';\nimport klaosMetaHealth from './klaosMetaHealth/klaosMetaHealth.routes';",
     reason: 'register KLaOS message prefix + meta health settings route imports',
   },
+
+  // === KLaOS — Painel de Agentes (O.1): item no Sidebar (admin-only) ===
+  // Coloca o link dentro do grupo Reports porque é supervisão. Permission
+  // 'administrator' já vem na route meta — sidebar só decide a renderização.
+  {
+    id: '/sidebar/Sidebar.vue',
+    from: `        {
+          name: 'Reports Bot',
+          label: t('SIDEBAR.REPORTS_BOT'),
+          to: accountScopedRoute('bot_reports'),
+        },
+      ],
+    },
+    {
+      name: 'Campaigns',`,
+    to: `        {
+          name: 'Reports Bot',
+          label: t('SIDEBAR.REPORTS_BOT'),
+          to: accountScopedRoute('bot_reports'),
+        },
+        {
+          name: 'KLaOS Supervisor Agents',
+          label: 'Painel de Agentes',
+          to: accountScopedRoute('klaos_supervisor_agents'),
+        },
+      ],
+    },
+    {
+      name: 'Campaigns',`,
+    reason: 'klaos-supervisor: item Painel de Agentes no grupo Reports do sidebar',
+  },
+
+  // === KLaOS — Painel de Agentes (O.1): registra rota top-level ===
+  {
+    id: '/dashboard/dashboard.routes.js',
+    from: "import settings from './settings/settings.routes';",
+    to: "import settings from './settings/settings.routes';\nimport klaosSupervisor from './klaosSupervisor/klaosSupervisor.routes';",
+    reason: 'klaos-supervisor: importa routes do Painel de Agentes',
+  },
+  {
+    id: '/dashboard/dashboard.routes.js',
+    from: '        ...campaignsRoutes.routes,\n      ],',
+    to: '        ...campaignsRoutes.routes,\n        ...klaosSupervisor.routes,\n      ],',
+    reason: 'klaos-supervisor: registra route Painel de Agentes',
+  },
   {
     id: '/settings/settings.routes.js',
     from: '...whatsappConnections.routes,\n  ],\n};',
