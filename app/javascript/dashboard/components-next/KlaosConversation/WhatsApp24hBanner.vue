@@ -62,34 +62,45 @@ const openTemplatePicker = () => {
   border-left: 4px solid #d97706;
   color: #78350f;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  min-width: 0;
+  flex-wrap: wrap;
 }
 .klaos-wa24h-banner__icon {
-  font-size: 22px;
+  font-size: 20px;
   animation: klaos-wa24h-pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
 }
 .klaos-wa24h-banner__title {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   color: #78350f;
+  line-height: 1.3;
 }
 .klaos-wa24h-banner__desc {
-  font-size: 13px;
+  font-size: 12px;
   margin-top: 2px;
   color: #92400e;
+  line-height: 1.3;
 }
 .klaos-wa24h-banner__btn {
   background: #d97706;
   color: white;
   font-weight: 600;
-  font-size: 13px;
-  padding: 6px 12px;
+  font-size: 12px;
+  padding: 5px 10px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .klaos-wa24h-banner__btn:hover {
   background: #b45309;
+}
+/* Em telas estreitas o botão vai pra próxima linha em vez de quebrar texto */
+@media (max-width: 900px) {
+  .klaos-wa24h-banner__title { font-size: 12px; }
+  .klaos-wa24h-banner__desc { font-size: 11px; }
 }
 @keyframes klaos-wa24h-pulse {
   0%, 100% { opacity: 0.6; transform: scale(1); }
