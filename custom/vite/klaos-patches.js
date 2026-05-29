@@ -1513,12 +1513,16 @@ function handleMentionClick(item = {}) {
   const list = whatsAppTemplateMessages.value.filter(template =>
     template.name.toLowerCase().includes(query.value.toLowerCase())
   );
-  // KLaOS — hierarquia personal → global → alfabético.
-  // Global vem do endpoint /usage_frequents (derivado de messages humanos).
+  // KLaOS — hierarquia: pinned (📌 manual) → personal → global → alfabético.
+  // Pinned vem de user.ui_settings.pinned_templates (array de nomes na ordem).
   if (typeof window !== 'undefined' && window.klaosGlobalFrequents) {
     window.klaosGlobalFrequents.fetch();
   }
   const user = store.getters.getCurrentUser;
+  const pinnedList =
+    (user && user.ui_settings && user.ui_settings.pinned_templates) || [];
+  const pinnedIndex = {};
+  pinnedList.forEach((name, idx) => { pinnedIndex[name] = idx; });
   const personal =
     (user && user.ui_settings && user.ui_settings.template_frequents) || {};
   const global =
@@ -1526,6 +1530,13 @@ function handleMentionClick(item = {}) {
       ? window.klaosGlobalFrequents.get('templates')
       : null) || {};
   return [...list].sort((a, b) => {
+    const piA = pinnedIndex[a.name];
+    const piB = pinnedIndex[b.name];
+    const aIsPinned = piA !== undefined;
+    const bIsPinned = piB !== undefined;
+    if (aIsPinned && !bIsPinned) return -1;
+    if (!aIsPinned && bIsPinned) return 1;
+    if (aIsPinned && bIsPinned) return piA - piB;
     const pa = personal[a.name] || 0;
     const pb = personal[b.name] || 0;
     if (pa !== pb) return pb - pa;
@@ -1534,8 +1545,34 @@ function handleMentionClick(item = {}) {
     if (ga !== gb) return gb - ga;
     return (a.name || '').localeCompare(b.name || '');
   });
-});`,
-    reason: 'template-frequents: ordena filteredTemplateMessages por user.ui_settings.template_frequents',
+});
+
+// KLaOS — verifica se um template está pinado pelo agente atual.
+const klaosIsTemplatePinned = templateName => {
+  const user = store.getters.getCurrentUser;
+  const list =
+    (user && user.ui_settings && user.ui_settings.pinned_templates) || [];
+  return list.includes(templateName);
+};
+
+// KLaOS — toggle pin/unpin do template em user.ui_settings.pinned_templates.
+const klaosTogglePinTemplate = (event, templateName) => {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  const user = store.getters.getCurrentUser;
+  if (!user || !templateName) return;
+  const allSettings = user.ui_settings || {};
+  const current = allSettings.pinned_templates || [];
+  const updated = current.includes(templateName)
+    ? current.filter(n => n !== templateName)
+    : [templateName, ...current].slice(0, 16);
+  store.dispatch('updateUISettings', {
+    uiSettings: { ...allSettings, pinned_templates: updated },
+  });
+};`,
+    reason: 'template-frequents: ordena filteredTemplateMessages com pinned > frequents',
   },
   {
     id: '/WhatsappTemplates/TemplatesPicker.vue',
@@ -1572,6 +1609,27 @@ const getTemplateBody = template => {`,
     from: `          @click="emit('onSelect', template)"`,
     to: `          @click="klaosOnSelect(template)"`,
     reason: 'template-frequents: usa wrapper klaosOnSelect no click do botão de template',
+  },
+  // === KLaOS — Pino manual de template (📌) ===
+  // Adiciona botão de pino no canto superior direito de cada template. Click
+  // alterna estado. Pinados sobem pro topo independente da frequência.
+  {
+    id: '/WhatsappTemplates/TemplatesPicker.vue',
+    from: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id">
+        <button`,
+    to: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id" class="relative">
+        <button
+          type="button"
+          class="absolute top-2 right-2 z-10 p-1.5 rounded hover:bg-n-alpha-2 transition-colors"
+          :title="klaosIsTemplatePinned(template.name) ? 'Desfixar template' : 'Fixar template no topo'"
+          @click="klaosTogglePinTemplate($event, template.name)"
+        >
+          <span :class="klaosIsTemplatePinned(template.name) ? 'text-n-amber-9' : 'text-n-slate-9'">
+            {{ klaosIsTemplatePinned(template.name) ? '📌' : '📍' }}
+          </span>
+        </button>
+        <button`,
+    reason: 'template-pin: adiciona botão 📌 de pinar template no canto do card',
   },
 
   // === KLaOS — Global Usage Frequents (hierarchia personal → global) ===
