@@ -2183,6 +2183,36 @@ const assigneeTabItems = computed(() => {
     reason: 'sort-latest: esconde dropdown de sort no UI',
   },
 
+  // === KLaOS — O.10 Banner janela 24h WhatsApp REFORÇADO ===
+  // Upstream tem banner cinza/rosa claro discreto. Agente fica travado e
+  // não saca o motivo. Substituímos por banner âmbar gritante com ícone
+  // piscante + botão "Usar template".
+  {
+    id: '/widgets/conversation/MessagesView.vue',
+    from: `    <Banner
+      v-if="!currentChat.can_reply"
+      color-scheme="alert"
+      class="mx-2 mt-2 overflow-hidden rounded-lg"
+      :banner-message="replyWindowBannerMessage"
+      :href-link="replyWindowLink"
+      :href-link-text="replyWindowLinkText"
+    />`,
+    to: `    <KlaosWhatsApp24hBanner v-if="!currentChat.can_reply" />`,
+    reason: 'O.10 wa24h-banner: substitui banner upstream discreto pelo Klaos âmbar',
+  },
+  {
+    id: '/widgets/conversation/MessagesView.vue',
+    from: "import Banner from 'dashboard/components/ui/Banner.vue';",
+    to: "import Banner from 'dashboard/components/ui/Banner.vue';\nimport KlaosWhatsApp24hBanner from 'next/KlaosConversation/WhatsApp24hBanner.vue';",
+    reason: 'O.10 wa24h-banner: import componente custom',
+  },
+  {
+    id: '/widgets/conversation/MessagesView.vue',
+    from: '    Banner,\n    ConversationLabelSuggestion,',
+    to: '    Banner,\n    KlaosWhatsApp24hBanner,\n    ConversationLabelSuggestion,',
+    reason: 'O.10 wa24h-banner: registra componente no options API',
+  },
+
   // === KLaOS — O.9 "Tempo desde última msg" badge colorido na card ===
   // Substitui o TimeAgo padrão por um badge mais destacado com faixa de
   // tempo colorida: verde <1h, cinza 1-6h, âmbar 6-24h, vermelho >24h.
