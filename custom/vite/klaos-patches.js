@@ -2148,6 +2148,66 @@ const assigneeTabItems = computed(() => {
     reason: 'empty-msg-fix: isReplyButtonDisabled exige file real do áudio',
   },
 
+  // === KLaOS — Força sort LATEST sempre (Gustavo "perdeu" outras ordens) ===
+  // Hoje o Frontdesk persiste o sort por usuário em ui_settings — se o
+  // agente troca pra "created_at_desc" sem perceber, a lista para de
+  // atualizar com mensagem nova. Decisão: forçar SEMPRE last_activity_at_desc.
+  // Multi-tenant. Esconde também o dropdown pra não dar opção de errar.
+  {
+    id: '/components/ChatList.vue',
+    from: `  activeSortBy.value = Object.values(wootConstants.SORT_BY_TYPE).includes(
+    orderBy
+  )
+    ? orderBy
+    : wootConstants.SORT_BY_TYPE.LAST_ACTIVITY_AT_DESC;`,
+    to: `  // KLaOS: sempre força LATEST, ignora ui_settings persistido. Pedido do
+  // Gustavo. Agente não pode "se perder" em outro sort por engano.
+  activeSortBy.value = wootConstants.SORT_BY_TYPE.LAST_ACTIVITY_AT_DESC;`,
+    reason: 'sort-latest: força LATEST sempre, ignora ui_settings persistido',
+  },
+  {
+    id: '/widgets/conversation/ConversationBasicFilter.vue',
+    from: `      <div class="flex items-center justify-between last:mt-4 gap-2">
+        <span class="text-sm truncate text-n-slate-12">
+          {{ $t('CHAT_LIST.CHAT_SORT.ORDER_BY') }}
+        </span>
+        <SelectMenu
+          :model-value="chatSortFilter"
+          :options="chatSortOptions"
+          :label="activeChatSortLabel"
+          :sub-menu-position="isOnExpandedLayout ? 'left' : 'right'"
+          @update:model-value="handleSortChange"
+        />
+      </div>`,
+    to: '<!-- KLaOS: removido sort dropdown (forçamos LATEST sempre) -->',
+    reason: 'sort-latest: esconde dropdown de sort no UI',
+  },
+
+  // === KLaOS — O.9 "Tempo desde última msg" badge colorido na card ===
+  // Substitui o TimeAgo padrão por um badge mais destacado com faixa de
+  // tempo colorida: verde <1h, cinza 1-6h, âmbar 6-24h, vermelho >24h.
+  // Padrão de paridade com Kualiz "Painel de Atendimentos" (Onda 2 O.9).
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: "import TimeAgo from 'dashboard/components/ui/TimeAgo.vue';",
+    to: "import TimeAgo from 'dashboard/components/ui/TimeAgo.vue';\nimport KlaosLastActivityBadge from 'next/KlaosConversation/LastActivityBadge.vue';",
+    reason: 'O.9 last-activity-badge: import componente custom',
+  },
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: `        <span class="ml-auto font-normal leading-4 text-xxs">
+          <TimeAgo
+            :last-activity-timestamp="chat.timestamp"
+            :created-at-timestamp="chat.created_at"
+            :conversation-id="chat.id"
+          />
+        </span>`,
+    to: `        <span class="ml-auto leading-4">
+          <KlaosLastActivityBadge :timestamp="chat.timestamp" />
+        </span>`,
+    reason: 'O.9 last-activity-badge: substitui TimeAgo por badge colorido por SLA',
+  },
+
   // === KLaOS — Snooze: data-attr na ConversationCard pro pulse ===
   // Adiciona data-klaos-conversation-id no root da card pra o componente
   // SnoozeReopenAlert achar e aplicar/remover a CSS class .klaos-pulse
