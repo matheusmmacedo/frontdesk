@@ -22,6 +22,13 @@
 import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
+import { emitter } from 'shared/helpers/mitt';
+
+// KLaOS custom event broadcastado pelo backend
+// (custom/config/initializers/klaos_snooze_no_limit.rb) sempre que uma conv
+// adiada reabre. ActionCable.js (via patch klaos-patches) escuta e emite via
+// mitt emitter, e este componente reage.
+const KLAOS_SNOOZE_REOPENED_EVENT = 'klaos.snooze_reopened';
 
 const store = useStore();
 const currentAccountId = useMapGetter('getCurrentAccountId');
@@ -175,6 +182,17 @@ watch(
   { deep: true }
 );
 
+// Escuta o evento ActionCable custom broadcastado pelo backend quando
+// reabre conv adiada. Usar window.bus (mitt emitter do Chatwoot) que recebe
+// TODOS os eventos de ActionCable como bus.on(event_name, data).
+const onKlaosSnoozeReopened = data => {
+  if (!isEnabled.value) return;
+  handleReopen({
+    id: data?.conversation_id || data?.id,
+    meta: { sender: { name: data?.sender_name || 'Conv' } },
+  });
+};
+
 onMounted(() => {
   initAudio();
   ensureNotifPermission();
@@ -185,6 +203,7 @@ onMounted(() => {
       meta: { sender: { name: name || 'Teste KLaOS' } },
     });
   };
+  emitter.on(KLAOS_SNOOZE_REOPENED_EVENT, onKlaosSnoozeReopened);
 });
 onBeforeUnmount(() => {
   if (titleInterval) {
@@ -200,6 +219,7 @@ onBeforeUnmount(() => {
     alertAudio = null;
   }
   delete window.__klaosTestSnoozeReopen;
+  emitter.off(KLAOS_SNOOZE_REOPENED_EVENT, onKlaosSnoozeReopened);
 });
 </script>
 

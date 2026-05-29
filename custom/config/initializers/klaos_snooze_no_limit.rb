@@ -18,11 +18,41 @@
 # limite inferior — qualquer conv com snoozed_until <= agora reabre na
 # próxima execução do job.
 module KlaosSnoozeNoLimit
+  KLAOS_SNOOZE_REOPENED_EVENT = 'klaos.snooze_reopened'
+
   def perform
     Conversation
       .where(status: :snoozed)
       .where('snoozed_until <= ?', Time.current)
-      .find_each(batch_size: 100, &:open!)
+      .find_each(batch_size: 100) do |conv|
+        conv.open!
+        klaos_broadcast_snooze_reopened(conv)
+      end
+  end
+
+  private
+
+  # Broadcasta evento custom pro frontend disparar o alerta com som/piscar.
+  # O `conversation.status_changed` nativo do Chatwoot não basta porque a
+  # conv normalmente NÃO está no store do frontend enquanto snoozed (filtros
+  # padrão omitem snoozed), então o watcher do componente Klaos não tem
+  # `prevStatus='snoozed'` registrado pra detectar a transição.
+  def klaos_broadcast_snooze_reopened(conversation)
+    account = conversation.account
+    tokens = account.users.pluck(:pubsub_token).compact.uniq
+    return if tokens.empty?
+
+    payload = {
+      conversation_id: conversation.id,
+      conversation_display_id: conversation.display_id,
+      sender_name: conversation.contact&.name,
+      account_id: account.id
+    }
+    ::ActionCableBroadcastJob.perform_later(tokens, KLAOS_SNOOZE_REOPENED_EVENT, payload)
+  rescue StandardError => e
+    Rails.logger.warn(
+      "[KlaosSnoozeNoLimit] broadcast custom event falhou conv=#{conversation.id}: #{e.message}"
+    )
   end
 end
 

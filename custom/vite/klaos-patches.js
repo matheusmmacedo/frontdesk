@@ -2019,6 +2019,30 @@ const assigneeTabItems = computed(() => {
     reason: 'keep-agents-online: renderiza toggle entre AudioTranscription e AccountId',
   },
 
+  // === KLaOS — ActionCable: registra evento custom klaos.snooze_reopened ===
+  // O backend (custom/config/initializers/klaos_snooze_no_limit.rb) broadcasta
+  // este evento quando reabre uma conv adiada. Frontend SnoozeReopenAlert.vue
+  // ouve via emitter pra disparar tab piscando + push + som.
+  {
+    id: '/dashboard/helper/actionCable.js',
+    from: "'copilot.message.created': this.onCopilotMessageCreated,\n    };",
+    to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n    };",
+    reason: 'klaos-snooze-reopened: registra event handler',
+  },
+  {
+    id: '/dashboard/helper/actionCable.js',
+    from: "  // eslint-disable-next-line class-methods-use-this\n  onReconnect = () => {",
+    to: `  onKlaosSnoozeReopened = data => {
+    try {
+      emitter.emit('klaos.snooze_reopened', data);
+    } catch (e) { /* noop */ }
+  };
+
+  // eslint-disable-next-line class-methods-use-this
+  onReconnect = () => {`,
+    reason: 'klaos-snooze-reopened: handler que emite via mitt emitter',
+  },
+
   // === KLaOS — Fix bug "mensagem vazia enviada" do composer (ReplyBox.vue) ===
   // Bug nativo Chatwoot (confirmado via git blame + diff vs upstream/develop):
   //   onFinishRecorder seta `hasRecordedAudio=true` INCONDICIONALMENTE,
