@@ -45,6 +45,20 @@ const isEnabled = computed(
 // status diferente de 'snoozed' (memória controlada).
 const prevStatus = ref(new Map());
 
+// Banner top de alerta visível mesmo com aba ATIVA (Chrome esconde push
+// notification quando aba está em foco). Array de alertas ativos.
+const activeAlerts = ref([]);
+
+const dismissAlert = id => {
+  activeAlerts.value = activeAlerts.value.filter(a => a.id !== id);
+};
+
+const openConversation = convId => {
+  const accountId = currentAccountId.value;
+  if (!accountId || !convId) return;
+  window.location.href = `/app/accounts/${accountId}/conversations/${convId}`;
+};
+
 // Áudio: usa o ding do Chatwoot que já existe em public/audio/dashboard.
 let alertAudio = null;
 const initAudio = () => {
@@ -155,7 +169,13 @@ const handleReopen = conversation => {
   startTitlePulse(senderName);
   fireBrowserNotification(senderName, conversation.id);
   pulseConversationCard(conversation.id);
-  useAlert(`🔔 ${senderName} voltou do adiamento — clique pra atender.`);
+  // Banner fixed no topo — NÃO some sozinho. Visível mesmo com aba ativa.
+  activeAlerts.value.push({
+    id: `${conversation.id}-${Date.now()}`,
+    conversationId: conversation.id,
+    senderName,
+    when: new Date(),
+  });
 };
 
 const conversationsList = computed(
@@ -224,7 +244,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <!-- Sem UI — escuta passiva. Estilo global pra pulso das cards. -->
+  <!-- Estilo global pra pulso das cards -->
   <teleport to="head">
     <component :is="'style'">
       {{
@@ -235,8 +255,54 @@ onBeforeUnmount(() => {
         .klaos-pulse {
           animation: klaos-pulse-anim 0.8s ease-in-out infinite;
           box-shadow: inset 4px 0 0 #f59e0b;
+        }
+        @keyframes klaos-banner-blink {
+          0%, 50% { background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%); }
+          51%, 100% { background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); }
+        }
+        .klaos-snooze-banner {
+          position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+          padding: 14px 20px;
+          color: white;
+          font-weight: 600; font-size: 16px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+          animation: klaos-banner-blink 1s ease-in-out infinite;
+          display: flex; justify-content: space-between; align-items: center;
+          gap: 12px;
+        }
+        .klaos-snooze-banner__content { flex: 1; }
+        .klaos-snooze-banner__open {
+          background: white; color: #b91c1c;
+          padding: 6px 14px; border-radius: 6px; border: none;
+          font-weight: 700; cursor: pointer; font-size: 14px;
+        }
+        .klaos-snooze-banner__close {
+          background: transparent; color: white; border: 1px solid rgba(255,255,255,0.5);
+          padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 14px;
         }`
       }}
     </component>
+  </teleport>
+
+  <!-- Banner fixed no topo: empilha um pra cada alerta ativo -->
+  <teleport to="body">
+    <div v-if="activeAlerts.length" style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999;">
+      <div
+        v-for="alert in activeAlerts"
+        :key="alert.id"
+        class="klaos-snooze-banner"
+        :style="{ position: 'static', marginBottom: '2px' }"
+      >
+        <span class="klaos-snooze-banner__content">
+          🔔 Conversa com <b>{{ alert.senderName }}</b> voltou do adiamento — atender agora?
+        </span>
+        <button class="klaos-snooze-banner__open" @click="openConversation(alert.conversationId)">
+          Abrir
+        </button>
+        <button class="klaos-snooze-banner__close" @click="dismissAlert(alert.id)">
+          ✕
+        </button>
+      </div>
+    </div>
   </teleport>
 </template>
