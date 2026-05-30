@@ -407,11 +407,6 @@ const goPage = n => {
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
-  padding: 10px 16px;
-  background: white;
-  border-radius: 10px;
-  border-left: 4px solid transparent;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 .klaos-supv__search-wrap {
   display: inline-flex;
@@ -423,12 +418,11 @@ const goPage = n => {
   max-width: 100%;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  background: #f9fafb;
+  background: white;
   box-sizing: border-box;
 }
 .klaos-supv__search-wrap:focus-within {
   border-color: #2563eb;
-  background: white;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 .klaos-supv__search-icon {
