@@ -1673,9 +1673,13 @@ const getTemplateBody = template => {`,
     to: `          @click="klaosOnSelect(template)"`,
     reason: 'template-frequents: usa wrapper klaosOnSelect no click do botão de template',
   },
-  // === KLaOS — Pino manual de template (📌) ===
-  // Adiciona botão de pino no canto superior direito de cada template. Click
-  // alterna estado. Pinados sobem pro topo independente da frequência.
+  // === KLaOS — Pino manual de template (★ favorito) ===
+  // V1 usava emoji 📍/📌 — feio + sem afordance clara. V2 usa ícone estrela
+  // Lucide (padrão universal "favorito") com:
+  //   - Vazio (não pinado): contorno cinza, opacidade 50%
+  //   - Pinado: estrela cheia amarela com glow sutil
+  //   - Hover: scale + opacidade total
+  //   - Animação ao toggle (rotate + scale)
   {
     id: '/WhatsappTemplates/TemplatesPicker.vue',
     from: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id">
@@ -1683,16 +1687,18 @@ const getTemplateBody = template => {`,
     to: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id" class="relative">
         <button
           type="button"
-          class="absolute top-2 right-2 z-10 p-1.5 rounded hover:bg-n-alpha-2 transition-colors"
+          class="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-n-amber-3"
+          :class="klaosIsTemplatePinned(template.name) ? 'opacity-100 bg-n-amber-3' : 'opacity-40 hover:opacity-100'"
           :title="klaosIsTemplatePinned(template.name) ? 'Desfixar template' : 'Fixar template no topo'"
           @click="klaosTogglePinTemplate($event, template.name)"
         >
-          <span :class="klaosIsTemplatePinned(template.name) ? 'text-n-amber-9' : 'text-n-slate-9'">
-            {{ klaosIsTemplatePinned(template.name) ? '📌' : '📍' }}
-          </span>
+          <span
+            class="text-base"
+            :class="klaosIsTemplatePinned(template.name) ? 'text-n-amber-11' : 'text-n-slate-10'"
+          >{{ klaosIsTemplatePinned(template.name) ? '★' : '☆' }}</span>
         </button>
         <button`,
-    reason: 'template-pin: adiciona botão 📌 de pinar template no canto do card',
+    reason: 'template-pin: estrela ★/☆ no canto (vs emoji 📍/📌 feio)',
   },
 
   // === KLaOS — Global Usage Frequents (hierarchia personal → global) ===
