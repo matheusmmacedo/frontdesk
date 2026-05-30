@@ -11,11 +11,12 @@
 //   - updateAvailability — dispatch pra mudar
 //
 // Multi-tenant nato. Renderizado na sidebar (acima do avatar).
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useMapGetter, useStore } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
 import wootConstants from 'dashboard/constants/globals';
 import { useImpersonation } from 'dashboard/composables/useImpersonation';
+import PauseReasonModal from './PauseReasonModal.vue';
 
 const store = useStore();
 const currentUserAvailability = useMapGetter('getCurrentUserAvailability');
@@ -50,6 +51,8 @@ const buttons = computed(() => [
 
 const isActive = key => currentUserAvailability.value === key;
 
+const showPauseModal = ref(false);
+
 const setStatus = key => {
   if (isImpersonating.value) {
     useAlert(
@@ -58,10 +61,34 @@ const setStatus = key => {
     return;
   }
   if (isActive(key)) return;
+  // Pausa (busy) abre modal pra escolher MOTIVO (O.19). Online/offline
+  // vão direto pra updateAvailability.
+  if (key === 'busy') {
+    showPauseModal.value = true;
+    return;
+  }
   store.dispatch('updateAvailability', {
     availability: key,
     account_id: currentAccountId.value,
   });
+};
+
+const onPauseConfirmed = async reason => {
+  // 1. updateAvailability busy (cria evento aberto via initializer)
+  // 2. POST agent_pause pra setar pause_reason_id no evento
+  await store.dispatch('updateAvailability', {
+    availability: 'busy',
+    account_id: currentAccountId.value,
+  });
+  try {
+    await window.axios.post(
+      `/api/custom/v1/accounts/${currentAccountId.value}/klaos/agent_pause`,
+      { reason_id: reason.id }
+    );
+  } catch (e) {
+    useAlert('Pausa registrada, mas falhou ao salvar o motivo.');
+  }
+  showPauseModal.value = false;
 };
 </script>
 
@@ -83,5 +110,10 @@ const setStatus = key => {
       <span class="text-base leading-none">{{ btn.icon }}</span>
       <span class="leading-none">{{ btn.label }}</span>
     </button>
+    <PauseReasonModal
+      v-if="showPauseModal"
+      @confirm="onPauseConfirmed"
+      @close="showPauseModal = false"
+    />
   </div>
 </template>

@@ -17,6 +17,7 @@ class KlaosAgentAvailabilityEvent < ApplicationRecord
 
   belongs_to :account
   belongs_to :user
+  belongs_to :pause_reason, class_name: 'KlaosPauseReason', optional: true
 
   enum status: { offline: 0, online: 1, busy: 2 }
 

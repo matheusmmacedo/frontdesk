@@ -193,13 +193,22 @@ const forceStatus = async (row, newStatus) => {
             </div>
           </td>
           <td>
-            <span
-              class="klaos-supv__state"
-              :class="availabilityClass(row.availability)"
-            >
-              {{ availabilityIcon(row.availability) }}
-              {{ availabilityLabel(row.availability) }}
-            </span>
+            <div class="klaos-supv__state-cell">
+              <span
+                class="klaos-supv__state"
+                :class="availabilityClass(row.availability)"
+              >
+                {{ availabilityIcon(row.availability) }}
+                {{ availabilityLabel(row.availability) }}
+              </span>
+              <span
+                v-if="row.availability === 'busy' && row.pause_reason"
+                class="klaos-supv__pause-reason"
+                :title="`Em pausa: ${row.pause_reason.name}`"
+              >
+                {{ row.pause_reason.icon }} {{ row.pause_reason.name }}
+              </span>
+            </div>
           </td>
           <td class="klaos-supv__num">
             <strong>{{ row.chats_now }}</strong>
@@ -361,6 +370,20 @@ const forceStatus = async (row, newStatus) => {
 .klaos-supv__email {
   font-size: 12px;
   color: #6b7280;
+}
+.klaos-supv__state-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+.klaos-supv__pause-reason {
+  font-size: 11px;
+  color: #92400e;
+  background: #fef3c7;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
 }
 .klaos-supv__state {
   display: inline-flex;
