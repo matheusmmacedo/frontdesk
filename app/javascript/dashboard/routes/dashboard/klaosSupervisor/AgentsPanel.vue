@@ -410,41 +410,37 @@ const goPage = n => {
   flex-wrap: wrap;
 }
 .klaos-supv__search-wrap {
-  position: relative;
   flex: 1;
   max-width: 400px;
   display: flex;
   align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+}
+.klaos-supv__search-wrap:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 .klaos-supv__search-icon {
-  position: absolute;
-  left: 12px;
-  top: calc(50% - 9px);
   color: #4b5563;
   pointer-events: none;
   width: 18px;
   height: 18px;
-  line-height: 1;
+  flex-shrink: 0;
 }
 .klaos-supv__search {
-  width: 100%;
-  padding: 10px 36px 10px 36px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: white;
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  background: transparent;
   font-size: 14px;
   color: #111827;
-}
-.klaos-supv__search:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 .klaos-supv__search-clear {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
   background: none;
   border: none;
   font-size: 14px;
@@ -452,6 +448,7 @@ const goPage = n => {
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
+  flex-shrink: 0;
 }
 .klaos-supv__search-clear:hover { background: #f3f4f6; }
 .klaos-supv__count {
