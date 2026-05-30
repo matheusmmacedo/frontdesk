@@ -1687,18 +1687,16 @@ const getTemplateBody = template => {`,
     to: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id" class="relative">
         <button
           type="button"
-          class="absolute top-2 right-2 z-10 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110"
-          :class="klaosIsTemplatePinned(template.name) ? 'bg-n-amber-3 hover:bg-n-amber-4' : 'bg-n-alpha-2 hover:bg-n-amber-3'"
-          :title="klaosIsTemplatePinned(template.name) ? 'Desfixar template' : 'Fixar template no topo'"
+          class="absolute top-2.5 right-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all hover:scale-105"
+          :class="klaosIsTemplatePinned(template.name) ? 'bg-n-amber-4 text-n-amber-12 hover:bg-n-amber-5' : 'bg-n-alpha-2 text-n-slate-12 hover:bg-n-amber-3'"
+          :title="klaosIsTemplatePinned(template.name) ? 'Clique pra desfixar' : 'Clique pra fixar no topo'"
           @click="klaosTogglePinTemplate($event, template.name)"
         >
-          <span
-            class="text-lg leading-none"
-            :class="klaosIsTemplatePinned(template.name) ? 'text-n-amber-11' : 'text-n-slate-11'"
-          >{{ klaosIsTemplatePinned(template.name) ? '★' : '☆' }}</span>
+          <span class="text-sm leading-none">{{ klaosIsTemplatePinned(template.name) ? '★' : '☆' }}</span>
+          <span class="leading-none">{{ klaosIsTemplatePinned(template.name) ? 'Fixado' : 'Fixar' }}</span>
         </button>
         <button`,
-    reason: 'template-pin: estrela ★/☆ no canto com bg discreto + cor visível',
+    reason: 'template-pin: pill com texto + estrela (vs só estrela invisível)',
   },
 
   // === KLaOS — Global Usage Frequents (hierarchia personal → global) ===
