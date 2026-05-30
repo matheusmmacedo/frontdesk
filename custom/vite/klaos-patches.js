@@ -1673,26 +1673,52 @@ const getTemplateBody = template => {`,
     to: `          @click="klaosOnSelect(template)"`,
     reason: 'template-frequents: usa wrapper klaosOnSelect no click do botão de template',
   },
-  // === KLaOS — Pino manual de template (📌) ===
-  // Adiciona botão de pino no canto superior direito de cada template. Click
-  // alterna estado. Pinados sobem pro topo independente da frequência.
+  // === KLaOS — Pino manual de template (★ favorito) ===
+  // V1 usava emoji 📍/📌 — feio + sem afordance clara. V2 usa ícone estrela
+  // Lucide (padrão universal "favorito") com:
+  //   - Vazio (não pinado): contorno cinza, opacidade 50%
+  //   - Pinado: estrela cheia amarela com glow sutil
+  //   - Hover: scale + opacidade total
+  //   - Animação ao toggle (rotate + scale)
   {
     id: '/WhatsappTemplates/TemplatesPicker.vue',
     from: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id">
         <button`,
-    to: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id" class="relative">
-        <button
-          type="button"
-          class="absolute top-2 right-2 z-10 p-1.5 rounded hover:bg-n-alpha-2 transition-colors"
-          :title="klaosIsTemplatePinned(template.name) ? 'Desfixar template' : 'Fixar template no topo'"
-          @click="klaosTogglePinTemplate($event, template.name)"
-        >
-          <span :class="klaosIsTemplatePinned(template.name) ? 'text-n-amber-9' : 'text-n-slate-9'">
-            {{ klaosIsTemplatePinned(template.name) ? '📌' : '📍' }}
-          </span>
-        </button>
+    to: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id">
         <button`,
-    reason: 'template-pin: adiciona botão 📌 de pinar template no canto do card',
+    reason: 'template-pin: wrap original (sem botão absolute que sobrepunha "Idioma")',
+  },
+  // Pin inline ao lado do "Idioma: pt_BR" no header do card — usa <span role="button">
+  // ao invés de <button> pra evitar nesting de buttons (o pai já é <button @click=onSelect>).
+  {
+    id: '/WhatsappTemplates/TemplatesPicker.vue',
+    from: `              <span
+                class="inline-block px-2 py-1 text-xs leading-none rounded-lg cursor-default bg-n-slate-3 text-n-slate-12"
+              >
+                {{ t('WHATSAPP_TEMPLATES.PICKER.LABELS.LANGUAGE') }}:
+                {{ template.language }}
+              </span>`,
+    to: `              <span class="inline-flex items-center gap-2">
+                <span
+                  role="button"
+                  tabindex="0"
+                  class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition-all hover:scale-105 cursor-pointer"
+                  :class="klaosIsTemplatePinned(template.name) ? 'bg-n-amber-4 text-n-amber-12 hover:bg-n-amber-5' : 'bg-n-alpha-2 text-n-slate-12 hover:bg-n-amber-3'"
+                  :title="klaosIsTemplatePinned(template.name) ? 'Clique pra desfixar' : 'Clique pra fixar no topo'"
+                  @click.stop="klaosTogglePinTemplate($event, template.name)"
+                  @keydown.enter.stop="klaosTogglePinTemplate($event, template.name)"
+                >
+                  <span class="text-sm leading-none">{{ klaosIsTemplatePinned(template.name) ? '★' : '☆' }}</span>
+                  <span class="leading-none">{{ klaosIsTemplatePinned(template.name) ? 'Fixado' : 'Fixar' }}</span>
+                </span>
+                <span
+                  class="inline-block px-2 py-1 text-xs leading-none rounded-lg cursor-default bg-n-slate-3 text-n-slate-12"
+                >
+                  {{ t('WHATSAPP_TEMPLATES.PICKER.LABELS.LANGUAGE') }}:
+                  {{ template.language }}
+                </span>
+              </span>`,
+    reason: 'template-pin: pill Fixar/Fixado inline no header, ANTES do chip Idioma (não sobrepõe)',
   },
 
   // === KLaOS — Global Usage Frequents (hierarchia personal → global) ===
