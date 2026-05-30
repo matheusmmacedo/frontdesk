@@ -5,17 +5,17 @@
 // botões de ação rápida em hover, sem precisar abrir a conv. Reusa as
 // actions Vuex nativas — zero novo backend.
 //
-// Ações:
-//   - 💬 Abrir conv (default — apenas dispara click padrão)
-//   - ⇄ Transferir (abre modal de transferência nativo)
-//   - ✓ Resolver (toggle status pra resolved)
+// Ação:
+//   - ✓ Resolver (toggle status pra resolved) — única ação que pode rodar
+//     SEM precisar abrir a conv no painel direito. "Transferir" foi
+//     removido porque exige UI complexa (assignee picker) que só faz
+//     sentido no header da conv aberta — sem isso era só "trocar de
+//     conv selecionada", redundante com o click normal no card.
 //
 // Multi-tenant nato. Só mostra quando hover na card.
 import { computed } from 'vue';
 import { useStore } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
-import { BUS_EVENTS } from 'shared/constants/busEvents';
-import { emitter } from 'shared/helpers/mitt';
 import wootConstants from 'dashboard/constants/globals';
 
 const props = defineProps({
@@ -45,26 +45,6 @@ const onResolve = e => {
     });
 };
 
-const onTransfer = e => {
-  e.stopPropagation();
-  e.preventDefault();
-  // Emite evento que o painel direito da conversa escuta pra abrir
-  // o picker de assignee. Caso a conv não esteja aberta no momento,
-  // dispatcha setActiveConversation e o emit num timeout pequeno.
-  if (store.getters.getSelectedChat?.id !== props.chat.id) {
-    store
-      .dispatch('setActiveChat', { data: props.chat })
-      .then(() => {
-        setTimeout(
-          () => emitter.emit(BUS_EVENTS.OPEN_ASSIGNEE_DROPDOWN),
-          200
-        );
-      })
-      .catch(() => {});
-  } else {
-    emitter.emit(BUS_EVENTS.OPEN_ASSIGNEE_DROPDOWN);
-  }
-};
 </script>
 
 <template>
@@ -79,14 +59,6 @@ const onTransfer = e => {
       @click="onResolve"
     >
       ✓
-    </button>
-    <button
-      type="button"
-      class="klaos-inline-actions__btn"
-      title="Transferir conversa"
-      @click="onTransfer"
-    >
-      ⇄
     </button>
   </div>
 </template>
