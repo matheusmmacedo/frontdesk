@@ -143,7 +143,7 @@ const PATCHES = [
         },
         {
           name: 'KLaOS Supervisor Agents',
-          label: 'Painel de Agentes',
+          label: 'Painel de Atendentes',
           to: accountScopedRoute('klaos_supervisor_agents'),
         },
       ],

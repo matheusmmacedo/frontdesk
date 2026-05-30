@@ -182,7 +182,7 @@ const goPage = n => {
   <div class="klaos-supv">
     <header class="klaos-supv__header">
       <div>
-        <h1 class="klaos-supv__title">Painel de Agentes</h1>
+        <h1 class="klaos-supv__title">Painel de Atendentes</h1>
         <p class="klaos-supv__subtitle">
           Visão em tempo real da operação. Atualiza a cada 10s.
         </p>
@@ -239,7 +239,7 @@ const goPage = n => {
         </button>
       </div>
       <div class="klaos-supv__count">
-        {{ filteredRows.length }} agente{{ filteredRows.length === 1 ? '' : 's' }}
+        {{ filteredRows.length }} atendente{{ filteredRows.length === 1 ? '' : 's' }}
         <template v-if="query">filtrado{{ filteredRows.length === 1 ? '' : 's' }}</template>
       </div>
     </div>
@@ -247,7 +247,7 @@ const goPage = n => {
     <div v-if="loading" class="klaos-supv__state">Carregando…</div>
     <div v-else-if="error" class="klaos-supv__state klaos-supv__state--err">{{ error }}</div>
     <div v-else-if="!pagedRows.length" class="klaos-supv__state">
-      {{ query ? 'Nenhum agente bate com a busca.' : 'Nenhum agente nessa conta.' }}
+      {{ query ? 'Nenhum atendente bate com a busca.' : 'Nenhum atendente nessa conta.' }}
     </div>
 
     <ul v-else class="klaos-supv__list">
