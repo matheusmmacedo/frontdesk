@@ -406,23 +406,29 @@ const goPage = n => {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  padding: 10px 16px;
+  background: white;
+  border-radius: 10px;
+  border-left: 4px solid transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 .klaos-supv__search-wrap {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 38px;
-  padding: 0 12px;
+  height: 36px;
+  padding: 0 10px;
   width: 320px;
   max-width: 100%;
-  border: 1px solid #d1d5db;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
-  background: white;
+  background: #f9fafb;
   box-sizing: border-box;
 }
 .klaos-supv__search-wrap:focus-within {
   border-color: #2563eb;
+  background: white;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 .klaos-supv__search-icon {
