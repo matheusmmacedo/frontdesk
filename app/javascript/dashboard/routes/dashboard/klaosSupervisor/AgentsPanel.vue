@@ -407,53 +407,58 @@ const goPage = n => {
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
-  flex-wrap: wrap;
 }
 .klaos-supv__search-wrap {
-  flex: 1;
-  max-width: 400px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
+  height: 38px;
   padding: 0 12px;
+  width: 320px;
+  max-width: 100%;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   background: white;
+  box-sizing: border-box;
 }
 .klaos-supv__search-wrap:focus-within {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 .klaos-supv__search-icon {
-  color: #4b5563;
+  color: #6b7280;
   pointer-events: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
 }
 .klaos-supv__search {
   flex: 1;
-  padding: 10px 0;
+  min-width: 0;
+  height: 100%;
   border: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 13px;
   color: #111827;
   outline: none;
+  padding: 0;
 }
 .klaos-supv__search-clear {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 12px;
   color: #6b7280;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
   flex-shrink: 0;
+  line-height: 1;
 }
 .klaos-supv__search-clear:hover { background: #f3f4f6; }
 .klaos-supv__count {
   font-size: 13px;
   color: #6b7280;
+  white-space: nowrap;
 }
 
 .klaos-supv__list {
