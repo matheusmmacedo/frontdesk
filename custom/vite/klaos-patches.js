@@ -100,8 +100,8 @@ const PATCHES = [
   {
     id: '/settings/settings.routes.js',
     from: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';",
-    to: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';\nimport klaosMessagePrefix from './klaosMessagePrefix/klaosMessagePrefix.routes';\nimport klaosMetaHealth from './klaosMetaHealth/klaosMetaHealth.routes';",
-    reason: 'register KLaOS message prefix + meta health settings route imports',
+    to: "import whatsappConnections from './whatsappConnections/whatsappConnections.routes';\nimport klaosMessagePrefix from './klaosMessagePrefix/klaosMessagePrefix.routes';\nimport klaosMetaHealth from './klaosMetaHealth/klaosMetaHealth.routes';\nimport klaosPauseReasons from './klaosPauseReasons/klaosPauseReasons.routes';",
+    reason: 'register KLaOS message prefix + meta health + pause reasons settings route imports',
   },
 
   // === KLaOS — Banner 24h "Usar template" abre modal de template (O.10 fix) ===
@@ -143,7 +143,7 @@ const PATCHES = [
         },
         {
           name: 'KLaOS Supervisor Agents',
-          label: 'Painel de Agentes',
+          label: 'Painel de Atendentes',
           to: accountScopedRoute('klaos_supervisor_agents'),
         },
       ],
@@ -169,8 +169,8 @@ const PATCHES = [
   {
     id: '/settings/settings.routes.js',
     from: '...whatsappConnections.routes,\n  ],\n};',
-    to: '...whatsappConnections.routes,\n    ...klaosMessagePrefix.routes,\n    ...klaosMetaHealth.routes,\n  ],\n};',
-    reason: 'register KLaOS message prefix + meta health routes in settings route array',
+    to: '...whatsappConnections.routes,\n    ...klaosMessagePrefix.routes,\n    ...klaosMetaHealth.routes,\n    ...klaosPauseReasons.routes,\n  ],\n};',
+    reason: 'register KLaOS message prefix + meta health + pause reasons routes in settings array',
   },
   {
     id: '/sidebar/Sidebar.vue',
@@ -197,8 +197,14 @@ const PATCHES = [
           label: 'Saúde do WhatsApp',
           icon: 'i-lucide-activity',
           to: accountScopedRoute('klaos_meta_health_index'),
+        },
+        {
+          name: 'Settings KLaOS Pause Reasons',
+          label: 'Motivos de Pausa',
+          icon: 'i-lucide-coffee',
+          to: accountScopedRoute('klaos_pause_reasons_index'),
         },`,
-    reason: 'add Formato do Nome + Saúde do WhatsApp (Fase 2 fix áudio) entries in settings sidebar',
+    reason: 'add Formato do Nome + Saúde do WhatsApp + Motivos de Pausa entries in settings sidebar',
   },
 
   // === KLaOS — "Devolver ao bot" como botão visível + visibilidade correta ===

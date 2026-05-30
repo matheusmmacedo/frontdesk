@@ -25,6 +25,7 @@ class Api::Custom::V1::Accounts::SupervisorAgentsController < Api::V1::Accounts:
     timing = KlaosAgentTimingService.new(account: Current.account, user_ids: agent_ids).call
     chats_now = chats_per_agent(agent_ids)
     summary = summary_counts(agents)
+    pause_reasons_by_user = current_pause_reasons(agent_ids)
 
     rows = agents.map do |user|
       au = user.account_users.find { |x| x.account_id == Current.account.id }
@@ -36,6 +37,8 @@ class Api::Custom::V1::Accounts::SupervisorAgentsController < Api::V1::Accounts:
         thumbnail: user.avatar_url,
         role: au&.role,
         availability: au&.availability,
+        # Motivo da pausa ATUAL (O.19) — só quando availability=busy
+        pause_reason: pause_reasons_by_user[user.id],
         chats_now: chats_now[user.id] || 0,
         attended_today: t[:attended_today],
         online_today_s: t[:online_s],
@@ -75,6 +78,34 @@ class Api::Custom::V1::Accounts::SupervisorAgentsController < Api::V1::Accounts:
            .where(status: %i[open pending])
            .group(:assignee_id)
            .count
+  end
+
+  # Para cada user_id, pega o pause_reason do evento de availability ABERTO
+  # (ended_at NULL) — só vem se o evento estiver com status=busy.
+  def current_pause_reasons(user_ids)
+    return {} if user_ids.blank?
+
+    events = KlaosAgentAvailabilityEvent
+             .where(account_id: Current.account.id, user_id: user_ids, ended_at: nil)
+             .busy
+             .where.not(pause_reason_id: nil)
+             .includes(:pause_reason)
+
+    events.each_with_object({}) do |ev, acc|
+      r = ev.pause_reason
+      elapsed_s = (Time.current - ev.started_at).to_i
+      max_s = r&.max_minutes&.* 60
+      overtime = max_s && elapsed_s > max_s
+      acc[ev.user_id] = {
+        id: ev.pause_reason_id,
+        name: r&.name,
+        icon: r&.icon,
+        started_at: ev.started_at.to_i,
+        elapsed_s: elapsed_s,
+        max_minutes: r&.max_minutes,
+        overtime: overtime
+      }
+    end
   end
 
   def summary_counts(agents)

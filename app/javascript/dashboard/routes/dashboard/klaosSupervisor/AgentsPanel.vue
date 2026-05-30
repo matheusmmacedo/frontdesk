@@ -1,23 +1,20 @@
 <script setup>
-// KLaOS — Painel de Agentes (O.1 Onda 2).
+// KLaOS — Painel de Agentes v3 (O.1 + O.19 — Onda 2).
 //
-// Tela de SUPERVISÃO em tempo real: admin vê grid com todos os agentes,
-// estado atual, chats em atendimento agora, atendidos hoje, tempo logado
-// e em pausa, e pode forçar status (logout, pausa).
+// Layout: LISTA full-width vertical. Cada agente = uma linha larga com
+// status colorido à esquerda, avatar + nome, motivo da pausa em badge,
+// métricas inline e ações no fim. Topo tem busca por nome/email +
+// pílulas resumo. Paginação client-side (20 por página).
 //
-// Backend: /api/custom/v1/accounts/:id/supervisor/agents
-// Tempo logado/pausa: tabela klaos_agent_availability_events
-//   (alimentada por klaos_agent_availability_tracking initializer)
+// Backend: GET /api/custom/v1/accounts/:id/supervisor/agents
+//   Retorna agents[] com availability + pause_reason {name, icon,
+//   elapsed_s, max_minutes, overtime} + tempos do dia.
 //
 // Refresh:
-//   - Polling 10s no payload (chats, atendidos hoje)
-//   - Ticker LOCAL 1s pros tempos logado/pausa (adiciona delta desde
-//     o último refresh ao online_today_s + busy_today_s do user "live")
+//   - Polling 10s do payload
+//   - Ticker LOCAL 1s pros tempos
 //
 // Multi-tenant nato.
-// Usa window.axios global que tem os auth headers Devise Token Auth
-// (access-token / client / uid / expiry / token-type). Import direto
-// de 'axios' cria instância nova sem auth e bate 401.
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
@@ -28,6 +25,9 @@ const payload = ref(null);
 const loading = ref(true);
 const error = ref(null);
 const tickNow = ref(Date.now());
+const query = ref('');
+const page = ref(1);
+const PER_PAGE = 20;
 let refreshInterval = null;
 let tickerInterval = null;
 
@@ -62,26 +62,58 @@ onUnmounted(() => {
 const generatedAtMs = computed(() =>
   payload.value ? payload.value.generated_at * 1000 : Date.now()
 );
-
 const deltaSec = computed(() =>
   Math.max(0, Math.floor((tickNow.value - generatedAtMs.value) / 1000))
 );
 
-const rows = computed(() => {
+// All rows com tempos live computados
+const allRows = computed(() => {
   if (!payload.value) return [];
   return payload.value.agents.map(a => {
-    // Tempo "live": soma o delta desde o último refresh ao bucket do
-    // status atual. Ex: agente está online → online_today_s += delta.
     let online = a.online_today_s;
     let busy = a.busy_today_s;
     if (a.availability === 'online') online += deltaSec.value;
     if (a.availability === 'busy') busy += deltaSec.value;
+    let pause = null;
+    if (a.pause_reason) {
+      const elapsedLive = a.pause_reason.elapsed_s + deltaSec.value;
+      const maxS = a.pause_reason.max_minutes
+        ? a.pause_reason.max_minutes * 60
+        : null;
+      pause = {
+        ...a.pause_reason,
+        elapsed_s_live: elapsedLive,
+        overtime_live: maxS ? elapsedLive > maxS : false,
+        remaining_s: maxS ? maxS - elapsedLive : null,
+      };
+    }
     return {
       ...a,
       online_today_s_live: online,
       busy_today_s_live: busy,
+      pause_live: pause,
     };
   });
+});
+
+// Busca por nome ou email
+const filteredRows = computed(() => {
+  const q = query.value.trim().toLowerCase();
+  if (!q) return allRows.value;
+  return allRows.value.filter(
+    a =>
+      a.name?.toLowerCase().includes(q) ||
+      a.email?.toLowerCase().includes(q)
+  );
+});
+
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredRows.value.length / PER_PAGE))
+);
+
+const pagedRows = computed(() => {
+  const start = (page.value - 1) * PER_PAGE;
+  return filteredRows.value.slice(start, start + PER_PAGE);
 });
 
 const summary = computed(() => payload.value?.summary || {});
@@ -95,23 +127,25 @@ const fmtDuration = sec => {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
 };
 
-const availabilityIcon = a => {
-  if (a === 'online') return '🟢';
-  if (a === 'busy') return '🟡';
-  return '⚪';
+const fmtShort = sec => {
+  if (sec === null || sec === undefined) return '0min';
+  const s = Math.max(0, Math.abs(Math.floor(sec)));
+  const m = Math.floor(s / 60);
+  const ss = s % 60;
+  if (m < 60) return `${m}min ${ss}s`;
+  const h = Math.floor(m / 60);
+  return `${h}h ${m % 60}min`;
 };
 
-const availabilityLabel = a => {
-  if (a === 'online') return 'Online';
-  if (a === 'busy') return 'Pausa';
-  return 'Offline';
-};
+const availabilityLabel = a =>
+  a === 'online' ? 'Online' : a === 'busy' ? 'Pausa' : 'Offline';
 
-const availabilityClass = a => {
-  if (a === 'online') return 'klaos-supv-state--online';
-  if (a === 'busy') return 'klaos-supv-state--busy';
-  return 'klaos-supv-state--offline';
-};
+const rowStateClass = a =>
+  a === 'online'
+    ? 'klaos-supv-row--online'
+    : a === 'busy'
+    ? 'klaos-supv-row--busy'
+    : 'klaos-supv-row--offline';
 
 const forceStatus = async (row, newStatus) => {
   if (row.availability === newStatus) return;
@@ -133,121 +167,194 @@ const forceStatus = async (row, newStatus) => {
     useAlert(e.response?.data?.error || 'Erro ao mudar status.');
   }
 };
+
+const onSearchInput = () => {
+  page.value = 1; // reset paginação ao buscar
+};
+
+const goPage = n => {
+  if (n < 1 || n > totalPages.value) return;
+  page.value = n;
+};
 </script>
 
 <template>
   <div class="klaos-supv">
     <header class="klaos-supv__header">
       <div>
-        <h1 class="klaos-supv__title">Painel de Agentes</h1>
+        <h1 class="klaos-supv__title">Painel de Atendentes</h1>
         <p class="klaos-supv__subtitle">
           Visão em tempo real da operação. Atualiza a cada 10s.
         </p>
       </div>
       <div class="klaos-supv__summary">
-        <span class="klaos-supv__badge klaos-supv__badge--online">
+        <span class="klaos-supv__pill klaos-supv__pill--online">
           🟢 {{ summary.online || 0 }} online
         </span>
-        <span class="klaos-supv__badge klaos-supv__badge--busy">
+        <span class="klaos-supv__pill klaos-supv__pill--busy">
           🟡 {{ summary.busy || 0 }} pausa
         </span>
-        <span class="klaos-supv__badge klaos-supv__badge--offline">
+        <span class="klaos-supv__pill klaos-supv__pill--offline">
           ⚪ {{ summary.offline || 0 }} offline
         </span>
-        <span class="klaos-supv__badge klaos-supv__badge--with-chats">
+        <span class="klaos-supv__pill klaos-supv__pill--chats">
           💬 {{ summary.with_chats || 0 }} com chats
         </span>
       </div>
     </header>
 
-    <div v-if="loading" class="klaos-supv__loading">Carregando…</div>
-    <div v-else-if="error" class="klaos-supv__error">{{ error }}</div>
+    <div class="klaos-supv__toolbar">
+      <div class="klaos-supv__search-wrap">
+        <span class="klaos-supv__search-icon i-lucide-search" aria-hidden="true"></span>
+        <input
+          v-model="query"
+          type="text"
+          placeholder="Buscar por nome ou email…"
+          class="klaos-supv__search"
+          @input="onSearchInput"
+        />
+        <button
+          v-if="query"
+          type="button"
+          class="klaos-supv__search-clear"
+          @click="query = ''; page = 1"
+          title="Limpar busca"
+        >
+          ✕
+        </button>
+      </div>
+      <div class="klaos-supv__count">
+        {{ filteredRows.length }} atendente{{ filteredRows.length === 1 ? '' : 's' }}
+        <template v-if="query">filtrado{{ filteredRows.length === 1 ? '' : 's' }}</template>
+      </div>
+    </div>
 
-    <table v-else class="klaos-supv__table">
-      <thead>
-        <tr>
-          <th>Agente</th>
-          <th>Estado</th>
-          <th>Chats agora</th>
-          <th>Atendidos hoje</th>
-          <th>Logado hoje</th>
-          <th>Pausa hoje</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in rows" :key="row.id">
-          <td class="klaos-supv__agent-cell">
-            <img
-              v-if="row.thumbnail"
-              :src="row.thumbnail"
-              :alt="row.name"
-              class="klaos-supv__avatar"
-            />
-            <div v-else class="klaos-supv__avatar klaos-supv__avatar--placeholder">
-              {{ row.name?.charAt(0) }}
+    <div v-if="loading" class="klaos-supv__state">Carregando…</div>
+    <div v-else-if="error" class="klaos-supv__state klaos-supv__state--err">{{ error }}</div>
+    <div v-else-if="!pagedRows.length" class="klaos-supv__state">
+      {{ query ? 'Nenhum atendente bate com a busca.' : 'Nenhum atendente nessa conta.' }}
+    </div>
+
+    <ul v-else class="klaos-supv__list">
+      <li
+        v-for="row in pagedRows"
+        :key="row.id"
+        class="klaos-supv-row"
+        :class="[rowStateClass(row.availability), row.pause_live?.overtime_live && 'klaos-supv-row--overtime']"
+      >
+        <div class="klaos-supv-row__status">
+          <span class="klaos-supv-row__status-dot"></span>
+          <span class="klaos-supv-row__status-lbl">{{ availabilityLabel(row.availability) }}</span>
+        </div>
+
+        <div class="klaos-supv-row__agent">
+          <img
+            v-if="row.thumbnail"
+            :src="row.thumbnail"
+            :alt="row.name"
+            class="klaos-supv-row__avatar"
+          />
+          <div v-else class="klaos-supv-row__avatar klaos-supv-row__avatar--placeholder">
+            {{ row.name?.charAt(0) }}
+          </div>
+          <div class="klaos-supv-row__name-block">
+            <div class="klaos-supv-row__name">{{ row.name }}</div>
+            <div class="klaos-supv-row__email">{{ row.email }}</div>
+          </div>
+        </div>
+
+        <div
+          v-if="row.pause_live"
+          class="klaos-supv-row__reason"
+          :class="row.pause_live.overtime_live && 'klaos-supv-row__reason--overtime'"
+          :title="row.pause_live.max_minutes
+            ? `Limite: ${row.pause_live.max_minutes} min`
+            : 'Sem limite'"
+        >
+          {{ row.pause_live.icon }} {{ row.pause_live.name }}
+          <span class="klaos-supv-row__reason-time">
+            · {{ fmtShort(row.pause_live.elapsed_s_live) }}
+            <template v-if="row.pause_live.overtime_live">
+              · +{{ fmtShort(-row.pause_live.remaining_s) }}
+            </template>
+          </span>
+        </div>
+        <div v-else class="klaos-supv-row__reason-empty"></div>
+
+        <div class="klaos-supv-row__metrics">
+          <div class="klaos-supv-row__metric">
+            <div class="klaos-supv-row__metric-val">{{ row.chats_now }}</div>
+            <div class="klaos-supv-row__metric-lbl">chats</div>
+          </div>
+          <div class="klaos-supv-row__metric">
+            <div class="klaos-supv-row__metric-val">{{ row.attended_today }}</div>
+            <div class="klaos-supv-row__metric-lbl">atend.</div>
+          </div>
+          <div class="klaos-supv-row__metric">
+            <div class="klaos-supv-row__metric-val klaos-supv-row__metric-val--time">
+              {{ fmtDuration(row.online_today_s_live) }}
             </div>
-            <div>
-              <div class="klaos-supv__name">{{ row.name }}</div>
-              <div class="klaos-supv__email">{{ row.email }}</div>
+            <div class="klaos-supv-row__metric-lbl">logado</div>
+          </div>
+          <div class="klaos-supv-row__metric">
+            <div class="klaos-supv-row__metric-val klaos-supv-row__metric-val--time">
+              {{ fmtDuration(row.busy_today_s_live) }}
             </div>
-          </td>
-          <td>
-            <span
-              class="klaos-supv__state"
-              :class="availabilityClass(row.availability)"
-            >
-              {{ availabilityIcon(row.availability) }}
-              {{ availabilityLabel(row.availability) }}
-            </span>
-          </td>
-          <td class="klaos-supv__num">
-            <strong>{{ row.chats_now }}</strong>
-          </td>
-          <td class="klaos-supv__num">{{ row.attended_today }}</td>
-          <td class="klaos-supv__num klaos-supv__time">
-            {{ fmtDuration(row.online_today_s_live) }}
-          </td>
-          <td class="klaos-supv__num klaos-supv__time">
-            {{ fmtDuration(row.busy_today_s_live) }}
-          </td>
-          <td class="klaos-supv__actions">
-            <button
-              v-if="row.availability !== 'offline'"
-              type="button"
-              class="klaos-supv__btn klaos-supv__btn--offline"
-              title="Forçar offline"
-              @click="forceStatus(row, 'offline')"
-            >
-              ⏻
-            </button>
-            <button
-              v-if="row.availability !== 'busy'"
-              type="button"
-              class="klaos-supv__btn klaos-supv__btn--busy"
-              title="Forçar pausa"
-              @click="forceStatus(row, 'busy')"
-            >
-              ⏸
-            </button>
-            <button
-              v-if="row.availability !== 'online'"
-              type="button"
-              class="klaos-supv__btn klaos-supv__btn--online"
-              title="Colocar online"
-              @click="forceStatus(row, 'online')"
-            >
-              ▶
-            </button>
-          </td>
-        </tr>
-        <tr v-if="!rows.length">
-          <td colspan="7" class="klaos-supv__empty">
-            Nenhum agente nessa conta.
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <div class="klaos-supv-row__metric-lbl">pausa</div>
+          </div>
+        </div>
+
+        <div class="klaos-supv-row__actions">
+          <button
+            v-if="row.availability !== 'online'"
+            type="button"
+            class="klaos-supv-row__btn klaos-supv-row__btn--online"
+            title="Colocar online"
+            @click="forceStatus(row, 'online')"
+          >
+            ▶
+          </button>
+          <button
+            v-if="row.availability !== 'busy'"
+            type="button"
+            class="klaos-supv-row__btn klaos-supv-row__btn--busy"
+            title="Forçar pausa"
+            @click="forceStatus(row, 'busy')"
+          >
+            ⏸
+          </button>
+          <button
+            v-if="row.availability !== 'offline'"
+            type="button"
+            class="klaos-supv-row__btn klaos-supv-row__btn--offline"
+            title="Forçar offline"
+            @click="forceStatus(row, 'offline')"
+          >
+            ⏻
+          </button>
+        </div>
+      </li>
+    </ul>
+
+    <nav v-if="totalPages > 1" class="klaos-supv__pager">
+      <button
+        type="button"
+        class="klaos-supv__pager-btn"
+        :disabled="page === 1"
+        @click="goPage(page - 1)"
+      >
+        ‹ Anterior
+      </button>
+      <span class="klaos-supv__pager-info">Página {{ page }} de {{ totalPages }}</span>
+      <button
+        type="button"
+        class="klaos-supv__pager-btn"
+        :disabled="page === totalPages"
+        @click="goPage(page + 1)"
+      >
+        Próxima ›
+      </button>
+    </nav>
   </div>
 </template>
 
@@ -256,6 +363,7 @@ const forceStatus = async (row, newStatus) => {
   padding: 24px;
   height: 100%;
   overflow: auto;
+  background: #f9fafb;
 }
 .klaos-supv__header {
   display: flex;
@@ -263,12 +371,13 @@ const forceStatus = async (row, newStatus) => {
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 .klaos-supv__title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   margin: 0;
+  color: #111827;
 }
 .klaos-supv__subtitle {
   font-size: 13px;
@@ -280,66 +389,142 @@ const forceStatus = async (row, newStatus) => {
   gap: 8px;
   flex-wrap: wrap;
 }
-.klaos-supv__badge {
-  padding: 6px 12px;
-  border-radius: 16px;
+.klaos-supv__pill {
+  padding: 6px 14px;
+  border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
-  background: #f3f4f6;
-  color: #374151;
   white-space: nowrap;
 }
-.klaos-supv__badge--online {
-  background: #d1fae5;
-  color: #065f46;
-}
-.klaos-supv__badge--busy {
-  background: #fef3c7;
-  color: #78350f;
-}
-.klaos-supv__badge--offline {
-  background: #e5e7eb;
-  color: #374151;
-}
-.klaos-supv__badge--with-chats {
-  background: #dbeafe;
-  color: #1e40af;
-}
-.klaos-supv__table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-.klaos-supv__table th {
-  text-align: left;
-  padding: 12px 16px;
-  background: #f9fafb;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-  color: #6b7280;
-  border-bottom: 1px solid #e5e7eb;
-}
-.klaos-supv__table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f3f4f6;
-  font-size: 14px;
-  color: #111827;
-  vertical-align: middle;
-}
-.klaos-supv__table tr:last-child td {
-  border-bottom: none;
-}
-.klaos-supv__agent-cell {
+.klaos-supv__pill--online { background: #d1fae5; color: #065f46; }
+.klaos-supv__pill--busy { background: #fef3c7; color: #78350f; }
+.klaos-supv__pill--offline { background: #e5e7eb; color: #374151; }
+.klaos-supv__pill--chats { background: #dbeafe; color: #1e40af; }
+
+.klaos-supv__toolbar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 12px;
+  margin-bottom: 12px;
 }
-.klaos-supv__avatar {
+.klaos-supv__search-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px;
+  width: 320px;
+  max-width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  box-sizing: border-box;
+}
+.klaos-supv__search-wrap:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.klaos-supv__search-icon {
+  color: #6b7280;
+  pointer-events: none;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.klaos-supv__search {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: #111827;
+  outline: none;
+  padding: 0;
+}
+.klaos-supv__search-clear {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.klaos-supv__search-clear:hover { background: #f3f4f6; }
+.klaos-supv__count {
+  font-size: 13px;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.klaos-supv__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.klaos-supv-row {
+  display: grid;
+  grid-template-columns: 120px minmax(220px, 1.5fr) minmax(160px, 1.2fr) auto auto;
+  gap: 16px;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  border-left: 4px solid #e5e7eb;
+  padding: 12px 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: all 0.15s ease;
+}
+.klaos-supv-row:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.klaos-supv-row--online { border-left-color: #10b981; }
+.klaos-supv-row--busy { border-left-color: #f59e0b; }
+.klaos-supv-row--offline { border-left-color: #9ca3af; }
+.klaos-supv-row--overtime {
+  border-left-color: #dc2626 !important;
+  background: linear-gradient(90deg, #fef2f2 0%, white 30%);
+  animation: klaos-supv-pulse 1.5s ease-in-out infinite;
+}
+@keyframes klaos-supv-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px #fecaca; }
+  50% { box-shadow: 0 0 0 3px #fca5a5; }
+}
+
+.klaos-supv-row__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.klaos-supv-row--online .klaos-supv-row__status { color: #065f46; }
+.klaos-supv-row--busy .klaos-supv-row__status { color: #78350f; }
+.klaos-supv-row--offline .klaos-supv-row__status { color: #374151; }
+.klaos-supv-row--overtime .klaos-supv-row__status { color: #991b1b; }
+.klaos-supv-row__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.klaos-supv-row__agent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.klaos-supv-row__avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -347,94 +532,167 @@ const forceStatus = async (row, newStatus) => {
   background: #e5e7eb;
   flex-shrink: 0;
 }
-.klaos-supv__avatar--placeholder {
+.klaos-supv-row__avatar--placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 700;
   color: #6b7280;
   background: #f3f4f6;
+  font-size: 14px;
 }
-.klaos-supv__name {
+.klaos-supv-row__name-block {
+  min-width: 0;
+}
+.klaos-supv-row__name {
   font-weight: 600;
+  color: #111827;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.klaos-supv__email {
-  font-size: 12px;
+.klaos-supv-row__email {
+  font-size: 11px;
   color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.klaos-supv__state {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 12px;
+
+.klaos-supv-row__reason {
   font-size: 12px;
-  font-weight: 600;
-}
-.klaos-supv__state--online {
-  background: #d1fae5;
-  color: #065f46;
-}
-.klaos-supv__state--busy {
+  padding: 4px 10px;
+  border-radius: 999px;
   background: #fef3c7;
   color: #78350f;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  justify-self: start;
 }
-.klaos-supv__state--offline {
-  background: #e5e7eb;
-  color: #374151;
+.klaos-supv-row__reason--overtime {
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 700;
 }
-.klaos-supv__num {
-  text-align: center;
+.klaos-supv-row__reason-time {
+  opacity: 0.85;
   font-variant-numeric: tabular-nums;
 }
-.klaos-supv__time {
-  font-family: 'SF Mono', Monaco, monospace;
-  font-size: 13px;
+.klaos-supv-row__reason-empty {}
+
+.klaos-supv-row__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 70px);
+  gap: 6px;
 }
-.klaos-supv__actions {
+.klaos-supv-row__metric {
+  text-align: center;
+}
+.klaos-supv-row__metric-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+.klaos-supv-row__metric-val--time {
+  font-size: 12px;
+  font-family: 'SF Mono', Monaco, monospace;
+  letter-spacing: -0.5px;
+}
+.klaos-supv-row__metric-lbl {
+  font-size: 10px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 1px;
+}
+
+.klaos-supv-row__actions {
   display: flex;
   gap: 4px;
-  justify-content: flex-end;
 }
-.klaos-supv__btn {
+.klaos-supv-row__btn {
   width: 32px;
   height: 32px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.klaos-supv-row__btn--online {
+  background: #d1fae5; color: #065f46; border-color: #6ee7b7;
+}
+.klaos-supv-row__btn--busy {
+  background: #fef3c7; color: #78350f; border-color: #fcd34d;
+}
+.klaos-supv-row__btn--offline {
+  background: #fee2e2; color: #991b1b; border-color: #fca5a5;
+}
+.klaos-supv-row__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.klaos-supv__pager {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+.klaos-supv__pager-btn {
+  padding: 8px 16px;
   border-radius: 6px;
-  border: 1px solid transparent;
-  font-size: 14px;
+  border: 1px solid #d1d5db;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
   cursor: pointer;
-  transition: all 0.15s ease;
 }
-.klaos-supv__btn--online {
-  background: #d1fae5;
-  color: #065f46;
-  border-color: #6ee7b7;
+.klaos-supv__pager-btn:hover:not(:disabled) {
+  background: #f3f4f6;
 }
-.klaos-supv__btn--busy {
-  background: #fef3c7;
-  color: #78350f;
-  border-color: #fcd34d;
+.klaos-supv__pager-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
-.klaos-supv__btn--offline {
-  background: #fee2e2;
-  color: #991b1b;
-  border-color: #fca5a5;
+.klaos-supv__pager-info {
+  font-size: 13px;
+  color: #6b7280;
 }
-.klaos-supv__btn:hover {
-  transform: scale(1.1);
-}
-.klaos-supv__loading,
-.klaos-supv__error,
-.klaos-supv__empty {
+
+.klaos-supv__state {
   padding: 48px;
   text-align: center;
   color: #6b7280;
   font-size: 14px;
+  background: white;
+  border-radius: 10px;
 }
-.klaos-supv__error {
-  color: #b91c1c;
+.klaos-supv__state--err { color: #b91c1c; }
+
+@media (max-width: 1100px) {
+  .klaos-supv-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .klaos-supv-row__metrics {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .klaos-supv-row__actions {
+    justify-content: flex-end;
+  }
 }
 </style>
