@@ -1687,18 +1687,18 @@ const getTemplateBody = template => {`,
     to: `<div v-for="(template, i) in filteredTemplateMessages" :key="template.id" class="relative">
         <button
           type="button"
-          class="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center rounded-full transition-all hover:scale-110 hover:bg-n-amber-3"
-          :class="klaosIsTemplatePinned(template.name) ? 'opacity-100 bg-n-amber-3' : 'opacity-40 hover:opacity-100'"
+          class="absolute top-2 right-2 z-10 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110"
+          :class="klaosIsTemplatePinned(template.name) ? 'bg-n-amber-3 hover:bg-n-amber-4' : 'bg-n-alpha-2 hover:bg-n-amber-3'"
           :title="klaosIsTemplatePinned(template.name) ? 'Desfixar template' : 'Fixar template no topo'"
           @click="klaosTogglePinTemplate($event, template.name)"
         >
           <span
-            class="text-base"
-            :class="klaosIsTemplatePinned(template.name) ? 'text-n-amber-11' : 'text-n-slate-10'"
+            class="text-lg leading-none"
+            :class="klaosIsTemplatePinned(template.name) ? 'text-n-amber-11' : 'text-n-slate-11'"
           >{{ klaosIsTemplatePinned(template.name) ? '★' : '☆' }}</span>
         </button>
         <button`,
-    reason: 'template-pin: estrela ★/☆ no canto (vs emoji 📍/📌 feio)',
+    reason: 'template-pin: estrela ★/☆ no canto com bg discreto + cor visível',
   },
 
   // === KLaOS — Global Usage Frequents (hierarchia personal → global) ===
