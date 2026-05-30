@@ -205,7 +205,22 @@ const goPage = n => {
 
     <div class="klaos-supv__toolbar">
       <div class="klaos-supv__search-wrap">
-        <span class="klaos-supv__search-icon">🔍</span>
+        <svg
+          class="klaos-supv__search-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
         <input
           v-model="query"
           type="text"
@@ -421,8 +436,7 @@ const goPage = n => {
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
-  opacity: 0.5;
+  color: #6b7280;
   pointer-events: none;
 }
 .klaos-supv__search {
