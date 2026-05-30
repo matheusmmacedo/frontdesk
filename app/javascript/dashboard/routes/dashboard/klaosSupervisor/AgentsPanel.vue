@@ -419,13 +419,12 @@ const goPage = n => {
 .klaos-supv__search-icon {
   position: absolute;
   left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
+  top: calc(50% - 9px);
+  color: #4b5563;
   pointer-events: none;
   width: 18px;
   height: 18px;
-  font-size: 18px;
+  line-height: 1;
 }
 .klaos-supv__search {
   width: 100%;
