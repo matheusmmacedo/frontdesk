@@ -61,7 +61,7 @@ class Api::Custom::V1::Accounts::PauseReasonsController < Api::V1::Accounts::Bas
   end
 
   def reason_params
-    params.require(:reason).permit(:name, :icon, :sort_order, :active)
+    params.require(:reason).permit(:name, :icon, :sort_order, :active, :max_minutes)
   end
 
   def check_admin_authorization
@@ -76,7 +76,8 @@ class Api::Custom::V1::Accounts::PauseReasonsController < Api::V1::Accounts::Bas
       name: r.name,
       icon: r.icon,
       sort_order: r.sort_order,
-      active: r.active
+      active: r.active,
+      max_minutes: r.max_minutes
     }
   end
 end

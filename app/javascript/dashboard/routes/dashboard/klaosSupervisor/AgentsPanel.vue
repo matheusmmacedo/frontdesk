@@ -1,23 +1,22 @@
 <script setup>
-// KLaOS — Painel de Agentes (O.1 Onda 2).
+// KLaOS — Painel de Agentes v2 (O.1 + O.19 — Onda 2).
 //
-// Tela de SUPERVISÃO em tempo real: admin vê grid com todos os agentes,
-// estado atual, chats em atendimento agora, atendidos hoje, tempo logado
-// e em pausa, e pode forçar status (logout, pausa).
+// GRID de cards (substituiu a tabela). Cada agente vira card com:
+//   - Header colorido por status (verde/amarelo/cinza)
+//   - Avatar grande
+//   - Motivo da pausa em badge âmbar (vermelho piscante se overtime)
+//   - 4 métricas em grid: chats / atendidos / logado / pausa
+//   - Ações de forçar status no rodapé
 //
-// Backend: /api/custom/v1/accounts/:id/supervisor/agents
-// Tempo logado/pausa: tabela klaos_agent_availability_events
-//   (alimentada por klaos_agent_availability_tracking initializer)
+// Backend: GET /api/custom/v1/accounts/:id/supervisor/agents
+//   Retorna agents[] com availability + pause_reason {name, icon,
+//   elapsed_s, max_minutes, overtime} + tempos do dia.
 //
 // Refresh:
-//   - Polling 10s no payload (chats, atendidos hoje)
-//   - Ticker LOCAL 1s pros tempos logado/pausa (adiciona delta desde
-//     o último refresh ao online_today_s + busy_today_s do user "live")
+//   - Polling 10s do payload (chats, atendidos, motivo)
+//   - Ticker LOCAL 1s pros tempos (soma delta ao bucket do status atual)
 //
 // Multi-tenant nato.
-// Usa window.axios global que tem os auth headers Devise Token Auth
-// (access-token / client / uid / expiry / token-type). Import direto
-// de 'axios' cria instância nova sem auth e bate 401.
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useMapGetter } from 'dashboard/composables/store';
 import { useAlert } from 'dashboard/composables';
@@ -70,16 +69,30 @@ const deltaSec = computed(() =>
 const rows = computed(() => {
   if (!payload.value) return [];
   return payload.value.agents.map(a => {
-    // Tempo "live": soma o delta desde o último refresh ao bucket do
-    // status atual. Ex: agente está online → online_today_s += delta.
+    // Tempos "live": soma delta ao bucket do status atual
     let online = a.online_today_s;
     let busy = a.busy_today_s;
     if (a.availability === 'online') online += deltaSec.value;
     if (a.availability === 'busy') busy += deltaSec.value;
+    // Motivo: também tickando elapsed pra detectar overtime ao vivo
+    let pause = null;
+    if (a.pause_reason) {
+      const elapsedLive = a.pause_reason.elapsed_s + deltaSec.value;
+      const maxS = a.pause_reason.max_minutes
+        ? a.pause_reason.max_minutes * 60
+        : null;
+      pause = {
+        ...a.pause_reason,
+        elapsed_s_live: elapsedLive,
+        overtime_live: maxS ? elapsedLive > maxS : false,
+        remaining_s: maxS ? maxS - elapsedLive : null,
+      };
+    }
     return {
       ...a,
       online_today_s_live: online,
       busy_today_s_live: busy,
+      pause_live: pause,
     };
   });
 });
@@ -95,23 +108,25 @@ const fmtDuration = sec => {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
 };
 
-const availabilityIcon = a => {
-  if (a === 'online') return '🟢';
-  if (a === 'busy') return '🟡';
-  return '⚪';
+const fmtShort = sec => {
+  if (sec === null || sec === undefined) return '0min';
+  const s = Math.max(0, Math.abs(Math.floor(sec)));
+  const m = Math.floor(s / 60);
+  const ss = s % 60;
+  if (m < 60) return `${m}min ${ss}s`;
+  const h = Math.floor(m / 60);
+  return `${h}h ${m % 60}min`;
 };
 
-const availabilityLabel = a => {
-  if (a === 'online') return 'Online';
-  if (a === 'busy') return 'Pausa';
-  return 'Offline';
-};
+const availabilityLabel = a =>
+  a === 'online' ? 'Online' : a === 'busy' ? 'Pausa' : 'Offline';
 
-const availabilityClass = a => {
-  if (a === 'online') return 'klaos-supv-state--online';
-  if (a === 'busy') return 'klaos-supv-state--busy';
-  return 'klaos-supv-state--offline';
-};
+const statusClass = a =>
+  a === 'online'
+    ? 'klaos-supv-card--online'
+    : a === 'busy'
+    ? 'klaos-supv-card--busy'
+    : 'klaos-supv-card--offline';
 
 const forceStatus = async (row, newStatus) => {
   if (row.availability === newStatus) return;
@@ -145,16 +160,16 @@ const forceStatus = async (row, newStatus) => {
         </p>
       </div>
       <div class="klaos-supv__summary">
-        <span class="klaos-supv__badge klaos-supv__badge--online">
+        <span class="klaos-supv__pill klaos-supv__pill--online">
           🟢 {{ summary.online || 0 }} online
         </span>
-        <span class="klaos-supv__badge klaos-supv__badge--busy">
+        <span class="klaos-supv__pill klaos-supv__pill--busy">
           🟡 {{ summary.busy || 0 }} pausa
         </span>
-        <span class="klaos-supv__badge klaos-supv__badge--offline">
+        <span class="klaos-supv__pill klaos-supv__pill--offline">
           ⚪ {{ summary.offline || 0 }} offline
         </span>
-        <span class="klaos-supv__badge klaos-supv__badge--with-chats">
+        <span class="klaos-supv__pill klaos-supv__pill--chats">
           💬 {{ summary.with_chats || 0 }} com chats
         </span>
       </div>
@@ -163,100 +178,109 @@ const forceStatus = async (row, newStatus) => {
     <div v-if="loading" class="klaos-supv__loading">Carregando…</div>
     <div v-else-if="error" class="klaos-supv__error">{{ error }}</div>
 
-    <table v-else class="klaos-supv__table">
-      <thead>
-        <tr>
-          <th>Agente</th>
-          <th>Estado</th>
-          <th>Chats agora</th>
-          <th>Atendidos hoje</th>
-          <th>Logado hoje</th>
-          <th>Pausa hoje</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in rows" :key="row.id">
-          <td class="klaos-supv__agent-cell">
+    <div v-else class="klaos-supv__grid">
+      <article
+        v-for="row in rows"
+        :key="row.id"
+        class="klaos-supv-card"
+        :class="[statusClass(row.availability), row.pause_live?.overtime_live && 'klaos-supv-card--overtime']"
+      >
+        <header class="klaos-supv-card__head">
+          <div class="klaos-supv-card__head-status">
+            <span class="klaos-supv-card__dot"></span>
+            {{ availabilityLabel(row.availability) }}
+          </div>
+          <div
+            v-if="row.pause_live"
+            class="klaos-supv-card__reason"
+            :class="row.pause_live.overtime_live && 'klaos-supv-card__reason--overtime'"
+            :title="row.pause_live.max_minutes
+              ? `Limite: ${row.pause_live.max_minutes} min`
+              : 'Sem limite'"
+          >
+            {{ row.pause_live.icon }} {{ row.pause_live.name }}
+            <span class="klaos-supv-card__reason-time">
+              {{ fmtShort(row.pause_live.elapsed_s_live) }}
+              <template v-if="row.pause_live.overtime_live">
+                · +{{ fmtShort(-row.pause_live.remaining_s) }}
+              </template>
+            </span>
+          </div>
+        </header>
+
+        <div class="klaos-supv-card__body">
+          <div class="klaos-supv-card__avatar-wrap">
             <img
               v-if="row.thumbnail"
               :src="row.thumbnail"
               :alt="row.name"
-              class="klaos-supv__avatar"
+              class="klaos-supv-card__avatar"
             />
-            <div v-else class="klaos-supv__avatar klaos-supv__avatar--placeholder">
+            <div v-else class="klaos-supv-card__avatar klaos-supv-card__avatar--placeholder">
               {{ row.name?.charAt(0) }}
             </div>
-            <div>
-              <div class="klaos-supv__name">{{ row.name }}</div>
-              <div class="klaos-supv__email">{{ row.email }}</div>
+            <div class="klaos-supv-card__name-block">
+              <div class="klaos-supv-card__name">{{ row.name }}</div>
+              <div class="klaos-supv-card__email">{{ row.email }}</div>
             </div>
-          </td>
-          <td>
-            <div class="klaos-supv__state-cell">
-              <span
-                class="klaos-supv__state"
-                :class="availabilityClass(row.availability)"
-              >
-                {{ availabilityIcon(row.availability) }}
-                {{ availabilityLabel(row.availability) }}
-              </span>
-              <span
-                v-if="row.availability === 'busy' && row.pause_reason"
-                class="klaos-supv__pause-reason"
-                :title="`Em pausa: ${row.pause_reason.name}`"
-              >
-                {{ row.pause_reason.icon }} {{ row.pause_reason.name }}
-              </span>
+          </div>
+
+          <div class="klaos-supv-card__metrics">
+            <div class="klaos-supv-card__metric">
+              <div class="klaos-supv-card__metric-val">{{ row.chats_now }}</div>
+              <div class="klaos-supv-card__metric-lbl">chats agora</div>
             </div>
-          </td>
-          <td class="klaos-supv__num">
-            <strong>{{ row.chats_now }}</strong>
-          </td>
-          <td class="klaos-supv__num">{{ row.attended_today }}</td>
-          <td class="klaos-supv__num klaos-supv__time">
-            {{ fmtDuration(row.online_today_s_live) }}
-          </td>
-          <td class="klaos-supv__num klaos-supv__time">
-            {{ fmtDuration(row.busy_today_s_live) }}
-          </td>
-          <td class="klaos-supv__actions">
-            <button
-              v-if="row.availability !== 'offline'"
-              type="button"
-              class="klaos-supv__btn klaos-supv__btn--offline"
-              title="Forçar offline"
-              @click="forceStatus(row, 'offline')"
-            >
-              ⏻
-            </button>
-            <button
-              v-if="row.availability !== 'busy'"
-              type="button"
-              class="klaos-supv__btn klaos-supv__btn--busy"
-              title="Forçar pausa"
-              @click="forceStatus(row, 'busy')"
-            >
-              ⏸
-            </button>
-            <button
-              v-if="row.availability !== 'online'"
-              type="button"
-              class="klaos-supv__btn klaos-supv__btn--online"
-              title="Colocar online"
-              @click="forceStatus(row, 'online')"
-            >
-              ▶
-            </button>
-          </td>
-        </tr>
-        <tr v-if="!rows.length">
-          <td colspan="7" class="klaos-supv__empty">
-            Nenhum agente nessa conta.
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <div class="klaos-supv-card__metric">
+              <div class="klaos-supv-card__metric-val">{{ row.attended_today }}</div>
+              <div class="klaos-supv-card__metric-lbl">atendidos hoje</div>
+            </div>
+            <div class="klaos-supv-card__metric">
+              <div class="klaos-supv-card__metric-val klaos-supv-card__metric-val--time">
+                {{ fmtDuration(row.online_today_s_live) }}
+              </div>
+              <div class="klaos-supv-card__metric-lbl">logado hoje</div>
+            </div>
+            <div class="klaos-supv-card__metric">
+              <div class="klaos-supv-card__metric-val klaos-supv-card__metric-val--time">
+                {{ fmtDuration(row.busy_today_s_live) }}
+              </div>
+              <div class="klaos-supv-card__metric-lbl">pausa hoje</div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="klaos-supv-card__actions">
+          <button
+            v-if="row.availability !== 'online'"
+            type="button"
+            class="klaos-supv-card__btn klaos-supv-card__btn--online"
+            @click="forceStatus(row, 'online')"
+          >
+            ▶ Online
+          </button>
+          <button
+            v-if="row.availability !== 'busy'"
+            type="button"
+            class="klaos-supv-card__btn klaos-supv-card__btn--busy"
+            @click="forceStatus(row, 'busy')"
+          >
+            ⏸ Pausa
+          </button>
+          <button
+            v-if="row.availability !== 'offline'"
+            type="button"
+            class="klaos-supv-card__btn klaos-supv-card__btn--offline"
+            @click="forceStatus(row, 'offline')"
+          >
+            ⏻ Offline
+          </button>
+        </footer>
+      </article>
+
+      <div v-if="!rows.length" class="klaos-supv__empty">
+        Nenhum agente nessa conta.
+      </div>
+    </div>
   </div>
 </template>
 
@@ -265,6 +289,7 @@ const forceStatus = async (row, newStatus) => {
   padding: 24px;
   height: 100%;
   overflow: auto;
+  background: #f9fafb;
 }
 .klaos-supv__header {
   display: flex;
@@ -272,12 +297,13 @@ const forceStatus = async (row, newStatus) => {
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 .klaos-supv__title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   margin: 0;
+  color: #111827;
 }
 .klaos-supv__subtitle {
   font-size: 13px;
@@ -289,166 +315,227 @@ const forceStatus = async (row, newStatus) => {
   gap: 8px;
   flex-wrap: wrap;
 }
-.klaos-supv__badge {
-  padding: 6px 12px;
-  border-radius: 16px;
+.klaos-supv__pill {
+  padding: 6px 14px;
+  border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
-  background: #f3f4f6;
-  color: #374151;
   white-space: nowrap;
 }
-.klaos-supv__badge--online {
+.klaos-supv__pill--online {
   background: #d1fae5;
   color: #065f46;
 }
-.klaos-supv__badge--busy {
+.klaos-supv__pill--busy {
   background: #fef3c7;
   color: #78350f;
 }
-.klaos-supv__badge--offline {
+.klaos-supv__pill--offline {
   background: #e5e7eb;
   color: #374151;
 }
-.klaos-supv__badge--with-chats {
+.klaos-supv__pill--chats {
   background: #dbeafe;
   color: #1e40af;
 }
-.klaos-supv__table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+.klaos-supv__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }
-.klaos-supv__table th {
-  text-align: left;
-  padding: 12px 16px;
-  background: #f9fafb;
+
+.klaos-supv-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+.klaos-supv-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.klaos-supv-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  color: white;
   font-size: 12px;
+  font-weight: 600;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.klaos-supv-card--online .klaos-supv-card__head {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+.klaos-supv-card--busy .klaos-supv-card__head {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+.klaos-supv-card--offline .klaos-supv-card__head {
+  background: linear-gradient(90deg, #6b7280 0%, #4b5563 100%);
+}
+.klaos-supv-card--overtime {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px #fecaca;
+  animation: klaos-supv-pulse 1.5s ease-in-out infinite;
+}
+.klaos-supv-card--overtime .klaos-supv-card__head {
+  background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
+}
+@keyframes klaos-supv-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px #fecaca; }
+  50% { box-shadow: 0 0 0 4px #fca5a5; }
+}
+
+.klaos-supv-card__head-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-weight: 600;
-  color: #6b7280;
-  border-bottom: 1px solid #e5e7eb;
 }
-.klaos-supv__table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f3f4f6;
-  font-size: 14px;
-  color: #111827;
-  vertical-align: middle;
+.klaos-supv-card__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
 }
-.klaos-supv__table tr:last-child td {
-  border-bottom: none;
+.klaos-supv-card__reason {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.klaos-supv__agent-cell {
+.klaos-supv-card__reason-time {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.95;
+}
+
+.klaos-supv-card__body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.klaos-supv-card__avatar-wrap {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.klaos-supv__avatar {
-  width: 36px;
-  height: 36px;
+.klaos-supv-card__avatar {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   background: #e5e7eb;
   flex-shrink: 0;
 }
-.klaos-supv__avatar--placeholder {
+.klaos-supv-card__avatar--placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 700;
   color: #6b7280;
   background: #f3f4f6;
+  font-size: 16px;
 }
-.klaos-supv__name {
+.klaos-supv-card__name-block {
+  min-width: 0;
+  flex: 1;
+}
+.klaos-supv-card__name {
   font-weight: 600;
+  color: #111827;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.klaos-supv__email {
-  font-size: 12px;
-  color: #6b7280;
-}
-.klaos-supv__state-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
-}
-.klaos-supv__pause-reason {
+.klaos-supv-card__email {
   font-size: 11px;
-  color: #92400e;
-  background: #fef3c7;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.klaos-supv__state {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
+
+.klaos-supv-card__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
-.klaos-supv__state--online {
-  background: #d1fae5;
-  color: #065f46;
-}
-.klaos-supv__state--busy {
-  background: #fef3c7;
-  color: #78350f;
-}
-.klaos-supv__state--offline {
-  background: #e5e7eb;
-  color: #374151;
-}
-.klaos-supv__num {
+.klaos-supv-card__metric {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 8px 10px;
   text-align: center;
-  font-variant-numeric: tabular-nums;
 }
-.klaos-supv__time {
-  font-family: 'SF Mono', Monaco, monospace;
+.klaos-supv-card__metric-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+.klaos-supv-card__metric-val--time {
   font-size: 13px;
+  font-family: 'SF Mono', Monaco, monospace;
+  letter-spacing: -0.5px;
 }
-.klaos-supv__actions {
-  display: flex;
-  gap: 4px;
-  justify-content: flex-end;
+.klaos-supv-card__metric-lbl {
+  font-size: 10px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 2px;
 }
-.klaos-supv__btn {
-  width: 32px;
-  height: 32px;
+
+.klaos-supv-card__actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-top: 1px solid #f3f4f6;
+  background: #fafafa;
+}
+.klaos-supv-card__btn {
+  flex: 1;
+  padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid transparent;
-  font-size: 14px;
+  font-size: 11px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  text-align: center;
 }
-.klaos-supv__btn--online {
+.klaos-supv-card__btn--online {
   background: #d1fae5;
   color: #065f46;
   border-color: #6ee7b7;
 }
-.klaos-supv__btn--busy {
+.klaos-supv-card__btn--busy {
   background: #fef3c7;
   color: #78350f;
   border-color: #fcd34d;
 }
-.klaos-supv__btn--offline {
+.klaos-supv-card__btn--offline {
   background: #fee2e2;
   color: #991b1b;
   border-color: #fca5a5;
 }
-.klaos-supv__btn:hover {
-  transform: scale(1.1);
+.klaos-supv-card__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .klaos-supv__loading,
 .klaos-supv__error,
 .klaos-supv__empty {

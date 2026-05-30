@@ -92,11 +92,18 @@ class Api::Custom::V1::Accounts::SupervisorAgentsController < Api::V1::Accounts:
              .includes(:pause_reason)
 
     events.each_with_object({}) do |ev, acc|
+      r = ev.pause_reason
+      elapsed_s = (Time.current - ev.started_at).to_i
+      max_s = r&.max_minutes&.* 60
+      overtime = max_s && elapsed_s > max_s
       acc[ev.user_id] = {
         id: ev.pause_reason_id,
-        name: ev.pause_reason&.name,
-        icon: ev.pause_reason&.icon,
-        started_at: ev.started_at.to_i
+        name: r&.name,
+        icon: r&.icon,
+        started_at: ev.started_at.to_i,
+        elapsed_s: elapsed_s,
+        max_minutes: r&.max_minutes,
+        overtime: overtime
       }
     end
   end

@@ -14,7 +14,7 @@ export default {
       loading: true,
       error: null,
       saving: false,
-      form: { name: '', icon: '🟡' },
+      form: { name: '', icon: '🟡', max_minutes: null },
       editingId: null,
     };
   },
@@ -46,11 +46,15 @@ export default {
     },
     startEdit(reason) {
       this.editingId = reason.id;
-      this.form = { name: reason.name, icon: reason.icon };
+      this.form = {
+        name: reason.name,
+        icon: reason.icon,
+        max_minutes: reason.max_minutes,
+      };
     },
     cancelEdit() {
       this.editingId = null;
-      this.form = { name: '', icon: '🟡' };
+      this.form = { name: '', icon: '🟡', max_minutes: null };
     },
     async submit() {
       if (!this.canSubmit) return;
@@ -119,6 +123,16 @@ export default {
         class="klaos-pr-settings__name"
         :disabled="saving"
       />
+      <input
+        v-model.number="form.max_minutes"
+        type="number"
+        min="1"
+        max="600"
+        placeholder="min"
+        class="klaos-pr-settings__minutes"
+        title="Tempo limite em minutos (deixe vazio = sem limite)"
+        :disabled="saving"
+      />
       <button
         type="submit"
         :disabled="!canSubmit"
@@ -144,6 +158,7 @@ export default {
         <tr>
           <th>Ícone</th>
           <th>Nome</th>
+          <th>Limite (min)</th>
           <th>Ordem</th>
           <th>Ações</th>
         </tr>
@@ -152,6 +167,7 @@ export default {
         <tr v-for="r in reasons" :key="r.id">
           <td class="klaos-pr-settings__icon-cell">{{ r.icon }}</td>
           <td>{{ r.name }}</td>
+          <td>{{ r.max_minutes ? `${r.max_minutes} min` : '—' }}</td>
           <td>{{ r.sort_order }}</td>
           <td class="klaos-pr-settings__actions">
             <button type="button" class="klaos-pr-settings__edit" @click="startEdit(r)">
@@ -163,7 +179,7 @@ export default {
           </td>
         </tr>
         <tr v-if="!reasons.length">
-          <td colspan="4" class="klaos-pr-settings__empty">
+          <td colspan="5" class="klaos-pr-settings__empty">
             Nenhum motivo cadastrado.
           </td>
         </tr>
@@ -208,6 +224,13 @@ export default {
 .klaos-pr-settings__name {
   flex: 1;
   min-width: 200px;
+}
+.klaos-pr-settings__minutes {
+  width: 80px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
 }
 .klaos-pr-settings__submit,
 .klaos-pr-settings__cancel,
