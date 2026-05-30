@@ -104,6 +104,24 @@ const PATCHES = [
     reason: 'register KLaOS message prefix + meta health settings route imports',
   },
 
+  // === KLaOS — Banner 24h "Usar template" abre modal de template (O.10 fix) ===
+  // O banner KLaOS dispatcha `klaos:open-template-picker` no document.
+  // ReplyBox upstream tem `openWhatsappTemplateModal` mas nenhum listener
+  // global — clique sem efeito. Patch adiciona o addEventListener no
+  // mounted (e remove no unmounted) — clique abre o modal de template real.
+  {
+    id: '/widgets/conversation/ReplyBox.vue',
+    from: "    emitter.on(BUS_EVENTS.TOGGLE_REPLY_TO_MESSAGE, this.fetchAndSetReplyTo);",
+    to: "    emitter.on(BUS_EVENTS.TOGGLE_REPLY_TO_MESSAGE, this.fetchAndSetReplyTo);\n    document.addEventListener('klaos:open-template-picker', this.openWhatsappTemplateModal);",
+    reason: 'klaos-banner-24h: listener pra abrir modal de template via custom event',
+  },
+  {
+    id: '/widgets/conversation/ReplyBox.vue',
+    from: "    document.removeEventListener('keydown', this.handleKeyEvents);",
+    to: "    document.removeEventListener('keydown', this.handleKeyEvents);\n    document.removeEventListener('klaos:open-template-picker', this.openWhatsappTemplateModal);",
+    reason: 'klaos-banner-24h: cleanup do listener no unmounted',
+  },
+
   // === KLaOS — Painel de Agentes (O.1): item no Sidebar (admin-only) ===
   // Coloca o link dentro do grupo Reports porque é supervisão. Permission
   // 'administrator' já vem na route meta — sidebar só decide a renderização.
