@@ -436,12 +436,21 @@ const goPage = n => {
   flex: 1;
   min-width: 0;
   height: 100%;
-  border: none;
-  background: transparent;
+  border: none !important;
+  background: transparent !important;
   font-size: 13px;
   color: #111827;
-  outline: none;
-  padding: 0;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.klaos-supv__search:focus,
+.klaos-supv__search:hover,
+.klaos-supv__search:active {
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }
 .klaos-supv__search-clear {
   background: none;
