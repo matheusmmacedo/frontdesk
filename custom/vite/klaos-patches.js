@@ -2183,17 +2183,17 @@ const assigneeTabItems = computed(() => {
     reason: 'klaos-handoff + snooze: registra event handlers',
   },
   // === KLaOS — Cor sutil em conversas NÃO LIDAS (reforça o badge) ===
-  // Quando unread_count > 0, a card ganha bg azul muito leve + título em
-  // bold. Lida fica branca padrão. Diferença visual permite scan rápido
-  // da lista sem precisar fixar olhar no badge pequeno.
+  // Quando unread_count > 0, a card ganha bg azul muito leve + border-left.
+  // A card que renderiza no dashboard é components/widgets/conversation/
+  // ConversationCard.vue (NÃO a versão components-next).
   {
-    id: '/Conversation/ConversationCard/ConversationCard.vue',
-    from: `    class="flex w-full gap-3 px-3 py-4 transition-all duration-300 ease-in-out cursor-pointer"
-    @click="onCardClick"`,
-    to: `    class="flex w-full gap-3 px-3 py-4 transition-all duration-300 ease-in-out cursor-pointer"
-    :class="conversation.unread_count > 0 ? 'klaos-conv-unread' : ''"
-    @click="onCardClick"`,
-    reason: 'klaos-unread-color: marca card com classe quando há msgs não-lidas',
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: `      'active animate-card-select bg-n-background border-n-weak': isActiveChat,
+      'bg-n-slate-2': selected,`,
+    to: `      'active animate-card-select bg-n-background border-n-weak': isActiveChat,
+      'bg-n-slate-2': selected,
+      'klaos-conv-unread': chat && chat.unread_count > 0 && !isActiveChat,`,
+    reason: 'klaos-unread-color: adiciona classe quando há msgs não-lidas (exclui conv ativa)',
   },
   // Adiciona o CSS global pra .klaos-conv-unread no arquivo de estilos
   // dashboard.scss (já patcheado em outros locais).
