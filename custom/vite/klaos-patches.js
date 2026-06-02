@@ -2179,8 +2179,8 @@ const assigneeTabItems = computed(() => {
   {
     id: '/dashboard/helper/actionCable.js',
     from: "'copilot.message.created': this.onCopilotMessageCreated,\n    };",
-    to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n    };",
-    reason: 'klaos-snooze-reopened: registra event handler',
+    to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n      'klaos.conversation_assigned_to_me': this.onKlaosConversationAssignedToMe,\n      'klaos.conversation_unassigned_from_me': this.onKlaosConversationUnassignedFromMe,\n    };",
+    reason: 'klaos-handoff + snooze: registra event handlers',
   },
   {
     id: '/dashboard/helper/actionCable.js',
@@ -2191,9 +2191,21 @@ const assigneeTabItems = computed(() => {
     } catch (e) { /* noop */ }
   };
 
+  onKlaosConversationAssignedToMe = data => {
+    try {
+      emitter.emit('klaos.conversation_assigned_to_me', data);
+    } catch (e) { /* noop */ }
+  };
+
+  onKlaosConversationUnassignedFromMe = data => {
+    try {
+      emitter.emit('klaos.conversation_unassigned_from_me', data);
+    } catch (e) { /* noop */ }
+  };
+
   // eslint-disable-next-line class-methods-use-this
   onReconnect = () => {`,
-    reason: 'klaos-snooze-reopened: handler que emite via mitt emitter',
+    reason: 'klaos-handoff + snooze: handlers que emitem via mitt emitter',
   },
 
   // === KLaOS — Fix bug "mensagem vazia enviada" do composer (ReplyBox.vue) ===
@@ -2400,20 +2412,20 @@ const assigneeTabItems = computed(() => {
   {
     id: '/dashboard/App.vue',
     from: "import WootSnackbarBox from './components/SnackbarContainer.vue';",
-    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';",
-    reason: 'snooze-reopen-alert: import componente do alerta',
+    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';\nimport ConversationHandoffAlert from 'next/KlaosHandoff/ConversationHandoffAlert.vue';",
+    reason: 'snooze-reopen-alert + handoff-alert: import componentes',
   },
   {
     id: '/dashboard/App.vue',
     from: '    WootSnackbarBox,\n    PendingEmailVerificationBanner,',
-    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    PendingEmailVerificationBanner,',
-    reason: 'snooze-reopen-alert: registra componente',
+    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    ConversationHandoffAlert,\n    PendingEmailVerificationBanner,',
+    reason: 'snooze-reopen-alert + handoff-alert: registra componentes',
   },
   {
     id: '/dashboard/App.vue',
     from: '    <WootSnackbarBox />\n    <NetworkNotification />',
-    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <NetworkNotification />',
-    reason: 'snooze-reopen-alert: monta no App pra escutar transições snoozed→open globalmente',
+    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <ConversationHandoffAlert />\n    <NetworkNotification />',
+    reason: 'snooze-reopen-alert + handoff-alert: monta globalmente no App.vue',
   },
 
   // === KLaOS — Snooze: troca CustomSnoozeModal por KlaosCustomSnoozeModal (Item snooze) ===
