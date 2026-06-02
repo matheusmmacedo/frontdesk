@@ -2182,6 +2182,15 @@ const assigneeTabItems = computed(() => {
     to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n      'klaos.conversation_assigned_to_me': this.onKlaosConversationAssignedToMe,\n      'klaos.conversation_unassigned_from_me': this.onKlaosConversationUnassignedFromMe,\n    };",
     reason: 'klaos-handoff + snooze: registra event handlers',
   },
+  // Patch no onMessageCreated upstream pra ALSO emitir via mitt — permite
+  // que componentes Klaos escutem novas mensagens sem precisar inspecionar
+  // o store. Usado pelo KlaosNewMessageAlert.vue.
+  {
+    id: '/dashboard/helper/actionCable.js',
+    from: "    DashboardAudioNotificationHelper.onNewMessage(data);\n    this.app.$store.dispatch('addMessage', data);",
+    to: "    DashboardAudioNotificationHelper.onNewMessage(data);\n    this.app.$store.dispatch('addMessage', data);\n    try { emitter.emit('klaos.message_created', data); } catch (e) { /* noop */ }",
+    reason: 'klaos-new-message-alert: emite via mitt pra componentes Klaos reagirem',
+  },
   {
     id: '/dashboard/helper/actionCable.js',
     from: "  // eslint-disable-next-line class-methods-use-this\n  onReconnect = () => {",
@@ -2412,20 +2421,20 @@ const assigneeTabItems = computed(() => {
   {
     id: '/dashboard/App.vue',
     from: "import WootSnackbarBox from './components/SnackbarContainer.vue';",
-    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';\nimport ConversationHandoffAlert from 'next/KlaosHandoff/ConversationHandoffAlert.vue';",
-    reason: 'snooze-reopen-alert + handoff-alert: import componentes',
+    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';\nimport ConversationHandoffAlert from 'next/KlaosHandoff/ConversationHandoffAlert.vue';\nimport OfflineBanner from 'next/KlaosWebSocket/OfflineBanner.vue';\nimport NewMessageAlert from 'next/KlaosNewMessage/NewMessageAlert.vue';",
+    reason: 'snooze + handoff + offline + new-msg: import componentes',
   },
   {
     id: '/dashboard/App.vue',
     from: '    WootSnackbarBox,\n    PendingEmailVerificationBanner,',
-    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    ConversationHandoffAlert,\n    PendingEmailVerificationBanner,',
-    reason: 'snooze-reopen-alert + handoff-alert: registra componentes',
+    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    ConversationHandoffAlert,\n    OfflineBanner,\n    NewMessageAlert,\n    PendingEmailVerificationBanner,',
+    reason: 'snooze + handoff + offline + new-msg: registra componentes',
   },
   {
     id: '/dashboard/App.vue',
     from: '    <WootSnackbarBox />\n    <NetworkNotification />',
-    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <ConversationHandoffAlert />\n    <NetworkNotification />',
-    reason: 'snooze-reopen-alert + handoff-alert: monta globalmente no App.vue',
+    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <ConversationHandoffAlert />\n    <OfflineBanner />\n    <NewMessageAlert />\n    <NetworkNotification />',
+    reason: 'snooze + handoff + offline + new-msg: monta globalmente no App.vue',
   },
 
   // === KLaOS — Snooze: troca CustomSnoozeModal por KlaosCustomSnoozeModal (Item snooze) ===
