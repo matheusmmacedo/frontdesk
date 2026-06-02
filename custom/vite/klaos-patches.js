@@ -2182,6 +2182,36 @@ const assigneeTabItems = computed(() => {
     to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n      'klaos.conversation_assigned_to_me': this.onKlaosConversationAssignedToMe,\n      'klaos.conversation_unassigned_from_me': this.onKlaosConversationUnassignedFromMe,\n    };",
     reason: 'klaos-handoff + snooze: registra event handlers',
   },
+  // === KLaOS — Cor sutil em conversas NÃO LIDAS (reforça o badge) ===
+  // Quando unread_count > 0, a card ganha bg azul muito leve + título em
+  // bold. Lida fica branca padrão. Diferença visual permite scan rápido
+  // da lista sem precisar fixar olhar no badge pequeno.
+  {
+    id: '/Conversation/ConversationCard/ConversationCard.vue',
+    from: `    class="flex w-full gap-3 px-3 py-4 transition-all duration-300 ease-in-out cursor-pointer"
+    @click="onCardClick"`,
+    to: `    class="flex w-full gap-3 px-3 py-4 transition-all duration-300 ease-in-out cursor-pointer"
+    :class="conversation.unread_count > 0 ? 'klaos-conv-unread' : ''"
+    @click="onCardClick"`,
+    reason: 'klaos-unread-color: marca card com classe quando há msgs não-lidas',
+  },
+  // Adiciona o CSS global pra .klaos-conv-unread no arquivo de estilos
+  // dashboard.scss (já patcheado em outros locais).
+  {
+    id: '/dashboard/App.vue',
+    from: '<style lang="scss">',
+    to: `<style lang="scss">
+.klaos-conv-unread {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.02) 60%, transparent 100%) !important;
+  border-left: 3px solid #2563eb;
+}
+.klaos-conv-unread h4 {
+  font-weight: 700 !important;
+}
+`,
+    reason: 'klaos-unread-color: estilo .klaos-conv-unread (bg azul leve + título bold)',
+  },
+
   // === KLaOS — Fix badge "X não lidas" zerando cedo (#2 Gustavo) ===
   // Bug Chatwoot: quando o broadcast ActionCable da nova mensagem NÃO inclui
   // conversation.unread_count no payload, o frontend ZERA o badge ao invés
