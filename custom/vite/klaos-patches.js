@@ -2182,6 +2182,33 @@ const assigneeTabItems = computed(() => {
     to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n      'klaos.conversation_assigned_to_me': this.onKlaosConversationAssignedToMe,\n      'klaos.conversation_unassigned_from_me': this.onKlaosConversationUnassignedFromMe,\n    };",
     reason: 'klaos-handoff + snooze: registra event handlers',
   },
+  // === KLaOS — Fix badge "X não lidas" zerando cedo (#2 Gustavo) ===
+  // Bug Chatwoot: quando o broadcast ActionCable da nova mensagem NÃO inclui
+  // conversation.unread_count no payload, o frontend ZERA o badge ao invés
+  // de incrementar. Resultado: cliente manda 3-4 msgs em rajada, agente vê
+  // 0 não-lidas e tem que entrar conv por conv.
+  //
+  // Fix: se o payload trouxer unread_count, usa (autoritativo do backend).
+  // Se NÃO trouxer e a msg é incoming não-private, INCREMENTA o contador
+  // local. Não-incoming sem unread_count: mantém o valor atual.
+  {
+    id: '/store/modules/conversations/index.js',
+    from: "      chat.messages.push(message);\n      chat.timestamp = message.created_at;\n      const { conversation: { unread_count: unreadCount = 0 } = {} } = message;\n      chat.unread_count = unreadCount;",
+    to: `      chat.messages.push(message);
+      chat.timestamp = message.created_at;
+      // KLaOS — fix badge zerando (Gustavo reportou rajada de msgs sem
+      // contador). Se broadcast vier sem unread_count, INCREMENTA quando
+      // for incoming não-private; mantém quando for outgoing/activity.
+      const incomingUnread = message.conversation?.unread_count;
+      const isIncomingPublic = message.message_type === 0 && !message.private;
+      if (incomingUnread !== undefined && incomingUnread !== null) {
+        chat.unread_count = incomingUnread;
+      } else if (isIncomingPublic) {
+        chat.unread_count = (chat.unread_count || 0) + 1;
+      }`,
+    reason: 'klaos-unread-badge-fix: incrementa quando broadcast omite unread_count',
+  },
+
   // Patch no onMessageCreated upstream pra ALSO emitir via mitt — permite
   // que componentes Klaos escutem novas mensagens sem precisar inspecionar
   // o store. Usado pelo KlaosNewMessageAlert.vue.
