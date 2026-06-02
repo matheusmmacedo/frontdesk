@@ -2203,7 +2203,7 @@ const assigneeTabItems = computed(() => {
     to: `<style lang="scss">
 .klaos-conv-unread {
   background: linear-gradient(90deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.02) 60%, transparent 100%) !important;
-  border-left: 3px solid #2563eb;
+  border-left: 3px solid #2563eb !important;
 }
 .klaos-conv-unread h4 {
   font-weight: 700 !important;
