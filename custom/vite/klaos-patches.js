@@ -2202,11 +2202,19 @@ const assigneeTabItems = computed(() => {
     from: '<style lang="scss">',
     to: `<style lang="scss">
 .klaos-conv-unread {
-  background: linear-gradient(90deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.02) 60%, transparent 100%) !important;
-  border-left: 3px solid #2563eb !important;
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.05) 50%, transparent 100%) !important;
+  box-shadow: inset 4px 0 0 0 #2563eb !important;
 }
 .klaos-conv-unread h4 {
   font-weight: 700 !important;
+  color: #1e3a8a !important;
+}
+:global(.dark) .klaos-conv-unread {
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.15) 0%, rgba(96, 165, 250, 0.06) 50%, transparent 100%) !important;
+  box-shadow: inset 4px 0 0 0 #60a5fa !important;
+}
+:global(.dark) .klaos-conv-unread h4 {
+  color: #dbeafe !important;
 }
 `,
     reason: 'klaos-unread-color: estilo .klaos-conv-unread (bg azul leve + título bold)',

@@ -51,6 +51,41 @@ const playSound = async () => {
   }
 };
 
+// Push nativo do browser (Notification API). Mostra mesmo com aba em
+// background. Requer permission granted prévia — silencia se não tiver.
+let notifPermissionAsked = false;
+const ensureNotifPermission = async () => {
+  if (notifPermissionAsked) return;
+  notifPermissionAsked = true;
+  if ('Notification' in window && Notification.permission === 'default') {
+    try {
+      await Notification.requestPermission();
+    } catch (e) {
+      /* noop */
+    }
+  }
+};
+
+const fireBrowserNotification = (senderName, content, convId) => {
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+  try {
+    const notif = new Notification(`💬 ${senderName}`, {
+      body: content || 'Nova mensagem',
+      icon: '/favicon-32x32.png',
+      tag: `klaos-newmsg-${convId}`,
+      requireInteraction: false,
+    });
+    notif.onclick = () => {
+      window.focus();
+      notif.close();
+    };
+    setTimeout(() => notif.close(), 8000);
+  } catch (e) {
+    /* noop */
+  }
+};
+
 const dismiss = id => {
   alerts.value = alerts.value.filter(a => a.id !== id);
 };
@@ -99,11 +134,13 @@ const onMessageCreated = data => {
   });
 
   playSound();
+  fireBrowserNotification(senderName, content, convId);
   setTimeout(() => dismiss(id), AUTO_DISMISS_MS);
 };
 
 onMounted(() => {
   initAudio();
+  ensureNotifPermission();
   emitter.on(KLAOS_MESSAGE_CREATED, onMessageCreated);
 });
 
