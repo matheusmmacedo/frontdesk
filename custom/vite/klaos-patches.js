@@ -2182,6 +2182,80 @@ const assigneeTabItems = computed(() => {
     to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n      'klaos.conversation_assigned_to_me': this.onKlaosConversationAssignedToMe,\n      'klaos.conversation_unassigned_from_me': this.onKlaosConversationUnassignedFromMe,\n    };",
     reason: 'klaos-handoff + snooze: registra event handlers',
   },
+  // === KLaOS — Cor sutil em conversas NÃO LIDAS (reforça o badge) ===
+  // Quando unread_count > 0, a card ganha bg azul muito leve + border-left.
+  // A card que renderiza no dashboard é components/widgets/conversation/
+  // ConversationCard.vue (NÃO a versão components-next).
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: `      'active animate-card-select bg-n-background border-n-weak': isActiveChat,
+      'bg-n-slate-2': selected,`,
+    to: `      'active animate-card-select bg-n-background border-n-weak': isActiveChat,
+      'bg-n-slate-2': selected,
+      'klaos-conv-unread': chat && chat.unread_count > 0 && !isActiveChat,`,
+    reason: 'klaos-unread-color: adiciona classe quando há msgs não-lidas (exclui conv ativa)',
+  },
+  // Adiciona o CSS global pra .klaos-conv-unread no arquivo de estilos
+  // dashboard.scss (já patcheado em outros locais).
+  {
+    id: '/dashboard/App.vue',
+    from: '<style lang="scss">',
+    to: `<style lang="scss">
+.klaos-conv-unread {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.05) 50%, transparent 100%) !important;
+  box-shadow: inset 4px 0 0 0 #2563eb !important;
+}
+.klaos-conv-unread h4 {
+  font-weight: 700 !important;
+  color: #1e3a8a !important;
+}
+:global(.dark) .klaos-conv-unread {
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.15) 0%, rgba(96, 165, 250, 0.06) 50%, transparent 100%) !important;
+  box-shadow: inset 4px 0 0 0 #60a5fa !important;
+}
+:global(.dark) .klaos-conv-unread h4 {
+  color: #dbeafe !important;
+}
+`,
+    reason: 'klaos-unread-color: estilo .klaos-conv-unread (bg azul leve + título bold)',
+  },
+
+  // === KLaOS — Fix badge "X não lidas" zerando cedo (#2 Gustavo) ===
+  // Bug Chatwoot: quando o broadcast ActionCable da nova mensagem NÃO inclui
+  // conversation.unread_count no payload, o frontend ZERA o badge ao invés
+  // de incrementar. Resultado: cliente manda 3-4 msgs em rajada, agente vê
+  // 0 não-lidas e tem que entrar conv por conv.
+  //
+  // Fix: se o payload trouxer unread_count, usa (autoritativo do backend).
+  // Se NÃO trouxer e a msg é incoming não-private, INCREMENTA o contador
+  // local. Não-incoming sem unread_count: mantém o valor atual.
+  {
+    id: '/store/modules/conversations/index.js',
+    from: "      chat.messages.push(message);\n      chat.timestamp = message.created_at;\n      const { conversation: { unread_count: unreadCount = 0 } = {} } = message;\n      chat.unread_count = unreadCount;",
+    to: `      chat.messages.push(message);
+      chat.timestamp = message.created_at;
+      // KLaOS — fix badge zerando (Gustavo reportou rajada de msgs sem
+      // contador). Se broadcast vier sem unread_count, INCREMENTA quando
+      // for incoming não-private; mantém quando for outgoing/activity.
+      const incomingUnread = message.conversation?.unread_count;
+      const isIncomingPublic = message.message_type === 0 && !message.private;
+      if (incomingUnread !== undefined && incomingUnread !== null) {
+        chat.unread_count = incomingUnread;
+      } else if (isIncomingPublic) {
+        chat.unread_count = (chat.unread_count || 0) + 1;
+      }`,
+    reason: 'klaos-unread-badge-fix: incrementa quando broadcast omite unread_count',
+  },
+
+  // Patch no onMessageCreated upstream pra ALSO emitir via mitt — permite
+  // que componentes Klaos escutem novas mensagens sem precisar inspecionar
+  // o store. Usado pelo KlaosNewMessageAlert.vue.
+  {
+    id: '/dashboard/helper/actionCable.js',
+    from: "    DashboardAudioNotificationHelper.onNewMessage(data);\n    this.app.$store.dispatch('addMessage', data);",
+    to: "    DashboardAudioNotificationHelper.onNewMessage(data);\n    this.app.$store.dispatch('addMessage', data);\n    try { emitter.emit('klaos.message_created', data); } catch (e) { /* noop */ }",
+    reason: 'klaos-new-message-alert: emite via mitt pra componentes Klaos reagirem',
+  },
   {
     id: '/dashboard/helper/actionCable.js',
     from: "  // eslint-disable-next-line class-methods-use-this\n  onReconnect = () => {",
@@ -2412,20 +2486,20 @@ const assigneeTabItems = computed(() => {
   {
     id: '/dashboard/App.vue',
     from: "import WootSnackbarBox from './components/SnackbarContainer.vue';",
-    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';\nimport ConversationHandoffAlert from 'next/KlaosHandoff/ConversationHandoffAlert.vue';",
-    reason: 'snooze-reopen-alert + handoff-alert: import componentes',
+    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';\nimport ConversationHandoffAlert from 'next/KlaosHandoff/ConversationHandoffAlert.vue';\nimport OfflineBanner from 'next/KlaosWebSocket/OfflineBanner.vue';\nimport NewMessageAlert from 'next/KlaosNewMessage/NewMessageAlert.vue';",
+    reason: 'snooze + handoff + offline + new-msg: import componentes',
   },
   {
     id: '/dashboard/App.vue',
     from: '    WootSnackbarBox,\n    PendingEmailVerificationBanner,',
-    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    ConversationHandoffAlert,\n    PendingEmailVerificationBanner,',
-    reason: 'snooze-reopen-alert + handoff-alert: registra componentes',
+    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    ConversationHandoffAlert,\n    OfflineBanner,\n    NewMessageAlert,\n    PendingEmailVerificationBanner,',
+    reason: 'snooze + handoff + offline + new-msg: registra componentes',
   },
   {
     id: '/dashboard/App.vue',
     from: '    <WootSnackbarBox />\n    <NetworkNotification />',
-    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <ConversationHandoffAlert />\n    <NetworkNotification />',
-    reason: 'snooze-reopen-alert + handoff-alert: monta globalmente no App.vue',
+    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <ConversationHandoffAlert />\n    <OfflineBanner />\n    <NewMessageAlert />\n    <NetworkNotification />',
+    reason: 'snooze + handoff + offline + new-msg: monta globalmente no App.vue',
   },
 
   // === KLaOS — Snooze: troca CustomSnoozeModal por KlaosCustomSnoozeModal (Item snooze) ===
