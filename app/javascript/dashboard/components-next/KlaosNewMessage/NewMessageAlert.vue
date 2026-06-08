@@ -110,7 +110,18 @@ const onMessageCreated = data => {
   // 3. Pula se for a conv ATIVA (agente já tá vendo)
   if (selectedChat.value?.id === convId) return;
 
-  // 4. Filtro de relevância: assignee = eu OR conv unassigned (livre).
+  // 4. Pula se um BOT (AgentBot) está atendendo — bot é o "dono" da conv
+  // até passar pra humano. Não tem por que alertar ninguém da equipe.
+  // Sinal canônico: status='pending' OU presença de assignee_agent_bot.
+  const status = conv.status || data.status;
+  if (status === 'pending') return;
+  const botId =
+    conv.meta?.assignee_bot?.id ||
+    conv.assignee_agent_bot_id ||
+    conv.assignee_agent_bot?.id;
+  if (botId) return;
+
+  // 5. Filtro de relevância: assignee = eu OR conv unassigned (livre).
   // Outras convs (atribuídas a outra pessoa) não me alertam.
   const assigneeId = conv.meta?.assignee?.id || conv.assignee_id;
   if (assigneeId && assigneeId !== currentUserId.value) return;
