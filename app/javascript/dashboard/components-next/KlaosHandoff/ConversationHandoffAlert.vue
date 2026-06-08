@@ -27,7 +27,7 @@ const KLAOS_UNASSIGNED_FROM_ME = 'klaos.conversation_unassigned_from_me';
 
 const currentAccountId = useMapGetter('getCurrentAccountId');
 const alerts = ref([]);
-const AUTO_DISMISS_MS = 10000;
+const AUTO_DISMISS_MS = 18000; // 18s (era 10s — Gustavo não notava em tempo)
 
 let alertAudio = null;
 
@@ -93,6 +93,25 @@ const pushAlert = (mode, payload) => {
   setTimeout(() => dismiss(id), AUTO_DISMISS_MS);
 };
 
+// Aplica pulse verde na CARD da conv na lista — permanece visível por
+// 60s mesmo depois que o banner some, pra agente não perder.
+const pulseConversationCard = convId => {
+  const apply = () => {
+    const card = document.querySelector(
+      `[data-klaos-conversation-id="${convId}"]`
+    );
+    if (card) card.classList.add('klaos-handoff-pulse');
+  };
+  apply();
+  setTimeout(apply, 1000);
+  setTimeout(() => {
+    const card = document.querySelector(
+      `[data-klaos-conversation-id="${convId}"]`
+    );
+    if (card) card.classList.remove('klaos-handoff-pulse');
+  }, 60000);
+};
+
 const onAssignedToMe = payload => {
   pushAlert('in', payload);
   fireBrowserNotification(
@@ -101,6 +120,7 @@ const onAssignedToMe = payload => {
       (payload.previous_assignee ? ` (de ${payload.previous_assignee.name})` : ''),
     `klaos-assign-${payload.conversation_id}`
   );
+  pulseConversationCard(payload.conversation_id);
 };
 
 const onUnassignedFromMe = payload => {

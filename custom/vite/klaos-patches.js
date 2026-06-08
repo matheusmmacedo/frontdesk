@@ -2216,8 +2216,24 @@ const assigneeTabItems = computed(() => {
 :global(.dark) .klaos-conv-unread h4 {
   color: #dbeafe !important;
 }
+.klaos-handoff-pulse {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.06) 60%, transparent 100%) !important;
+  box-shadow: inset 5px 0 0 0 #10b981 !important;
+  animation: klaos-handoff-pulse-anim 1.2s ease-in-out infinite !important;
+}
+.klaos-handoff-pulse h4 {
+  font-weight: 700 !important;
+  color: #065f46 !important;
+}
+@keyframes klaos-handoff-pulse-anim {
+  0%, 100% { background: linear-gradient(90deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.06) 60%, transparent 100%); }
+  50% { background: linear-gradient(90deg, rgba(16, 185, 129, 0.32) 0%, rgba(16, 185, 129, 0.10) 60%, transparent 100%); }
+}
+:global(.dark) .klaos-handoff-pulse h4 {
+  color: #6ee7b7 !important;
+}
 `,
-    reason: 'klaos-unread-color: estilo .klaos-conv-unread (bg azul leve + título bold)',
+    reason: 'klaos-unread-color + handoff-pulse: estilos das cards destacadas',
   },
 
   // === KLaOS — Fix badge "X não lidas" zerando cedo (#2 Gustavo) ===
