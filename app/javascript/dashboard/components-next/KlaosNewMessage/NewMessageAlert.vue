@@ -97,20 +97,38 @@ const fireBrowserNotification = (senderName, content, convId) => {
 
 const applyPulse = convId => {
   pulsingConvIds.value.add(convId);
-  const apply = () => {
+  const tryApply = () => {
     const card = document.querySelector(
       `[data-klaos-conversation-id="${convId}"]`
     );
-    if (card) card.classList.add(PULSE_CLASS);
+    if (card) {
+      card.classList.add(PULSE_CLASS);
+      return true;
+    }
+    return false;
   };
-  apply();
-  setTimeout(apply, 500);
-  setTimeout(apply, 1500);
 
-  // Conv ativa (já tô vendo): pulsa por 4s e some
-  if (selectedChat.value?.id === convId) {
-    setTimeout(() => removePulse(convId), 4000);
+  const afterApplied = () => {
+    if (selectedChat.value?.id === convId) {
+      setTimeout(() => removePulse(convId), 4000);
+    }
+  };
+
+  if (tryApply()) {
+    afterApplied();
+    return;
   }
+
+  // Card ainda não no DOM — observa até aparecer (timeout 15s)
+  const observer = new MutationObserver(() => {
+    if (tryApply()) {
+      observer.disconnect();
+      clearTimeout(killTimer);
+      afterApplied();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  const killTimer = setTimeout(() => observer.disconnect(), 15000);
 };
 
 const removePulse = convId => {

@@ -95,22 +95,40 @@ const fireBrowserNotification = (title, body, tag) => {
 
 const applyPulse = convId => {
   pulsingConvIds.value.add(convId);
-  const apply = () => {
+  const tryApply = () => {
     const card = document.querySelector(
       `[data-klaos-conversation-id="${convId}"]`
     );
-    if (card) card.classList.add(PULSE_CLASS);
+    if (card) {
+      card.classList.add(PULSE_CLASS);
+      return true;
+    }
+    return false;
   };
-  apply();
-  // re-aplica em 500ms e 1500ms caso a card só renderize depois (bump
-  // pode ter movido a conv pra dentro da viewport agora — DOM novo)
-  setTimeout(apply, 500);
-  setTimeout(apply, 1500);
 
-  // Conv já ativa quando recebeu transferência? Some em 4s (já tô vendo)
-  if (selectedChat.value?.id === convId) {
-    setTimeout(() => removePulse(convId), 4000);
+  const afterApplied = () => {
+    if (selectedChat.value?.id === convId) {
+      setTimeout(() => removePulse(convId), 4000);
+    }
+  };
+
+  // Tenta imediatamente; se já aplicou, finaliza
+  if (tryApply()) {
+    afterApplied();
+    return;
   }
+
+  // Card ainda não no DOM (Minhas list atualizando após assign) — usa
+  // MutationObserver pra detectar quando aparece, com timeout 15s
+  const observer = new MutationObserver(() => {
+    if (tryApply()) {
+      observer.disconnect();
+      clearTimeout(killTimer);
+      afterApplied();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  const killTimer = setTimeout(() => observer.disconnect(), 15000);
 };
 
 const removePulse = convId => {
