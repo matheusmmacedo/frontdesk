@@ -119,22 +119,16 @@ const applyPulse = convId => {
     return;
   }
 
-  // Polling cada 250ms até 20s (re-aplica em re-renders do Vue)
-  let attempts = 0;
+  // Polling INDEFINIDO até pulsingConvIds esvaziar (removePulse explícito
+  // ou componente desmontado).
   const interval = setInterval(() => {
-    attempts += 1;
     if (!pulsingConvIds.value.has(convId)) {
       clearInterval(interval);
       return;
     }
     tryApply();
-    if (attempts > 80) {
-      clearInterval(interval);
-      afterApplied();
-    } else if (attempts === 1 && tryApply()) {
-      afterApplied();
-    }
-  }, 250);
+  }, 500);
+  afterApplied();
 };
 
 const removePulse = convId => {

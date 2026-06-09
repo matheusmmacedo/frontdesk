@@ -117,24 +117,18 @@ const applyPulse = convId => {
     return;
   }
 
-  // Card ainda não no DOM — polling cada 250ms até 20s.
-  // Em re-renders do Vue (lista filtrada/ordenada) o classList pode
-  // ser perdido — re-aplica enquanto pulsingConvIds contém o convId.
-  let attempts = 0;
+  // Card ainda não no DOM OU Vue re-renderiza a lista (perdendo classList).
+  // Polling INDEFINIDO a cada 500ms, só para quando pulsingConvIds não
+  // tem mais o convId (removePulse foi chamado). Garantia: cleanup em
+  // onBeforeUnmount limpa o Set, então setInterval para também.
   const interval = setInterval(() => {
-    attempts += 1;
     if (!pulsingConvIds.value.has(convId)) {
       clearInterval(interval);
       return;
     }
     tryApply();
-    if (attempts > 80) {
-      clearInterval(interval);
-      afterApplied();
-    } else if (attempts === 1 && tryApply()) {
-      afterApplied();
-    }
-  }, 250);
+  }, 500);
+  afterApplied();
 };
 
 const removePulse = convId => {
