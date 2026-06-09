@@ -119,16 +119,22 @@ const applyPulse = convId => {
     return;
   }
 
-  // Card ainda não no DOM — observa até aparecer (timeout 15s)
-  const observer = new MutationObserver(() => {
-    if (tryApply()) {
-      observer.disconnect();
-      clearTimeout(killTimer);
+  // Polling cada 250ms até 20s (re-aplica em re-renders do Vue)
+  let attempts = 0;
+  const interval = setInterval(() => {
+    attempts += 1;
+    if (!pulsingConvIds.value.has(convId)) {
+      clearInterval(interval);
+      return;
+    }
+    tryApply();
+    if (attempts > 80) {
+      clearInterval(interval);
+      afterApplied();
+    } else if (attempts === 1 && tryApply()) {
       afterApplied();
     }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  const killTimer = setTimeout(() => observer.disconnect(), 15000);
+  }, 250);
 };
 
 const removePulse = convId => {

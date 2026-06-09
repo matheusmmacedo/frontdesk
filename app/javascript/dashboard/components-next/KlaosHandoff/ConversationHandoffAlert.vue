@@ -112,23 +112,29 @@ const applyPulse = convId => {
     }
   };
 
-  // Tenta imediatamente; se já aplicou, finaliza
   if (tryApply()) {
     afterApplied();
     return;
   }
 
-  // Card ainda não no DOM (Minhas list atualizando após assign) — usa
-  // MutationObserver pra detectar quando aparece, com timeout 15s
-  const observer = new MutationObserver(() => {
-    if (tryApply()) {
-      observer.disconnect();
-      clearTimeout(killTimer);
+  // Card ainda não no DOM — polling cada 250ms até 20s.
+  // Em re-renders do Vue (lista filtrada/ordenada) o classList pode
+  // ser perdido — re-aplica enquanto pulsingConvIds contém o convId.
+  let attempts = 0;
+  const interval = setInterval(() => {
+    attempts += 1;
+    if (!pulsingConvIds.value.has(convId)) {
+      clearInterval(interval);
+      return;
+    }
+    tryApply();
+    if (attempts > 80) {
+      clearInterval(interval);
+      afterApplied();
+    } else if (attempts === 1 && tryApply()) {
       afterApplied();
     }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  const killTimer = setTimeout(() => observer.disconnect(), 15000);
+  }, 250);
 };
 
 const removePulse = convId => {
