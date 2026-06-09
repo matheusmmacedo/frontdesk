@@ -114,13 +114,10 @@ const applyPulse = convId => {
     }
   };
 
-  if (tryApply()) {
-    afterApplied();
-    return;
-  }
-
-  // Polling INDEFINIDO até pulsingConvIds esvaziar (removePulse explícito
-  // ou componente desmontado).
+  // SEMPRE inicia polling — Vue re-renderiza cards a cada update e o
+  // classList é descartado. Sem polling contínuo, pulse some.
+  tryApply();
+  afterApplied();
   const interval = setInterval(() => {
     if (!pulsingConvIds.value.has(convId)) {
       clearInterval(interval);
@@ -128,7 +125,6 @@ const applyPulse = convId => {
     }
     tryApply();
   }, 500);
-  afterApplied();
 };
 
 const removePulse = convId => {
