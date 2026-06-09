@@ -1,35 +1,46 @@
 <script setup>
-// KLaOS — Alerta de nova mensagem quando o agente está em OUTRA conv
-// (paridade Kualiz, problema reportado pelo Gustavo).
+// KLaOS — Sinal de nova mensagem (paridade Kualiz).
 //
-// Sintoma: "às vezes estou conversando com outro paciente, o cliente
-// manda mensagem e elas não estão vendo". Chatwoot já tem o som global
-// (DashboardAudioNotificationHelper) mas não tem banner visual quando
-// a aba está focada — o som muitas vezes não toca por autoplay policy
-// e o agente perde o evento.
+// Comportamento (Kualiz-like, decisão Matheus 2026-06-09):
+//   - SEM banner top-right (removido — feedback Matheus/Gustavo)
+//   - Pulse VERDE persistente na card da conv na lista
+//   - Pulse fica até o agente ABRIR a conv (selectedChat.id === convId)
+//   - Conv sobe pro TOPO (bump local de last_activity_at)
+//   - Som leve (1 ding) + push nativo (se permission granted)
 //
-// Solução KLaOS:
-//   - Banner top-right toda vez que chega INCOMING (cliente) em uma
-//     conv que NÃO é a active conversation atual.
-//   - Som confiável (1 toque, não loop) com volume médio.
-//   - Auto-dismiss 8s.
-//   - Botão "Abrir" navega pra conv.
-//   - Filtra: só atendente VINCULADO à conv (assignee = me) OR conv
-//     unassigned (qualquer um pode pegar).
-//
-// Multi-tenant nato. Reusa estrutura visual do ConversationHandoffAlert.
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useMapGetter } from 'dashboard/composables/store';
+// Filtros (quem recebe o pulse):
+//   - Só msg de CLIENTE (incoming, não privada)
+//   - Conv atribuída AO USUÁRIO ATUAL (assignee === me)
+//     → conv LIVRE (sem assignee) NÃO pulsa (decisão: fica neutra)
+//     → conv de OUTRO agente NÃO pulsa
+//     → conv com bot atendendo (status=pending OU assignee_agent_bot)
+//       NÃO pulsa
+//   - Conv ATIVA (aberta agora) PULSA mesmo assim por 4s (decisão Matheus
+//     2026-06-09: sinal extra mesmo se já vendo)
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { emitter } from 'shared/helpers/mitt';
 
 const KLAOS_MESSAGE_CREATED = 'klaos.message_created';
+const PULSE_CLASS = 'klaos-newmsg-pulse';
+const AUTO_DISMISS_MS = 8000;
 
+const store = useStore();
 const currentAccountId = useMapGetter('getCurrentAccountId');
 const currentUserId = useMapGetter('getCurrentUserID');
 const selectedChat = useMapGetter('getSelectedChat');
 
+const pulsingConvIds = ref(new Set());
 const alerts = ref([]);
-const AUTO_DISMISS_MS = 8000;
+
+const dismiss = id => {
+  alerts.value = alerts.value.filter(a => a.id !== id);
+};
+
+const openConversation = displayId => {
+  if (!currentAccountId.value || !displayId) return;
+  window.location.href = `/app/accounts/${currentAccountId.value}/conversations/${displayId}`;
+};
 
 let alertAudio = null;
 const initAudio = () => {
@@ -51,8 +62,6 @@ const playSound = async () => {
   }
 };
 
-// Push nativo do browser (Notification API). Mostra mesmo com aba em
-// background. Requer permission granted prévia — silencia se não tiver.
 let notifPermissionAsked = false;
 const ensureNotifPermission = async () => {
   if (notifPermissionAsked) return;
@@ -86,13 +95,56 @@ const fireBrowserNotification = (senderName, content, convId) => {
   }
 };
 
-const dismiss = id => {
-  alerts.value = alerts.value.filter(a => a.id !== id);
+const applyPulse = convId => {
+  pulsingConvIds.value.add(convId);
+  const tryApply = () => {
+    const card = document.querySelector(
+      `[data-klaos-conversation-id="${convId}"]`
+    );
+    if (card) {
+      card.classList.add(PULSE_CLASS);
+      return true;
+    }
+    return false;
+  };
+
+  const afterApplied = () => {
+    if (selectedChat.value?.id === convId) {
+      setTimeout(() => removePulse(convId), 4000);
+    }
+  };
+
+  // SEMPRE inicia polling — Vue re-renderiza cards a cada update e o
+  // classList é descartado. Sem polling contínuo, pulse some.
+  tryApply();
+  afterApplied();
+  const interval = setInterval(() => {
+    if (!pulsingConvIds.value.has(convId)) {
+      clearInterval(interval);
+      return;
+    }
+    tryApply();
+  }, 500);
 };
 
-const openConversation = displayId => {
-  if (!currentAccountId.value || !displayId) return;
-  window.location.href = `/app/accounts/${currentAccountId.value}/conversations/${displayId}`;
+const removePulse = convId => {
+  if (!pulsingConvIds.value.has(convId)) return;
+  pulsingConvIds.value.delete(convId);
+  const card = document.querySelector(
+    `[data-klaos-conversation-id="${convId}"]`
+  );
+  if (card) card.classList.remove(PULSE_CLASS);
+};
+
+const bumpToTop = convId => {
+  try {
+    store.dispatch('updateConversationLastActivity', {
+      conversationId: convId,
+      lastActivityAt: Math.floor(Date.now() / 1000),
+    });
+  } catch (e) {
+    /* noop */
+  }
 };
 
 const onMessageCreated = data => {
@@ -103,16 +155,13 @@ const onMessageCreated = data => {
   // 2. Pula privadas / activity
   if (data.private) return;
 
+  // data.conversation.id é o display_id (api serializa assim).
+  // Card na lista usa chat.id que = display_id. Sempre preferir conv.id.
   const conv = data.conversation || {};
-  const convId = data.conversation_id || conv.id;
+  const convId = conv.id || conv.display_id || data.conversation_id;
   if (!convId) return;
 
-  // 3. Pula se for a conv ATIVA (agente já tá vendo)
-  if (selectedChat.value?.id === convId) return;
-
-  // 4. Pula se um BOT (AgentBot) está atendendo — bot é o "dono" da conv
-  // até passar pra humano. Não tem por que alertar ninguém da equipe.
-  // Sinal canônico: status='pending' OU presença de assignee_agent_bot.
+  // 3. Pula se um BOT (AgentBot) está atendendo
   const status = conv.status || data.status;
   if (status === 'pending') return;
   const botId =
@@ -121,19 +170,22 @@ const onMessageCreated = data => {
     conv.assignee_agent_bot?.id;
   if (botId) return;
 
-  // 5. Filtro de relevância: assignee = eu OR conv unassigned (livre).
-  // Outras convs (atribuídas a outra pessoa) não me alertam.
+  // 4. Só pulsa se conv é MINHA. Livre (assignee=null) NÃO pulsa.
+  // Decisão Matheus 2026-06-09: conv livre fica neutra.
   const assigneeId = conv.meta?.assignee?.id || conv.assignee_id;
-  if (assigneeId && assigneeId !== currentUserId.value) return;
+  if (!assigneeId) return;
+  if (assigneeId !== currentUserId.value) return;
 
   const senderName =
     conv.meta?.sender?.name ||
     data.sender?.name ||
     `Conversa #${conv.display_id || convId}`;
-
   const content = (data.content || '').slice(0, 100);
-  const id = `${convId}-${data.id || Date.now()}`;
 
+  bumpToTop(convId);
+  applyPulse(convId);
+
+  const id = `${convId}-${data.id || Date.now()}`;
   alerts.value.push({
     id,
     convId,
@@ -141,13 +193,21 @@ const onMessageCreated = data => {
     senderName,
     content,
     inboxName: conv.inbox?.name || data.inbox?.name,
-    when: new Date(),
   });
+  setTimeout(() => dismiss(id), AUTO_DISMISS_MS);
 
   playSound();
   fireBrowserNotification(senderName, content, convId);
-  setTimeout(() => dismiss(id), AUTO_DISMISS_MS);
 };
+
+watch(
+  () => selectedChat.value?.id,
+  newId => {
+    if (newId && pulsingConvIds.value.has(newId)) {
+      setTimeout(() => removePulse(newId), 600);
+    }
+  }
+);
 
 onMounted(() => {
   initAudio();
@@ -163,11 +223,7 @@ onBeforeUnmount(() => {
 <template>
   <teleport to="body">
     <div v-if="alerts.length" class="klaos-newmsg-stack">
-      <article
-        v-for="alert in alerts"
-        :key="alert.id"
-        class="klaos-newmsg"
-      >
+      <article v-for="alert in alerts" :key="alert.id" class="klaos-newmsg">
         <div class="klaos-newmsg__icon" aria-hidden="true">💬</div>
         <div class="klaos-newmsg__body">
           <div class="klaos-newmsg__title">
@@ -177,9 +233,7 @@ onBeforeUnmount(() => {
             </template>
           </div>
           <div class="klaos-newmsg__sender">{{ alert.senderName }}</div>
-          <div v-if="alert.content" class="klaos-newmsg__content">
-            {{ alert.content }}
-          </div>
+          <div v-if="alert.content" class="klaos-newmsg__content">{{ alert.content }}</div>
         </div>
         <div class="klaos-newmsg__actions">
           <button
@@ -231,88 +285,36 @@ onBeforeUnmount(() => {
   from { transform: translateX(20px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
-.klaos-newmsg__icon {
-  font-size: 22px;
-  line-height: 1;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-.klaos-newmsg__body {
-  flex: 1;
-  min-width: 0;
-}
+.klaos-newmsg__icon { font-size: 22px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+.klaos-newmsg__body { flex: 1; min-width: 0; }
 .klaos-newmsg__title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #1e40af;
-  line-height: 1.2;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  font-size: 13px; font-weight: 700; color: #1e40af; line-height: 1.2;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
 }
 .klaos-newmsg__inbox {
-  display: inline-block;
-  padding: 1px 7px;
-  border-radius: 999px;
-  background: #f3f4f6;
-  color: #4b5563;
-  font-size: 10px;
-  font-weight: 500;
+  display: inline-block; padding: 1px 7px; border-radius: 999px;
+  background: #f3f4f6; color: #4b5563; font-size: 10px; font-weight: 500;
 }
 .klaos-newmsg__sender {
-  font-size: 12px;
-  font-weight: 600;
-  color: #111827;
-  margin-top: 3px;
-  line-height: 1.3;
+  font-size: 12px; font-weight: 600; color: #111827; margin-top: 3px; line-height: 1.3;
 }
 .klaos-newmsg__content {
-  font-size: 12px;
-  color: #4b5563;
-  margin-top: 2px;
-  line-height: 1.35;
-  word-break: break-word;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  font-size: 12px; color: #4b5563; margin-top: 2px; line-height: 1.35;
+  word-break: break-word; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 }
-.klaos-newmsg__actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-}
+.klaos-newmsg__actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .klaos-newmsg__open {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
+  background: #2563eb; color: white; border: none;
+  padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
 }
 .klaos-newmsg__open:hover { background: #1d4ed8; }
 .klaos-newmsg__close {
-  background: transparent;
-  border: none;
-  color: #6b7280;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  line-height: 1;
+  background: transparent; border: none; color: #6b7280;
+  font-size: 14px; cursor: pointer; padding: 4px 8px; border-radius: 4px; line-height: 1;
 }
 .klaos-newmsg__close:hover { background: #f3f4f6; color: #111827; }
-
 @media (max-width: 600px) {
-  .klaos-newmsg-stack {
-    top: 12px;
-    right: 12px;
-    left: 12px;
-    width: auto;
-  }
+  .klaos-newmsg-stack { top: 12px; right: 12px; left: 12px; width: auto; }
 }
 </style>

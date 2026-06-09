@@ -1,33 +1,57 @@
 <script setup>
-// KLaOS — Alerta de transferência de conversa (paridade Kualiz).
+// KLaOS — Sinal de transferência de conversa (paridade Kualiz).
+//
+// Comportamento (Kualiz-like, decisão Matheus 2026-06-09):
+//   - SEM banner top-right (removido — feedback Matheus/Gustavo)
+//   - Pulse AZUL persistente na card da conv na lista
+//   - Pulse fica até o agente ABRIR a conv (selectedChat.id === convId)
+//   - Conv sobe pro TOPO da lista (bump local de last_activity_at,
+//     não toca no banco — não polui SLA)
+//   - Som leve (1 ding) + push nativo no IN (se permission granted)
 //
 // Reage a 2 eventos custom broadcastados pelo backend
 // (custom/config/initializers/klaos_conversation_handoff_broadcast.rb):
-//
-//   1. klaos.conversation_assigned_to_me   → conv atribuída A MIM (in)
-//   2. klaos.conversation_unassigned_from_me → conv tirada DE MIM (out)
-//
-// UX:
-//   - Alertas IN (verde): "Nova conversa atribuída: João" + botão "Abrir"
-//   - Alertas OUT (âmbar): "João transferida para Maria" + botão "✕"
-//   - Top-right stack (não banner gigante igual o Snooze que cobre tudo)
-//   - Som leve: 1 toque (não loop) — handoff acontece com mais frequência
-//     que reabertura de snooze, não pode atrapalhar atendimento
-//   - Push nativo no IN (se permission granted)
-//   - Auto-dismiss 10s
-//   - Responsivo: largura 100% em mobile, max-w em desktop
-//
-// Multi-tenant nato.
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useMapGetter } from 'dashboard/composables/store';
+//   1. klaos.conversation_assigned_to_me   → conv atribuída A MIM (pulsa)
+//   2. klaos.conversation_unassigned_from_me → conv tirada DE MIM (silencioso,
+//      só remove pulse se ainda estava pulsando)
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { emitter } from 'shared/helpers/mitt';
 
 const KLAOS_ASSIGNED_TO_ME = 'klaos.conversation_assigned_to_me';
 const KLAOS_UNASSIGNED_FROM_ME = 'klaos.conversation_unassigned_from_me';
+const PULSE_CLASS = 'klaos-handoff-pulse';
+const AUTO_DISMISS_MS = 18000;
 
+const store = useStore();
 const currentAccountId = useMapGetter('getCurrentAccountId');
+const selectedChat = useMapGetter('getSelectedChat');
+
+const pulsingConvIds = ref(new Set());
 const alerts = ref([]);
-const AUTO_DISMISS_MS = 18000; // 18s (era 10s — Gustavo não notava em tempo)
+
+const dismiss = id => {
+  alerts.value = alerts.value.filter(a => a.id !== id);
+};
+
+const openConversation = displayId => {
+  if (!currentAccountId.value || !displayId) return;
+  window.location.href = `/app/accounts/${currentAccountId.value}/conversations/${displayId}`;
+};
+
+const pushAlert = (mode, payload) => {
+  const id = `${payload.conversation_id}-${mode}-${Date.now()}`;
+  alerts.value.push({
+    id,
+    mode,
+    displayId: payload.conversation_display_id,
+    contactName: payload.contact_name || `Conversa #${payload.conversation_display_id}`,
+    fromAgent: payload.previous_assignee?.name,
+    toAgent: payload.new_assignee?.name,
+    inboxName: payload.inbox_name,
+  });
+  setTimeout(() => dismiss(id), AUTO_DISMISS_MS);
+};
 
 let alertAudio = null;
 
@@ -69,63 +93,99 @@ const fireBrowserNotification = (title, body, tag) => {
   }
 };
 
-const dismiss = id => {
-  alerts.value = alerts.value.filter(a => a.id !== id);
-};
-
-const openConversation = displayId => {
-  if (!currentAccountId.value || !displayId) return;
-  window.location.href = `/app/accounts/${currentAccountId.value}/conversations/${displayId}`;
-};
-
-const pushAlert = (mode, payload) => {
-  const id = `${payload.conversation_id}-${mode}-${Date.now()}`;
-  alerts.value.push({
-    id,
-    mode, // 'in' | 'out'
-    displayId: payload.conversation_display_id,
-    contactName: payload.contact_name || `Conversa #${payload.conversation_display_id}`,
-    fromAgent: payload.previous_assignee?.name,
-    toAgent: payload.new_assignee?.name,
-    inboxName: payload.inbox_name,
-  });
-  playSoundLight();
-  setTimeout(() => dismiss(id), AUTO_DISMISS_MS);
-};
-
-// Aplica pulse verde na CARD da conv na lista — permanece visível por
-// 60s mesmo depois que o banner some, pra agente não perder.
-const pulseConversationCard = convId => {
-  const apply = () => {
+const applyPulse = convId => {
+  pulsingConvIds.value.add(convId);
+  const tryApply = () => {
     const card = document.querySelector(
       `[data-klaos-conversation-id="${convId}"]`
     );
-    if (card) card.classList.add('klaos-handoff-pulse');
+    if (card) {
+      card.classList.add(PULSE_CLASS);
+      return true;
+    }
+    return false;
   };
-  apply();
-  setTimeout(apply, 1000);
-  setTimeout(() => {
-    const card = document.querySelector(
-      `[data-klaos-conversation-id="${convId}"]`
-    );
-    if (card) card.classList.remove('klaos-handoff-pulse');
-  }, 60000);
+
+  const afterApplied = () => {
+    if (selectedChat.value?.id === convId) {
+      setTimeout(() => removePulse(convId), 4000);
+    }
+  };
+
+  // SEMPRE inicia polling — Vue re-renderiza a card a cada update
+  // (nova msg, etiqueta, etc.) e o classList é descartado. Sem polling
+  // contínuo, o pulse some na primeira mutação do Vuex.
+  tryApply();
+  afterApplied();
+  const interval = setInterval(() => {
+    if (!pulsingConvIds.value.has(convId)) {
+      clearInterval(interval);
+      return;
+    }
+    tryApply();
+  }, 500);
 };
 
+const removePulse = convId => {
+  if (!pulsingConvIds.value.has(convId)) return;
+  pulsingConvIds.value.delete(convId);
+  const card = document.querySelector(
+    `[data-klaos-conversation-id="${convId}"]`
+  );
+  if (card) card.classList.remove(PULSE_CLASS);
+};
+
+// Bump pro topo: seta last_activity_at = now no store local.
+// A lista já ordena por last_activity_at desc → conv sobe.
+// NÃO toca no banco — só visual local. Backend mantém valor real.
+const bumpToTop = convId => {
+  try {
+    store.dispatch('updateConversationLastActivity', {
+      conversationId: convId,
+      lastActivityAt: Math.floor(Date.now() / 1000),
+    });
+  } catch (e) {
+    /* noop */
+  }
+};
+
+// IMPORTANTE: o backend envia `conversation_id` (id interno do model) e
+// `conversation_display_id` (sequencial visível). Na lista de convs do
+// frontend, o `data-klaos-conversation-id` é setado como `chat.id` que
+// vale o DISPLAY_ID (a API serializa display_id como `id` no JSON).
+// Logo, pra achar a card e bumpar, usamos display_id.
 const onAssignedToMe = payload => {
+  const convId = payload?.conversation_display_id;
+  if (!convId) return;
+
+  bumpToTop(convId);
+  applyPulse(convId);
   pushAlert('in', payload);
+  playSoundLight();
   fireBrowserNotification(
-    `📥 Nova conversa atribuída`,
+    '📥 Nova conversa atribuída',
     `${payload.contact_name || 'Cliente'} foi transferido pra você` +
       (payload.previous_assignee ? ` (de ${payload.previous_assignee.name})` : ''),
-    `klaos-assign-${payload.conversation_id}`
+    `klaos-assign-${convId}`
   );
-  pulseConversationCard(payload.conversation_id);
 };
 
 const onUnassignedFromMe = payload => {
   pushAlert('out', payload);
+  const convId = payload?.conversation_display_id;
+  if (convId) removePulse(convId);
 };
+
+// Watcher: quando agente abre a conv, remove o pulse (com pequeno delay
+// pra ele ver a card piscando antes de sumir).
+watch(
+  () => selectedChat.value?.id,
+  newId => {
+    if (newId && pulsingConvIds.value.has(newId)) {
+      setTimeout(() => removePulse(newId), 600);
+    }
+  }
+);
 
 onMounted(() => {
   initAudio();
@@ -232,10 +292,7 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
   margin-top: 2px;
 }
-.klaos-handoff__body {
-  flex: 1;
-  min-width: 0;
-}
+.klaos-handoff__body { flex: 1; min-width: 0; }
 .klaos-handoff__title {
   font-size: 13px;
   font-weight: 700;
@@ -288,14 +345,8 @@ onBeforeUnmount(() => {
   line-height: 1;
 }
 .klaos-handoff__close:hover { background: #f3f4f6; color: #111827; }
-
 @media (max-width: 600px) {
-  .klaos-handoff-stack {
-    top: 12px;
-    right: 12px;
-    left: 12px;
-    width: auto;
-  }
+  .klaos-handoff-stack { top: 12px; right: 12px; left: 12px; width: auto; }
   .klaos-handoff__open { padding: 5px 10px; font-size: 11px; }
 }
 </style>
