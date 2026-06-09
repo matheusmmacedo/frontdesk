@@ -2216,21 +2216,81 @@ const assigneeTabItems = computed(() => {
 :global(.dark) .klaos-conv-unread h4 {
   color: #dbeafe !important;
 }
+/* Handoff (transferência) — AZUL persistente até abrir a conv */
 .klaos-handoff-pulse {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.06) 60%, transparent 100%) !important;
-  box-shadow: inset 5px 0 0 0 #10b981 !important;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0.06) 60%, transparent 100%) !important;
+  box-shadow: inset 5px 0 0 0 #3b82f6 !important;
   animation: klaos-handoff-pulse-anim 1.2s ease-in-out infinite !important;
+  position: relative !important;
 }
 .klaos-handoff-pulse h4 {
   font-weight: 700 !important;
-  color: #065f46 !important;
+  color: #1e3a8a !important;
+}
+.klaos-handoff-pulse::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
+  animation: klaos-pulse-dot 1.2s ease-in-out infinite !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
 }
 @keyframes klaos-handoff-pulse-anim {
-  0%, 100% { background: linear-gradient(90deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.06) 60%, transparent 100%); }
-  50% { background: linear-gradient(90deg, rgba(16, 185, 129, 0.32) 0%, rgba(16, 185, 129, 0.10) 60%, transparent 100%); }
+  0%, 100% { background: linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0.06) 60%, transparent 100%); }
+  50% { background: linear-gradient(90deg, rgba(59, 130, 246, 0.34) 0%, rgba(59, 130, 246, 0.10) 60%, transparent 100%); }
+}
+@keyframes klaos-pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.75; }
 }
 :global(.dark) .klaos-handoff-pulse h4 {
+  color: #bfdbfe !important;
+}
+
+/* New message — VERDE persistente até abrir a conv */
+.klaos-newmsg-pulse {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.06) 60%, transparent 100%) !important;
+  box-shadow: inset 5px 0 0 0 #10b981 !important;
+  animation: klaos-newmsg-pulse-anim 1.2s ease-in-out infinite !important;
+  position: relative !important;
+}
+.klaos-newmsg-pulse h4 {
+  font-weight: 700 !important;
+  color: #065f46 !important;
+}
+.klaos-newmsg-pulse::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25) !important;
+  animation: klaos-pulse-dot 1.2s ease-in-out infinite !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+@keyframes klaos-newmsg-pulse-anim {
+  0%, 100% { background: linear-gradient(90deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.06) 60%, transparent 100%); }
+  50% { background: linear-gradient(90deg, rgba(16, 185, 129, 0.34) 0%, rgba(16, 185, 129, 0.10) 60%, transparent 100%); }
+}
+:global(.dark) .klaos-newmsg-pulse h4 {
   color: #6ee7b7 !important;
+}
+
+/* Quando AMBOS pulses estão ativos na mesma card (handoff veio e logo
+   chegou msg nova), prioridade visual pro azul (transferência mais
+   urgente — agente nem sabe que ela existe ainda) */
+.klaos-handoff-pulse.klaos-newmsg-pulse {
+  box-shadow: inset 5px 0 0 0 #3b82f6, inset -5px 0 0 0 #10b981 !important;
 }
 `,
     reason: 'klaos-unread-color + handoff-pulse: estilos das cards destacadas',
