@@ -25,10 +25,38 @@ const AUTO_DISMISS_MS = 18000;
 
 const store = useStore();
 const currentAccountId = useMapGetter('getCurrentAccountId');
+const currentUserId = useMapGetter('getCurrentUserID');
 const selectedChat = useMapGetter('getSelectedChat');
 
 const pulsingConvIds = ref(new Set());
 const alerts = ref([]);
+
+// Persistência em localStorage — pulse sobrevive reload da página.
+// Chave por account+user pra não vazar entre contas/usuários.
+const storageKey = () =>
+  `klaos.handoff_pulsing.${currentAccountId.value || 0}.${currentUserId.value || 0}`;
+
+const persistPulsing = () => {
+  try {
+    const ids = Array.from(pulsingConvIds.value);
+    localStorage.setItem(storageKey(), JSON.stringify(ids));
+  } catch (e) {
+    /* noop */
+  }
+};
+
+const restorePulsing = () => {
+  try {
+    const raw = localStorage.getItem(storageKey());
+    if (!raw) return;
+    const ids = JSON.parse(raw);
+    if (Array.isArray(ids)) {
+      ids.forEach(id => pulsingConvIds.value.add(id));
+    }
+  } catch (e) {
+    /* noop */
+  }
+};
 
 const dismiss = id => {
   alerts.value = alerts.value.filter(a => a.id !== id);
@@ -95,6 +123,7 @@ const fireBrowserNotification = (title, body, tag) => {
 
 const applyPulse = convId => {
   pulsingConvIds.value.add(convId);
+  persistPulsing();
   const tryApply = () => {
     const card = document.querySelector(
       `[data-klaos-conversation-id="${convId}"]`
@@ -106,17 +135,11 @@ const applyPulse = convId => {
     return false;
   };
 
-  const afterApplied = () => {
-    if (selectedChat.value?.id === convId) {
-      setTimeout(() => removePulse(convId), 4000);
-    }
-  };
+  // Pulse persiste ATÉ o agente abrir a conv (clicar na card).
+  // selectedChat watcher remove. Sem timeout de "conv ativa" porque o
+  // user pediu pulso sempre persistir até abrir.
 
-  // SEMPRE inicia polling — Vue re-renderiza a card a cada update
-  // (nova msg, etiqueta, etc.) e o classList é descartado. Sem polling
-  // contínuo, o pulse some na primeira mutação do Vuex.
   tryApply();
-  afterApplied();
   const interval = setInterval(() => {
     if (!pulsingConvIds.value.has(convId)) {
       clearInterval(interval);
@@ -129,6 +152,7 @@ const applyPulse = convId => {
 const removePulse = convId => {
   if (!pulsingConvIds.value.has(convId)) return;
   pulsingConvIds.value.delete(convId);
+  persistPulsing();
   const card = document.querySelector(
     `[data-klaos-conversation-id="${convId}"]`
   );
@@ -189,6 +213,20 @@ watch(
 
 onMounted(() => {
   initAudio();
+  // Restaura pulse de convs que estavam pulsando antes do reload
+  restorePulsing();
+  pulsingConvIds.value.forEach(convId => {
+    const interval = setInterval(() => {
+      if (!pulsingConvIds.value.has(convId)) {
+        clearInterval(interval);
+        return;
+      }
+      const card = document.querySelector(
+        `[data-klaos-conversation-id="${convId}"]`
+      );
+      if (card) card.classList.add(PULSE_CLASS);
+    }, 500);
+  });
   emitter.on(KLAOS_ASSIGNED_TO_ME, onAssignedToMe);
   emitter.on(KLAOS_UNASSIGNED_FROM_ME, onUnassignedFromMe);
 });

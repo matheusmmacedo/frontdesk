@@ -2216,13 +2216,12 @@ const assigneeTabItems = computed(() => {
 :global(.dark) .klaos-conv-unread h4 {
   color: #dbeafe !important;
 }
-/* Handoff (transferência) — AZUL contundente, persistente até abrir */
+/* Handoff (transferência) — sinal AZUL no LADO ESQUERDO.
+   Coexiste com newmsg (lado direito): bordas e bolinhas em lados opostos. */
 .klaos-handoff-pulse {
-  background: rgba(59, 130, 246, 0.18) !important;
-  box-shadow: inset 0 0 0 2px #3b82f6, 0 0 0 1px rgba(59, 130, 246, 0.35) !important;
-  animation: klaos-handoff-pulse-anim 1.0s ease-in-out infinite !important;
+  box-shadow: inset 6px 0 0 0 #3b82f6 !important;
+  animation: klaos-handoff-bg 1.0s ease-in-out infinite !important;
   position: relative !important;
-  border-radius: 6px !important;
 }
 .klaos-handoff-pulse h4 {
   font-weight: 700 !important;
@@ -2231,8 +2230,8 @@ const assigneeTabItems = computed(() => {
 .klaos-handoff-pulse::before {
   content: '' !important;
   position: absolute !important;
-  top: 6px !important;
-  left: 6px !important;
+  top: 8px !important;
+  left: 12px !important;
   width: 10px !important;
   height: 10px !important;
   border-radius: 50% !important;
@@ -2242,9 +2241,9 @@ const assigneeTabItems = computed(() => {
   z-index: 5 !important;
   pointer-events: none !important;
 }
-@keyframes klaos-handoff-pulse-anim {
-  0%, 100% { background: rgba(59, 130, 246, 0.15); box-shadow: inset 0 0 0 2px #3b82f6, 0 0 0 0 rgba(59, 130, 246, 0); }
-  50%      { background: rgba(59, 130, 246, 0.35); box-shadow: inset 0 0 0 2px #60a5fa, 0 0 0 4px rgba(59, 130, 246, 0.35); }
+@keyframes klaos-handoff-bg {
+  0%, 100% { background-color: rgba(59, 130, 246, 0.08); }
+  50%      { background-color: rgba(59, 130, 246, 0.22); }
 }
 @keyframes klaos-pulse-dot {
   0%, 100% { transform: scale(1); opacity: 1; }
@@ -2254,23 +2253,21 @@ const assigneeTabItems = computed(() => {
   color: #bfdbfe !important;
 }
 
-/* New message — VERDE contundente, persistente até abrir */
+/* New message — sinal VERDE no LADO DIREITO (::after, lado oposto). */
 .klaos-newmsg-pulse {
-  background: rgba(16, 185, 129, 0.18) !important;
-  box-shadow: inset 0 0 0 2px #10b981, 0 0 0 1px rgba(16, 185, 129, 0.35) !important;
-  animation: klaos-newmsg-pulse-anim 1.0s ease-in-out infinite !important;
+  box-shadow: inset -6px 0 0 0 #10b981 !important;
+  animation: klaos-newmsg-bg 1.0s ease-in-out infinite !important;
   position: relative !important;
-  border-radius: 6px !important;
 }
 .klaos-newmsg-pulse h4 {
   font-weight: 700 !important;
   color: #065f46 !important;
 }
-.klaos-newmsg-pulse::before {
+.klaos-newmsg-pulse::after {
   content: '' !important;
   position: absolute !important;
-  top: 6px !important;
-  left: 6px !important;
+  top: 8px !important;
+  right: 12px !important;
   width: 10px !important;
   height: 10px !important;
   border-radius: 50% !important;
@@ -2280,18 +2277,23 @@ const assigneeTabItems = computed(() => {
   z-index: 5 !important;
   pointer-events: none !important;
 }
-@keyframes klaos-newmsg-pulse-anim {
-  0%, 100% { background: rgba(16, 185, 129, 0.15); box-shadow: inset 0 0 0 2px #10b981, 0 0 0 0 rgba(16, 185, 129, 0); }
-  50%      { background: rgba(16, 185, 129, 0.35); box-shadow: inset 0 0 0 2px #34d399, 0 0 0 4px rgba(16, 185, 129, 0.35); }
+@keyframes klaos-newmsg-bg {
+  0%, 100% { background-color: rgba(16, 185, 129, 0.08); }
+  50%      { background-color: rgba(16, 185, 129, 0.22); }
 }
 :global(.dark) .klaos-newmsg-pulse h4 {
   color: #6ee7b7 !important;
 }
 
-/* Ambos pulses na mesma card — prioridade visual pro azul (transferência
-   é mais urgente — agente nem sabe que ela existe ainda) */
+/* Ambas classes na mesma card — bordas DOS DOIS LADOS, duas bolinhas
+   (azul esq + verde dir), background gradiente das duas cores. */
 .klaos-handoff-pulse.klaos-newmsg-pulse {
-  box-shadow: inset 0 0 0 2px #3b82f6, 0 0 0 1px rgba(59, 130, 246, 0.35), 0 0 0 4px rgba(16, 185, 129, 0.25) !important;
+  box-shadow: inset 6px 0 0 0 #3b82f6, inset -6px 0 0 0 #10b981 !important;
+  animation: klaos-combo-bg 1.0s ease-in-out infinite !important;
+}
+@keyframes klaos-combo-bg {
+  0%, 100% { background: linear-gradient(90deg, rgba(59,130,246,0.10) 0%, transparent 50%, rgba(16,185,129,0.10) 100%); }
+  50%      { background: linear-gradient(90deg, rgba(59,130,246,0.26) 0%, transparent 50%, rgba(16,185,129,0.26) 100%); }
 }
 `,
     reason: 'klaos-unread-color + handoff-pulse: estilos das cards destacadas',
