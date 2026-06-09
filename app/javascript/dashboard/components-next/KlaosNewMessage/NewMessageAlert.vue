@@ -10,13 +10,15 @@
 //
 // Filtros (quem recebe o pulse):
 //   - Só msg de CLIENTE (incoming, não privada)
-//   - Conv atribuída AO USUÁRIO ATUAL (assignee === me)
-//     → conv LIVRE (sem assignee) NÃO pulsa (decisão: fica neutra)
-//     → conv de OUTRO agente NÃO pulsa
-//     → conv com bot atendendo (status=pending OU assignee_agent_bot)
-//       NÃO pulsa
-//   - Conv ATIVA (aberta agora) PULSA mesmo assim por 4s (decisão Matheus
-//     2026-06-09: sinal extra mesmo se já vendo)
+//   - QUALQUER conv (minha, de outro agente, livre) — todos do inbox veem
+//     o pulse na lista. (Decisão Matheus 2026-06-09: "todas as conversas
+//     mesmo que não minhas até que seja clicada".)
+//     ActionCable já filtra: cliente só recebe message.created de convs
+//     do inbox dele, então não vaza pra agente de fora.
+//   - Pula só se BOT (AgentBot) está atendendo (status=pending OU
+//     assignee_agent_bot presente) — bot é o dono até passar pra humano.
+//   - Conv ATIVA (aberta agora) PULSA mesmo assim por 4s (sinal extra
+//     mesmo se já vendo)
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 import { emitter } from 'shared/helpers/mitt';
@@ -154,11 +156,9 @@ const onMessageCreated = data => {
     conv.assignee_agent_bot?.id;
   if (botId) return;
 
-  // 4. Só pulsa se conv é MINHA. Livre (assignee=null) NÃO pulsa.
-  // Decisão Matheus 2026-06-09: conv livre fica neutra.
-  const assigneeId = conv.meta?.assignee?.id || conv.assignee_id;
-  if (!assigneeId) return;
-  if (assigneeId !== currentUserId.value) return;
+  // 4. Sem filtro de assignee — pulsa em qualquer conv (decisão Matheus
+  // 2026-06-09: "todas as conversas mesmo que não minhas até clicar").
+  // ActionCable já entrega só pra agentes do inbox da conv.
 
   const senderName =
     conv.meta?.sender?.name ||
@@ -166,8 +166,15 @@ const onMessageCreated = data => {
     `Conversa #${conv.display_id || convId}`;
   const content = (data.content || '').slice(0, 100);
 
+  // Pulse + bump pra TODAS as convs do inbox (visual passivo)
   bumpToTop(convId);
   applyPulse(convId);
+
+  // Banner top-right + som + push SÓ se for MINHA conv (sinal ativo).
+  // Pulsa pra todos mas não notifica todos com banner — evita spam.
+  const assigneeId = conv.meta?.assignee?.id || conv.assignee_id;
+  const isMine = assigneeId && assigneeId === currentUserId.value;
+  if (!isMine) return;
 
   const id = `${convId}-${data.id || Date.now()}`;
   alerts.value.push({
