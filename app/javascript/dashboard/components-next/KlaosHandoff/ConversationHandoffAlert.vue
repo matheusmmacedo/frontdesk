@@ -160,8 +160,13 @@ const bumpToTop = convId => {
   }
 };
 
+// IMPORTANTE: o backend envia `conversation_id` (id interno do model) e
+// `conversation_display_id` (sequencial visível). Na lista de convs do
+// frontend, o `data-klaos-conversation-id` é setado como `chat.id` que
+// vale o DISPLAY_ID (a API serializa display_id como `id` no JSON).
+// Logo, pra achar a card e bumpar, usamos display_id.
 const onAssignedToMe = payload => {
-  const convId = payload?.conversation_id;
+  const convId = payload?.conversation_display_id;
   if (!convId) return;
 
   bumpToTop(convId);
@@ -178,7 +183,7 @@ const onAssignedToMe = payload => {
 
 const onUnassignedFromMe = payload => {
   pushAlert('out', payload);
-  const convId = payload?.conversation_id;
+  const convId = payload?.conversation_display_id;
   if (convId) removePulse(convId);
 };
 

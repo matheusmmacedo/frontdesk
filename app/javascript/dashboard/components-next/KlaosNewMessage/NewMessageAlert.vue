@@ -165,8 +165,10 @@ const onMessageCreated = data => {
   // 2. Pula privadas / activity
   if (data.private) return;
 
+  // data.conversation.id é o display_id (api serializa assim).
+  // Card na lista usa chat.id que = display_id. Sempre preferir conv.id.
   const conv = data.conversation || {};
-  const convId = data.conversation_id || conv.id;
+  const convId = conv.id || conv.display_id || data.conversation_id;
   if (!convId) return;
 
   // 3. Pula se um BOT (AgentBot) está atendendo
