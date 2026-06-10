@@ -12,10 +12,18 @@
 #   - assignee_id IS NOT NULL  (passou pelo fallback A)
 #   - status open
 #   - assignee atual NÃO está online (Redis)
+#   - last_activity_at < 4h (só convs recentes — não move estoque velho)
 #   - existe outro membro do (inbox.members ∩ team.members) que ESTÁ online
 #
-# Rate limit: cada conv pode ser re-atribuída no máximo uma vez a cada 5min
-# (Redis SETEX). Evita ping-pong se múltiplos agentes ficam alternando estado.
+# Rate limit (DOIS níveis pra evitar rajada):
+#   - Por conv: 5min (Redis SETEX) — evita ping-pong
+#   - Por conta: 5 reatribuições/minuto (Redis INCR + TTL 120s) — evita
+#     que TODA a fila de um agente offline caia em rajada num agente só
+#
+# Bug histórico (10/06/2026): sem o rate limit por conta + sem o load
+# balancing do LeastLoadedPicker, quando Yasmin saiu offline 24 convs
+# foram pra Ludi em 6 segundos (catch-up usava sort.first e processava
+# tudo num tick só). Ver custom/app/services/klaos/least_loaded_picker.rb
 #
 # Roda a cada 2min via sidekiq-cron (registrado em
 # auto_assignment_catch_up_schedule.rb).
@@ -28,8 +36,14 @@ module Klaos
   class AutoAssignmentCatchUpJob < ApplicationJob
     queue_as :scheduled_jobs
 
-    RATE_LIMIT_TTL_SECONDS = 300 # 5 min
+    RATE_LIMIT_TTL_SECONDS = 300 # 5 min por conv
     RATE_LIMIT_KEY = 'klaos:catchup:conv:%<conv_id>d'
+
+    ACCOUNT_RATE_PER_MIN     = 5     # max reatribuições por conta por minuto
+    ACCOUNT_RATE_TTL_SECONDS = 120   # janela com folga (2min p/ cobrir borda)
+    ACCOUNT_RATE_KEY         = 'klaos:catchup:acct:%<account_id>d:%<minute>s'
+
+    SCOPE_RECENT_HOURS = 4 # só catch-up em convs com last_activity_at < 4h
 
     def perform
       enabled_accounts.each do |account|
@@ -50,6 +64,7 @@ module Klaos
       candidate_conversations(account).find_each do |conv|
         next if rate_limited?(conv.id)
         next if assignee_online?(conv, online_user_ids)
+        next if account_rate_limited?(account.id) # global cap atingido — para esse tick
 
         promote_to_online_member(conv, online_user_ids)
       end
@@ -65,6 +80,7 @@ module Klaos
              .where(status: :open)
              .where.not(team_id: nil)
              .where.not(assignee_id: nil)
+             .where('last_activity_at > ?', SCOPE_RECENT_HOURS.hours.ago)
     end
 
     def fetch_online_user_ids(account_id)
@@ -88,7 +104,15 @@ module Klaos
       candidate_ids -= [conv.assignee_id]
       return if candidate_ids.empty?
 
-      new_user_id = candidate_ids.sort.first
+      # Load balancing: escolhe agente com MENOR número de convs abertas.
+      # Substitui o antigo `candidate_ids.sort.first` que sempre pegava
+      # o menor ID (bug do 10/06: rajada inteira pra mesma pessoa).
+      new_user_id = Klaos::LeastLoadedPicker.pick(
+        account_id: conv.account_id,
+        candidate_ids: candidate_ids
+      )
+      return unless new_user_id
+
       new_user = User.find_by(id: new_user_id)
       return unless new_user
 
@@ -96,10 +120,12 @@ module Klaos
       Current.executed_by = inbox
       conv.update!(assignee: new_user)
       mark_rate_limit(conv.id)
+      mark_account_rate_limit(conv.account_id)
 
       Rails.logger.info(
         "[KlaosCatchUp] promoted conv=#{conv.id} team=#{team.id} " \
-        "from offline_user=#{old_assignee_id} to online_user=#{new_user_id}"
+        "from offline_user=#{old_assignee_id} to online_user=#{new_user_id} " \
+        "(picked via least_loaded among #{candidate_ids.inspect})"
       )
     ensure
       Current.executed_by = nil
@@ -115,6 +141,22 @@ module Klaos
 
     def mark_rate_limit(conv_id)
       ::Redis::Alfred.setex(rate_limit_key(conv_id), '1', RATE_LIMIT_TTL_SECONDS)
+    end
+
+    def account_rate_key(account_id)
+      # Bucket por minuto. Garante cap deterministico por janela.
+      minute = Time.current.strftime('%Y%m%d%H%M')
+      format(ACCOUNT_RATE_KEY, account_id: account_id, minute: minute)
+    end
+
+    def account_rate_limited?(account_id)
+      ::Redis::Alfred.get(account_rate_key(account_id)).to_i >= ACCOUNT_RATE_PER_MIN
+    end
+
+    def mark_account_rate_limit(account_id)
+      key = account_rate_key(account_id)
+      ::Redis::Alfred.incr(key)
+      ::Redis::Alfred.expire(key, ACCOUNT_RATE_TTL_SECONDS)
     end
   end
 end
