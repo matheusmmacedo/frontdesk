@@ -41,14 +41,22 @@ module KlaosAutoAssignmentOfflineFallback
   end
 
   def klaos_pick_offline_fallback
-    user_id = allowed_agent_ids.map(&:to_i).sort.first
-    user = User.find_by(id: user_id)
+    # Load balancing: agente com MENOR carga atual de convs abertas.
+    # Substitui o antigo `sort.first` (que pegava sempre o menor ID e
+    # acabava acumulando estoque no mesmo agente). Ver:
+    #   custom/app/services/klaos/least_loaded_picker.rb
+    account_id = conversation&.account_id
+    user_id = Klaos::LeastLoadedPicker.pick(
+      account_id: account_id,
+      candidate_ids: allowed_agent_ids
+    )
+    user = User.find_by(id: user_id) if user_id
 
     Rails.logger.info(
       "[KlaosOfflineFallback] no online agent — assigning offline " \
       "conv=#{conversation.id} team=#{conversation.team_id} " \
       "inbox=#{conversation.inbox_id} candidates=#{allowed_agent_ids.inspect} " \
-      "picked_user_id=#{user_id} picked_name=#{user&.name.inspect}"
+      "picked_user_id=#{user_id} picked_name=#{user&.name.inspect} (via least_loaded)"
     )
 
     user
