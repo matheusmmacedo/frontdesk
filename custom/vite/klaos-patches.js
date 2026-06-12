@@ -2639,29 +2639,26 @@ const assigneeTabItems = computed(() => {
   },
 
   // === KLaOS — Enterprise polish tokens (SCSS) ===
-  // Injetado ao final do _woot.scss (upstream). Adiciona:
+  // Injetado no <style lang="scss"> do App.vue (upstream). Adiciona:
   //   - CSS vars (--klaos-radius, --klaos-shadow-xs/sm, --klaos-hairline)
-  //   - Letter-spacing levemente apertado em h1/h2/h3 (sutil, ~ -0.01em)
+  //   - Letter-spacing levemente apertado em h1/h2/h3 (escopado em .klaos-enterprise)
   //   - Utility classes pra usar nas telas novas (.klaos-card, .klaos-hairline,
   //     .klaos-shadow-xs, .klaos-table-row, .klaos-pill, .klaos-kpi-delta)
   //
   // Estratégia: NÃO sobrescreve estilos globais do Chatwoot pra não quebrar
   // layout existente. Apenas expõe building blocks que telas novas usam.
+  //
+  // Patch no App.vue porque Vite chama transform com id puro `App.vue` antes
+  // de separar <style>; isso permite manipular o bloco sem precisar matchear
+  // queries (?vue&type=style&lang.scss).
   {
-    id: '/assets/scss/_woot.scss',
-    from: `  /* button-text-small: Text for smaller buttons */
-  .text-button-small {
-    @apply font-inter text-xs font-460;
-    line-height: 18px; /* 150% */
-    letter-spacing: -0.24px;
-  }
-}`,
-    to: `  /* button-text-small: Text for smaller buttons */
-  .text-button-small {
-    @apply font-inter text-xs font-460;
-    line-height: 18px; /* 150% */
-    letter-spacing: -0.24px;
-  }
+    id: '/dashboard/App.vue',
+    from: `.v-popper--theme-tooltip .v-popper__arrow-container {
+  display: none;
+}
+</style>`,
+    to: `.v-popper--theme-tooltip .v-popper__arrow-container {
+  display: none;
 }
 
 /* ==========================================================================
@@ -2757,7 +2754,8 @@ const assigneeTabItems = computed(() => {
   letter-spacing: -0.025em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-}`,
+}
+</style>`,
     reason: 'enterprise-polish: tokens + utility classes pra telas novas (Central, Canais, KPI Dashboard)',
   },
 ];
@@ -2770,11 +2768,7 @@ export default function klaosPatches() {
     enforce: 'pre',
 
     transform(code, id) {
-      // Normaliza id removendo query params do Vite (ex: `?vue&type=style`,
-      // `?used`). Sem isso, patches em .scss/.vue não casam quando Vite
-      // adiciona sufixos durante o pipeline.
-      const cleanId = id.split('?')[0];
-      const targetedPatches = PATCHES.filter(p => cleanId.endsWith(p.id));
+      const targetedPatches = PATCHES.filter(p => id.endsWith(p.id));
       if (targetedPatches.length === 0) return null;
 
       // Normalize line endings pra match cross-platform (CRLF no Windows vs LF no Unix).
