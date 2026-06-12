@@ -2638,6 +2638,42 @@ const assigneeTabItems = computed(() => {
     reason: 'snooze-alert-toggle: renderiza abaixo do label IA',
   },
 
+  // === KLaOS — Central do Agente (rota /app/accounts/:accountId/central) ===
+  // Componente: app/javascript/dashboard/components-next/KlaosCentral/CentralPage.vue
+  // Patches:
+  //   1) Import do componente no topo do dashboard.routes.js
+  //   2) Route entry no array de children do AppContainer
+  {
+    id: '/dashboard/dashboard.routes.js',
+    from: `import { routes as captainRoutes } from './captain/captain.routes';
+import AppContainer from './Dashboard.vue';`,
+    to: `import { routes as captainRoutes } from './captain/captain.routes';
+import KlaosCentralPage from '../../components-next/KlaosCentral/CentralPage.vue';
+import AppContainer from './Dashboard.vue';`,
+    reason: 'central: importa KlaosCentralPage no router do dashboard',
+  },
+  // NOTA: outro patch (klaos-supervisor, linha ~164) já inseriu
+  // `...klaosSupervisor.routes,` depois de campaignsRoutes. Patcheamos a
+  // versão pós-supervisor pra evitar conflito de ordem.
+  {
+    id: '/dashboard/dashboard.routes.js',
+    from: `        ...campaignsRoutes.routes,
+        ...klaosSupervisor.routes,
+      ],
+    },`,
+    to: `        ...campaignsRoutes.routes,
+        ...klaosSupervisor.routes,
+        {
+          path: 'central',
+          name: 'klaos_central',
+          meta: { permissions: ['administrator', 'agent', 'custom_role'] },
+          component: KlaosCentralPage,
+        },
+      ],
+    },`,
+    reason: 'central: registra rota /central com permissão pra todos os roles',
+  },
+
   // === KLaOS — Enterprise polish tokens (SCSS) ===
   // Injetado no <style lang="scss"> do App.vue (upstream). Adiciona:
   //   - CSS vars (--klaos-radius, --klaos-shadow-xs/sm, --klaos-hairline)
