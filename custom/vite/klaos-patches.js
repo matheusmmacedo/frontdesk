@@ -2654,14 +2654,14 @@ const assigneeTabItems = computed(() => {
     {
       name: 'KlaosCentral',
       label: 'Central',
-      icon: 'i-lucide-house',
+      icon: 'i-lucide-blocks',
       to: accountScopedRoute('klaos_central'),
       activeOn: ['klaos_central'],
     },
     {
       name: 'KlaosCanais',
       label: 'Canais & Números',
-      icon: 'i-lucide-radio-tower',
+      icon: 'i-lucide-megaphone',
       to: accountScopedRoute('klaos_canais'),
       activeOn: ['klaos_canais'],
     },
