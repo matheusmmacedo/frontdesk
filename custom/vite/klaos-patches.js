@@ -2770,7 +2770,11 @@ export default function klaosPatches() {
     enforce: 'pre',
 
     transform(code, id) {
-      const targetedPatches = PATCHES.filter(p => id.endsWith(p.id));
+      // Normaliza id removendo query params do Vite (ex: `?vue&type=style`,
+      // `?used`). Sem isso, patches em .scss/.vue não casam quando Vite
+      // adiciona sufixos durante o pipeline.
+      const cleanId = id.split('?')[0];
+      const targetedPatches = PATCHES.filter(p => cleanId.endsWith(p.id));
       if (targetedPatches.length === 0) return null;
 
       // Normalize line endings pra match cross-platform (CRLF no Windows vs LF no Unix).
