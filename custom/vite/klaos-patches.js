@@ -2637,6 +2637,170 @@ const assigneeTabItems = computed(() => {
     to: '    <div class="mt-6">\n      <UnassignedLabelInput />\n    </div>\n    <div class="mt-6">\n      <SnoozeReopenAlertToggle />\n    </div>\n    <AccountId />',
     reason: 'snooze-alert-toggle: renderiza abaixo do label IA',
   },
+
+  // === KLaOS — Central do Agente (rota /app/accounts/:accountId/central) ===
+  // Componente: app/javascript/dashboard/components-next/KlaosCentral/CentralPage.vue
+  // Patches:
+  //   1) Import do componente no topo do dashboard.routes.js
+  //   2) Route entry no array de children do AppContainer
+  {
+    id: '/dashboard/dashboard.routes.js',
+    from: `import { routes as captainRoutes } from './captain/captain.routes';
+import AppContainer from './Dashboard.vue';`,
+    to: `import { routes as captainRoutes } from './captain/captain.routes';
+import KlaosCentralPage from '../../components-next/KlaosCentral/CentralPage.vue';
+import KlaosChannelsPage from '../../components-next/KlaosChannels/ChannelsPage.vue';
+import AppContainer from './Dashboard.vue';`,
+    reason: 'central+canais: importa KlaosCentralPage e KlaosChannelsPage no router',
+  },
+  // NOTA: outro patch (klaos-supervisor, linha ~164) já inseriu
+  // `...klaosSupervisor.routes,` depois de campaignsRoutes. Patcheamos a
+  // versão pós-supervisor pra evitar conflito de ordem.
+  {
+    id: '/dashboard/dashboard.routes.js',
+    from: `        ...campaignsRoutes.routes,
+        ...klaosSupervisor.routes,
+      ],
+    },`,
+    to: `        ...campaignsRoutes.routes,
+        ...klaosSupervisor.routes,
+        {
+          path: 'central',
+          name: 'klaos_central',
+          meta: { permissions: ['administrator', 'agent', 'custom_role'] },
+          component: KlaosCentralPage,
+        },
+        {
+          path: 'canais',
+          name: 'klaos_canais',
+          meta: { permissions: ['administrator', 'agent', 'custom_role'] },
+          component: KlaosChannelsPage,
+        },
+      ],
+    },`,
+    reason: 'central+canais: registra rotas /central e /canais',
+  },
+
+  // === KLaOS — Enterprise polish tokens (SCSS) ===
+  // Injetado no <style lang="scss"> do App.vue (upstream). Adiciona:
+  //   - CSS vars (--klaos-radius, --klaos-shadow-xs/sm, --klaos-hairline)
+  //   - Letter-spacing levemente apertado em h1/h2/h3 (escopado em .klaos-enterprise)
+  //   - Utility classes pra usar nas telas novas (.klaos-card, .klaos-hairline,
+  //     .klaos-shadow-xs, .klaos-table-row, .klaos-pill, .klaos-kpi-delta)
+  //
+  // Estratégia: NÃO sobrescreve estilos globais do Chatwoot pra não quebrar
+  // layout existente. Apenas expõe building blocks que telas novas usam.
+  //
+  // Patch no App.vue porque Vite chama transform com id puro `App.vue` antes
+  // de separar <style>; isso permite manipular o bloco sem precisar matchear
+  // queries (?vue&type=style&lang.scss).
+  {
+    id: '/dashboard/App.vue',
+    from: `.v-popper--theme-tooltip .v-popper__arrow-container {
+  display: none;
+}
+</style>`,
+    to: `.v-popper--theme-tooltip .v-popper__arrow-container {
+  display: none;
+}
+
+/* ==========================================================================
+ * KLaOS — Enterprise tokens (injetados via custom/vite/klaos-patches.js)
+ * Building blocks pra telas novas (Central, Canais, KPI Dashboard etc).
+ * Sutil, não sobrescreve global pra não quebrar layout upstream.
+ * ========================================================================== */
+:root {
+  --klaos-radius-sm: 6px;
+  --klaos-radius-md: 10px;
+  --klaos-radius-lg: 14px;
+  --klaos-hairline-color: rgba(15, 23, 42, 0.08);
+  --klaos-hairline-color-dark: rgba(255, 255, 255, 0.08);
+  --klaos-shadow-xs: 0 1px 0 rgba(15, 23, 42, 0.04);
+  --klaos-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --klaos-shadow-md: 0 4px 8px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --klaos-row-height: 36px;
+  --klaos-row-height-dense: 32px;
+}
+.dark {
+  --klaos-hairline-color: var(--klaos-hairline-color-dark);
+}
+
+/* Headings polish — tracking levemente apertado pra dar peso enterprise */
+.klaos-enterprise h1,
+.klaos-enterprise h2,
+.klaos-enterprise h3 {
+  letter-spacing: -0.011em;
+}
+.klaos-enterprise h1 { font-feature-settings: 'ss01', 'cv01'; }
+
+/* Utility: container "card" enterprise (border fina + shadow quase invisível) */
+.klaos-card {
+  background: rgb(255 255 255);
+  border: 1px solid var(--klaos-hairline-color);
+  border-radius: var(--klaos-radius-md);
+  box-shadow: var(--klaos-shadow-xs);
+}
+.dark .klaos-card {
+  background: rgb(20 22 26);
+  border-color: var(--klaos-hairline-color);
+}
+
+/* Utility: hairline 1px (separador visual fino) */
+.klaos-hairline {
+  border-color: var(--klaos-hairline-color) !important;
+}
+
+/* Utility: shadow enterprise (mais sutil que Tailwind shadow-sm padrão) */
+.klaos-shadow-xs { box-shadow: var(--klaos-shadow-xs); }
+.klaos-shadow-sm { box-shadow: var(--klaos-shadow-sm); }
+.klaos-shadow-md { box-shadow: var(--klaos-shadow-md); }
+
+/* Utility: linha de tabela densa estilo Qualizap/Linear */
+.klaos-table-row {
+  height: var(--klaos-row-height);
+  border-bottom: 1px solid var(--klaos-hairline-color);
+}
+.klaos-table-row:hover { background: rgba(15, 23, 42, 0.025); }
+.dark .klaos-table-row:hover { background: rgba(255, 255, 255, 0.025); }
+
+/* Utility: pill (badge pequeno, neutro) */
+.klaos-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  border-radius: 999px;
+  letter-spacing: -0.01em;
+}
+
+/* Utility: KPI delta (setinha + valor — adoção do padrão Qualizap) */
+.klaos-kpi-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.klaos-kpi-delta--down { color: rgb(239 68 68); }
+.klaos-kpi-delta--up { color: rgb(34 197 94); }
+.klaos-kpi-delta--flat { color: rgb(100 116 139); }
+
+/* Utility: relógio gigante pro Painel do Agente */
+.klaos-clock {
+  font-family: 'InterDisplay', 'Inter', sans-serif;
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+</style>`,
+    reason: 'enterprise-polish: tokens + utility classes pra telas novas (Central, Canais, KPI Dashboard)',
+  },
 ];
 
 export default function klaosPatches() {
