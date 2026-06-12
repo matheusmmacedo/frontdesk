@@ -2638,6 +2638,39 @@ const assigneeTabItems = computed(() => {
     reason: 'snooze-alert-toggle: renderiza abaixo do label IA',
   },
 
+  // === KLaOS — Itens "Central" e "Canais & Números" na sidebar primária ===
+  // Patch no array menuItems do Sidebar.vue inserindo 2 entradas ANTES do
+  // item Inbox padrão do Chatwoot. Usa accountScopedRoute(name) que já é
+  // o helper utilizado pelos demais items do menu.
+  {
+    id: '/components-next/sidebar/Sidebar.vue',
+    from: `const menuItems = computed(() => {
+  return [
+    {
+      name: 'Inbox',
+      label: t('SIDEBAR.INBOX'),`,
+    to: `const menuItems = computed(() => {
+  return [
+    {
+      name: 'KlaosCentral',
+      label: 'Central',
+      icon: 'i-lucide-blocks',
+      to: accountScopedRoute('klaos_central'),
+      activeOn: ['klaos_central'],
+    },
+    {
+      name: 'KlaosCanais',
+      label: 'Canais & Números',
+      icon: 'i-lucide-megaphone',
+      to: accountScopedRoute('klaos_canais'),
+      activeOn: ['klaos_canais'],
+    },
+    {
+      name: 'Inbox',
+      label: t('SIDEBAR.INBOX'),`,
+    reason: 'central+canais: items de menu na sidebar primária ANTES do Inbox',
+  },
+
   // === KLaOS — Central do Agente (rota /app/accounts/:accountId/central) ===
   // Componente: app/javascript/dashboard/components-next/KlaosCentral/CentralPage.vue
   // Patches:
