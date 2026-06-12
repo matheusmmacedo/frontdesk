@@ -2649,8 +2649,9 @@ const assigneeTabItems = computed(() => {
 import AppContainer from './Dashboard.vue';`,
     to: `import { routes as captainRoutes } from './captain/captain.routes';
 import KlaosCentralPage from '../../components-next/KlaosCentral/CentralPage.vue';
+import KlaosChannelsPage from '../../components-next/KlaosChannels/ChannelsPage.vue';
 import AppContainer from './Dashboard.vue';`,
-    reason: 'central: importa KlaosCentralPage no router do dashboard',
+    reason: 'central+canais: importa KlaosCentralPage e KlaosChannelsPage no router',
   },
   // NOTA: outro patch (klaos-supervisor, linha ~164) já inseriu
   // `...klaosSupervisor.routes,` depois de campaignsRoutes. Patcheamos a
@@ -2669,9 +2670,15 @@ import AppContainer from './Dashboard.vue';`,
           meta: { permissions: ['administrator', 'agent', 'custom_role'] },
           component: KlaosCentralPage,
         },
+        {
+          path: 'canais',
+          name: 'klaos_canais',
+          meta: { permissions: ['administrator', 'agent', 'custom_role'] },
+          component: KlaosChannelsPage,
+        },
       ],
     },`,
-    reason: 'central: registra rota /central com permissão pra todos os roles',
+    reason: 'central+canais: registra rotas /central e /canais',
   },
 
   // === KLaOS — Enterprise polish tokens (SCSS) ===
