@@ -12,7 +12,7 @@
 
 import { ref, computed, onMounted } from 'vue';
 import { useMapGetter } from 'dashboard/composables/store';
-import axios from 'axios';
+import InboxesAPI from 'dashboard/api/inboxes';
 
 const currentAccountId = useMapGetter('getCurrentAccountId');
 
@@ -37,8 +37,7 @@ const CHANNEL_LABEL = {
 const fetchInboxes = async () => {
   loading.value = true;
   try {
-    const acct = currentAccountId.value;
-    const r = await axios.get(`/api/v1/accounts/${acct}/inboxes`);
+    const r = await InboxesAPI.get();
     inboxes.value = r.data?.payload || [];
     error.value = null;
   } catch (e) {
