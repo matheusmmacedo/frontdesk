@@ -15,8 +15,11 @@
 // dashboard.routes.js (custom/vite/klaos-patches.js).
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useMapGetter } from 'dashboard/composables/store';
+import { useRouter } from 'vue-router';
+import { useStore, useMapGetter } from 'dashboard/composables/store';
 
+const router = useRouter();
+const store = useStore();
 const currentUser = useMapGetter('getCurrentUser');
 const currentAccountId = useMapGetter('getCurrentAccountId');
 
@@ -52,16 +55,45 @@ const newsItems = ref([
   // placeholder vazio — vai puxar de uma futura tabela klaos_news
 ]);
 
-const goTo = where => {
+// Navegação programática via Vue Router + Vuex.
+// "Mine/Unassigned/Snoozed" não têm URL própria — são filtros locais no
+// `home`. Logo navegamos pra `home` e setamos o store via dispatch.
+// "Mentions" e "Unattended" têm rota dedicada (no plural — atenção).
+const goTo = async where => {
   const acct = currentAccountId.value;
   if (!acct) return;
-  const map = {
-    mine:        `/app/accounts/${acct}/dashboard?assignee_type=me&status=open`,
-    unassigned:  `/app/accounts/${acct}/dashboard?assignee_type=unassigned&status=open`,
-    snoozed:     `/app/accounts/${acct}/dashboard?status=snoozed`,
-    mentions:    `/app/accounts/${acct}/mentions/conversation`,
-  };
-  if (map[where]) window.location.href = map[where];
+  try {
+    switch (where) {
+      case 'mine':
+        store.dispatch('setChatStatusFilter', 'open');
+        store.dispatch('setActiveInbox', null);
+        await router.push({ name: 'home', params: { accountId: acct } });
+        break;
+      case 'unassigned':
+        // Mesma página, filtro local mudará na próxima interação
+        store.dispatch('setChatStatusFilter', 'open');
+        await router.push({ name: 'home', params: { accountId: acct } });
+        break;
+      case 'snoozed':
+        store.dispatch('setChatStatusFilter', 'snoozed');
+        await router.push({ name: 'home', params: { accountId: acct } });
+        break;
+      case 'mentions':
+        await router.push({
+          name: 'conversation_mentions',
+          params: { accountId: acct }
+        });
+        break;
+      case 'unattended':
+        await router.push({
+          name: 'conversation_unattended',
+          params: { accountId: acct }
+        });
+        break;
+    }
+  } catch (e) {
+    // Router pode lançar NavigationDuplicated — silencioso
+  }
 };
 
 onMounted(() => {
