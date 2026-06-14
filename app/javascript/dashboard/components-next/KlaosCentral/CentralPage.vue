@@ -28,6 +28,7 @@ let clockInterval = null;
 
 const hh = computed(() => now.value.getHours().toString().padStart(2, '0'));
 const mm = computed(() => now.value.getMinutes().toString().padStart(2, '0'));
+const ss = computed(() => now.value.getSeconds().toString().padStart(2, '0'));
 
 const greeting = computed(() => {
   const h = now.value.getHours();
@@ -65,18 +66,25 @@ const goTo = async where => {
   try {
     switch (where) {
       case 'mine':
-        store.dispatch('setChatStatusFilter', 'open');
-        store.dispatch('setActiveInbox', null);
-        await router.push({ name: 'home', params: { accountId: acct } });
+        await router.push({
+          name: 'home',
+          params: { accountId: acct },
+          query: { klaos_tab: 'me', klaos_status: 'open' }
+        });
         break;
       case 'unassigned':
-        // Mesma página, filtro local mudará na próxima interação
-        store.dispatch('setChatStatusFilter', 'open');
-        await router.push({ name: 'home', params: { accountId: acct } });
+        await router.push({
+          name: 'home',
+          params: { accountId: acct },
+          query: { klaos_tab: 'unassigned', klaos_status: 'open' }
+        });
         break;
       case 'snoozed':
-        store.dispatch('setChatStatusFilter', 'snoozed');
-        await router.push({ name: 'home', params: { accountId: acct } });
+        await router.push({
+          name: 'home',
+          params: { accountId: acct },
+          query: { klaos_tab: 'me', klaos_status: 'snoozed' }
+        });
         break;
       case 'mentions':
         await router.push({
@@ -112,7 +120,9 @@ onBeforeUnmount(() => {
     <header class="klaos-central__hero">
       <div class="klaos-central__greeting">
         <p class="klaos-central__hello">{{ greeting }}, {{ userName }}</p>
-        <h1 class="klaos-clock">{{ hh }}<span class="klaos-central__colon">:</span>{{ mm }}</h1>
+        <h1 class="klaos-clock">
+          {{ hh }}<span class="klaos-central__colon">:</span>{{ mm }}<span class="klaos-central__colon klaos-central__colon--seconds">:</span><span class="klaos-central__seconds">{{ ss }}</span>
+        </h1>
         <p class="klaos-central__subtitle">
           Sua central de atendimento — tudo o que importa pra você hoje.
         </p>
@@ -242,6 +252,15 @@ onBeforeUnmount(() => {
   color: rgb(100 116 139);
   font-weight: 300;
   margin: 0 4px;
+}
+.klaos-central__colon--seconds {
+  margin: 0 2px 0 4px;
+}
+.klaos-central__seconds {
+  color: rgb(100 116 139);
+  font-size: 0.6em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 .klaos-central__subtitle {
   margin: 10px 0 0;
