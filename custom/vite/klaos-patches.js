@@ -2638,6 +2638,23 @@ const assigneeTabItems = computed(() => {
     reason: 'snooze-alert-toggle: renderiza abaixo do label IA',
   },
 
+  // === KLaOS — ChatList lê query params custom da Central pra setar tab+filter ===
+  // Atalhos da Central navegam pra `home` com query klaos_tab=me/unassigned/all
+  // e klaos_status=open/snoozed. ChatList aplica no onMounted ANTES do fetch.
+  {
+    id: '/components/ChatList.vue',
+    from: `  setFiltersFromUISettings();
+  store.dispatch('setChatStatusFilter', activeStatus.value);`,
+    to: `  setFiltersFromUISettings();
+  // KLaOS — query params da Central pra setar tab assignee + status filter
+  const klaosTab = route?.query?.klaos_tab;
+  const klaosStatus = route?.query?.klaos_status;
+  if (klaosTab) activeAssigneeTab.value = klaosTab;
+  if (klaosStatus) activeStatus.value = klaosStatus;
+  store.dispatch('setChatStatusFilter', activeStatus.value);`,
+    reason: 'central-shortcuts: aplica klaos_tab/klaos_status da Central no ChatList mount',
+  },
+
   // === KLaOS — Itens "Central" e "Canais & Números" na sidebar primária ===
   // Patch no array menuItems do Sidebar.vue inserindo 2 entradas ANTES do
   // item Inbox padrão do Chatwoot. Usa accountScopedRoute(name) que já é
