@@ -26,11 +26,28 @@ module KlaosSnoozeNoLimit
       .where('snoozed_until <= ?', Time.current)
       .find_each(batch_size: 100) do |conv|
         conv.open!
+        # Persiste timestamp no additional_attributes pra que a Central
+        # do agente possa mostrar "Voltaram do adiamento desde sua última
+        # visita" mesmo se o agente estava offline quando o broadcast
+        # do snooze_reopened foi disparado.
+        klaos_mark_returned_from_snooze(conv)
         klaos_broadcast_snooze_reopened(conv)
       end
   end
 
   private
+
+  # Marca quando a conv voltou do snooze pra a Central do agente conseguir
+  # mostrar lista de "voltaram desde sua última visita".
+  def klaos_mark_returned_from_snooze(conversation)
+    extras = conversation.additional_attributes || {}
+    extras = extras.merge('klaos_returned_from_snooze_at' => Time.current.iso8601)
+    conversation.update_columns(additional_attributes: extras)
+  rescue StandardError => e
+    Rails.logger.warn(
+      "[KlaosSnoozeNoLimit] mark returned_from_snooze falhou conv=#{conversation.id}: #{e.message}"
+    )
+  end
 
   # Broadcasta evento custom pro frontend disparar o alerta com som/piscar.
   # O `conversation.status_changed` nativo do Chatwoot não basta porque a
