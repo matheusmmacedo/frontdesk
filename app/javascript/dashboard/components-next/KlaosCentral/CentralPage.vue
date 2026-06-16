@@ -56,6 +56,67 @@ const newsItems = ref([
   // placeholder vazio — vai puxar de uma futura tabela klaos_news
 ]);
 
+// === Bloco "Voltaram do adiamento" ===
+// Lista de convs que reabriram via cron desde a última vez que o agente
+// clicou em "ciente". Endpoint custom em
+// custom/app/controllers/api/custom/v1/accounts/snooze_returns_controller.rb
+// Persiste o "visto em" no users.ui_settings (acessível via API).
+const snoozeReturns = ref([]);
+const snoozeReturnsLoading = ref(false);
+const snoozeReturnsLastSeenAt = ref(null);
+
+const fetchSnoozeReturns = async () => {
+  const acct = currentAccountId.value;
+  if (!acct) return;
+  snoozeReturnsLoading.value = true;
+  try {
+    const r = await window.axios.get(`/api/custom/v1/accounts/${acct}/snooze_returns`);
+    snoozeReturns.value = r.data?.items || [];
+    snoozeReturnsLastSeenAt.value = r.data?.last_seen_at || null;
+  } catch (e) {
+    snoozeReturns.value = [];
+  } finally {
+    snoozeReturnsLoading.value = false;
+  }
+};
+
+const dismissSnoozeReturns = async () => {
+  const acct = currentAccountId.value;
+  if (!acct) return;
+  try {
+    await window.axios.post(`/api/custom/v1/accounts/${acct}/snooze_returns/dismiss`);
+    snoozeReturns.value = [];
+  } catch (e) {
+    /* noop */
+  }
+};
+
+const openConversation = displayId => {
+  const acct = currentAccountId.value;
+  if (!acct || !displayId) return;
+  window.location.href = `/app/accounts/${acct}/conversations/${displayId}`;
+};
+
+const formatReturnTime = iso => {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso);
+    const today = new Date();
+    const isSameDay =
+      d.getDate() === today.getDate() &&
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear();
+    const hh2 = d.getHours().toString().padStart(2, '0');
+    const mm2 = d.getMinutes().toString().padStart(2, '0');
+    if (isSameDay) return `hoje ${hh2}:${mm2}`;
+    const day = d.getDate().toString().padStart(2, '0');
+    const mon = (d.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}/${mon} ${hh2}:${mm2}`;
+  } catch (e) {
+    return '';
+  }
+};
+
 // Navegação programática via Vue Router + Vuex.
 // "Mine/Unassigned/Snoozed" não têm URL própria — são filtros locais no
 // `home`. Logo navegamos pra `home` e setamos o store via dispatch.
@@ -106,6 +167,7 @@ const goTo = async where => {
 
 onMounted(() => {
   clockInterval = setInterval(() => { now.value = new Date(); }, 1000);
+  fetchSnoozeReturns();
 });
 onBeforeUnmount(() => {
   if (clockInterval) clearInterval(clockInterval);
@@ -128,6 +190,51 @@ onBeforeUnmount(() => {
         </p>
       </div>
     </header>
+
+    <!-- ============================================================ -->
+    <!-- VOLTARAM DO ADIAMENTO — banner dourado se houver -->
+    <!-- ============================================================ -->
+    <section
+      v-if="snoozeReturns.length > 0"
+      class="klaos-central__snooze-returns klaos-card klaos-snooze-banner-pulse"
+    >
+      <header class="klaos-central__snooze-header">
+        <div>
+          <h2 class="klaos-central__snooze-title">
+            ⏰ {{ snoozeReturns.length }} {{ snoozeReturns.length === 1 ? 'conversa voltou' : 'conversas voltaram' }} do adiamento
+          </h2>
+          <p class="klaos-central__snooze-subtitle">
+            Reapareceram pra você desde sua última visita. Atender agora.
+          </p>
+        </div>
+        <button class="klaos-central__snooze-dismiss" @click="dismissSnoozeReturns">
+          ✓ Marcar todas como vistas
+        </button>
+      </header>
+      <ul class="klaos-central__snooze-list">
+        <li
+          v-for="item in snoozeReturns"
+          :key="item.conversation_id"
+          class="klaos-central__snooze-item"
+        >
+          <div class="klaos-central__snooze-item-text">
+            <strong>{{ item.contact_name || 'Sem nome' }}</strong>
+            <span class="klaos-central__snooze-item-when">
+              voltou {{ formatReturnTime(item.returned_at) }}
+            </span>
+            <small v-if="item.inbox_name" class="klaos-central__snooze-item-inbox">
+              {{ item.inbox_name }}
+            </small>
+          </div>
+          <button
+            class="klaos-central__snooze-open"
+            @click="openConversation(item.display_id)"
+          >
+            Abrir →
+          </button>
+        </li>
+      </ul>
+    </section>
 
     <!-- ============================================================ -->
     <!-- GRID: novidades + tarefas -->
@@ -267,6 +374,106 @@ onBeforeUnmount(() => {
   font-size: 13px;
   color: rgb(100 116 139);
   letter-spacing: -0.01em;
+}
+
+.klaos-central__snooze-returns {
+  margin-bottom: 24px;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid #f59e0b !important;
+  background: linear-gradient(180deg, rgba(254, 243, 199, 0.4) 0%, rgba(255, 255, 255, 1) 60%) !important;
+}
+.klaos-snooze-banner-pulse {
+  animation: klaos-snooze-pulse 1.6s ease-in-out infinite;
+}
+@keyframes klaos-snooze-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6), var(--klaos-shadow-xs); }
+  50%      { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0), var(--klaos-shadow-xs); }
+}
+.klaos-central__snooze-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+}
+.klaos-central__snooze-title {
+  margin: 0;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.015em;
+  color: rgb(120 53 15);
+}
+.klaos-central__snooze-subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: rgb(146 64 14);
+  letter-spacing: -0.01em;
+}
+.klaos-central__snooze-dismiss {
+  background: white;
+  color: rgb(120 53 15);
+  border: 1px solid rgb(245 158 11);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+.klaos-central__snooze-dismiss:hover {
+  background: rgb(254 243 199);
+}
+.klaos-central__snooze-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.klaos-central__snooze-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+  gap: 12px;
+}
+.klaos-central__snooze-item:last-child { border-bottom: 0; }
+.klaos-central__snooze-item-text {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+  flex: 1; min-width: 0;
+}
+.klaos-central__snooze-item-text strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(15 23 42);
+  letter-spacing: -0.011em;
+}
+.klaos-central__snooze-item-when {
+  font-size: 12px;
+  color: rgb(100 116 139);
+  font-variant-numeric: tabular-nums;
+}
+.klaos-central__snooze-item-inbox {
+  font-size: 11px;
+  color: rgb(120 53 15);
+  background: rgba(254, 243, 199, 0.6);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 500;
+}
+.klaos-central__snooze-open {
+  background: rgb(245 158 11);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.klaos-central__snooze-open:hover {
+  background: rgb(217 119 6);
 }
 
 .klaos-central__grid {
