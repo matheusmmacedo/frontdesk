@@ -81,9 +81,13 @@ module KlaosMarkUnread
 end
 
 Rails.application.config.to_prepare do
-  next unless defined?(Api::V1::Accounts::ConversationsController)
-  next if Api::V1::Accounts::ConversationsController.include?(KlaosMarkUnread)
+  # Em Rails 7 com Zeitwerk, `defined?` pode falhar com classes autoload-lazy
+  # antes do controller ser tocado pela primeira vez. Forçar via
+  # safe_constantize que dispara o autoload corretamente.
+  controller = 'Api::V1::Accounts::ConversationsController'.safe_constantize
+  next unless controller
+  next if controller.include?(KlaosMarkUnread)
 
-  Api::V1::Accounts::ConversationsController.prepend(KlaosMarkUnread)
+  controller.prepend(KlaosMarkUnread)
   Rails.logger.info '[KlaosMarkUnread] prepended on ConversationsController'
 end
