@@ -2202,7 +2202,7 @@ const assigneeTabItems = computed(() => {
           class="shadow-lg rounded-full text-xxs font-semibold h-4 leading-4 ltr:ml-auto rtl:mr-auto mt-1 min-w-[1rem] px-1 py-0 text-center text-white"
           :class="[
             (hasUnread || chat.additional_attributes?.klaos_marked_unread_at) ? 'block' : 'hidden',
-            hasUnread ? 'bg-n-teal-9' : 'bg-amber-500'
+            hasUnread ? 'bg-n-teal-9' : 'bg-n-amber-9'
           ]"
         >
           {{ unreadCount > 9 ? '9+' : (unreadCount || '!') }}
