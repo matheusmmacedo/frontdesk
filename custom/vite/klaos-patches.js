@@ -2182,6 +2182,34 @@ const assigneeTabItems = computed(() => {
     to: "'copilot.message.created': this.onCopilotMessageCreated,\n      'klaos.snooze_reopened': this.onKlaosSnoozeReopened,\n      'klaos.conversation_assigned_to_me': this.onKlaosConversationAssignedToMe,\n      'klaos.conversation_unassigned_from_me': this.onKlaosConversationUnassignedFromMe,\n    };",
     reason: 'klaos-handoff + snooze: registra event handlers',
   },
+  // === KLaOS — Badge "!" amarelo quando marcado manualmente como não lido ===
+  // Pra convs sem mensagem incoming (disparo outgoing/template), o
+  // upstream "unread" do Chatwoot não consegue popular unread_count
+  // porque a fórmula só conta INCOMING > agent_last_seen_at. O backend
+  // custom (klaos_mark_unread.rb) persiste additional_attributes.
+  // klaos_marked_unread_at. Aqui o frontend mostra "!" amarelo nessas
+  // cards pra Gustavo conseguir marcar mesmo em convs de cobrança/template
+  // onde cliente ainda não respondeu.
+  {
+    id: '/widgets/conversation/ConversationCard.vue',
+    from: `        <span
+          class="shadow-lg rounded-full text-xxs font-semibold h-4 leading-4 ltr:ml-auto rtl:mr-auto mt-1 min-w-[1rem] px-1 py-0 text-center text-white bg-n-teal-9"
+          :class="hasUnread ? 'block' : 'hidden'"
+        >
+          {{ unreadCount > 9 ? '9+' : unreadCount }}
+        </span>`,
+    to: `        <span
+          class="shadow-lg rounded-full text-xxs font-semibold h-4 leading-4 ltr:ml-auto rtl:mr-auto mt-1 min-w-[1rem] px-1 py-0 text-center text-white"
+          :class="[
+            (hasUnread || chat.additional_attributes?.klaos_marked_unread_at) ? 'block' : 'hidden',
+            hasUnread ? 'bg-n-teal-9' : 'bg-amber-500'
+          ]"
+        >
+          {{ unreadCount > 9 ? '9+' : (unreadCount || '!') }}
+        </span>`,
+    reason: 'klaos-marked-unread: badge "!" amarelo pra conv marcada manualmente sem incoming',
+  },
+
   // === KLaOS — Cor sutil em conversas NÃO LIDAS (reforça o badge) ===
   // Quando unread_count > 0, a card ganha bg azul muito leve + border-left.
   // A card que renderiza no dashboard é components/widgets/conversation/
@@ -2192,8 +2220,8 @@ const assigneeTabItems = computed(() => {
       'bg-n-slate-2': selected,`,
     to: `      'active animate-card-select bg-n-background border-n-weak': isActiveChat,
       'bg-n-slate-2': selected,
-      'klaos-conv-unread': chat && chat.unread_count > 0 && !isActiveChat,`,
-    reason: 'klaos-unread-color: adiciona classe quando há msgs não-lidas (exclui conv ativa)',
+      'klaos-conv-unread': chat && (chat.unread_count > 0 || chat.additional_attributes?.klaos_marked_unread_at) && !isActiveChat,`,
+    reason: 'klaos-unread-color: adiciona classe quando há msgs não-lidas OU marcação manual',
   },
   // Adiciona o CSS global pra .klaos-conv-unread no arquivo de estilos
   // dashboard.scss (já patcheado em outros locais).
