@@ -2295,6 +2295,42 @@ const assigneeTabItems = computed(() => {
   0%, 100% { background: linear-gradient(90deg, rgba(59,130,246,0.10) 0%, transparent 50%, rgba(16,185,129,0.10) 100%); }
   50%      { background: linear-gradient(90deg, rgba(59,130,246,0.26) 0%, transparent 50%, rgba(16,185,129,0.26) 100%); }
 }
+
+/* Snooze-return — sinal ÂMBAR no TOPO (lado livre, não conflita com
+   handoff esquerda nem newmsg direita). Pulse persistente até user
+   abrir a conv. */
+.klaos-snooze-return-pulse {
+  box-shadow: inset 0 6px 0 0 #f59e0b !important;
+  animation: klaos-snooze-return-bg 1.0s ease-in-out infinite !important;
+  position: relative !important;
+}
+.klaos-snooze-return-pulse h4 {
+  font-weight: 700 !important;
+  color: #92400e !important;
+}
+.klaos-snooze-return-pulse::before {
+  content: '⏰' !important;
+  position: absolute !important;
+  top: 6px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  font-size: 12px !important;
+  background: #f59e0b !important;
+  color: white !important;
+  padding: 1px 8px 1px 6px !important;
+  border-radius: 0 0 8px 8px !important;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.4) !important;
+  z-index: 5 !important;
+  pointer-events: none !important;
+  animation: klaos-pulse-dot 1.0s ease-in-out infinite !important;
+}
+@keyframes klaos-snooze-return-bg {
+  0%, 100% { background-color: rgba(245, 158, 11, 0.08); }
+  50%      { background-color: rgba(245, 158, 11, 0.22); }
+}
+:global(.dark) .klaos-snooze-return-pulse h4 {
+  color: #fcd34d !important;
+}
 `,
     reason: 'klaos-unread-color + handoff-pulse: estilos das cards destacadas',
   },
@@ -2565,20 +2601,20 @@ const assigneeTabItems = computed(() => {
   {
     id: '/dashboard/App.vue',
     from: "import WootSnackbarBox from './components/SnackbarContainer.vue';",
-    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';\nimport ConversationHandoffAlert from 'next/KlaosHandoff/ConversationHandoffAlert.vue';\nimport OfflineBanner from 'next/KlaosWebSocket/OfflineBanner.vue';\nimport NewMessageAlert from 'next/KlaosNewMessage/NewMessageAlert.vue';",
-    reason: 'snooze + handoff + offline + new-msg: import componentes',
+    to: "import WootSnackbarBox from './components/SnackbarContainer.vue';\nimport SnoozeReopenAlert from 'next/KlaosSnooze/SnoozeReopenAlert.vue';\nimport SnoozeReturnPulse from 'next/KlaosSnoozeReturn/SnoozeReturnPulse.vue';\nimport ConversationHandoffAlert from 'next/KlaosHandoff/ConversationHandoffAlert.vue';\nimport OfflineBanner from 'next/KlaosWebSocket/OfflineBanner.vue';\nimport NewMessageAlert from 'next/KlaosNewMessage/NewMessageAlert.vue';",
+    reason: 'snooze + handoff + offline + new-msg + snooze-return-pulse: import componentes',
   },
   {
     id: '/dashboard/App.vue',
     from: '    WootSnackbarBox,\n    PendingEmailVerificationBanner,',
-    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    ConversationHandoffAlert,\n    OfflineBanner,\n    NewMessageAlert,\n    PendingEmailVerificationBanner,',
-    reason: 'snooze + handoff + offline + new-msg: registra componentes',
+    to: '    WootSnackbarBox,\n    SnoozeReopenAlert,\n    SnoozeReturnPulse,\n    ConversationHandoffAlert,\n    OfflineBanner,\n    NewMessageAlert,\n    PendingEmailVerificationBanner,',
+    reason: 'snooze + handoff + offline + new-msg + snooze-return-pulse: registra componentes',
   },
   {
     id: '/dashboard/App.vue',
     from: '    <WootSnackbarBox />\n    <NetworkNotification />',
-    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <ConversationHandoffAlert />\n    <OfflineBanner />\n    <NewMessageAlert />\n    <NetworkNotification />',
-    reason: 'snooze + handoff + offline + new-msg: monta globalmente no App.vue',
+    to: '    <WootSnackbarBox />\n    <SnoozeReopenAlert />\n    <SnoozeReturnPulse />\n    <ConversationHandoffAlert />\n    <OfflineBanner />\n    <NewMessageAlert />\n    <NetworkNotification />',
+    reason: 'snooze + handoff + offline + new-msg + snooze-return-pulse: monta globalmente',
   },
 
   // === KLaOS — Snooze: troca CustomSnoozeModal por KlaosCustomSnoozeModal (Item snooze) ===
