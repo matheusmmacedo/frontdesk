@@ -32,7 +32,7 @@ class Api::Custom::V1::Accounts::SnoozeReturnsController < Api::V1::Accounts::Ba
                    .where(status: :open)
                    .where("additional_attributes->>'klaos_returned_from_snooze_at' IS NOT NULL")
                    .where("(additional_attributes->>'klaos_returned_from_snooze_at')::timestamptz > ?", last_seen_at)
-                   .order("(additional_attributes->>'klaos_returned_from_snooze_at')::timestamptz DESC")
+                   .order(Arel.sql("(additional_attributes->>'klaos_returned_from_snooze_at')::timestamptz DESC"))
                    .limit(50)
 
     render json: {

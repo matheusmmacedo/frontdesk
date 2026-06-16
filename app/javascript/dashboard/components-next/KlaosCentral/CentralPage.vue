@@ -16,7 +16,6 @@
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
 
 const router = useRouter();
@@ -71,7 +70,7 @@ const fetchSnoozeReturns = async () => {
   if (!acct) return;
   snoozeReturnsLoading.value = true;
   try {
-    const r = await axios.get(`/api/custom/v1/accounts/${acct}/snooze_returns`);
+    const r = await window.axios.get(`/api/custom/v1/accounts/${acct}/snooze_returns`);
     snoozeReturns.value = r.data?.items || [];
     snoozeReturnsLastSeenAt.value = r.data?.last_seen_at || null;
   } catch (e) {
@@ -85,7 +84,7 @@ const dismissSnoozeReturns = async () => {
   const acct = currentAccountId.value;
   if (!acct) return;
   try {
-    await axios.post(`/api/custom/v1/accounts/${acct}/snooze_returns/dismiss`);
+    await window.axios.post(`/api/custom/v1/accounts/${acct}/snooze_returns/dismiss`);
     snoozeReturns.value = [];
   } catch (e) {
     /* noop */
