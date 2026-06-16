@@ -48,6 +48,12 @@ const disabledTime = date => {
       @submit.prevent="$emit('chooseTime', snoozeTime)"
     >
       <div class="klaos-snooze-picker-wrapper">
+        <!-- KLaOS — Removidos `confirm` + `:confirm-text` do DatePicker.
+             Gustavo reportou (15/06): "tem 2 botões Adiar — dentro do
+             calendário e no rodapé". O de dentro selecionava a data mas
+             NÃO efetivava (precisava clicar o de fora). Solução: só 1
+             botão, no rodapé. Selecionar data simplesmente popula
+             `snoozeTime` e habilita o submit. -->
         <DatePicker
           v-model:value="snoozeTime"
           type="datetime"
@@ -60,8 +66,6 @@ const disabledTime = date => {
           :show-second="false"
           format="DD/MM/YYYY HH:mm"
           time-title-format="dddd, DD [de] MMMM"
-          confirm
-          :confirm-text="$t('CONVERSATION.CUSTOM_SNOOZE.APPLY')"
         />
       </div>
       <div class="flex flex-row justify-end w-full gap-2 px-0 py-2 mt-4">
