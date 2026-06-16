@@ -2719,6 +2719,44 @@ const assigneeTabItems = computed(() => {
     reason: 'central-shortcuts: aplica klaos_tab/klaos_status da Central no ChatList mount',
   },
 
+  // === KLaOS — ChatList REATIVO a mudanças de query (sidebar Adiadas) ===
+  // Clicar no item "Adiadas" do sidebar quando JÁ está em /dashboard
+  // muda só a query string. Vue Router NÃO desmonta o componente
+  // → onMounted não roda → filtro não muda. Bug reportado por Gustavo
+  // ("não roda porra"). Watcher reage a route.query e re-fetcha.
+  {
+    id: '/components/ChatList.vue',
+    from: `  if (hasActiveFolders.value) {
+    store.dispatch('campaigns/get');
+  }
+});`,
+    to: `  if (hasActiveFolders.value) {
+    store.dispatch('campaigns/get');
+  }
+});
+
+// KLaOS — reage a mudanças de klaos_tab/klaos_status na URL sem precisar
+// remontar (caso item Adiadas do sidebar quando já está em /dashboard).
+watch(() => route.query, (q) => {
+  const klaosTab = q?.klaos_tab;
+  const klaosStatus = q?.klaos_status;
+  let changed = false;
+  if (klaosTab && klaosTab !== activeAssigneeTab.value) {
+    activeAssigneeTab.value = klaosTab;
+    changed = true;
+  }
+  if (klaosStatus && klaosStatus !== activeStatus.value) {
+    activeStatus.value = klaosStatus;
+    changed = true;
+  }
+  if (changed) {
+    store.dispatch('setChatStatusFilter', activeStatus.value);
+    resetAndFetchData();
+  }
+}, { deep: true });`,
+    reason: 'central+sidebar: watch query pra reagir a mudança de filtro sem remontar',
+  },
+
   // === KLaOS — Itens "Central" e "Canais & Números" na sidebar primária ===
   // Patch no array menuItems do Sidebar.vue inserindo 2 entradas ANTES do
   // item Inbox padrão do Chatwoot. Usa accountScopedRoute(name) que já é
