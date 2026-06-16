@@ -48,6 +48,13 @@ const disabledTime = date => {
       @submit.prevent="$emit('chooseTime', snoozeTime)"
     >
       <div class="klaos-snooze-picker-wrapper">
+        <!-- KLaOS — Mantém confirm do DatePicker mas com texto "Pronto"
+             (não "Adiar"). Gustavo reportou (15/06): "tem 2 botões 'Adiar'
+             iguais — dentro do calendário e no rodapé". O de dentro só
+             seleciona a data; o do rodapé é que efetiva. Renomeando o
+             interno pra "Pronto" o usuário entende que é só pra confirmar
+             a escolha da data/hora, e o "Adiar" do rodapé é a ação final.
+        -->
         <DatePicker
           v-model:value="snoozeTime"
           type="datetime"
@@ -61,7 +68,7 @@ const disabledTime = date => {
           format="DD/MM/YYYY HH:mm"
           time-title-format="dddd, DD [de] MMMM"
           confirm
-          :confirm-text="$t('CONVERSATION.CUSTOM_SNOOZE.APPLY')"
+          confirm-text="Pronto"
         />
       </div>
       <div class="flex flex-row justify-end w-full gap-2 px-0 py-2 mt-4">

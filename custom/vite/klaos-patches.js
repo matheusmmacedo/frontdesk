@@ -2674,6 +2674,34 @@ const assigneeTabItems = computed(() => {
     reason: 'snooze-alert-toggle: renderiza abaixo do label IA',
   },
 
+  // === KLaOS — Item "Adiadas" na sidebar (sub-item de Conversas) ===
+  // Gustavo reportou que não acha as convs que ele adiou. Adicionar item
+  // permanente abaixo de "Menções" e "Não atendidas" pra acesso direto.
+  // Usa accountScopedRoute('home') + ?klaos_status=snoozed que o ChatList
+  // já interpreta (patch existente).
+  {
+    id: '/components-next/sidebar/Sidebar.vue',
+    from: `        {
+          name: 'Unattended',
+          activeOn: ['conversation_through_unattended'],
+          label: t('SIDEBAR.UNATTENDED_CONVERSATIONS'),
+          to: accountScopedRoute('conversation_unattended'),
+        },`,
+    to: `        {
+          name: 'Unattended',
+          activeOn: ['conversation_through_unattended'],
+          label: t('SIDEBAR.UNATTENDED_CONVERSATIONS'),
+          to: accountScopedRoute('conversation_unattended'),
+        },
+        {
+          name: 'KlaosSnoozed',
+          label: 'Adiadas',
+          activeOn: [],
+          to: \`\${accountScopedRoute('home')}?klaos_status=snoozed&klaos_tab=me\`,
+        },`,
+    reason: 'adiadas: item permanente sub Conversas pra agente achar as snoozed',
+  },
+
   // === KLaOS — ChatList lê query params custom da Central pra setar tab+filter ===
   // Atalhos da Central navegam pra `home` com query klaos_tab=me/unassigned/all
   // e klaos_status=open/snoozed. ChatList aplica no onMounted ANTES do fetch.
