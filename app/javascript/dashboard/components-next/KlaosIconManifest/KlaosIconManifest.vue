@@ -45,5 +45,15 @@
     <span class="i-lucide-target"></span>
     <span class="i-lucide-trending-up"></span>
     <span class="i-lucide-trending-down"></span>
+
+    <!-- Classes Tailwind usadas em patches (string-replace runtime) que o
+         JIT não detecta porque não aparecem nos arquivos-fonte do dashboard.
+         Mesma lógica dos ícones lucide acima. -->
+    <span class="bg-amber-500"></span>
+    <span class="bg-amber-400"></span>
+    <span class="bg-amber-600"></span>
+    <span class="text-amber-700"></span>
+    <span class="text-amber-800"></span>
+    <span class="text-amber-900"></span>
   </div>
 </template>

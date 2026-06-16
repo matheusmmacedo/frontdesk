@@ -20,6 +20,11 @@
 
 module KlaosMarkUnread
   KLAOS_UNREAD_KEY = 'klaos_marked_unread_at'
+  # Quando o agente abre/lê uma conv que voltou do snooze, limpar o
+  # timestamp também — sem isso o SnoozeReturnPulse re-aplica o pulse
+  # a cada 60s. Gustavo reportou (16/06): "alerta com reloginho piscando,
+  # clico e volta".
+  KLAOS_SNOOZE_RETURNED_KEY = 'klaos_returned_from_snooze_at'
 
   def unread
     super
@@ -59,10 +64,13 @@ module KlaosMarkUnread
     return if @conversation.blank?
 
     extras = @conversation.additional_attributes || {}
-    return unless extras.key?(KLAOS_UNREAD_KEY)
+    # Limpa AMBOS: marked_unread (badge "!") e returned_from_snooze (pulse ⏰).
+    # Os dois somem quando o agente abre a conv.
+    return unless extras.key?(KLAOS_UNREAD_KEY) || extras.key?(KLAOS_SNOOZE_RETURNED_KEY)
 
     extras = extras.dup
     extras.delete(KLAOS_UNREAD_KEY)
+    extras.delete(KLAOS_SNOOZE_RETURNED_KEY)
     @conversation.update_columns(additional_attributes: extras)
   end
 
@@ -81,9 +89,13 @@ module KlaosMarkUnread
 end
 
 Rails.application.config.to_prepare do
-  next unless defined?(Api::V1::Accounts::ConversationsController)
-  next if Api::V1::Accounts::ConversationsController.include?(KlaosMarkUnread)
+  # Em Rails 7 com Zeitwerk, `defined?` pode falhar com classes autoload-lazy
+  # antes do controller ser tocado pela primeira vez. Forçar via
+  # safe_constantize que dispara o autoload corretamente.
+  controller = 'Api::V1::Accounts::ConversationsController'.safe_constantize
+  next unless controller
+  next if controller.include?(KlaosMarkUnread)
 
-  Api::V1::Accounts::ConversationsController.prepend(KlaosMarkUnread)
+  controller.prepend(KlaosMarkUnread)
   Rails.logger.info '[KlaosMarkUnread] prepended on ConversationsController'
 end
