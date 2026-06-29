@@ -53,14 +53,14 @@ module KlaosSnoozeReopenPush
 end
 
 module Klaos
-  class SnoozeReopenPushJob < ApplicationJob
+  class SnoozeReopenPushJob < ::ApplicationJob
     queue_as :medium
 
     def perform(conversation_id, user_id)
-      conversation = Conversation.find_by(id: conversation_id)
+      conversation = ::Conversation.find_by(id: conversation_id)
       return if conversation.blank?
 
-      user = User.find_by(id: user_id)
+      user = ::User.find_by(id: user_id)
       return if user.blank?
 
       user.notification_subscriptions.each do |subscription|
@@ -74,7 +74,7 @@ module Klaos
     private
 
     def deliver_browser_push(conversation, user, subscription)
-      return if VapidService.public_key.blank?
+      return if ::VapidService.public_key.blank?
 
       payload_json = JSON.generate(
         title: "🔔 Conversa #{conversation.display_id} voltou do adiar",
@@ -83,15 +83,15 @@ module Klaos
         url: deep_link(conversation)
       )
 
-      WebPush.payload_send(
+      ::WebPush.payload_send(
         message: payload_json,
         endpoint: subscription.subscription_attributes['endpoint'],
         p256dh: subscription.subscription_attributes['p256dh'],
         auth: subscription.subscription_attributes['auth'],
         vapid: {
           subject: deep_link(conversation),
-          public_key: VapidService.public_key,
-          private_key: VapidService.private_key
+          public_key: ::VapidService.public_key,
+          private_key: ::VapidService.private_key
         },
         ssl_timeout: 5,
         open_timeout: 5,
@@ -101,12 +101,12 @@ module Klaos
       Rails.logger.info(
         "[KlaosSnoozeReopenPush] browser push enviado user=#{user.email} conv=#{conversation.display_id}"
       )
-    rescue WebPush::ExpiredSubscription, WebPush::InvalidSubscription, WebPush::Unauthorized => e
+    rescue ::WebPush::ExpiredSubscription, ::WebPush::InvalidSubscription, ::WebPush::Unauthorized => e
       Rails.logger.info "[KlaosSnoozeReopenPush] subscription expirada user=#{user.id}: #{e.message}"
       subscription.destroy!
-    rescue WebPush::TooManyRequests => e
+    rescue ::WebPush::TooManyRequests => e
       Rails.logger.warn "[KlaosSnoozeReopenPush] rate limit user=#{user.id}: #{e.message}"
-    rescue Errno::ECONNRESET, Net::OpenTimeout, Net::ReadTimeout => e
+    rescue ::Errno::ECONNRESET, ::Net::OpenTimeout, ::Net::ReadTimeout => e
       Rails.logger.error "[KlaosSnoozeReopenPush] timeout user=#{user.id}: #{e.message}"
     rescue StandardError => e
       Rails.logger.warn(
