@@ -53,16 +53,28 @@ KLAOS_EVENT_BRIDGE_EXTRA_EVENTS = %w[
   agent_bot_assigned agent_bot_unassigned
 ].freeze
 
+# Override do validate_webhook_subscriptions via prepend. NÃO mexe na
+# constante ALLOWED_WEBHOOK_EVENTS porque o método original do Webhook usa
+# constant lookup via Module.nesting que pode ser cacheado por Bootsnap ou
+# resetado em reload (tentativa anterior com remove_const+const_set não
+# funcionou em runtime, persistia 422). Prepend de validator é a forma
+# robusta: substitui o método em si na chain de lookup.
+module KlaosWebhookAllowExtraEvents
+  def validate_webhook_subscriptions
+    allowed = self.class::ALLOWED_WEBHOOK_EVENTS + KLAOS_EVENT_BRIDGE_EXTRA_EVENTS
+    invalid = !subscriptions.instance_of?(Array) ||
+              subscriptions.blank? ||
+              (subscriptions.uniq - allowed).length.positive?
+    errors.add(:subscriptions, I18n.t('errors.webhook.invalid')) if invalid
+  end
+end
+
 Rails.application.config.to_prepare do
-  # Estende ALLOWED_WEBHOOK_EVENTS pra permitir salvar os eventos novos
-  # nas subscriptions via API/UI. Sem isso, KLaOS recebe 422 ao tentar
-  # adicionar 'team_created' etc no webhook.
+  # Prepend do override do validator. Idempotente (não-prepend duplicado).
   webhook_class = 'Webhook'.safe_constantize
-  if webhook_class && !webhook_class::ALLOWED_WEBHOOK_EVENTS.include?('team_created')
-    extended = (webhook_class::ALLOWED_WEBHOOK_EVENTS + KLAOS_EVENT_BRIDGE_EXTRA_EVENTS).uniq.freeze
-    webhook_class.send(:remove_const, :ALLOWED_WEBHOOK_EVENTS)
-    webhook_class.const_set(:ALLOWED_WEBHOOK_EVENTS, extended)
-    Rails.logger.info "[KlaosEventBridge] ALLOWED_WEBHOOK_EVENTS estendida com #{KLAOS_EVENT_BRIDGE_EXTRA_EVENTS.inspect}"
+  if webhook_class && !webhook_class.include?(KlaosWebhookAllowExtraEvents)
+    webhook_class.prepend(KlaosWebhookAllowExtraEvents)
+    Rails.logger.info "[KlaosEventBridge] Webhook#validate_webhook_subscriptions prepended pra aceitar #{KLAOS_EVENT_BRIDGE_EXTRA_EVENTS.inspect}"
   end
 
   # ---- Inbox: only `inbox_deleted` é novo (created/updated já em WebhookListener) ----
