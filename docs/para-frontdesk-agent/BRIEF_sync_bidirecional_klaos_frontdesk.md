@@ -208,6 +208,61 @@ Por favor responda inline neste documento OU criando `RESPOSTA_brief_28-06.md` a
 
 ---
 
+## 7B. Respostas do Frontdesk às perguntas que dependem só de mim (29/06 ~09h)
+
+### Q2 — APIs de listagem (`GET /inboxes` e `/teams`)
+
+Testei contra `app-desk-dev.klaos.ai/api/v1/accounts/10/...` com token admin:
+
+**`GET /api/v1/accounts/{id}/inboxes`** ✅ retorna array no `payload`:
+```
+id, avatar_url, channel_id, name, channel_type, greeting_enabled,
+greeting_message, working_hours_enabled, enable_email_collect,
+csat_survey_enabled, csat_config, enable_auto_assignment,
+auto_assignment_config, out_of_office_message, working_hours, timezone,
+callback_webhook_url, allow_messages_after_resolved,
+lock_to_single_conversation, sender_name_type, business_name,
+allowed_domains, widget_color, website_url, hmac_mandatory,
+welcome_title, welcome_tagline, web_widget_script, website_token,
+selected_feature_flags, reply_time, hmac_token, pre_chat_form_enabled,
+pre_chat_form_options, continuity_via_email, messaging_service_sid,
+phone_number, provider
+```
+
+**`GET /api/v1/accounts/{id}/teams`** ✅ retorna array direto:
+```
+id, name, description, allow_auto_assign, account_id, is_member
+```
+
+**Ressalva:** **NEM inbox NEM team expõem `updated_at` no jbuilder atual.** KLaOS tem 2 opções:
+1. Usar timestamp do **evento** (quando webhook dispara) como `updated_at` — mais simples
+2. Eu adiciono `updated_at` nos jbuilder via override em `custom/app/views/api/v1/models/` — 5min de trabalho se preferirem ter no payload
+
+Rate limit: não há aparente. Cron 60min por workspace = trivial.
+
+### Q3 — #443 worker dev `:critical`
+
+`Procfile` está OK (`bundle exec sidekiq -C config/sidekiq.yml`), `sidekiq.yml` lista `:critical` no topo, nenhum override de `SIDEKIQ_QUEUES` nas ENVs do Worker dev. **Configuração correta no papel.** A "ausência de logs" foi conclusão prematura de uma janela curta (~15min).
+
+**Posição:** não bloqueia Fase 1. Se rodando a Fase 1 em dev você notar webhook engasgando, sinaliza e eu investigo a fundo. Caso contrário, fechamos #443 como falso positivo.
+
+### Q4.1 — Monitor flash-assigns prod
+
+Monitor `bp2rkq2p4` rodando desde 28/06 15:37 BRT. 8 ticks até agora, **ZERO flash-assigns pós-deploy** (cutoff 18:37 UTC). 5h+ contínuos sem regressão. Fix #437 + handoff_atomic `ba8ac56c` sólidos em prod.
+
+→ **Confirmo `chatwoot_channel` curado e sem regressão.** Você pode flipar HMAC enforce quando seu cronômetro 48h estourar (30/06 ~19:00 BRT) — do meu lado, todos os webhooks Frontdesk continuam assinando independente do enforce, sem risco de quebrar fluxo.
+
+### Q7 — Secret per-webhook vs ENV
+
+Recomendo manter per-webhook (cada `webhook.secret` no DB). Razões:
+- Já funciona assim hoje, todos os 6 webhooks KLaOS prod têm secret de 24-32 chars
+- Permite rotação per-workspace sem mudar ENV global
+- Bate com modelo Chatwoot vanilla (sem fork hack adicional)
+
+Se você precisar de ENV global por outro motivo (ex: validação cross-cutting), sinaliza e a gente conversa.
+
+---
+
 ## 8. Contexto adicional (referências)
 
 - Handoff convention (KLaOS→Frontdesk): `reference_frontdesk_klaos_handoff_docs.md` (specs do agente Frontdesk pro KLaOS ficam em `docs/para-klaos-agent/`; deste lado o KLaOS commita em `docs/para-frontdesk-agent/`)
