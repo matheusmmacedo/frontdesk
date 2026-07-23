@@ -71,6 +71,30 @@ RSpec.describe 'Conversation Label API', type: :request do
         expect(response.body).to include('label3')
         expect(response.body).to include('label4')
       end
+
+      # Regressao bug #699 (P1 BLOQUEIO regua cobranca):
+      # POST /labels deve disparar CONVERSATION_UPDATED via Rails dispatcher
+      # pra que WebhookListener (KLaOS HTTP) E AutomationRuleListener recebam
+      # o evento com label_list em changed_attributes. Antes do fix
+      # (custom/config/initializers/klaos_label_change_dispatch.rb), o virtual
+      # attr label_list nao entrava em previous_changes de forma confiavel
+      # e o guard em notify_conversation_updation saia cedo — webhook silencioso.
+      it 'dispatches CONVERSATION_UPDATED with label_list in changed_attributes (fix #699)' do
+        allow(Rails.configuration.dispatcher).to receive(:dispatch)
+
+        post api_v1_account_conversation_labels_url(account_id: account.id, conversation_id: conversation.display_id),
+             params: { labels: %w[label3 label4] },
+             headers: agent.create_new_auth_token,
+             as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(Rails.configuration.dispatcher).to have_received(:dispatch)
+          .with(
+            Conversation::CONVERSATION_UPDATED,
+            kind_of(Time),
+            hash_including(changed_attributes: hash_including('label_list'))
+          ).once
+      end
     end
   end
 end

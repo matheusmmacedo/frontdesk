@@ -434,3 +434,20 @@ Investigação revelou **bug de sync** no campo `meio_pagamento_tipo`, com proxi
 ### Impacto no Frontdesk
 - ação necessária ou "nenhuma"
 ```
+
+## 2026-06-28 — Revert decorator `c7ed48a30` (redundante)
+
+Commit `c018cab7c` em `klaos-dev` — reverte o decorator `custom/config/initializers/inbox_webhook_data_decorator.rb` que adicionei mais cedo hoje.
+
+**Motivo da reversão:**
+Investigação cross-agent identificou que `custom/config/initializers/webhook_payload_enrichment.rb` (commit `77926ca1c`, 2026-04-12, há 2.5 meses) JÁ implementa exatamente o mesmo override de `Inbox#webhook_data`, injetando `channel_type`, `channel_name` e `provider`. Meu decorator era 100% redundante.
+
+**Implicações:**
+- Bug original `chatwoot_channel=null` em 423 convs prod NUNCA dependeu de mudança no Frontdesk. Causa raiz era 100% no INSERT do KLaOS (fix #437 `42fe1b40`).
+- Fase 4 do plano consolidado #437/#435 **cancelada** — sem prejuízo. Cronômetro 48h cobre apenas channel fix + handoff_atomic + Redis RR + HMAC warn-only do KLaOS.
+- Lição aprendida e salva em memória do projeto: auditorias de fork Chatwoot devem ler `custom/config/initializers/` E `custom/app/` ANTES de `app/` upstream, pra não reportar "feature ausente" quando na verdade está sobrescrita em runtime.
+
+**Achado colateral (Frontdesk dev):**
+Worker dev (Railway env development, service `2e37d1f6-…`) aparentemente não consome a fila Sidekiq `:critical` — `EventDispatcherJob` ficou parado, webhook 15 acct=10 dev não entregou payload pro webhook.site mesmo configurado certo. Task #443 criada no nosso backlog pra investigar. NÃO afeta prod (que processa todas as filas normalmente).
+
+**Status final do plano #437/#435 do Frontdesk:** zero ação pendente. Tudo resolvido pelo KLaOS.
