@@ -174,6 +174,47 @@ describe WebhookListener do
         listener.conversation_updated(conversation_updated_event)
       end
     end
+
+    # Regressao bug #699: shape do payload quando label_list muda.
+    # O fix (custom/config/initializers/klaos_label_change_dispatch.rb)
+    # injeta 'label_list' (string key) no changed_attributes que chega
+    # aqui. base_listener#extract_changed_attributes mapeia pra
+    # `[{ 'label_list' => { previous_value:, current_value: } }]`.
+    # Consumer KLaOS le esse shape.
+    context 'when label_list changed' do
+      let!(:label_change_event) do
+        Events::Base.new(
+          event_name, Time.zone.now,
+          conversation: conversation.reload,
+          changed_attributes: {
+            'label_list' => [['old'], ['new']]
+          }
+        )
+      end
+
+      it 'triggers webhook with label_list mapped to previous_value/current_value shape' do
+        webhook = create(:webhook, inbox: inbox, account: account)
+
+        expect(WebhookJob).to receive(:perform_later).with(
+          webhook.url,
+          conversation.webhook_data.merge(
+            event: 'conversation_updated',
+            changed_attributes: [
+              {
+                'label_list' => {
+                  previous_value: ['old'],
+                  current_value: ['new']
+                }
+              }
+            ]
+          ),
+          :account_webhook,
+          secret: webhook.secret, delivery_id: instance_of(String)
+        ).once
+
+        listener.conversation_updated(label_change_event)
+      end
+    end
   end
 
   describe '#contact_created' do
