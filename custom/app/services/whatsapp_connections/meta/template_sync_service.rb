@@ -43,8 +43,34 @@ module WhatsappConnections
 
       def propagate_to_channels(templates)
         @connection.linked_phone_numbers.includes(:channel_whatsapp).find_each do |phone|
-          phone.channel_whatsapp&.update(message_templates: templates)
+          channel = phone.channel_whatsapp
+          next unless channel
+
+          filtered = filter_for_channel(templates, channel)
+          channel.update(message_templates: filtered)
         end
+      end
+
+      # Filtro por prefixo pra isolamento de templates em WABAs compartilhadas
+      # (MS+BC compartilham WABA 735467396201142 → templates bluecare_* vazavam pro UI MS
+      # e pra waba_templates do KLaOS via getInbox).
+      # Config lida de channel.provider_config['template_filter'] (jsonb Chatwoot padrão):
+      #   { "prefix_whitelist": ["bluecare_"] }  → só templates com esses prefixos
+      #   { "prefix_blacklist": ["bluecare_"] }  → esconde templates com esses prefixos
+      # Sem config → retorna tudo (backward-compat).
+      def filter_for_channel(templates, channel)
+        cfg = channel.provider_config&.dig('template_filter') || {}
+        whitelist = cfg['prefix_whitelist']
+        blacklist = cfg['prefix_blacklist']
+
+        out = templates
+        if whitelist.is_a?(Array) && whitelist.any?
+          out = out.select { |t| whitelist.any? { |p| t['name'].to_s.start_with?(p) } }
+        end
+        if blacklist.is_a?(Array) && blacklist.any?
+          out = out.reject { |t| blacklist.any? { |p| t['name'].to_s.start_with?(p) } }
+        end
+        out
       end
     end
   end
