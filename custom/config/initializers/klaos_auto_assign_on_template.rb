@@ -44,8 +44,28 @@ module KlaosAutoAssignOnTemplate
     return false if conversation.assignee_id.present?
     return false unless sender_type == 'User'
     return false unless klaos_is_template_message?
+    return false unless klaos_sender_in_scope?
 
     true
+  end
+
+  # Sender precisa ser membro do inbox; se a conv já tem team, do team também.
+  # Sem isso, `update_column(:assignee_id, sender_id)` bypassa o
+  # `before_save :ensure_assignee_is_from_team` do upstream e deixa a conv
+  # com assignee fora do team (bug conv 1102 — Yasmin/14 assign em team 5).
+  def klaos_sender_in_scope?
+    inbox = conversation.inbox
+    return false unless inbox&.member_ids&.include?(sender_id)
+
+    team = conversation.team
+    return true if team.blank?
+
+    team.members.ids.include?(sender_id)
+  rescue StandardError => e
+    Rails.logger.warn(
+      "[KlaosAutoAssignOnTemplate] scope check falhou conv=#{conversation_id}: #{e.class}: #{e.message}"
+    )
+    false # fail-closed: em dúvida, não atribui — handoffAtomic corrige depois
   end
 
   def klaos_is_template_message?
