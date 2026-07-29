@@ -69,8 +69,11 @@ class Api::Custom::V1::Accounts::UsageFrequentsController < Api::V1::Accounts::B
   def cached(kind, &block)
     # v2: corrigido SQL do templates (?-operator do JSONB conflitava com
     # placeholder do ActiveRecord; troquei pra `IS NOT NULL`).
+    # v3 (29/07): `.reorder(nil)` no top_templates. Bump obrigatório — sem ele o
+    # cache continuaria servindo o `{}` gravado pelas execuções que estouravam
+    # GroupingError, e o fix só apareceria quando o TTL expirasse.
     Rails.cache.fetch(
-      "klaos:usage_frequents:#{Current.account.id}:#{kind}:v2",
+      "klaos:usage_frequents:#{Current.account.id}:#{kind}:v3",
       expires_in: CACHE_TTL,
       &block
     )
@@ -99,12 +102,19 @@ class Api::Custom::V1::Accounts::UsageFrequentsController < Api::V1::Accounts::B
     #
     # Importante: o operador `?` do JSONB (key-exists) conflita com placeholders
     # do ActiveRecord, então filtramos por `->>name IS NOT NULL` em vez do `?`.
+    #
+    # (29/07) `.reorder(nil)` é obrigatório: o `default_scope`/`order` do model
+    # Message injeta `ORDER BY messages.created_at`, que num `GROUP BY` vira
+    # PG::GroupingError ("column messages.created_at must appear in the GROUP BY
+    # clause"). O rescue abaixo mascarava o erro devolvendo {} — o ranking de
+    # templates estava morto em prod desde sempre, falhando silenciosamente.
     Message
       .joins(:conversation)
       .where(conversations: { account_id: Current.account.id })
       .where(message_type: :outgoing)
       .where(sender_type: 'User')
       .where("messages.additional_attributes->'template_params'->>'name' IS NOT NULL")
+      .reorder(nil)
       .group("messages.additional_attributes->'template_params'->>'name'")
       .count
       .sort_by { |_, v| -v }
