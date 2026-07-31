@@ -32,6 +32,7 @@ const KLAOS_SNOOZE_REOPENED_EVENT = 'klaos.snooze_reopened';
 
 const store = useStore();
 const currentAccountId = useMapGetter('getCurrentAccountId');
+const currentUserId = useMapGetter('getCurrentUserID');
 
 const account = computed(() =>
   store.getters['accounts/getAccount'](currentAccountId.value)
@@ -157,7 +158,31 @@ const pulseConversationCard = convId => {
   }, 60000);
 };
 
+// (31/07) SÓ ALERTA CONVERSA QUE É MINHA.
+//
+// O alerta de retorno é escandaloso de propósito — som 3x, título piscando,
+// notificação do browser, banner que não some sozinho e card pulsando 60s.
+// Sem filtro de dono, quem enxerga a conta inteira (admin) levava esse pacote
+// a CADA conversa que reabria, inclusive as de outros atendentes e as que
+// estão com a IA. Reclamação do Gustavo (Mais Saúde, 31/07): "pra tudo eu
+// recebo alerta sonoro, só quero das conversas que estão comigo".
+//
+// Mesmo critério já usado pelo NewMessageAlert e pelo ConversationHandoffAlert:
+// conversa sem dono não alerta ninguém — só o dono é avisado.
+const ehMinhaConversa = conversation => {
+  const meuId = currentUserId.value;
+  if (!meuId) return false;
+  const assigneeId =
+    conversation?.meta?.assignee?.id ??
+    conversation?.assignee_id ??
+    conversation?.assignee?.id ??
+    null;
+  return assigneeId === meuId;
+};
+
 const handleReopen = conversation => {
+  if (!ehMinhaConversa(conversation)) return;
+
   const senderName =
     conversation.meta?.sender?.name || `Conv #${conversation.id}`;
   // display_id é o ID público (sequencial por conta) usado nas URLs. id
@@ -217,10 +242,21 @@ watch(
 // TODOS os eventos de ActionCable como bus.on(event_name, data).
 const onKlaosSnoozeReopened = data => {
   if (!isEnabled.value) return;
+  const convId = data?.conversation_id || data?.id;
+  // O broadcast do backend não carrega o assignee. Sem ele o filtro de dono
+  // reprovaria TODA conversa e o alerta morreria por este caminho — então
+  // buscamos a conversa na store, que é a mesma fonte do watcher acima.
+  const daStore = (store.state.conversations?.allConversations || []).find(
+    c => c.id === convId
+  );
   handleReopen({
-    id: data?.conversation_id || data?.id,
+    id: convId,
     displayId: data?.conversation_display_id,
-    meta: { sender: { name: data?.sender_name || 'Conv' } },
+    meta: {
+      sender: { name: data?.sender_name || 'Conv' },
+      assignee: daStore?.meta?.assignee,
+    },
+    assignee_id: data?.assignee_id ?? daStore?.assignee_id,
   });
 };
 
