@@ -9,10 +9,11 @@
 # que o sistema "não notifica".
 #
 # Duas camadas de proteção:
-#   1. before_create — usuário novo nasce com defaults ON.
-#   2. backfill no boot — varre users existentes sem a chave e aplica
-#      os defaults. Idempotente (UPDATE só quem precisa) e roda uma vez
-#      por boot.
+#   1. before_create — usuário novo nasce com defaults ON (aqui).
+#   2. backfill nos users existentes — em
+#      db/migrate/20260802180100_backfill_audio_alert_defaults.rb.
+#      Ficava neste arquivo, num Thread no boot, e nunca chegou a rodar;
+#      o porquê está registrado mais abaixo e na migration.
 #
 # Combo:
 #   enable_audio_alerts                           = 'all'   → todo evento
@@ -40,33 +41,20 @@ module KlaosAudioAlertsDefault
     self.ui_settings = AUDIO_DEFAULTS.merge(existing)
   end
 
-  # Backfill em users existentes — varre quem não tem a chave essencial
-  # e aplica os defaults preservando o resto do ui_settings. Roda uma vez
-  # por boot do processo (cacheado por Rails.cache pra não brigar entre
-  # web/worker simultâneos).
-  def self.backfill_existing_users
-    return unless defined?(User)
-
-    cache_key = 'klaos:audio_alerts_backfilled_v1'
-    return if Rails.cache.read(cache_key)
-
-    affected = User.where("NOT (ui_settings ? 'enable_audio_alerts')")
-                   .or(User.where(ui_settings: nil))
-                   .or(User.where(ui_settings: {}))
-
-    count = 0
-    affected.find_each do |u|
-      existing = (u.ui_settings || {}).stringify_keys
-      next if existing.key?('enable_audio_alerts')
-      u.update_columns(ui_settings: AUDIO_DEFAULTS.merge(existing))
-      count += 1
-    end
-
-    Rails.cache.write(cache_key, true, expires_in: 1.hour)
-    Rails.logger.info "[AudioAlertsDefault] backfill aplicou defaults em #{count} users" if count.positive?
-  rescue StandardError => e
-    Rails.logger.error "[AudioAlertsDefault] backfill falhou: #{e.class}: #{e.message}"
-  end
+  # O backfill em users existentes ficava AQUI, num `Thread.new` disparado no
+  # to_prepare. NUNCA FUNCIONOU: a thread nasce fora do contexto de conexão do
+  # Rails e cai no database.yml cru (POSTGRES_* com defaults localhost /
+  # chatwoot_production) em vez da DATABASE_URL, morrendo em todo boot com
+  #
+  #   [AudioAlertsDefault] backfill falhou: ActiveRecord::NoDatabaseError:
+  #     We could not find your database: railway
+  #
+  # O `rescue` transformava isso em uma linha de log que ninguém lia, então a
+  # camada 2 parecia existir e não existia — agente antigo seguiu sem som.
+  # Descoberto em 02/08/2026 ao copiar este mesmo padrão para o auto-resolve.
+  #
+  # Agora é db/migrate/20260802180100_backfill_audio_alert_defaults.rb, que
+  # roda no preDeployCommand com o ambiente inteiro montado.
 end
 
 Rails.application.config.to_prepare do
@@ -75,12 +63,5 @@ Rails.application.config.to_prepare do
   unless User.include?(KlaosAudioAlertsDefault)
     User.include(KlaosAudioAlertsDefault)
     Rails.logger.info '[AudioAlertsDefault] hook installed on User#before_create'
-  end
-
-  # Backfill assíncrono — não bloqueia boot. Roda em outro thread pra dar
-  # tempo do app subir e responder healthcheck.
-  Thread.new do
-    sleep 5
-    KlaosAudioAlertsDefault.backfill_existing_users
   end
 end

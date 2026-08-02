@@ -10,10 +10,17 @@
 # sem ninguem responder nem resolver, entupindo a caixa e mentindo na metrica
 # de "abertas".
 #
-# Este initializer torna o comportamento padrao da plataforma, em duas camadas
-# (mesmo desenho do audio_alerts_default.rb):
-#   1. before_create — conta nova ja nasce com auto-resolve ligado.
-#   2. backfill no boot — aplica nas contas existentes que nunca configuraram.
+# Este initializer cuida das contas NOVAS: before_create, a conta ja nasce com
+# auto-resolve ligado.
+#
+# As contas que ja existiam sao tratadas pela migration
+# db/migrate/20260802180000_backfill_auto_resolve_defaults.rb. O backfill NAO
+# roda no boot: a primeira versao tentou num `Thread.new` dentro do to_prepare
+# (padrao copiado do audio_alerts_default.rb) e falhou em todo boot com
+# `ActiveRecord::NoDatabaseError: We could not find your database: railway` —
+# a thread nasce fora do contexto de conexao do Rails e cai no database.yml
+# cru (POSTGRES_* com defaults localhost/chatwoot_production) em vez da
+# DATABASE_URL. Ver a migration para o diagnostico completo.
 #
 # Defaults:
 #   auto_resolve_after           = 1440  (24h de inatividade)
@@ -30,9 +37,9 @@
 # resolveu de verdade do que o robo fechou por silencio. O Label e criado na
 # conta pra aparecer no filtro da UI (add_labels sozinho cria so a tag).
 #
-# Respeita escolha do cliente: o criterio e CHAVE AUSENTE, nao valor nulo. Quem
-# desligar pela UI (Configuracoes -> Geral) grava a chave com nil e o backfill
-# nao religa por cima.
+# Respeita escolha do cliente: aqui e na migration o criterio e CHAVE AUSENTE,
+# nao valor nulo. Quem desligar pela UI (Configuracoes -> Geral) grava a chave
+# com nil e nao e religado por cima.
 
 module KlaosAutoResolveDefault
   DEFAULTS = {
@@ -72,32 +79,6 @@ module KlaosAutoResolveDefault
   rescue StandardError => e
     Rails.logger.warn "[AutoResolveDefault] label falhou account=#{account.id}: #{e.message}"
   end
-
-  # Backfill nas contas existentes. Aplica so onde a chave esta AUSENTE —
-  # quem ja configurou (inclusive quem desligou de proposito) fica intacto.
-  # Roda uma vez por boot, cacheado pra web e worker nao brigarem.
-  def self.backfill_existing_accounts
-    return unless defined?(Account)
-
-    cache_key = 'klaos:auto_resolve_backfilled_v1'
-    return if Rails.cache.read(cache_key)
-
-    Rails.cache.write(cache_key, true, expires_in: 1.hour)
-
-    count = 0
-    Account.where("NOT (settings ? 'auto_resolve_after')").find_each do |account|
-      existing = (account.settings || {}).stringify_keys
-      next if existing.key?('auto_resolve_after')
-
-      account.update_columns(settings: DEFAULTS.merge(existing))
-      ensure_label(account)
-      count += 1
-    end
-
-    Rails.logger.info "[AutoResolveDefault] backfill aplicou defaults em #{count} contas" if count.positive?
-  rescue StandardError => e
-    Rails.logger.error "[AutoResolveDefault] backfill falhou: #{e.class}: #{e.message}"
-  end
 end
 
 Rails.application.config.to_prepare do
@@ -106,11 +87,5 @@ Rails.application.config.to_prepare do
   unless Account.include?(KlaosAutoResolveDefault)
     Account.include(KlaosAutoResolveDefault)
     Rails.logger.info '[AutoResolveDefault] hook installed on Account#before_create'
-  end
-
-  # Assincrono pra nao segurar o boot/healthcheck.
-  Thread.new do
-    sleep 5
-    KlaosAutoResolveDefault.backfill_existing_accounts
   end
 end
