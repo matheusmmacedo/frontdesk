@@ -56,9 +56,15 @@ module KlaosAutoResolveDefault
     base.after_create :klaos_ensure_auto_resolve_label
   end
 
+  # Preenche so o que estiver NULO. `DEFAULTS.merge(existing)` nao servia: o
+  # Chatwoot grava as chaves de settings com null quando o formulario e salvo
+  # vazio, e o merge preservaria esse null achando que era escolha do cliente.
+  # `auto_resolve_ignore_waiting => false` e valor legitimo e sobrevive, porque
+  # o teste e `.nil?`, nao falsy.
   def klaos_apply_auto_resolve_defaults
-    existing = (settings || {}).stringify_keys
-    self.settings = DEFAULTS.merge(existing)
+    atual = (settings || {}).stringify_keys
+    DEFAULTS.each { |chave, valor| atual[chave] = valor if atual[chave].nil? }
+    self.settings = atual
   end
 
   def klaos_ensure_auto_resolve_label
