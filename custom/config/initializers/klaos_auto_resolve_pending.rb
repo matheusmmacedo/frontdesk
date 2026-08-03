@@ -67,6 +67,14 @@ module KlaosAutoResolvePending
                     .where.not(contact_id: nil)
     escopo = escopo.where(waiting_since: nil) if account.auto_resolve_ignore_waiting
 
+    # Conversa com atendente responsavel nao e encerrada por inatividade —
+    # mesma regra do caminho `open`, com o mesmo helper para nao divergirem.
+    # Ver klaos_auto_resolve_skip_assigned.rb (incidente 02/08).
+    if defined?(KlaosAutoResolveSkipAssigned) &&
+       KlaosAutoResolveSkipAssigned.pular_atribuidas?(account)
+      escopo = escopo.where(assignee_id: nil)
+    end
+
     total = 0
     escopo.limit(Limits::BULK_ACTIONS_LIMIT).each do |conversation|
       if account.auto_resolve_message.present?
