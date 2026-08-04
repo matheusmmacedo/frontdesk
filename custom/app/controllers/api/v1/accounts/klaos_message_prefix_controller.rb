@@ -35,7 +35,12 @@ class Api::V1::Accounts::KlaosMessagePrefixController < Api::V1::Accounts::BaseC
   private
 
   def authorize_admin!
-    return if Current.user&.administrator?(Current.account)
+    # `administrator?` (User, via UserAttributeHelpers) NAO recebe argumento —
+    # ele mesmo resolve a conta por `current_account_user`, que usa
+    # `Current.account`. Passar a conta levantava ArgumentError e derrubava
+    # todo request com 500, mesmo com a rota correta. Era a unica chamada com
+    # argumento no repo inteiro.
+    return if Current.user&.administrator?
 
     render json: { error: 'Apenas administradores podem alterar esta configuração.' }, status: :forbidden
   end

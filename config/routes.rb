@@ -120,7 +120,14 @@ Rails.application.routes.draw do
           resources :campaigns, only: [:index, :create, :show, :update, :destroy]
           resources :dashboard_apps, only: [:index, :show, :create, :update, :destroy]
           # KLaOS custom — template de prefix pras mensagens humanas outgoing
-          resource :klaos_message_prefix, only: [:show, :update]
+          # `controller:` explicito: recurso SINGULAR faz o Rails procurar o
+          # controller no PLURAL (actionpack SingletonResource#initialize:
+          # `@controller = (options[:controller] || plural).to_s`). Sem isto ele
+          # buscava KlaosMessagePrefixesController, que nao existe — e a rota
+          # devolvia 404 em qualquer conta. Mesmo caso de `resource
+          # :twilio_channel` acima, que so funciona porque o arquivo no disco e
+          # `twilio_channels_controller.rb`.
+          resource :klaos_message_prefix, only: [:show, :update], controller: 'klaos_message_prefix'
           namespace :channels do
             resource :twilio_channel, only: [:create]
           end
