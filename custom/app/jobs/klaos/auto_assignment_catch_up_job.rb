@@ -64,6 +64,7 @@ module Klaos
       candidate_conversations(account).find_each do |conv|
         next if rate_limited?(conv.id)
         next if assignee_online?(conv, online_user_ids)
+        next if human_actively_handling?(conv) # atendimento em curso — nao roubar
         next if account_rate_limited?(account.id) # global cap atingido — para esse tick
 
         promote_to_online_member(conv, online_user_ids)
@@ -92,6 +93,31 @@ module Klaos
 
     def assignee_online?(conv, online_user_ids)
       online_user_ids.include?(conv.assignee_id)
+    end
+
+    # Presenca no Redis (`OnlineStatusTracker`) NAO e a mesma coisa que
+    # "esta atendendo". O agente cai da presenca so por fechar a aba ou
+    # deixar em segundo plano, mesmo respondendo pelo celular. Sem esta
+    # guarda o catch-up tirava a conversa de quem estava no meio do
+    # atendimento.
+    #
+    # Caso real (Blue Care, 04/08/2026, conv 22 LENIR): Ricardo assumiu
+    # 15:21, o job passou pro Gustavo 15:30 (Ricardo nao e membro do time
+    # `contratos`, entao o unico candidato online era o Gustavo). Gustavo
+    # devolveu 15:55 na mao e o job roubou DE NOVO 16:00 — exatamente o
+    # TTL de 5min do rate limit por conversa. Loop infinito enquanto o
+    # assignee nao fosse membro do time.
+    #
+    # Regra: se o proprio assignee respondeu o cliente na janela abaixo, a
+    # conversa e dele — online ou nao.
+    HUMAN_ACTIVE_WINDOW = 30.minutes
+
+    def human_actively_handling?(conv)
+      conv.messages
+          .where(message_type: :outgoing, private: false)
+          .where(sender_type: 'User', sender_id: conv.assignee_id)
+          .where('created_at > ?', HUMAN_ACTIVE_WINDOW.ago)
+          .exists?
     end
 
     def promote_to_online_member(conv, online_user_ids)
