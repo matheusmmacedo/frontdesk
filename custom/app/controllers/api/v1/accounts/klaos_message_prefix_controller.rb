@@ -16,7 +16,14 @@ class Api::V1::Accounts::KlaosMessagePrefixController < Api::V1::Accounts::BaseC
   end
 
   def update
-    template = params[:template].to_s.strip
+    # SEM `.strip`: o espaco em branco no fim e SIGNIFICATIVO aqui. O template
+    # recomendado termina em "\n" (prefixo em linha propria) e o alternativo
+    # termina em " " (prefixo inline) — os dois exemplos que este mesmo
+    # controller devolve em `examples`. Com strip, salvar pela tela colava o
+    # prefixo no texto: "*Atendente YASMIN:*Bom dia" em vez de
+    # "*Atendente YASMIN:*\nBom dia". A Mais Saude so escapou porque foi
+    # gravada direto no banco, sem passar por aqui.
+    template = params[:template].to_s
     if template.length > 200
       render json: { error: 'Template muito longo (máximo 200 caracteres).' }, status: :unprocessable_entity
       return
@@ -35,7 +42,12 @@ class Api::V1::Accounts::KlaosMessagePrefixController < Api::V1::Accounts::BaseC
   private
 
   def authorize_admin!
-    return if Current.user&.administrator?(Current.account)
+    # `administrator?` (User, via UserAttributeHelpers) NAO recebe argumento —
+    # ele mesmo resolve a conta por `current_account_user`, que usa
+    # `Current.account`. Passar a conta levantava ArgumentError e derrubava
+    # todo request com 500, mesmo com a rota correta. Era a unica chamada com
+    # argumento no repo inteiro.
+    return if Current.user&.administrator?
 
     render json: { error: 'Apenas administradores podem alterar esta configuração.' }, status: :forbidden
   end
