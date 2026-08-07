@@ -75,6 +75,18 @@ module KlaosAutoResolvePending
       escopo = escopo.where(assignee_id: nil)
     end
 
+    # `last_activity_at` acima so registra a ultima fala do CLIENTE (ver
+    # klaos_sort_ignore_activities.rb), entao sozinha ela fecharia uma conversa
+    # que a gente acabou de cobrar. Mesmo relogio do caminho `open`, mesmo
+    # helper, para os dois nao divergirem. Ver klaos_auto_resolve_relogio_real.rb
+    # (incidente 07/08).
+    if defined?(KlaosAutoResolveRelogioReal) &&
+       KlaosAutoResolveRelogioReal.habilitado?(account)
+      escopo = KlaosAutoResolveRelogioReal.sem_mensagem_desde(
+        escopo, Time.now.utc - minutos.minutes
+      )
+    end
+
     total = 0
     escopo.limit(Limits::BULK_ACTIONS_LIMIT).each do |conversation|
       if account.auto_resolve_message.present?
