@@ -53,6 +53,37 @@ substituir, copie o componente pra `custom/app/javascript/...` e re-aponte o imp
 
 ---
 
+## 🔒 Contratos blindados — leia antes de mexer em conversa
+
+`spec/models/klaos_contratos_blindados_spec.rb` trava comportamentos que **já
+custaram incidente em produção**. Não são testes de implementação: cada exemplo
+protege uma coisa que a operação depende e que já quebrou uma vez.
+
+| contrato | o que trava | quem protege |
+|---|---|---|
+| ordenação | responder/etiquetar **não** sobe a conversa na lista; só o cliente sobe | `klaos_sort_ignore_activities.rb` |
+| auto-resolve | conversa **com atendente responsável** nunca é fechada por inatividade | `klaos_auto_resolve_skip_assigned.rb` |
+| cobrança | conversa recém-cobrada **sobrevive** ao ciclo do auto-resolve | `klaos_auto_resolve_relogio_real.rb` |
+| reabertura | reabrir por ação nossa **não sorteia** atendente (usa `pending`, não `open`) | `klaos_reabre_em_acao_nossa.rb` |
+| adiamento | adiada vencida **sempre** volta, mesmo passados 3+ dias | `klaos_reopen_snoozed_sem_piso.rb` |
+
+**Rode esse arquivo antes de abrir PR** que toque em status de conversa,
+atribuição ou ordenação da lista:
+
+```bash
+bundle exec rspec spec/models/klaos_contratos_blindados_spec.rb
+```
+
+Como um desses contratos foi quebrado antes: em junho um fix legítimo de
+ordenação mudou **quando** `last_activity_at` é escrito. Aquela coluna também é
+o relógio do auto-resolve — o que ninguém percebeu, porque nada travava o
+segundo comportamento. Resultado em 07/08: 74 das 86 cobranças do dia fechadas
+1 minuto depois do envio. **Uma coluna servindo a dois donos, e nenhum teste
+segurando o segundo.** Ao mudar quando um campo é escrito, procure todos os
+leitores dele antes (`grep` na coluna, não só no método).
+
+---
+
 ## Build / Test / Lint
 
 - **Setup**: `bundle install && pnpm install`
