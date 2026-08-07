@@ -2707,6 +2707,23 @@ const assigneeTabItems = computed(() => {
   // permanente abaixo de "Menções" e "Não atendidas" pra acesso direto.
   // Usa accountScopedRoute('home') + ?klaos_status=snoozed que o ChatList
   // já interpreta (patch existente).
+  //
+  // (07/08/2026) O item nunca funcionou desde que foi criado, em junho. Estava
+  // assim:
+  //
+  //   to: `${accountScopedRoute('home')}?klaos_status=snoozed&klaos_tab=me`
+  //
+  // `accountScopedRoute` devolve um OBJETO ({name, params, query}); interpolado
+  // numa template string ele vira a palavra "[object Object]". O href saía como
+  //
+  //   /app/accounts/12/[object Object]?klaos_status=snoozed&klaos_tab=me
+  //
+  // e clicar não levava a lugar nenhum — confirmado no navegador hoje. Ou seja,
+  // o atendente adiava a conversa e continuava sem conseguir achá-la, que é
+  // exatamente a queixa que originou este item.
+  //
+  // Agora passa o objeto de rota inteiro, com a query junto, que é o formato
+  // que o router-link espera.
   {
     id: '/components-next/sidebar/Sidebar.vue',
     from: `        {
@@ -2725,7 +2742,10 @@ const assigneeTabItems = computed(() => {
           name: 'KlaosSnoozed',
           label: 'Adiadas',
           activeOn: [],
-          to: \`\${accountScopedRoute('home')}?klaos_status=snoozed&klaos_tab=me\`,
+          to: {
+            ...accountScopedRoute('home'),
+            query: { klaos_status: 'snoozed', klaos_tab: 'me' },
+          },
         },`,
     reason: 'adiadas: item permanente sub Conversas pra agente achar as snoozed',
   },
