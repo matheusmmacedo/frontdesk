@@ -18,6 +18,30 @@
 #   { "klaos_auto_assignment_offline_fallback": true }
 #
 # Default off → comportamento upstream intacto pra todas as outras contas.
+#
+# ---------------------------------------------------------------------------
+# 10/08/2026 — QUEM SE MARCOU INDISPONÍVEL FICA DE FORA
+#
+# O fallback acima confundia duas coisas muito diferentes:
+#
+#   sem presença no Redis  → a pessoa está trabalhando, só não tem a aba em
+#                            foco nos últimos 20s. Distribuir é o certo, e é
+#                            exatamente pra isso que este arquivo existe.
+#   availability = offline → a pessoa se marcou indisponível, ou está de
+#                            férias. Distribuir é errado, sempre.
+#
+# Como o fallback ignorava status, a Yasmin recebeu 7 conversas em 10/08
+# estando de férias E já marcada como offline no sistema. O time de vendas da
+# Mais Saúde é Ludiana + Yasmin; fora do horário as duas somem do Redis, o
+# fallback disparava e o rodízio de menor carga escolhia a Yasmin na metade
+# das vezes.
+#
+# Agora o fallback só considera quem está com availability = online no banco.
+# Se ninguém do time estiver disponível, ninguém recebe e a conversa fica sem
+# dono — que é o resultado correto às 3 da manhã e nas férias de alguém.
+#
+# Cuidado ao mexer: `availability` mora em account_users (por conta), não em
+# users. A mesma pessoa pode estar online num cliente e offline em outro.
 
 module KlaosAutoAssignmentOfflineFallback
   def find_assignee
@@ -31,6 +55,20 @@ module KlaosAutoAssignmentOfflineFallback
   end
 
   private
+
+  # Dos candidatos do time, só os que NÃO se marcaram indisponíveis.
+  # availability: 0 = online, 1 = offline, 2 = busy (ocupado).
+  # Quem está busy também fica de fora: se a pessoa sinalizou que não pode
+  # pegar mais conversa, o fallback não é motivo pra ignorar isso.
+  def klaos_candidatos_disponiveis
+    account_id = conversation&.account_id
+    return [] if account_id.blank?
+
+    AccountUser
+      .where(account_id: account_id, user_id: allowed_agent_ids)
+      .where(availability: :online)
+      .pluck(:user_id)
+  end
 
   def klaos_offline_fallback_enabled?
     account = conversation&.account
@@ -46,17 +84,29 @@ module KlaosAutoAssignmentOfflineFallback
     # acabava acumulando estoque no mesmo agente). Ver:
     #   custom/app/services/klaos/least_loaded_picker.rb
     account_id = conversation&.account_id
+    disponiveis = klaos_candidatos_disponiveis
+
+    if disponiveis.blank?
+      Rails.logger.info(
+        '[KlaosOfflineFallback] ninguém disponível — conversa fica sem dono ' \
+        "conv=#{conversation.id} team=#{conversation.team_id} " \
+        "candidatos=#{allowed_agent_ids.inspect} (todos offline/busy)"
+      )
+      return nil
+    end
+
     user_id = Klaos::LeastLoadedPicker.pick(
       account_id: account_id,
-      candidate_ids: allowed_agent_ids
+      candidate_ids: disponiveis
     )
     user = User.find_by(id: user_id) if user_id
 
     Rails.logger.info(
-      "[KlaosOfflineFallback] no online agent — assigning offline " \
-      "conv=#{conversation.id} team=#{conversation.team_id} " \
-      "inbox=#{conversation.inbox_id} candidates=#{allowed_agent_ids.inspect} " \
-      "picked_user_id=#{user_id} picked_name=#{user&.name.inspect} (via least_loaded)"
+      '[KlaosOfflineFallback] sem presença no Redis — distribuindo entre quem ' \
+      "está disponível conv=#{conversation.id} team=#{conversation.team_id} " \
+      "inbox=#{conversation.inbox_id} candidatos=#{allowed_agent_ids.inspect} " \
+      "disponíveis=#{disponiveis.inspect} " \
+      "escolhido=#{user_id} nome=#{user&.name.inspect} (via least_loaded)"
     )
 
     user
