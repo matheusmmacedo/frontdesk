@@ -31,6 +31,7 @@ module KlaosSnoozeNoLimit
         # visita" mesmo se o agente estava offline quando o broadcast
         # do snooze_reopened foi disparado.
         klaos_mark_returned_from_snooze(conv)
+        klaos_registrar_volta_na_timeline(conv)
         klaos_broadcast_snooze_reopened(conv)
       end
   end
@@ -49,6 +50,31 @@ module KlaosSnoozeNoLimit
     )
   end
 
+  # (19/08/2026) DEIXA RASTRO NA CONVERSA.
+  #
+  # Quem reabre aqui é o job, não uma pessoa, e o upstream só escreve
+  # atividade de mudança de status quando existe `Current.user`
+  # (`activity_message_handler.rb:70-79`). Resultado: a conversa voltava do
+  # adiamento e a última linha da timeline continuava sendo "Conversa foi
+  # adiada por Fulano". Quem abrisse depois não tinha como saber que ela
+  # voltou, nem quando.
+  #
+  # Mensagem de atividade é interna: aparece na timeline do atendimento e
+  # nunca é entregue ao cliente.
+  def klaos_registrar_volta_na_timeline(conversation)
+    ::Conversations::ActivityMessageJob.perform_later(
+      conversation,
+      account_id: conversation.account_id,
+      inbox_id: conversation.inbox_id,
+      message_type: :activity,
+      content: 'Conversa reaberta automaticamente: o adiamento terminou.'
+    )
+  rescue StandardError => e
+    Rails.logger.warn(
+      "[KlaosSnoozeNoLimit] activity de volta do snooze falhou conv=#{conversation.id}: #{e.message}"
+    )
+  end
+
   # Broadcasta evento custom pro frontend disparar o alerta com som/piscar.
   # O `conversation.status_changed` nativo do Chatwoot não basta porque a
   # conv normalmente NÃO está no store do frontend enquanto snoozed (filtros
@@ -59,9 +85,16 @@ module KlaosSnoozeNoLimit
     tokens = account.users.pluck(:pubsub_token).compact.uniq
     return if tokens.empty?
 
+    # (19/08/2026) `assignee_id` VAI NO PACOTE.
+    #
+    # Sem ele o front tinha que descobrir o dono procurando a conversa na
+    # store — e a store não tem conversa adiada, que é justamente o motivo
+    # deste broadcast existir. Sem dono, o filtro "só alerta conversa minha"
+    # reprovava TODAS e o alerta morria em silêncio antes do som.
     payload = {
       conversation_id: conversation.id,
       conversation_display_id: conversation.display_id,
+      assignee_id: conversation.assignee_id,
       sender_name: conversation.contact&.name,
       account_id: account.id
     }

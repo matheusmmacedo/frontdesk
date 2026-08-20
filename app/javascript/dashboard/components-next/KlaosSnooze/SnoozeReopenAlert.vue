@@ -192,6 +192,22 @@ const handleReopen = conversation => {
   const displayId = conversation.displayId || conversation.id;
   const internalId = conversation.id;
 
+  // (19/08/2026) Sobe a conversa na lista.
+  //
+  // O job reabre sem mexer no relógio dela, então ela reaparecia enterrada no
+  // meio da lista exibindo "há 5d 21h" — não parecia que tinha chegado nada.
+  // Isto altera SÓ a store local, nunca o banco: `last_activity_at` também é
+  // o relógio do auto-resolve, e mexer nele em produção já fechou 74 cobranças
+  // em um minuto (07/08). Mesma abordagem do ConversationHandoffAlert:162-174.
+  try {
+    store.dispatch('updateConversationLastActivity', {
+      conversationId: displayId,
+      lastActivityAt: Math.floor(Date.now() / 1000),
+    });
+  } catch (e) {
+    /* a lista continua funcionando sem o bump */
+  }
+
   // eslint-disable-next-line no-console
   console.warn(
     '[KlaosSnoozeReopenAlert] CONVERSA VOLTOU DO ADIAMENTO',
@@ -203,7 +219,10 @@ const handleReopen = conversation => {
   playSoundLoud();
   startTitlePulse(senderName);
   fireBrowserNotification(senderName, displayId);
-  pulseConversationCard(internalId);
+  // O card carrega `data-klaos-conversation-id` = `chat.id`, que vale o
+  // DISPLAY_ID. Com o id interno o seletor não achava card nenhum e o pulso
+  // simplesmente não acontecia.
+  pulseConversationCard(displayId);
   // Banner fixed no topo — NÃO some sozinho. Visível mesmo com aba ativa.
   activeAlerts.value.push({
     id: `${internalId}-${Date.now()}`,
@@ -242,21 +261,36 @@ watch(
 // TODOS os eventos de ActionCable como bus.on(event_name, data).
 const onKlaosSnoozeReopened = data => {
   if (!isEnabled.value) return;
-  const convId = data?.conversation_id || data?.id;
-  // O broadcast do backend não carrega o assignee. Sem ele o filtro de dono
-  // reprovaria TODA conversa e o alerta morreria por este caminho — então
-  // buscamos a conversa na store, que é a mesma fonte do watcher acima.
+
+  // (19/08/2026) O ALERTA ESTAVA MORTO POR CASAR ID ERRADO.
+  //
+  // O backend manda os dois números: `conversation_id` é o id INTERNO do
+  // model e `conversation_display_id` é o público, o que aparece na URL. Na
+  // store do front, `c.id` vale o DISPLAY_ID — a API serializa `display_id`
+  // como `id` no JSON (o ConversationHandoffAlert já documenta isso em
+  // :176-180). Buscar a store pelo id interno NUNCA casava: `daStore` vinha
+  // undefined, o assignee vinha undefined, `ehMinhaConversa` reprovava e a
+  // função saía antes de tocar o som.
+  //
+  // Agora o dono vem no próprio pacote (`klaos_snooze_no_limit.rb`), e a
+  // store é só reforço — ela nem costuma ter a conversa adiada, que é o
+  // motivo deste broadcast existir.
+  const internalId = data?.conversation_id ?? data?.id;
+  const displayId = data?.conversation_display_id ?? internalId;
+
   const daStore = (store.state.conversations?.allConversations || []).find(
-    c => c.id === convId
+    c => c.id === displayId
   );
+
   handleReopen({
-    id: convId,
-    displayId: data?.conversation_display_id,
+    id: internalId,
+    displayId,
     meta: {
       sender: { name: data?.sender_name || 'Conv' },
       assignee: daStore?.meta?.assignee,
     },
-    assignee_id: data?.assignee_id ?? daStore?.assignee_id,
+    assignee_id:
+      data?.assignee_id ?? daStore?.meta?.assignee?.id ?? daStore?.assignee_id,
   });
 };
 
