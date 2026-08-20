@@ -31,6 +31,20 @@ module KlaosSnoozeNoLimit
         # visita" mesmo se o agente estava offline quando o broadcast
         # do snooze_reopened foi disparado.
         klaos_mark_returned_from_snooze(conv)
+
+        # (20/08/2026) UM AVISO POR VOLTA, NÃO DOIS.
+        #
+        # Medido em dev: a mesma reabertura gerou DUAS linhas de atividade no
+        # mesmo segundo e DOIS alertas na tela — dois dings e dois banners para
+        # o atendente. O job é enfileirado mais de uma vez por ciclo (há mais de
+        # um worker rodando o cron), e as duas execuções pegam a conversa ainda
+        # `snoozed` antes de qualquer uma gravar.
+        #
+        # `open!` é idempotente e não incomoda ninguém quando repete; avisar
+        # duas vezes, sim. Então o efeito visível fica atrás de um claim: só
+        # quem grava a chave primeiro alerta.
+        next unless klaos_primeira_volta?(conv)
+
         klaos_registrar_volta_na_timeline(conv)
         klaos_broadcast_snooze_reopened(conv)
       end
@@ -48,6 +62,22 @@ module KlaosSnoozeNoLimit
     Rails.logger.warn(
       "[KlaosSnoozeNoLimit] mark returned_from_snooze falhou conv=#{conversation.id}: #{e.message}"
     )
+  end
+
+  # Claim de execução: `true` só para o primeiro processo que passar por esta
+  # conversa na janela. Os 10 minutos cobrem folgadamente o ciclo de 5 do cron
+  # sem segurar uma volta legítima seguinte, e a chave expira sozinha.
+  #
+  # Fail-OPEN de propósito: Redis fora do ar volta a avisar duas vezes, que é
+  # incômodo; falhar fechado deixaria a conversa voltar em silêncio, que é o
+  # defeito que este arquivo existe para corrigir.
+  def klaos_primeira_volta?(conversation)
+    ::Redis::Alfred.set("klaos:snooze_reopen:#{conversation.id}", 1, nx: true, ex: 600).present?
+  rescue StandardError => e
+    Rails.logger.warn(
+      "[KlaosSnoozeNoLimit] claim de volta falhou conv=#{conversation.id}: #{e.message}"
+    )
+    true
   end
 
   # (19/08/2026) DEIXA RASTRO NA CONVERSA.

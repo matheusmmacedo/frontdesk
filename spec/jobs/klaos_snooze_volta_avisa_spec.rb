@@ -111,6 +111,36 @@ RSpec.describe 'KLaOS conversa que volta do adiamento avisa e deixa rastro' do
   end
 
   # ─────────────────────────────────────────────────────────────────────────
+  # (20/08/2026) Um aviso por volta.
+  #
+  # Medido em dev: a mesma reabertura gerou DUAS linhas de atividade no mesmo
+  # segundo e TRÊS alertas na tela ao longo do teste — o job é enfileirado mais
+  # de uma vez por ciclo e as duas execuções pegam a conversa ainda `snoozed`.
+  # Dois dings e dois banners para o atendente.
+  # ─────────────────────────────────────────────────────────────────────────
+  describe 'quando o job roda duas vezes no mesmo ciclo' do
+    it 'avisa uma vez só' do
+      conversa = conversa_adiada(vencida: true, dono: atendente)
+
+      Conversations::ReopenSnoozedConversationsJob.perform_now
+      # Segunda execução concorrente: a conversa já voltou, mas antes disso o
+      # efeito visível saía de novo.
+      conversa.update_columns(status: Conversation.statuses[:snoozed], snoozed_until: 5.minutes.ago)
+      Conversations::ReopenSnoozedConversationsJob.perform_now
+
+      expect(broadcasts.count { |b| b[:evento] == KlaosSnoozeNoLimit::KLAOS_SNOOZE_REOPENED_EVENT }).to eq(1)
+    end
+
+    it 'Redis fora do ar volta a avisar, em vez de silenciar a conversa' do
+      allow(::Redis::Alfred).to receive(:set).and_raise(StandardError, 'redis fora do ar')
+      conversa_adiada(vencida: true, dono: atendente)
+
+      expect { Conversations::ReopenSnoozedConversationsJob.perform_now }.not_to raise_error
+      expect(pacote_do_broadcast).to be_present
+    end
+  end
+
+  # ─────────────────────────────────────────────────────────────────────────
   # Blindagem do que JÁ funcionava. O motivo deste initializer existir é o
   # limite de 3 dias do upstream, que fazia conversa adiada há muito tempo
   # nunca mais voltar ("a conversa não volta", reportado pelo Gustavo).
