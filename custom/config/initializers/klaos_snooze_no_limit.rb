@@ -62,12 +62,20 @@ module KlaosSnoozeNoLimit
   # Mensagem de atividade é interna: aparece na timeline do atendimento e
   # nunca é entregue ao cliente.
   def klaos_registrar_volta_na_timeline(conversation)
+    # As CHAVES são obrigatórias: `perform(conversation, message_params)` recebe
+    # o hash como argumento POSICIONAL. Passar `account_id:, inbox_id:, ...`
+    # solto vira keyword argument, que no Ruby 3 não casa com o posicional e
+    # levanta ArgumentError — engolido pelo rescue abaixo, virando só um warn.
+    # Foi assim que a primeira versão deste código não escreveu nada e o teste
+    # em dev pegou.
     ::Conversations::ActivityMessageJob.perform_later(
       conversation,
-      account_id: conversation.account_id,
-      inbox_id: conversation.inbox_id,
-      message_type: :activity,
-      content: 'Conversa reaberta automaticamente: o adiamento terminou.'
+      {
+        account_id: conversation.account_id,
+        inbox_id: conversation.inbox_id,
+        message_type: :activity,
+        content: 'Conversa reaberta automaticamente: o adiamento terminou.'
+      }
     )
   rescue StandardError => e
     Rails.logger.warn(
