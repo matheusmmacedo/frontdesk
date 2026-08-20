@@ -152,7 +152,7 @@ RSpec.describe 'KLaOS — contratos blindados de operacao' do
   # O job do upstream usa `snoozed_until: 3.days.ago..Time.current`. O `3.days.ago`
   # e PISO, nao teto: quem venceu antes disso nunca mais e reaberto — e `snoozed`
   # nao aparece em fila nenhuma, some da operacao em silencio.
-  # Protegido por: klaos_reopen_snoozed_sem_piso.rb
+  # Protegido por: klaos_snooze_no_limit.rb
   # ---------------------------------------------------------------------------
   describe 'adiada vencida volta, nao importa ha quanto tempo' do
     it 'volta mesmo tendo vencido ha mais de 3 dias' do

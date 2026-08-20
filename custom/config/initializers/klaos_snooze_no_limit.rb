@@ -47,6 +47,19 @@ module KlaosSnoozeNoLimit
 
         klaos_registrar_volta_na_timeline(conv)
         klaos_broadcast_snooze_reopened(conv)
+      rescue StandardError => e
+        # (20/08/2026) Uma conversa problemática não pode impedir as outras de
+        # voltar. Sem isto, a primeira que levantasse erro abortava o lote
+        # inteiro e todo mundo atrás dela continuava adiado até o próximo
+        # ciclo — ou para sempre, se o erro fosse permanente.
+        #
+        # A proteção estava escrita em `klaos_reopen_snoozed_sem_piso.rb`, que
+        # fazia prepend no MESMO job e nunca executava (dois módulos definindo
+        # `perform`, nenhum chamando `super`; vence o último prepended, que é
+        # este arquivo). Aquele arquivo foi removido e a proteção veio junto.
+        Rails.logger.error(
+          "[KlaosSnoozeNoLimit] falhou ao reabrir conv #{conv.id}: #{e.message}"
+        )
       end
   end
 

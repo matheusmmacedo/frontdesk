@@ -140,6 +140,23 @@ RSpec.describe 'KLaOS conversa que volta do adiamento avisa e deixa rastro' do
     end
   end
 
+  describe 'uma conversa com problema não segura as outras' do
+    it 'erro numa conversa não impede as demais de voltar' do
+      ruim = conversa_adiada(vencida: true, dono: atendente)
+      boa = conversa_adiada(vencida: true, dono: atendente)
+
+      # A primeira levanta ao gravar o carimbo; a segunda tem que voltar assim mesmo.
+      allow_any_instance_of(Conversation).to receive(:update_columns).and_wrap_original do |orig, *args|
+        raise StandardError, 'boom' if orig.receiver.id == ruim.id
+
+        orig.call(*args)
+      end
+
+      expect { Conversations::ReopenSnoozedConversationsJob.perform_now }.not_to raise_error
+      expect(boa.reload.status).to eq('open')
+    end
+  end
+
   # ─────────────────────────────────────────────────────────────────────────
   # Blindagem do que JÁ funcionava. O motivo deste initializer existir é o
   # limite de 3 dias do upstream, que fazia conversa adiada há muito tempo
