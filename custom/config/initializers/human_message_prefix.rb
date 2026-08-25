@@ -47,28 +47,8 @@
 #
 #   Pra desativar: SET custom_attributes = custom_attributes - 'klaos_human_message_template'
 #
-# ── Opt-out por BOT (klaos_prefix_skip_agent_bot_ids) ──────────────────────────
-#
-#   Mesma ideia do opt-out por mensagem (content_attributes['skip_klaos_prefix']),
-#   só que persistente e por account: os `agent_bots.id` listados aqui NÃO recebem
-#   prefixo, e todo o resto da conta (humanos e os outros bots) continua recebendo.
-#
-#   Caso de uso: a Sofia (agendamento) já se identifica sozinha no próprio texto,
-#   então a assinatura do canal ficava em duplicidade. Lara e ANA (cobrança)
-#   dependem da assinatura e ficam de fora da lista.
-#
-#   UPDATE accounts
-#   SET custom_attributes = COALESCE(custom_attributes, '{}'::jsonb) ||
-#     jsonb_build_object('klaos_prefix_skip_agent_bot_ids', '[15]'::jsonb)
-#   WHERE id = 10;  -- Mais Saúde dev; 15 = Sofia
-#
-#   Pra reverter: SET custom_attributes = custom_attributes - 'klaos_prefix_skip_agent_bot_ids'
-#
 
 module KlaosHumanMessagePrefix
-  # Chave em accounts.custom_attributes com os agent_bots.id que NÃO recebem prefixo.
-  SKIP_BOT_IDS_KEY = 'klaos_prefix_skip_agent_bot_ids'
-
   AVAILABLE_VARIABLES = {
     '{NAME}' => 'Nome completo como salvo no perfil',
     '{NAME_UPPER}' => 'Nome completo em MAIÚSCULO',
@@ -128,31 +108,6 @@ module KlaosHumanMessagePrefix
 
     str.split(' | ').first.to_s.strip
   end
-
-  # Normaliza a config bruta do jsonb numa lista de ids em String.
-  # Aceita array ([15, "98"]), id solto (15 ou "15") e string com vírgula
-  # ("15, 98"), porque essa chave é gravada à mão por SQL e nem sempre chega
-  # como array. Qualquer outra coisa (nil, hash, lixo) vira lista vazia — a
-  # config ausente/inválida NÃO pode mudar o comportamento de quem já funciona.
-  def skip_bot_ids(raw)
-    list = case raw
-           when Array then raw
-           when String then raw.split(',')
-           when Integer then [raw]
-           else []
-           end
-
-    list.map { |id| id.to_s.strip }.reject(&:empty?)
-  end
-
-  # true só pra AgentBot cujo id está na lista. Humano (User) nunca é afetado:
-  # a lista é de agent_bots.id e um user.id igual não pode desligar a assinatura
-  # do atendente por coincidência de número.
-  def skip_bot?(raw, sender_type, sender_id)
-    return false unless sender_type.to_s == 'AgentBot'
-
-    skip_bot_ids(raw).include?(sender_id.to_s)
-  end
 end
 
 Rails.application.config.to_prepare do
@@ -188,8 +143,7 @@ Rails.application.config.to_prepare do
         return
       end
 
-      account_attrs = conversation&.account&.custom_attributes
-      template = account_attrs&.[]('klaos_human_message_template')
+      template = conversation&.account&.custom_attributes&.[]('klaos_human_message_template')
       if template.blank?
         Rails.logger.info("#{tag} skip: no template configured (acc_id=#{conversation&.account_id})")
         return
@@ -199,16 +153,6 @@ Rails.application.config.to_prepare do
       # quando o atendente quer enviar SEM a assinatura. Permite envio "raw" pontual sem mudar a config da account.
       if content_attributes.is_a?(Hash) && content_attributes['skip_klaos_prefix']
         Rails.logger.info("#{tag} skip: content_attributes.skip_klaos_prefix=true (per-message opt-out)")
-        return
-      end
-
-      # Opt-out por BOT — mesma ideia do de cima, só que persistente e por account.
-      # Só desliga o prefixo do agent_bot cujo id está em
-      # custom_attributes['klaos_prefix_skip_agent_bot_ids']; humano e os demais
-      # bots da mesma conta seguem assinados.
-      skip_ids_raw = account_attrs&.[](KlaosHumanMessagePrefix::SKIP_BOT_IDS_KEY)
-      if KlaosHumanMessagePrefix.skip_bot?(skip_ids_raw, sender_type, sender_id)
-        Rails.logger.info("#{tag} skip: agent_bot #{sender_id} listado em #{KlaosHumanMessagePrefix::SKIP_BOT_IDS_KEY}=#{skip_ids_raw.inspect}")
         return
       end
 
