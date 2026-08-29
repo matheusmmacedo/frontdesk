@@ -27,6 +27,8 @@ Cada SDD nesta pasta cobre **uma mudança específica no Frontdesk** (repo `math
 - [SDD — Botão "Devolver ao bot" na UI da conversa](./SDD_TRANSFER_TO_BOT_BUTTON.md)
 - [SDD — Endpoint custom de transferência pro bot](./SDD_TRANSFER_TO_BOT_API.md)
 - [SDD — Timestamp de resolução em `additional_attributes` pra política de reabertura](./SDD_RESOLVED_TIMESTAMP.md)
+- [SDD — Incluir `channel_type` em `Inbox#webhook_data` (1-liner crítico)](./SDD_INBOX_WEBHOOK_DATA_CHANNEL_TYPE.md) — multi-tenant fix pra resolver 115 convs prod com chatwoot_channel=null
+- [SDD CROSS-REF — UI Modularidade KLaOS](./SDD_UI_MODULARIDADE_CROSSREF.md) — auditoria UI+backend+modelos; 3 pontos de coordenação Frontdesk (teams API enrichment, inbox placeholder, Klingo card)
 
 ## Comunicação cruzada
 
