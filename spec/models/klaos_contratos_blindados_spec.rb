@@ -173,4 +173,47 @@ RSpec.describe 'KLaOS — contratos blindados de operacao' do
       expect(conversa.reload.status).to eq('snoozed')
     end
   end
+
+  # ---------------------------------------------------------------------------
+  # CONTRATO N — apagar contato deixa rastro
+  # Medido em 29/08/2026: producao tem 57 destroys de Conversation com user_id
+  # NULL, dois deles conversa de paciente real (conta 9 em 02/08, conta 12 em
+  # 14/08). O user_id vem NULL porque quem destroi e o job da cascata, nao a
+  # pessoa — e `Contact` nao estava no conjunto auditado, entao nao havia linha
+  # nenhuma dizendo quem mandou apagar.
+  # Protegido por: custom/config/initializers/klaos_contact_destroy_audit.rb
+  # ---------------------------------------------------------------------------
+  describe 'apagar contato deixa rastro' do
+    it 'destruir contato grava audit de destroy' do
+      alvo = create(:contact, account: account)
+      id_alvo = alvo.id
+
+      expect { alvo.destroy! }.to change {
+        Audited::Audit.where(auditable_type: 'Contact', auditable_id: id_alvo, action: 'destroy').count
+      }.by(1)
+    end
+
+    it 'NAO guarda PII do paciente no audit' do
+      alvo = create(:contact, account: account, name: 'Fulano de Tal',
+                              email: 'fulano@exemplo.com', phone_number: '+5531999990000')
+      id_alvo = alvo.id
+      alvo.destroy!
+
+      linha = Audited::Audit.find_by(auditable_type: 'Contact', auditable_id: id_alvo, action: 'destroy')
+      mudancas = (linha.audited_changes || {}).to_s
+      expect(mudancas).not_to include('Fulano')
+      expect(mudancas).not_to include('fulano@exemplo.com')
+      expect(mudancas).not_to include('999990000')
+    end
+
+    # O VIZINHO: criar e atualizar contato acontece o tempo todo no sync. Se
+    # entrassem no audit, a tabela viraria lixo e o destroy sumiria no meio.
+    it 'criar e atualizar contato NAO gera audit' do
+      expect do
+        c = create(:contact, account: account)
+        c.update!(name: 'Nome Novo')
+      end.not_to change { Audited::Audit.where(auditable_type: 'Contact').count }
+    end
+  end
+
 end
