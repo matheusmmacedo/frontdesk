@@ -25,8 +25,15 @@
 #     "team_id": <int|null>,
 #     "agent_bot_id": <int|null>,
 #     "assignee_message_count": <int>,
-#     "assignee_last_message_at": <iso8601|null>
+#     "assignee_last_message_at": <iso8601|null>,
+#     "source_id": <string|null>
 #   }
+#
+# (16/09/2026) `source_id` e o numero para onde o WhatsApp desta conversa
+# realmente entrega (contact_inbox). Pode ser diferente do telefone do
+# contato: a conv 264 da Blue Care foi aberta a mao com um numero digitado
+# errado e recebeu a cobranca de outra pessoa. O KLaOS compara este campo com
+# o telefone do devedor antes de mandar cobranca.
 #
 # (07/08/2026) Os dois últimos campos existem para separar DOIS donos que o
 # `assignee_id` sozinho confunde:
@@ -56,7 +63,8 @@ class Api::Custom::V1::Accounts::GateSnapshotController < Api::V1::Accounts::Bas
       team_id: @conversation.team_id,
       agent_bot_id: @conversation.assignee_agent_bot_id,
       assignee_message_count: assignee_messages.count,
-      assignee_last_message_at: assignee_messages.maximum(:created_at)&.iso8601
+      assignee_last_message_at: assignee_messages.maximum(:created_at)&.iso8601,
+      source_id: @conversation.contact_inbox&.source_id
     }, status: :ok
   end
 
