@@ -91,6 +91,21 @@ RSpec.describe 'KLaOS — contratos blindados de operacao' do
       expect(conversa.reload.status).to eq('open')
     end
 
+    # (16/09/2026) Conv 993, 10/09: Gustavo reabriu e o sistema fechou de novo
+    # 2 segundos depois, porque a reabertura nao dava dono. Agora quem reabre
+    # vira dono (klaos_reabrir_atribui_quem_reabriu.rb) e este contrato e o que
+    # impede o fechamento em seguida.
+    it 'conversa reaberta que ganhou dono NAO e fechada em seguida' do
+      conversa = nova_conversa(status: :resolved)
+      conversa.update!(status: :open, assignee: agente)
+      conversa.update_columns(last_activity_at: 30.days.ago)
+
+      Conversations::ResolutionJob.new.perform(account: account)
+
+      expect(conversa.reload.status).to eq('open')
+      expect(conversa.assignee_id).to eq(agente.id)
+    end
+
     it 'conversa parada SEM atendente e fechada — orfa e o alvo legitimo' do
       conversa = nova_conversa
       conversa.update_columns(last_activity_at: 30.days.ago)

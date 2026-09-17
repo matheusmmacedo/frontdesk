@@ -61,9 +61,86 @@ module KlaosSnoozeNoLimit
           "[KlaosSnoozeNoLimit] falhou ao reabrir conv #{conv.id}: #{e.message}"
         )
       end
+
+    klaos_reabrir_encerradas_na_data_marcada
   end
 
   private
+
+  # (16/09/2026) "ENCERRAR E REABRIR COMIGO EM DD/MM".
+  #
+  # Conversa adiada que uma pessoa resolveu ou devolveu ao bot antes da hora
+  # guarda a hora em additional_attributes (klaos_reabrir_em_data_marcada.rb).
+  # Aqui ela volta: `open`, com o dono guardado, num update so, e as duas
+  # chaves saem nesse mesmo update. Sem tirar as chaves ela reabriria a cada
+  # ciclo do cron.
+  #
+  # O claim vem ANTES do update (no laco das adiadas ele vem depois, porque
+  # `open!` repetido e inofensivo). Aqui a volta atribui dono e grava
+  # atividade, entao so um processo pode fazer. Depois do claim a conversa e
+  # relida: se outro processo ja voltou com ela, as chaves nao estao mais la.
+  def klaos_reabrir_encerradas_na_data_marcada
+    agora = Time.current
+    Conversation
+      .where(status: %i[resolved pending])
+      .where("(additional_attributes->>'#{KlaosReabrirEmDataMarcada::CHAVE_EM}') IS NOT NULL")
+      .find_each(batch_size: 100) do |conv|
+        # A data e comparada em Ruby: um valor mal formado derrubaria a query
+        # inteira se o cast fosse no SQL.
+        marcada = klaos_hora_marcada(conv)
+        next if marcada.nil? || marcada > agora
+        next unless klaos_primeira_volta?(conv)
+
+        conv.reload
+        next unless conv.resolved? || conv.pending?
+
+        extras = conv.additional_attributes.is_a?(Hash) ? conv.additional_attributes : {}
+        next unless extras.key?(KlaosReabrirEmDataMarcada::CHAVE_EM)
+
+        dono = KlaosReabrirEmDataMarcada.dono_valido(conv, extras[KlaosReabrirEmDataMarcada::CHAVE_PARA])
+        novos_extras = extras.except(*KlaosReabrirEmDataMarcada::CHAVES)
+                             .merge('klaos_returned_from_snooze_at' => agora.iso8601)
+
+        mudancas = { status: :open, additional_attributes: novos_extras }
+        mudancas[:assignee_id] = dono if dono
+        conv.update!(mudancas)
+
+        klaos_registrar_volta_marcada_na_timeline(conv)
+        klaos_broadcast_snooze_reopened(conv)
+      rescue StandardError => e
+        Rails.logger.error(
+          "[KlaosSnoozeNoLimit] falhou ao reabrir conv encerrada com data #{conv.id}: #{e.message}"
+        )
+      end
+  rescue StandardError => e
+    Rails.logger.error("[KlaosSnoozeNoLimit] laco de reabertura marcada falhou: #{e.class}: #{e.message}")
+  end
+
+  def klaos_hora_marcada(conversation)
+    valor = (conversation.additional_attributes || {})[KlaosReabrirEmDataMarcada::CHAVE_EM]
+    return nil if valor.blank?
+
+    Time.zone.parse(valor.to_s)
+  rescue ArgumentError
+    nil
+  end
+
+  def klaos_registrar_volta_marcada_na_timeline(conversation)
+    # Hash POSICIONAL, ver klaos_registrar_volta_na_timeline.
+    ::Conversations::ActivityMessageJob.perform_later(
+      conversation,
+      {
+        account_id: conversation.account_id,
+        inbox_id: conversation.inbox_id,
+        message_type: :activity,
+        content: 'Conversa reaberta automaticamente: chegou a data marcada ao encerrar.'
+      }
+    )
+  rescue StandardError => e
+    Rails.logger.warn(
+      "[KlaosSnoozeNoLimit] activity da reabertura marcada falhou conv=#{conversation.id}: #{e.message}"
+    )
+  end
 
   # Marca quando a conv voltou do snooze pra a Central do agente conseguir
   # mostrar lista de "voltaram desde sua última visita".

@@ -46,20 +46,63 @@
 #
 # Desligavel por conta: settings['klaos_reabre_em_acao_nossa'] = false.
 
+# (16/09/2026) DUAS EXCECOES, pedido do Gustavo ("reabre aleatoriamente com a
+# propria Lara").
+#
+# 1. COBRAR-AGORA NAO E ACAO DO BOT.
+#    O atendente aplica a etiqueta cobrar-agora numa conversa resolvida, o KLaOS
+#    manda o template com o token do usuario I.A e o `reopen_resolved_conversation`
+#    ve bot ativo na inbox e grava `pending`. A conversa que o humano pediu para
+#    cobrar vira territorio da Lara: conta 9, 24 casos em 30 dias; 13 das 40
+#    reaberturas humanas vieram logo depois desse `pending` (conv 2063: Gustavo
+#    cobra, "pendente por I.A", cliente agradece, Lara responde).
+#    Agora: mensagem do cobrar-agora em conversa com dono reabre `open` e mantem
+#    o dono. `open` com dono nao aciona rodizio (`should_run_auto_assignment?`
+#    exige assignee em branco). Sem dono, segue o upstream (`pending`): quando
+#    o humano clicar em reabrir, klaos_reabrir_atribui_quem_reabriu.rb atribui
+#    a conversa a ele. Abrir `open` sem dono deixaria a Lara atrelada e sem
+#    botao de reabrir para o humano assumir.
+#    Como se reconhece: `template_params.klaos_origem == 'cobrar_agora'` (marca
+#    que o KLaOS passa a mandar), `additional_attributes.klaos_origem` (se um
+#    dia vier fora do template) ou o nome do template, que hoje ja identifica
+#    o fluxo (`cobr_cobrar_agora_v2`, `cobr_cobrar_agora_card_v2`,
+#    `<prefixo>_cobr_cobrar_agora_v2`).
+#
+# 2. REGUA NAO CANCELA ADIAMENTO.
+#    Conversa adiada so perde a hora quando uma PESSOA fala com o cliente (ou
+#    quando o cliente escreve, no upstream). Template da regua, mensagem do bot
+#    e qualquer envio por token de integracao deixam a conversa adiada: a
+#    regua da conta 9 cobra quase todo dia e nenhum adiamento longo de devedor
+#    sobrevivia. Cobrar-agora conta como pessoa (foi um humano que pediu).
+
 module KlaosReabreEmAcaoNossa
+  ORIGEM_COBRAR_AGORA = 'cobrar_agora'
+
   def reopen_conversation
     super
 
     return unless klaos_acao_nossa_reabre?
     return unless conversation.resolved? || conversation.snoozed?
 
-    # Adiada: a gente acabou de falar com o cliente, entao ela nao esta mais
-    # esperando o relogio. Limpa a hora ANTES de mudar o status, senao a conversa
-    # volta a ser candidata do job que reabre adiadas.
-    conversation.update_columns(snoozed_until: nil) if conversation.snoozed? # rubocop:disable Rails/SkipsModelValidations
+    cobrar_agora = klaos_cobrar_agora?
 
-    # Quem decide o status e o upstream (bot ativo -> pending, resto -> open).
-    reopen_resolved_conversation
+    if conversation.snoozed?
+      # Regua/bot/integracao: a conversa continua adiada.
+      return unless cobrar_agora || klaos_mensagem_de_pessoa?
+
+      # Adiada: uma pessoa acabou de falar com o cliente, entao ela nao esta
+      # mais esperando o relogio. Limpa a hora ANTES de mudar o status, senao a
+      # conversa volta a ser candidata do job que reabre adiadas.
+      conversation.update_columns(snoozed_until: nil) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    if cobrar_agora && conversation.assignee_id.present?
+      # Humano pediu a cobranca: fica com quem ja era dono, fora do bot.
+      conversation.open!
+    else
+      # Quem decide o status e o upstream (bot ativo -> pending, resto -> open).
+      reopen_resolved_conversation
+    end
   end
 
   private
@@ -72,6 +115,37 @@ module KlaosReabreEmAcaoNossa
 
     conta = conversation.account
     (conta&.settings || {})['klaos_reabre_em_acao_nossa'] != false
+  end
+
+  def klaos_template_params
+    extras = additional_attributes.is_a?(Hash) ? additional_attributes : {}
+    tp = extras['template_params']
+    tp.is_a?(Hash) ? tp : {}
+  end
+
+  def klaos_cobrar_agora?
+    extras = additional_attributes.is_a?(Hash) ? additional_attributes : {}
+    return true if extras['klaos_origem'].to_s == ORIGEM_COBRAR_AGORA
+
+    tp = klaos_template_params
+    return true if tp['klaos_origem'].to_s == ORIGEM_COBRAR_AGORA
+
+    tp['name'].to_s.include?('cobrar_agora')
+  end
+
+  # Pessoa digitando no painel. Nao conta: bot, template (regua), automacao,
+  # campanha e qualquer mensagem que entrou por api_access_token.
+  def klaos_mensagem_de_pessoa?
+    return false unless sender.is_a?(User)
+    return false if klaos_template_params.present?
+    conteudo = content_attributes
+    return false if conteudo.is_a?(Hash) && conteudo['automation_rule_id'].present?
+
+    extras = additional_attributes
+    return false if extras.is_a?(Hash) && extras['campaign_id'].present?
+    return false if defined?(KlaosOrigemDaRequisicao) && KlaosOrigemDaRequisicao.via_token
+
+    true
   end
 end
 
