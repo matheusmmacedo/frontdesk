@@ -3001,6 +3001,36 @@ import AppContainer from './Dashboard.vue';`,
 </style>`,
     reason: 'enterprise-polish: tokens + utility classes pra telas novas (Central, Canais, KPI Dashboard)',
   },
+
+  // === KLaOS — Adiar: data escrita do jeito brasileiro (15/10/2026) ===
+  // "dia 26", "26/10", "26 de outubro", "segunda", "segunda 08:00" voltavam
+  // lista vazia (ou, no último, AMANHÃ 08:00). Sem sugestão o campo parece
+  // desabilitado: foi o que o Gustavo viu na conversa 1444. O tradutor está em
+  // app/javascript/dashboard/helper/klaosDataPtBr.js.
+  {
+    id: '/helper/snoozeDateParser/localization.js',
+    from: `import { parseDateFromText } from './parser';`,
+    to: `import { parseDateFromText } from './parser';
+import { traduzirDataPtBr } from '../klaosDataPtBr';`,
+    reason: 'adiar-pt-br: importa o tradutor de datas',
+  },
+  {
+    id: '/helper/snoozeDateParser/localization.js',
+    from: `  const stripped = stripNoise(normalized);
+`,
+    to: `  const stripped = stripNoise(normalized);
+
+  const klaosPt =
+    locale && String(locale).toLowerCase().startsWith('pt')
+      ? traduzirDataPtBr(text, referenceDate)
+      : null;
+  const klaosPtParse = klaosPt ? parseDateFromText(klaosPt, referenceDate) : null;
+  if (klaosPtParse) {
+    return [{ label: text.trim(), query: klaosPt, ...klaosPtParse }];
+  }
+`,
+    reason: 'adiar-pt-br: tenta o formato brasileiro antes do parser em inglês',
+  },
 ];
 
 export default function klaosPatches() {
