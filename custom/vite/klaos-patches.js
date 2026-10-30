@@ -3031,6 +3031,97 @@ import { traduzirDataPtBr } from '../klaosDataPtBr';`,
 `,
     reason: 'adiar-pt-br: tenta o formato brasileiro antes do parser em inglês',
   },
+
+  // === KLaOS — texto longo no WhatsApp Cloud sai em várias mensagens (30/10/2026) ===
+  // Pedido do Gustavo (26/10): resposta pronta de cancelamento com 4589 a 7009
+  // caracteres travava o Enviar ("536 characters over"); 4096 é o limite da
+  // Meta para texto. O backend divide e envia na ordem
+  // (custom/config/initializers/klaos_whatsapp_texto_longo.rb). Aqui o composer
+  // só para de bloquear e avisa em quantas mensagens vai sair. Nota privada,
+  // anexo e outros canais seguem como antes. Regra espelhada em
+  // app/javascript/dashboard/helper/klaosTextoLongo.js.
+  {
+    id: '/components/widgets/conversation/ReplyBox.vue',
+    from: `import { MESSAGE_MAX_LENGTH } from 'shared/helpers/MessageTypeHelper';`,
+    to: `import { MESSAGE_MAX_LENGTH } from 'shared/helpers/MessageTypeHelper';
+import { contarPartes as klaosContarPartes } from 'dashboard/helper/klaosTextoLongo';`,
+    reason: 'texto-longo-wa: importa a regra de divisão',
+  },
+  {
+    id: '/components/widgets/conversation/ReplyBox.vue',
+    from: `    charactersRemaining() {
+      return this.maxLength - this.message.length;
+    },`,
+    to: `    charactersRemaining() {
+      return this.maxLength - this.message.length;
+    },
+    klaosPartesTextoLongo() {
+      if (this.isPrivate || !this.isAWhatsAppCloudChannel) return 1;
+      if (this.hasAttachments || this.hasRecordedAudio) return 1;
+      return klaosContarPartes(this.message);
+    },`,
+    reason: 'texto-longo-wa: quantas mensagens o texto vai virar',
+  },
+  {
+    id: '/components/widgets/conversation/ReplyBox.vue',
+    from: `        this.message.length > this.maxLength
+      );`,
+    to: `        (this.message.length > this.maxLength &&
+          this.klaosPartesTextoLongo < 2)
+      );`,
+    reason: 'texto-longo-wa: não bloqueia o Enviar quando o backend vai dividir',
+  },
+  {
+    id: '/components/widgets/conversation/ReplyBox.vue',
+    from: `      :characters-remaining="charactersRemaining"`,
+    to: `      :characters-remaining="charactersRemaining"
+      :klaos-partes="klaosPartesTextoLongo"`,
+    reason: 'texto-longo-wa: passa o número de partes pro ReplyTopPanel',
+  },
+  {
+    id: '/widgets/WootWriter/ReplyTopPanel.vue',
+    from: `    charactersRemaining: {
+      type: Number,
+      default: () => 0,
+    },`,
+    to: `    charactersRemaining: {
+      type: Number,
+      default: () => 0,
+    },
+    klaosPartes: {
+      type: Number,
+      default: 1,
+    },`,
+    reason: 'texto-longo-wa: prop com o número de partes',
+  },
+  {
+    id: '/widgets/WootWriter/ReplyTopPanel.vue',
+    from: `    charLengthClass() {
+      return this.charactersRemaining < 0 ? 'text-n-ruby-9' : 'text-n-slate-11';
+    },
+    characterLengthWarning() {
+      return this.charactersRemaining < 0`,
+    to: `    charLengthClass() {
+      if (this.klaosPartes > 1) return 'text-n-amber-11';
+      return this.charactersRemaining < 0 ? 'text-n-ruby-9' : 'text-n-slate-11';
+    },
+    characterLengthWarning() {
+      if (this.klaosPartes > 1) {
+        return \`Será enviada em \${this.klaosPartes} mensagens\`;
+      }
+      return this.charactersRemaining < 0`,
+    reason: 'texto-longo-wa: "será enviada em N mensagens" no lugar de "characters over"',
+  },
+  {
+    id: '/widgets/WootWriter/ReplyTopPanel.vue',
+    from: `      <div v-if="isMessageLengthReachingThreshold" class="text-xs">`,
+    to: `      <div
+        v-if="isMessageLengthReachingThreshold || klaosPartes > 1"
+        class="text-xs"
+        data-klaos-texto-longo
+      >`,
+    reason: 'texto-longo-wa: mostra o aviso assim que o texto vai ser dividido',
+  },
 ];
 
 export default function klaosPatches() {
